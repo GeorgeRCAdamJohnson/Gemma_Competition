@@ -5534,3 +5534,84 @@ CONCLUSION: we do not need a smarter model. We need to CONVERT "modify existing 
 Order by cost + mechanism-fit: (3) decoding anti-repeat FIRST (config-only, attacks the proven invariant),
 then (2) whole-function replace, then (1) modify->insert. Each is one run; keep/revert on the number. LoRA
 remains the weights backstop if all three stay at 1/5. v6/0.12 SACRED; do not overwrite submission on <0.12.
+
+
+## FULL TOOL AUDIT (all 9 host tools vs what we use) — found 2 unused levers (2026-10-10)
+
+Source: comp_files/HARNESS_README.md §6 (SwegemmaContext.create_tools, exactly 9 tools). We DECLARE all 9 in
+agent.yaml (nothing undeclared), but two are present-and-UNUSED, and one is actively banned:
+
+| tool | budget | declared | used by model | note |
+|---|---|---|---|---|
+| run_command | gated | yes | heavy | grep + python edits |
+| read_file | gated | yes | heavy | 150-line/10k-char cap, 1-indexed |
+| edit_file | gated | yes | **BANNED in v18 prompt** | has 3-tier resilient matcher (see below) |
+| write_file | gated | yes | rare | overwrites WHOLE file (mkdir -p) |
+| get_status | **FREE (count_tool_call=False)** | yes | **NEVER CALLED** | returns tool_calls_remaining, time_remaining |
+| submit_patch | **FREE** | yes | yes | the finish |
+| get_code_neighbors | gated | yes | ~never | graph CALLS/DEFINED_IN/IMPORTS |
+| search_similar_code | gated | yes | ~never | embedding sim; SYMBOL names only (offline trap) |
+| get_code_subgraph | gated | yes | **never** | induced subgraph for a node list |
+
+### LEVER A (NEW, highest value, zero cost): get_status is FREE and the model never calls it.
+Our dominant failure is BUDGET-DEATH (grep-loop -> 15 calls -> never edits). We have tried to fix this with
+PROSE ("reserve your last 3 calls", v16) and the model IGNORES it because it CANNOT count its own tool calls.
+get_status returns `tool_calls_remaining` at ZERO budget cost (count_tool_call=False, confirmed §6.1). A prompt
+that says: "call get_status after each tool call; the moment tool_calls_remaining <= 3, STOP searching and
+apply your edit NOW" gives the model the GROUND-TRUTH budget state for free, replacing its broken internal
+count with a real number. This is a free, self-triggered reserve-tail driven by actual state. NEVER TRIED in
+v1-v18. Directly attacks the proven invariant (reach-the-edit before budget death).
+
+### LEVER B (re-enable the host's own repair): edit_file 3-tier matcher. §6.1 confirms:
+  tier1 exact | tier2 FLEXIBLE (line match after strip; AUTO-RE-INDENTS new_string) | tier3 REGEX (tokenizes
+  around ()[]{}:<>= and joins with \s*, matches across wrapping/spacing). v18 BANNED edit_file for run_command
+  byte-exact replace -> we discarded the host's sloppy-anchor repair engine. tier2/tier3 are exactly the fuzzy
+  repair we wanted to hand-build (and are forbidden to ship as code per §2.1 declarative-only).
+
+### LEVER C (lower priority): write_file overwrites the WHOLE file = a modify->insert path (rewrite the
+  function cleanly from one read), sidesteps anchoring but risks reproducing the whole file wrong.
+
+### PRE-REGISTER v19 (one variable, same 5-task rich sample, bar >=2/5 flipping >=1 of 4079/4076):
+Combine the two cheap, mechanism-fit levers that attack the SAME invariant from both sides WITHOUT changing
+the model: (1) re-enable edit_file (use its 3-tier matcher, stop forcing run_command) + (2) FREE get_status
+reserve-tail ("get_status after each call; remaining<=3 => edit now"). Keep commit-to-path, budget 15. Attribution
+cell (added to submit_v19) auto-reports first_edit_at / max_repeat / search-vs-read split so we SEE which lever
+moved which task. NOTE: this bundles 2 changes on a DEV run (allowed; rule 7 governs SCORED subs) BECAUSE the
+attribution logging makes each lever's contribution separable. If >=2/5 and attribution is ambiguous, split
+them in a follow-up run before any scored submission.
+
+
+## v19 BUILT — 4 levers + attribution logging (2026-10-10). PRE-REGISTERED.
+
+Built submit_v19 (copied v18 scaffold, syntax-gate assembler). FOUR levers, all verified legal against
+HARNESS_README before writing (no guessed params):
+1. DECODING ANTI-REPEAT: sampling.yaml frequency_penalty: 0.4 (L146 confirms permitted/unrestricted). Mild,
+   discourages the verbatim re-emit-the-broken-call loop at generation time without distorting code tokens.
+   max_output_tokens 4096->6144 so a whole-function edit does not truncate the <|tool_call> tag (gotcha #1).
+2. EDIT-SHAPE in system.md: SHAPE1 ADD/OVERRIDE (insert a new unit / override the method on the used class,
+   do not surgically edit the shared base) ; SHAPE2 WHOLE-FUNCTION REPLACE (old_string = entire `def name(`..end,
+   anchor is short+unique, no fragile inner span) ; SHAPE3 one-line. Pick by difficulty. This is the "make the
+   hard edits look like the easy edit (isatty-add)" reframe, operationalized.
+3. RE-ENABLE edit_file + its 3-tier matcher (exact/flexible/regex, L451): v18 BANNED it; v19 makes it primary
+   (run_command replace is now only the twice-failed fallback). Explicit rule: never put read_file's "N:" gutter
+   into old_string (the run5 failure). Leans on the host's own sloppy-anchor repair (tier2 strips ws + reindents).
+4. FREE get_status RESERVE-TAIL: "call get_status after each call (costs 0 budget, L6.1); the moment
+   tool_calls_remaining <= 4, STOP searching and edit NOW." Replaces v16's ignored PROSE reserve-tail with a
+   ground-truth budget number the model cannot miscount. NEVER used in v1-v18.
+Plus: explicit "NEVER RE-EMIT A FAILED CALL — a failure means CHANGE approach; ignore any harness hint to
+'split into smaller edits' if it is making you repeat" (counters the harness nudge L358 that may DRIVE the loop).
+
+NEW: ATTRIBUTION CELL (cell 5) reads the traces post-run and prints per-task first_edit_at / n_edit /
+edit_fail / search / read / max_repeat, plus aggregates (search-death count, repeat-loop count) and per-WIN
+provenance. This is what makes bundling 4 levers on a DEV run legitimate (rule 7 governs SCORED subs): the log
+auto-separates which lever moved which task. No more manual trace-digging after each run.
+
+### PRE-REGISTERED BAR (external judge = free Kaggle run, same 5-task rich sample):
+PRIMARY: resolved >= 2/5 AND at least one of rich_4079 / rich_4076 flips to True (the content-heavy edits that
+grep-looped in v17/v18). 2/5 flipping a word-trap => a lever worked; read the attribution table to see WHICH.
+SECONDARY (mechanism, even if bar missed): does max_repeat drop (anti-repeat working)? does first_edit_at move
+earlier / stop being None (get_status reserve-tail + edit-shape working)? These tell us WHICH lever to keep.
+IF >=2/5 with a word-trap flip: candidate vs sacred 0.12 — but FIRST re-run with the winning lever ALONE to
+confirm attribution before spending the scored slot (rule 7). IF 1/5: read attribution; if a mechanism moved
+(repeat down OR first_edit earlier) keep that lever and iterate; if NOTHING moved, the weights backstop (LoRA)
+is next. v6/0.12 SACRED; do not overwrite submission.csv on <0.12.
