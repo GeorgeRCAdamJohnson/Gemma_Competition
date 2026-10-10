@@ -5356,3 +5356,26 @@ committed source file and verify. But it directly attacks the measured wall and 
 v17 (1/5, below 0.12). v6/0.12 sacred. Next lever: edit-via-run_command (v18) OR the loop/edit-discipline LoRA
 (the weights fix for both won't-commit and malformed-edit). v18 is the cheaper probe and attacks the exact
 measured failure; try it before the LoRA build.
+
+
+## v18 (edit-via-run_command) — build defect + fix
+
+**First push (v1) crashed before the agent ran.** `SyntaxError: invalid syntax. Perhaps you forgot a comma?`
+at the `system.md` `write_text(...)` call. Root cause: the outer string literal was delimited with `'''`,
+but the prompt CONTENT embeds `old='''<snippet>'''` / `new='''<replacement>'''` as example text — the inner
+`'''` closed the outer string early, so Python parsed the remaining prompt text as code. This is an EXECUTION
+bug (rule 11), NOT a verdict on the run_command-edit idea. A full GPU run was wasted on an unexecutable cell.
+
+**Fix:** swapped the outer delimiter of that one `write_text` to `"""` (content contains no `"""`, so no
+collision). No semantic change to the prompt — `\n` sequences render identically under both delimiters.
+Verified: `ast.parse` of the source AND all 5 assembled-notebook code cells pass. Re-pushed as v18 version 2
+(RUNNING).
+
+**Prevention:** added a SYNTAX GATE to `_assemble.py` — every code cell is `ast.parse`-d before the notebook
+is written; a malformed cell aborts the build with the offending line instead of shipping to Kaggle. This
+class of failure (triple-quote collision in an embedded prompt) can no longer burn GPU quota silently.
+
+Pre-registered bar unchanged: does run_command-edit flip >=2/5 single-file word-traps (rich_4076 ansi.py,
+rich_4079 markdown.py) that edit_file malform-looped on in v17? >=2/5 => mechanism works, submit candidate
+vs sacred 0.12. <2/5 after a clean run => prompt path exhausted (v13-v18), move to loop/edit-discipline LoRA
+on Colab (train_lora.py + build_localization_trajectories.py already built; adapter-load-in-scoring verified).
