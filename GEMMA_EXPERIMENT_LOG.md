@@ -5746,3 +5746,30 @@ lean prompt=0/5. "Lean/simple wins" (L577) is FALSE for a wholesale rewrite that
 line) instead of a multi-line span, OR "read_file the exact lines, copy them verbatim into old_string, do not
 paraphrase." One variable. If the frame idea is still wanted, add it as ONE sentence at the TOP of v19's prompt
 in a SEPARATE later run, never bundled with the anchor fix.
+
+
+## v19v3 BUILT + PUSHED — v19 base + ONE surgical rule (ANCHOR CORRECTNESS). (2026-10-10)
+
+Naming: this is the v19 FAMILY's third variant (v19 base, v20 = lean-prompt arm [regressed], v19v3 = anchor-fix
+arm), so named v19v3 not v21 — keeps lineage visible in the standings (matches v12_v2/v13_v2 convention).
+
+ONE variable vs v19: v19's four levers + full prompt UNCHANGED; ADDED a single "ANCHOR CORRECTNESS" block to
+STEP 2. It targets v19's exposed wall (edit_fail: edits reach the file but old_string does not match):
+  1. read the region THIS run, COPY old_string VERBATIM from what you just read (no retype/paraphrase/cleanup).
+  2. old_string = SHORTEST still-UNIQUE string (ideally ONE line / the def signature). Short exact anchor matches;
+     long multi-line span fails on any whitespace/quote mismatch. Shorter = MORE reliable.
+  3. On "could not find", SHORTEN to a smaller verbatim fragment — do NOT resend the same long string.
+Also ported the first_thought_chars metric into v19's attribution cell (strictly additive diagnostic).
+
+Why this is the right next move (not another wholesale rewrite): v20 proved wholesale rewrites regress (broke
+rich_4077 twice counting v4). v19 proved we already killed repeat-loop + search-death; the SOLE remaining wall
+is edit-anchor correctness (edit_fail=1 on all 3 word-trap losers; rich_4070 edited early but all 5 edits
+failed to apply). v19v3 attacks exactly that, surgically, leaving the scaffolding that carries the one win.
+
+### PRE-REGISTERED BAR (external judge, same 5-task rich sample):
+PRIMARY: resolved >= 2/5 AND it must FLIP a task whose v19 failure was edit_fail (4079/4076/3469/4070). The
+mechanism check (rule 13): does edit_fail drop toward 0 in the attribution table? If edit_fail falls but score
+stays 1/5, the anchor fix WORKED but a further wall (fix-content correctness) remains -> that is the LoRA/
+fix-content target. If edit_fail does NOT fall, the anchor rule did not take -> the model cannot copy verbatim
+even when told, which is itself a weights finding. v6/0.12 SACRED; v19v3 gets the scored slot ONLY on >=2/5 with
+a flip, re-confirmed. Kernel: comfyops/gemma-sibling-conform-v19v3 version 1, pushed/running.
