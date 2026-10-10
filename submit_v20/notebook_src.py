@@ -54,6 +54,14 @@
 # ===== CELL 1: environment + wheelhouse (robust resolver) =====
 import glob, importlib, os, shutil, subprocess, sys
 from pathlib import Path
+# LOG HYGIENE: silence known-benign noise so the ONLY stdout is the result/attribution tables.
+# (nbformat cell-id warning, ADK EXPERIMENTAL feature warnings, and the per-sandbox "ensurepip unavailable"
+#  WARNING from swegemma.sandbox.subprocess, which fires on EVERY task and buries resolved= lines.)
+import warnings, logging
+warnings.filterwarnings('ignore')
+os.environ['PYTHONWARNINGS'] = 'ignore'
+for _ln in ('swegemma.sandbox.subprocess', 'swegemma.sandbox', 'google.adk', 'google_adk'):
+    logging.getLogger(_ln).setLevel(logging.ERROR)
 os.environ['LITELLM_LOCAL_MODEL_COST_MAP'] = 'True'
 os.environ['TRANSFORMERS_NO_TF'] = '1'
 os.environ['VLLM_WORKER_MULTIPROC_METHOD'] = 'spawn'

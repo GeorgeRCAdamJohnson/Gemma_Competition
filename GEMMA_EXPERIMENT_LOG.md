@@ -5713,3 +5713,36 @@ first edit must MATCH). That is the next pre-registered target regardless of v20
 apply the model's old_string even with the 3-tier matcher? (candidate: model still pastes approximate text, or
 the whole-function anchor is too long to match). Read v20 attribution: if first_edit_at drops but edit_fail
 stays 1, the wall is anchor-correctness -> that is where the LoRA or an edit-by-smaller-anchor rule goes next.
+
+
+## v20 RESULT (external judge) — REGRESSION. Lean frame-override prompt FAILS its bar. Keep v19 prompt.
+
+Filtered run (v20, lean 307w prompt, same 4 levers, same 5 tasks):
+```
+rich_4077 resolved=False 241s  15 calls 0 chars   <- BROKE THE ONE RELIABLE WIN (resolved under v1/3/5/6/17/18/19)
+rich_4079 resolved=False 245.7s 15 calls 0 chars  + "agent exceeded turns budget" (hit max_turns=24)
+rich_4076 (running) ... heading 0/5
+```
+Pre-registered bar (v20 >= v19=1/5 AND loss first-thoughts shorter): FAILED. v20 is 0/5-heading, WORSE than v19.
+
+### MECHANISM (the real finding, from the "exceeded turns budget" warning):
+v20 is SLOWER per task (245s vs v19's 112s on rich_4079) NOT because it reasons better — it hits max_turns=24
+and dies. The lean prompt made the model emit MANY turns WITHOUT a tool call (pure reasoning / non-tool
+outputs), burning both the turn budget and the clock, landing 0 chars. Stripping the verbose structure removed
+the rails that forced "emit a tool call every turn." IRONY: the lean "stop ruminating" frame produced MORE
+rumination because it also deleted the tool-call-per-turn discipline that the verbose prompt drilled in.
+
+### REPEATED, NOW-CONFIRMED FINDING (rule 14): WHOLESALE PROMPT REWRITES REGRESS THIS MODEL.
+This is the SECOND time a prompt rewrite broke rich_4077 (v4 was first, also 0-char/15-call death). The one
+reliable win rides on SPECIFIC scaffolding (explicit per-step structure + "emit a tool call / submit then STOP"
+discipline). Removing it as a block kills the win. The frame-override IDEA is not disproven — but it CANNOT be
+delivered by replacing the whole prompt. It must be a SURGICAL one-line addition to v19's WORKING prompt.
+
+### DECISION: v19 prompt is the base (NOT v20). The A/B is conclusive: at fixed 4 levers, big prompt=1/5,
+lean prompt=0/5. "Lean/simple wins" (L577) is FALSE for a wholesale rewrite that drops the stop/tool-call rails.
+### NEXT (regardless): the REAL wall is v19's finding — first edit lands too late AND the first edit MISSES
+(edit_file can't match old_string; rich_4070 edited early, all 5 edits failed). v21 = v19 prompt (unchanged)
++ ONE surgical change targeting edit-anchor correctness: force a TINY unique anchor (a single signature/def
+line) instead of a multi-line span, OR "read_file the exact lines, copy them verbatim into old_string, do not
+paraphrase." One variable. If the frame idea is still wanted, add it as ONE sentence at the TOP of v19's prompt
+in a SEPARATE later run, never bundled with the anchor fix.
