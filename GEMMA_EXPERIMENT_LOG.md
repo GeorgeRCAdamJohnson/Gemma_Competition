@@ -119,6 +119,39 @@ same silent misinterpretation the way open-ended retries do (Silent Semantic Fai
 
 ---
 
+## CONSOLIDATED VERSION HISTORY (external-judge numbers only; one row per version)
+> Single source of truth for "what scored what." Dev = free Kaggle run on a fixed task sample (real 31B).
+> LB = scored submission on the hidden board. "sample" column notes the dev task set. Full per-task tables
+> and verdicts are in each version's section below (search `## vN`). Live-best = v6 @ 0.12 (SACRED).
+
+| ver | change (one variable) | dev result | sample | LB | verdict |
+|---|---|---|---|---|---|
+| v1  | first end-to-end agent, budget 25 | 0/6 | 6-task (4 rich/2 fastapi) | 0.08-ish | 4 loop bugs found; baseline |
+| v2  | fix 4 loop bugs, budget 40 | 0/6 | same 6 | — | REGRESSION (more calls = worse) |
+| v3  | budget 25, heredoc scratch, edit_file | 1/6 | same 6 | ~0.10 | rich_4077 resolve banked |
+| v4  | temp0 + thorough localize + prose tools | 0/6 | same 6 | — | REGRESSION — broke rich_4077 (explore death) |
+| v5  | v3 prompt + budget 15->22 ONLY | 1/6 | same 6 | — | rich_4077 RECOVERED; 15-call ceiling confirmed |
+| v6  | v5 + contract-anchoring prompt | **2/6** | same 6 | **0.12** | **LIVE-BEST / SACRED** (rich_4077 + rich_4079) |
+| v7  | text-search-first localization | 2/6 | same 6 | — | NULL (ties v6 count, fails fastapi criterion) |
+| v8  | contract self-audit sub-agent | 1/6 | 6/6 | — | REGRESSION vs v6; synthesis still misses fastapi |
+| v9  | representative-10, serial (trustworthy) | 0/10 | rep-10 | — | first clean rep-10 number; supersedes contaminated 1/10 |
+| v10 | budget 22->40, serial | **2/10** | rep-10 | — | beats v9=0/10; both resolves used >22 calls (mechanism-confirmed) |
+| v13-v14 | (word-trap localization prompt iterations) | ~1/sample | rich word-traps | — | see sections; localization improving, edit still the wall |
+| v15 | short-traj, no sub-agent, budget 12 | 1/5 | rich word-traps | not submitted | budget too tight (edit guillotined at 12) |
+| v16 | budget 15 + edit-early + reserve-tail + anti-loop | 1/5 | rich word-traps | not submitted | budget/prompt tuning EXHAUSTED as a lever |
+| v17 | commit-to-path-first (up-front TARGET) | 1/5 | rich 5-task | not submitted | localization SOLVED; pins edit_file tool-call format as the wall |
+| v18 | edit via run_command (drop edit_file) | 1/5 | rich 5-task | not submitted | edit-mech CLOSED; real wall = grep-death (search phase), already-decided fix = kill search phase |
+
+CORRECTION (rule 3/14): the two "kill the search phase" prompt levers are NOT unexplored — both were already
+tried and judged:
+- STATIC PRE-LOCALIZER: BUILT + measured (`train/_prelocalize_test.py`, top-5 recall 3/6, §~2837). Then
+  DEPRIORITIZED in-log (§~2901) as a WEAKER local-only copy of the graph the real harness already ships.
+- SYMBOL-QUERY GRAPH DISCIPLINE: this WAS v7 (§~3200/3221). v7 = 2/6 = NULL (tied v6, did not beat it, §~3761).
+So "do a prompt localization lever" is a RE-RUN of explored, converged ground. The prompt family (v1-v18)
+has now produced exactly ONE repeatable rich resolve (rich_4077) and never a second that holds. The honest
+remaining lever that is NOT a re-run is the WEIGHTS: loop/edit-discipline LoRA on terse localize->edit->submit
+trajectories (train_lora.py + build_localization_trajectories.py already built; adapter-load-in-scoring verified).
+
 ## STANDINGS / what is TRUE vs ASSUMED
 - TRUE (measured, model-free): 74% of gold fixes are sibling-conformable; REPO==LOCAL so not an artifact.
 - TRUE (literature): synthesis is the bottleneck; retry alone can't escape silent misinterpretation.
@@ -5424,3 +5457,80 @@ terse localize->edit->submit trajectories) is the weights-level version of the s
 ### edits fine when reached; rich_4070 even produced a 3157-char patch via run_command — it just ran out of
 ### budget first). Next variable = KILL THE SEARCH PHASE (lever 1 static pre-localizer is prompt/notebook-
 ### only, cheapest, and testable on the same 5-task sample). One change, re-run same 5, read the number.
+
+
+## PANEL HYPOTHESIS H2 (position-anchored / line-number editing) — FALSIFIED BY EXISTING DATA (local_eval runs 2 & 5)
+
+A specialist panel (ML/finetune, SWE-agent, skeptic, data-archaeologist) studied the v18 traces and converged
+on: the grep-loop is CONTENT-ANCHOR HUNTING, and the overlooked lever is POSITION-ANCHORED editing (edit by
+line number instead of by old-string). Pre-registered as v19.
+
+**User correction (caught the panel's blind spot):** line-number + filename editing was ALREADY TRIED locally.
+Evidence = Gemma/local_eval/_llamacpp_run5.txt (temp 0, rich_4077, local llama.cpp proxy):
+```
+[4] read_file(console.py, 960-980)        # read WITH line numbers
+[5] edit_file(old_string='969:         isatty: Optional[Callable[[',
+              new_string='969:         isatty: Optional[Callable[[', ...)   # <-- note the "969:" gutter
+[6..15] the IDENTICAL malformed edit, looped 10x to budget death. 0-char patch, NOT RESOLVED.
+```
+run2.txt: same task, different seed, died on a chat 500 after 5 localization calls (infra, not informative).
+
+**WHY H2 IS DEAD (the real finding):** when read_file prints line numbers, the model CANNOT separate the
+line-number GUTTER (the address, "969:") from the line CONTENT. It pasted "969:" INTO old_string, so the match
+can never hit the real file (which has no "969:" prefix), AND old==new (a no-op even if it matched). Then it
+looped the identical bad call. Position-anchoring did not remove the thrash — it CREATED a new malform mode
+(gutter-in-content) on top of it. So "edit by line number" is NOT the unexplored lever the panel thought; it is
+a tried, failed mode. Rules 3/14: honest null, do not re-run it as v19.
+
+**WHAT SURVIVES from the panel:** the DISCRIMINATOR observation still holds — the one win (rich_4077) does
+read->edit->submit with a single read; every loss either never transitions to edit or thrashes identical
+malformed edits. Both content-anchored (v18 run_command replace) AND position-anchored (run5 line-number)
+editing produce the SAME failure: the model emits a malformed/no-op edit and REPEATS it until budget death.
+That repetition-of-a-broken-call is the invariant across every edit format we have tried (edit_file old/new,
+sed, python replace, line-number). It is format-INDEPENDENT => it is a WEIGHTS/decoding behavior, not a tool
+choice. This is the strongest evidence yet that the fix is the LoRA (or a decoding-level anti-repeat), NOT
+another edit-format prompt.
+
+**REVISED LoRA TARGET (sharpened by this):** train the read->edit->submit transition AND penalize emitting a
+tool call identical to the immediately-preceding failed one (the repeat-until-death mode). Trajectories: gold
+diff as localize(1 read) -> ONE well-formed edit -> submit, with NO repeated-call tails. The invariant failure
+is "re-emit the broken call," so the training signal must include "a failed edit is followed by a DIFFERENT
+action, never the same call again."
+
+
+## SCORING-PREMISE CORRECTION + "fix one, why not others?" REFRAME (2026-10-10)
+
+**User premise to correct:** "the competition rewards submitting anything / any patches." NOT TRUE per the
+verified rule (log L23, HARNESS_README): scored by HERMETIC PYTEST, Fail-to-Pass AND Pass-to-Pass. A patch
+scores ONLY if it flips the failing test to pass without breaking passing tests. Binary per task. Our own
+data confirms a well-formed patch that is WRONG scores ZERO: fastapi_15588 (1608 chars, not resolved),
+rich_4076 (exact site, self-repro passed, hidden test failed), 12B rich_4077 (604-char no-op, not resolved).
+=> "produced a patch" != "scored." Submitting more/longer patches does nothing. This is why the field is
+frozen at ~0.12: everyone produces patches, few produce CORRECT ones. (Rule 9: do not build strategy on
+"any patch counts" — it is false.)
+
+**The real reframe (user: "we fix one thing why can't we fix others?") — it's the EDIT SHAPE, not bug
+difficulty.** Our ONE repeatable win and the losses differ by what the edit requires:
+- rich_4077 (WIN): fix = ADD a small new method with a unique anchor (FileProxy.isatty forwarding). The model
+  reliably expresses "insert a new self-contained block here."
+- rich_4079 / 4076 / 3469 (LOSS): fix = MODIFY existing multi-line logic (change on_text/on_child_close, change
+  a re.split, add a guard inside an existing function). Needs a verbatim content-anchor or position-anchor to
+  target the existing span — the exact thing the model mangles then repeat-loops to death (all 4 edit formats).
+CONCLUSION: we do not need a smarter model. We need to CONVERT "modify existing span" edits into the
+"insert new block" / "replace whole named unit" shape the model ALREADY succeeds at.
+
+### THREE UNEXPLORED, CHEAP LEVERS that follow (none is a re-run of v1-v18):
+1. MODIFY->INSERT: prompt the agent to fix by APPENDING an override (subclass method / reassignment /
+   decorator / monkeypatch at import) instead of editing the buggy span in place. "Add a new block" is the
+   model's strong shape. Works for the subset where an override can supersede the bug. Prompt-only.
+2. WHOLE-FUNCTION REPLACE: emit the ENTIRE corrected function body and replace the whole function (anchor =
+   `def <name>(` — short + unique), not a surgical in-span diff. Removes the long-verbatim-anchor need.
+   Prompt-only + a run_command recipe that replaces a function by name.
+3. DECODING ANTI-REPEAT: the invariant killer is re-emitting the identical failed tool call. Use the harness
+   GenerationConstraints (repetition/frequency penalty, stop_sequences) to break the degenerate loop at
+   generation time. Config-only, one 5-task run. Attacks the format-independent invariant directly.
+
+### PRE-REGISTER (one variable, same 5-task rich sample, bar >=2/5 flipping >=1 of 4079/4076):
+Order by cost + mechanism-fit: (3) decoding anti-repeat FIRST (config-only, attacks the proven invariant),
+then (2) whole-function replace, then (1) modify->insert. Each is one run; keep/revert on the number. LoRA
+remains the weights backstop if all three stay at 1/5. v6/0.12 SACRED; do not overwrite submission on <0.12.
