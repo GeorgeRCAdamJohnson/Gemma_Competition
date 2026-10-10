@@ -5615,3 +5615,59 @@ IF >=2/5 with a word-trap flip: candidate vs sacred 0.12 — but FIRST re-run wi
 confirm attribution before spending the scored slot (rule 7). IF 1/5: read attribution; if a mechanism moved
 (repeat down OR first_edit earlier) keep that lever and iterate; if NOTHING moved, the weights backstop (LoRA)
 is next. v6/0.12 SACRED; do not overwrite submission.csv on <0.12.
+
+
+## FRAME, NOT LENGTH — the real prompt lever (user insight, 2026-10-10)
+
+User, reading two trace first-thoughts side by side: one prompt "says you're doing a code review", the other
+"is telling it it's a special butterfly no pressure." The decisive/vague split is a FRAMING difference, not a
+length one.
+
+MECHANISM (verified against HARNESS_README §5.2 build_agent_prompt + tasks.jsonl problem_statements):
+- The harness prepends to EVERY task: `You are evaluating a software engineering task for repository {repo}.`
+  then `Problem Statement:` + the RAW GitHub PR description. We cannot change this wrapper.
+- The problem_statements are raw PR blurbs: emoji titles (👷/♻️/✨/🗑️), PR-template boilerplate ("Please start
+  with a GitHub Discussion..."), often vague ("Inline table code", "✨ Add support for @app.vibe()").
+- WIN trace rich_4077: statement "proxy isatty" is already terse + mechanism-shaped -> model framed it as "fix
+  this specific thing", decisive first thought @10.2s/250c.
+- LOSS trace rich_4079: "Inline table code" + the "you are evaluating a task" wrapper -> model framed it as a
+  big open-ended EVALUATION, ruminated @112.8s/742c about an issue # it cannot even see.
+
+LEVER (refines v20): our system.md sits ON TOP of the harness wrapper and sets the frame the model adopts.
+v20's lean prompt must LEAD with a FRAME OVERRIDE that demotes "evaluation/special" and installs "code
+reviewer fixing ONE named defect", and force a restate-as-defect move before any tool call:
+  "You are a senior engineer doing a focused code review. You are NOT evaluating anything; this is NOT special
+   — it is one ordinary bug in one file. Ignore PR boilerplate and emoji. FIRST, in one line, restate it as a
+   concrete defect: `BUG: <file>::<function> does <wrong>; FIX: <one change>`. Then read that one file and fix."
+This manufactures the "proxy isatty" shape for EVERY task, including the vague emoji ones. It is the content of
+the user's observation, and it is distinct from (and likely bigger than) the raw word-count cut.
+
+### v20 (refined) = v19's 4 levers + LEAN (~200w) prompt whose FIRST move is the frame-override + restate-as-defect.
+A/B vs v19 (same 5 tasks, only the prompt differs). Attribution cell now also logs first-thought latency+length.
+BAR: v20 >= v19 resolved AND median LOSS-task first-thought length drops (model gets decisive, not just the win).
+
+
+## v20 BUILT + PUSHED — the A/B second arm (frame-override lean prompt). Both running (2026-10-10).
+
+v20 = v19's EXACT four levers (frequency_penalty 0.4, edit-SHAPE add/whole-fn/one-line, edit_file 3-tier
+primary, FREE get_status reserve-tail) with ONE variable changed: the system.md prompt.
+- v19 prompt = 1137 words / 9 sections (the accumulated kitchen sink).
+- v20 prompt = 307 words, 4 MOVES, leading with a FRAME OVERRIDE: "You are a senior Python engineer doing a
+  focused code review. You are NOT evaluating anything, this is NOT special — one ordinary bug in one file.
+  Ignore PR boilerplate/emoji/issue numbers." Then MOVE1 restate-as-defect (BUG: file::func — wrong | FIX: x),
+  MOVE2 read one file + FREE get_status reserve-tail, MOVE3 easiest edit shape, MOVE4 submit+stop.
+Rationale (user insight): the harness wraps every task as "You are evaluating a software engineering task"
+over a raw emoji PR blurb -> special-butterfly framing -> rumination (rich_4079 742c/112s). "proxy isatty" won
+because it accidentally read as a concrete defect (250c/10s). v20 manufactures that concrete-defect frame.
+
+Attribution cell EXTENDED: now also captures first_thought_chars per task (len of the first agent reasoning
+message) + prints median/min/max. This directly measures the user's hypothesis: does the lean frame make the
+LOSS tasks decisive (shorter first thought), not just keep the win.
+
+Both kernels in flight: v19 (big prompt) RUNNING, v20 (lean prompt) pushed version 1. Same 5-task rich sample,
+same 4 levers -> the ONLY variable is the prompt. Clean A/B.
+PRE-REGISTERED BAR for v20: resolved >= v19 AND median loss-task first_thought_chars < v19's. If yes -> lean
+frame-override is the new base (confirms L577 "complex prompts halve score" on OUR prompt). If v20 < v19 ->
+prompt length/frame was NOT the lever; keep v19 prompt. Read BOTH attribution tables together.
+v6/0.12 SACRED; neither v19 nor v20 gets the scored slot unless it clears >=2/5 with a word-trap flip AND the
+winning config is re-confirmed alone (rule 7).
