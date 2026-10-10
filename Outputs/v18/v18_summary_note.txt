@@ -1,0 +1,98 @@
+Time
+#
+Log Message
+9.6s	1	/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+9.6s	2	  validate(nb)
+11.0s	3	0.00s - Debugger warning: It seems that frozen modules are being used, which may
+11.0s	4	0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+11.0s	5	0.00s - to python to disable frozen modules.
+11.0s	6	0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+11.7s	7	0.00s - Debugger warning: It seems that frozen modules are being used, which may
+11.7s	8	0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+11.7s	9	0.00s - to python to disable frozen modules.
+11.7s	10	0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+13.4s	11	[wheelhouse] source dir: /kaggle/input/datasets/metric/gemma-4-developer-agent-wheelhouse
+13.4s	12	Installing 41 wheels...
+91.9s	13	Wheelhouse installation complete.
+128.8s	14	[data] DATA_DIR = /kaggle/input/competitions/gemma-4-developer-agent
+128.8s	15	Agent dir written (v16 = v15 + edit-reserve + anti-loop, budget 15): /kaggle/working/submission
+128.8s	16	Loaded 129 tasks
+143.9s	17	[import] validate_single_declared_model NOT FOUND; using no-op (single-model rule satisfied by agent.yaml)
+143.9s	18	[model] MODEL_PATH = /kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2
+983.0s	19	vLLM server started on http://127.0.0.1:8000/v1 (tp=4)
+983.0s	20	RICH sample: 5 tasks (4 word-trap exemplars + 1 more rich)
+983.0s	21	[1/5] rich_4077 (Textualize/rich)...
+983.2s	22	/usr/local/lib/python3.12/dist-packages/google/adk/features/_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.AGENT_CONFIG is enabled.
+983.2s	23	  check_feature_enabled()
+983.2s	24	/tmp/ipykernel_65/2707016685.py:36: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+983.2s	25	  events_compaction_config=EventsCompactionConfig(compaction_interval=15, overlap_size=2,
+983.2s	26	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 30d9af27-b18, creating venv without pip: Command '['/tmp/swegemma_sandbox_30d9af27-b18_53v4ycqp/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+983.2s	27	
+983.2s	28	/usr/local/lib/python3.12/dist-packages/google/adk/features/_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.AGENT_CONFIG is enabled.
+983.2s	29	  check_feature_enabled()
+983.2s	30	/tmp/ipykernel_65/2707016685.py:36: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+983.2s	31	  events_compaction_config=EventsCompactionConfig(compaction_interval=15, overlap_size=2,
+983.2s	32	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 30d9af27-b18, creating venv without pip: Command '['/tmp/swegemma_sandbox_30d9af27-b18_53v4ycqp/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1052.1s	33	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 2c4a0bfe-e7c, creating venv without pip: Command '['/tmp/swegemma_sandbox_2c4a0bfe-e7c_ip8z0pag/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1052.1s	34	
+1052.1s	35	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 2c4a0bfe-e7c, creating venv without pip: Command '['/tmp/swegemma_sandbox_2c4a0bfe-e7c_ip8z0pag/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1054.8s	36	  -> resolved=True duration=71.7s tool_calls=7 patch_chars=396
+1054.8s	37	[2/5] rich_4079 (Textualize/rich)...
+1054.9s	38	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox d0f63fb8-4b3, creating venv without pip: Command '['/tmp/swegemma_sandbox_d0f63fb8-4b3_1asc5rkw/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1054.9s	39	
+1054.9s	40	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox d0f63fb8-4b3, creating venv without pip: Command '['/tmp/swegemma_sandbox_d0f63fb8-4b3_1asc5rkw/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1154.0s	41	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 6c56f235-4bd, creating venv without pip: Command '['/tmp/swegemma_sandbox_6c56f235-4bd_4s9enl7e/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1154.0s	42	
+1154.0s	43	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 6c56f235-4bd, creating venv without pip: Command '['/tmp/swegemma_sandbox_6c56f235-4bd_4s9enl7e/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1157.4s	44	  -> resolved=False duration=102.6s tool_calls=15 patch_chars=0
+1157.4s	45	[3/5] rich_4076 (Textualize/rich)...
+1157.6s	46	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox ea5e5030-f27, creating venv without pip: Command '['/tmp/swegemma_sandbox_ea5e5030-f27_wi_hb3z9/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1157.6s	47	
+1157.6s	48	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox ea5e5030-f27, creating venv without pip: Command '['/tmp/swegemma_sandbox_ea5e5030-f27_wi_hb3z9/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1240.6s	49	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 76dd7d76-970, creating venv without pip: Command '['/tmp/swegemma_sandbox_76dd7d76-970_o0m8_7o3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1240.6s	50	
+1240.6s	51	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 76dd7d76-970, creating venv without pip: Command '['/tmp/swegemma_sandbox_76dd7d76-970_o0m8_7o3/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1242.9s	52	  -> resolved=False duration=85.4s tool_calls=15 patch_chars=0
+1242.9s	53	[4/5] rich_3469 (Textualize/rich)...
+1243.0s	54	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 114a465d-d61, creating venv without pip: Command '['/tmp/swegemma_sandbox_114a465d-d61_3xtdpzux/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1243.0s	55	
+1243.0s	56	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 114a465d-d61, creating venv without pip: Command '['/tmp/swegemma_sandbox_114a465d-d61_3xtdpzux/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1459.4s	57	WARNING:swegemma.harness.agent_runner:Task rich_3469: Tool call budget (15) exhausted; terminating agent loop.
+1459.4s	58	
+1459.4s	59	WARNING:swegemma.harness.agent_runner:Task rich_3469: Tool call budget (15) exhausted; terminating agent loop.
+1459.5s	60	WARNING:swegemma.harness.agent_runner:Task rich_3469 completed without explicit submit_patch call and no working tree modifications.
+1459.5s	61	
+1459.5s	62	WARNING:swegemma.harness.agent_runner:Task rich_3469 completed without explicit submit_patch call and no working tree modifications.
+1459.5s	63	  -> resolved=False duration=216.6s tool_calls=15 patch_chars=0
+1459.5s	64	[5/5] rich_4070 (Textualize/rich)...
+1459.7s	65	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 976d827d-93a, creating venv without pip: Command '['/tmp/swegemma_sandbox_976d827d-93a_66j7kvtm/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1459.7s	66	
+1459.7s	67	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 976d827d-93a, creating venv without pip: Command '['/tmp/swegemma_sandbox_976d827d-93a_66j7kvtm/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1812.0s	68	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c7c23b92-e3d, creating venv without pip: Command '['/tmp/swegemma_sandbox_c7c23b92-e3d_36scwwxu/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1812.0s	69	
+1812.0s	70	WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox c7c23b92-e3d, creating venv without pip: Command '['/tmp/swegemma_sandbox_c7c23b92-e3d_36scwwxu/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
+1813.6s	71	  -> resolved=False duration=354.0s tool_calls=15 patch_chars=3157
+1813.6s	72	
+1813.6s	73	===== v18 SUMMARY (EDIT-VIA-run_command, budget 15, 5-task sample; bar: rich_4077 stays, rich_4079 FLIPS, >=2/5) =====
+1813.6s	74	       id repo  resolved  duration_s  tool_calls  patch_chars
+1813.6s	75	rich_4077 rich      True        71.7           7          396
+1813.6s	76	rich_4079 rich     False       102.6          15            0
+1813.6s	77	rich_4076 rich     False        85.4          15            0
+1813.6s	78	rich_3469 rich     False       216.6          15            0
+1813.6s	79	rich_4070 rich     False       354.0          15         3157
+1813.6s	80	
+1813.6s	81	RICH RESOLVED: 1/5
+1813.6s	82	  rich_4077: resolved=True calls=7 chars=396 dur=71.7s
+1813.6s	83	  rich_4079: resolved=False calls=15 chars=0 dur=102.6s
+1813.6s	84	  rich_4076: resolved=False calls=15 chars=0 dur=85.4s
+1813.6s	85	  rich_3469: resolved=False calls=15 chars=0 dur=216.6s
+1813.6s	86	Max tool_calls used: 15 (want edits landing by ~12, not 15) | max dur: 354 s
+1813.6s	87	Created /kaggle/working/submission.zip (3.6 KiB)
+1818.8s	88	/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\|'
+1818.8s	89	  cells[i][c] = re.sub('\\\\\|', '|', cell)
+1819.0s	90	/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\_'
+1819.0s	91	  text = re.sub(r'_', '\_', text) # Escape underscores in display text
+1819.9s	92	[NbConvertApp] Converting notebook __notebook__.ipynb to notebook
+1820.3s	93	[NbConvertApp] Writing 224959 bytes to __notebook__.ipynb
+1823.1s	94	[NbConvertApp] Converting notebook __notebook__.ipynb to html
+1823.9s	95	[NbConvertApp] Writing 469243 bytes to __results__.html

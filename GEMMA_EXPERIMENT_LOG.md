@@ -5379,3 +5379,48 @@ Pre-registered bar unchanged: does run_command-edit flip >=2/5 single-file word-
 rich_4079 markdown.py) that edit_file malform-looped on in v17? >=2/5 => mechanism works, submit candidate
 vs sacred 0.12. <2/5 after a clean run => prompt path exhausted (v13-v18), move to loop/edit-discipline LoRA
 on Colab (train_lora.py + build_localization_trajectories.py already built; adapter-load-in-scoring verified).
+
+
+## v18 RESULT (version 2, clean run) — 1/5. BAR FAILED. Not an edit-mechanism problem.
+
+External judge (Kaggle kernel run, 5-task rich sample):
+```
+rich_4077  resolved=True   calls=7   patch_chars=396   dur=71.7s
+rich_4079  resolved=False  calls=15  patch_chars=0     dur=102.6s   <- bar task, did NOT flip
+rich_4076  resolved=False  calls=15  patch_chars=0     dur=85.4s    <- bar task, did NOT flip
+rich_3469  resolved=False  calls=15  patch_chars=0     dur=216.6s
+rich_4070  resolved=False  calls=15  patch_chars=3157  dur=354.0s
+RICH RESOLVED: 1/5
+```
+Pre-registered bar (rich_4079 flips, >=2/5) = **FAILED**. v18 == v17 == v16 == v15 ~= 1/word-traps.
+
+### VERDICT ON THE run_command-edit IDEA: it was aimed at the WRONG wall.
+v17's wall was malformed edit_file calls. We removed edit_file in v18 — and the UNDERLYING behavior surfaced:
+the model does NOT fail at edit *execution*, it never REACHES the edit. Trace evidence:
+- rich_4079: committed to the correct file (rich/markdown.py) at step 4, then spent steps 5-20 (16 calls)
+  grep -> read -> grep -> read exploring the class hierarchy. Step 21 verbatim: "I've exhausted my tool
+  calls... I didn't actually apply any changes. I just analyzed." It KNEW the fix (TableDataElement should
+  inherit TextElement / implement on_text) and had ZERO budget left to apply it. 0-char patch.
+- rich_4076: tool-call sequence = grep x6, read x1, grep x9, submit/empty x2. SIXTEEN greps, ONE read,
+  ZERO edits. Pure search death.
+
+### THIS IS THE ALREADY-DECIDED FAILURE, NOT A NEW ONE (see log §v4 line ~417, §"short loop" ~2749, corpus
+### ~577-580): "the more tool calls we allow, the worse it does"; the grep->read->grep SWE dance is the WRONG
+### shape for this model; the biggest budget win is to KILL THE SEARCH PHASE. v18 did not touch the search
+### phase — it only changed how edits are applied — so it could not move the number. Correctly predicted.
+
+### WHAT ACTUALLY ATTACKS THIS WALL (two levers we already scoped but have NOT shipped):
+1. STATIC PRE-LOCALIZATION OUTSIDE THE LLM LOOP (log §2749): before the agent starts, grep the problem-
+   statement symbols/error strings against the repo, rank candidate files/functions, and inject that ranked
+   list into message 1. The agent then skips the 5-10 blind search calls. ~0 agent calls spent on search.
+2. FORCE SYMBOL-QUERIES TO THE REAL GRAPH TOOLS (log §2862-2876, §3222): the real harness ships a call graph
+   + symbol embeddings (search_similar_code / get_code_subgraph / get_code_neighbors). Our system.md barely
+   mentions them and still says "grep -n via run_command". Prompt the model to query those with SYMBOL names
+   (not prose) and read the top hit — one shot to the file instead of 16 greps.
+Both make the model ACT sooner by removing the reason to keep searching. The LoRA (loop/edit-discipline on
+terse localize->edit->submit trajectories) is the weights-level version of the same fix if prompt levers fail.
+
+### DECISION: do NOT submit v18 (1/5 < sacred 0.12). The edit-mechanism hypothesis is CLOSED (run_command
+### edits fine when reached; rich_4070 even produced a 3157-char patch via run_command — it just ran out of
+### budget first). Next variable = KILL THE SEARCH PHASE (lever 1 static pre-localizer is prompt/notebook-
+### only, cheapest, and testable on the same 5-task sample). One change, re-run same 5, read the number.
