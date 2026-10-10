@@ -1,0 +1,10 @@
+task           gold_file                                PS_file?  PS_sym?  gold_syms
+fastapi_15588  fastapi/sse.py                           False     False    ['EventSourceResponse', 'ServerSentEvent', '_check_event_single_line', '_check_id_no_null', '_check_id_valid', '_check_single_line']
+fastapi_14458  fastapi/dependencies/models.py           False     True     ['is_async_gen_callable', 'is_coroutine_callable', 'is_gen_callable']
+fastapi_14479  fastapi/dependencies/utils.py            True      True     ['analyze_param']
+fastapi_5624   fastapi/dependencies/utils.py            False     False    ['get_dependant']
+fastapi_14873  fastapi/routing.py                       True      True     ['__init__']
+fastapi_15763  fastapi/routing.py                       False     False    ['read_users']
+
+LEGEND: PS_file? = problem statement names the gold file/basename. PS_sym? = names a gold function/class.
+If many rows are False/False, the agent is asked to locate a site the prompt does not point to -> localization is the gate.

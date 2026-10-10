@@ -1,0 +1,4 @@
+﻿llama-server: 
+llama-cli: 
+ollama dir exists: True
+winget llama? : True

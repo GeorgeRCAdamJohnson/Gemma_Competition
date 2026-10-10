@@ -1,0 +1,9 @@
+﻿python : Model instance must be specified in the form of 
+'{owner}/{model-slug}/{framework}/{instance-slug}'
+At line:1 char:170
++ ... tances.txt; python -m kaggle models instances files google/gemma-4 2> ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Model instance ...instance-slug}':String) [], RemoteExce 
+   ption
+    + FullyQualifiedErrorId : NativeCommandError
+ 

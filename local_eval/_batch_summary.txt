@@ -1,0 +1,18 @@
+temp=0.0 max_tool_calls=15 tasks=['rich_4077']
+
+===== VARIANT: baseline =====
+  rich_4077    test_fail    calls= 5 dur=  8s chars=833
+  --> baseline: RESOLVED 0/1  mean 8s/task
+
+===== VARIANT: sibling =====
+  rich_4077    test_fail    calls=15 dur= 24s chars=903
+  --> sibling: RESOLVED 0/1  mean 24s/task
+
+===== VARIANT: localize =====
+  rich_4077    no_patch     calls=15 dur= 16s chars=0
+  --> localize: RESOLVED 0/1  mean 16s/task
+
+===== SUMMARY (resolves, then mean time) =====
+  baseline     0/1  mean 8s/task
+  localize     0/1  mean 16s/task
+  sibling      0/1  mean 24s/task

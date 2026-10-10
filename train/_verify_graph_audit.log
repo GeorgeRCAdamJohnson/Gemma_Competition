@@ -1,0 +1,15 @@
+nodes=4256 edges=2422
+
+[1] id samples: ['fastapi.exceptions.EndpointContext', 'fastapi.exceptions.HTTPException', 'fastapi.exceptions.HTTPException.__init__', 'fastapi.exceptions.WebSocketException']
+    dotted-path ids: 4256/4256
+
+[2] nodes whose source contains 'async def': 71
+    total 'self.' occurrences across node sources: 513
+
+[3] edge types: {'calls': 2422}
+    sample edge fastapi.exceptions.EndpointContext->fastapi.routing._extract_endpoint_context; reverse present: True
+
+[4] .npz embeddings found: 1 -> ['C:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma\\comp_files\\probe\\fastapi_016ab760faba1813ba235d5582a014a58bd2f417.npz']
+
+[5] 15588 gold 'ServerSentEvent' rank by naive token-overlap: 73 of 4256
+    top5 by overlap: ['fastapi.applications.FastAPI', 'fastapi.applications.FastAPI.__init__', 'fastapi.routing.APIRouter', 'fastapi.applications.FastAPI.patch', 'fastapi.routing.APIRouter.patch']

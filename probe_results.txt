@@ -1,0 +1,54 @@
+================================================================
+[fastapi]  fastapi_016ab760faba1813ba23...
+  nodes total           : 4287
+  distinct skeletons    : 1837
+  dedup ratio           : 2.33x  (distinct = 42.9% of nodes)
+  unparseable nodes     : 0 (0.0%)
+  raw text chars        : 3,520,910
+  distinct-skel chars   : 491,151  (char saving 86.1%)
+  top duplicate clusters (count : sample ids):
+      531  : path_operation_advanced_configuration.tutorial  (+530 twins)
+      110  : tests.test_tutorial.test_response_directly.tes  (+109 twins)
+       51  : tests.test_response_change_status_code.test_de  (+50 twins)
+       38  : tests.test_request_params.test_query.test_requ  (+37 twins)
+       36  : wsgi.tutorial001_py310.read_main  (+35 twins)
+  gold tasks at THIS commit: 1
+  fix-site symbols checked : 16  (unmatched-in-graph 28)
+     in UNIQUE skeleton (safe) : 13 (81%)
+     MERGED with twins (risk)  : 3 (19%)
+================================================================
+[rich]  rich_fc41075a3206d2a5fd846c6...
+  nodes total           : 2015
+  distinct skeletons    : 1673
+  dedup ratio           : 1.20x  (distinct = 83.0% of nodes)
+  unparseable nodes     : 0 (0.0%)
+  raw text chars        : 1,133,978
+  distinct-skel chars   : 376,671  (char saving 66.8%)
+  top duplicate clusters (count : sample ids):
+       42  : rich.table._Cell  (+41 twins)
+       26  : rich.table.Row  (+25 twins)
+       18  : rich._null_file.NullFile.__next__  (+17 twins)
+       13  : rich.console.RenderHook  (+12 twins)
+       11  : rich.json.JSON.__rich__  (+10 twins)
+  gold tasks at THIS commit: 1
+  fix-site symbols checked : 21  (unmatched-in-graph 0)
+     in UNIQUE skeleton (safe) : 20 (95%)
+     MERGED with twins (risk)  : 1 (5%)
+================================================================
+[requests]  requests_6f205ff422bccd5e4c4...
+  nodes total           : 759
+  distinct skeletons    : 659
+  dedup ratio           : 1.15x  (distinct = 86.8% of nodes)
+  unparseable nodes     : 0 (0.0%)
+  raw text chars        : 373,874
+  distinct-skel chars   : 126,810  (char saving 66.1%)
+  top duplicate clusters (count : sample ids):
+       20  : docs._themes.flask_theme_support.FlaskyStyle  (+19 twins)
+        9  : tests.test_utils.test_get_auth_from_url  (+8 twins)
+        8  : requests.exceptions.ConnectTimeout  (+7 twins)
+        5  : requests._types.BaseRequestKwargs  (+4 twins)
+        5  : requests.cookies.MockRequest.get_type  (+4 twins)
+  gold tasks at THIS commit: 1
+  fix-site symbols checked : 4  (unmatched-in-graph 1)
+     in UNIQUE skeleton (safe) : 4 (100%)
+     MERGED with twins (risk)  : 0 (0%)

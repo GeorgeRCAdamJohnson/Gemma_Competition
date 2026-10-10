@@ -1,0 +1,19 @@
+available: True
+search 'analyze_param': {'status': 'ok', 'query': 'analyze_param', 'results': ['fastapi.dependencies.utils.analyze_param'], 'count': 1}
+search 'get_dependant': {'status': 'ok', 'query': 'get_dependant', 'results': ['fastapi.dependencies.utils.get_dependant'], 'count': 1}
+neighbors analyze_param: {"status": "ok", "node": "fastapi.dependencies.utils.analyze_param", "neighbors": {"outgoing": ["fastapi._compat.shared.lenient_issubclass", "fastapi.params.Path", "fastapi._compat.shared.is_uploadfile_or_nonable_uploadfile_annotation", "fastapi._compat.shared.is_uploadfile_sequence_annotation", "fastapi.params.File", "fastapi._compat.shared.field_annotation_is_scalar", "fastapi._compat.shared.ann
+analyze_param text[:200]: def analyze_param(
+    *,
+    param_name: str,
+    annotation: Any,
+    value: Any,
+    is_path_param: bool,
+) -> ParamDetails:
+    field_info = None
+    depends = None
+    type_annotation: Any = Any
+
+
+15588 available: True
+search 'ServerSentEvent': {'status': 'ok', 'query': 'ServerSentEvent', 'results': ['fastapi.sse.ServerSentEvent', 'fastapi.sse.ServerSentEvent._check_data_exclusive'], 'count': 2}
+search 'EventSourceResponse': {'status': 'ok', 'query': 'EventSourceResponse', 'results': ['fastapi.sse.EventSourceResponse'], 'count': 1}

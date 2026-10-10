@@ -1,0 +1,7 @@
+LORA-ADAPTERS: [{"id": 0, "path": "C:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma\\train\\adapters\\fastapi_specialist_12b\\fastapi_specialist_12b.gguf", "scale": 1.0, "task_name": "", "prompt_prefix": ""}]
+GEN seconds=2.0 completion_tokens=130 tok/s=64.5
+CONTENT:
+```python
+def add_numbers(a, b):
+    return a + b
+```

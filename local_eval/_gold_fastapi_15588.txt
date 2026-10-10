@@ -1,0 +1,126 @@
+=== PROBLEM ===
+♻️ Validate Server Sent Event fields to avoid applications from sending broken data
+
+## Pull Request
+
+<!--
+Please start with a GitHub Discussion.
+
+Once a team member asks you to open a PR, create it and link the discussion here.
+
+Obvious typo fixes can be made in a PR without starting a discussion.
+-->
+
+Discussion: <!-- Link to the GitHub Discussion -->
+
+## Description
+
+♻️ Validate Server Sent Event fields to avoid applications from sending broken data
+
+This was reported multiple times as a "vulnerability" by users probably using automated AI tools, with the argument that if input was taken from the request and passed directly to an event unfiltered, it could break the client.
+
+If an app sets an `id` or `event` with multi-line content, I would consider that app broken, and probably the app itself vulnerable to something, not FastAPI. With this change, if any app sets invalid multi-line values (sourced from unfiltered input or in any other way), FastAPI will make it a server error (which it is, as the app is sending invalid data).
+
+I don't think the code before this PR has a bug, less a vulnerability. This change is mainly a quality of life improvement to prevent badly written apps from shooting themselves in the foot by passing unsanitized data directly to a SSE.
+
+<!-- Write the description of your PR here -->
+
+## AI Disclaimer
+
+<!-- If using AI, write here the prompt and model used -->
+
+Codex with GPT-5.5
+
+<details>
+<summary>AI transcript</summary>
+
+<!-- Paste here the entire AI transcript -->
+
+</details>
+
+## Checklist
+
+- [ ] This PR is an obvious typo fix, or it links to a GitHub Discussion for the proposed code change.
+- [x] I added tests for the change.
+- [x] The new or updated tests fail on the main branch and pass on this PR.
+- [x] Coverage stays at 100%.
+- [x] The documentation explains the change if needed.
+
+
+=== GOLD PATCH ===
+--- a/fastapi/sse.py
++++ b/fastapi/sse.py
+@@ -33,10 +33,20 @@ class EventSourceResponse(StreamingResponse):
+     media_type = "text/event-stream"
+ 
+ 
+-def _check_id_no_null(v: str | None) -> str | None:
++def _check_single_line(v: str | None, field_name: str) -> str | None:
++    if v is not None and ("\r" in v or "\n" in v):
++        raise ValueError(f"SSE '{field_name}' must be a single line")
++    return v
++
++
++def _check_event_single_line(v: str | None) -> str | None:
++    return _check_single_line(v, "event")
++
++
++def _check_id_valid(v: str | None) -> str | None:
+     if v is not None and "\0" in v:
+         raise ValueError("SSE 'id' must not contain null characters")
+-    return v
++    return _check_single_line(v, "id")
+ 
+ 
+ class ServerSentEvent(BaseModel):
+@@ -86,24 +96,27 @@ class ServerSentEvent(BaseModel):
+     ] = None
+     event: Annotated[
+         str | None,
++        AfterValidator(_check_event_single_line),
+         Doc(
+             """
+             Optional event type name.
+ 
+             Maps to `addEventListener(event, ...)` on the browser. When omitted,
+-            the browser dispatches on the generic `message` event.
++            the browser dispatches on the generic `message` event. Must be a
++            single line.
+             """
+         ),
+     ] = None
+     id: Annotated[
+         str | None,
+-        AfterValidator(_check_id_no_null),
++        AfterValidator(_check_id_valid),
+         Doc(
+             """
+             Optional event ID.
+ 
+             The browser sends this value back as the `Last-Event-ID` header on
+-            automatic reconnection. **Must not contain null (`\\0`) characters.**
++            automatic reconnection. **Must be a single line** and must not contain
++            null (`\\0`) characters.
+             """
+         ),
+     ] = None
+
+=== TEST_PATCH ===
+--- a/tests/test_sse.py
++++ b/tests/test_sse.py
+@@ -221,6 +221,15 @@ def test_server_sent_event_null_id_rejected():
+         ServerSentEvent(data="test", id="has\0null")
+ 
+ 
++@pytest.mark.parametrize("field_name", ["event", "id"])
++@pytest.mark.parametrize("value", ["first\nsecond", "first\rsecond", "first\r\nsecond"])
++def test_server_sent_event_single_line_fields_reject_newlines(
++    field_name: str, value: str
++):
++    with pytest.raises(ValueError, match=f"SSE '{field_name}' must be a single line"):
++        ServerSentEvent(data="test", **{field_name: value})
++
++
+ def test_server_sent_event_negative_retry_rejected():
+     with pytest.raises(ValueError):
+         ServerSentEvent(data="test", retry=-1)

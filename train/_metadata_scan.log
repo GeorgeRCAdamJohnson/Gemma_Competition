@@ -1,0 +1,37 @@
+=== FIELD INVENTORY (what metadata exists) ===
+fields: instance_id, repo, base_commit, patch, test_patch, problem_statement, hints_text, created_at
+
+=== created_at (LEAKAGE RISK: temporal ordering) ===
+  present on 129/129 tasks. sample: [('fastapi_15661', '2026-05-31T16:00:39Z'), ('fastapi_15588', '2026-05-23T17:23:05Z'), ('fastapi_15589', '2026-05-23T18:35:06Z')]
+  year distribution: {'2026': 50, '2025': 48, '2024': 21, '2023': 10}
+
+=== issue/PR number refs in problem_statement (LEAKAGE: #NNNN, 'defect #', PR #) ===
+  85/129 tasks reference an issue/PR number (external content we DON'T have).
+
+=== problem_statement STRUCTURE ===
+  leading-emoji titles: 67/129  (52%)
+  GitHub PR-template boilerplate present: 24/129  (19%)
+  length: median 418  min 42  max 10095  <100 chars: 24
+
+=== EMOJI PREFIX -> signal? (USABLE: in problem_statement) ===
+  '(none)'     62
+  '🐛'          34
+  '✨'          14
+  '♻'          7
+  '📝'          3
+  '🚸'          2
+  '🔊'          2
+  '👷'          1
+  '🗑'          1
+  '🔒'          1
+  '➖'          1
+  '⬆'          1
+
+=== TITLE KEYWORD -> gold-file hotspot? (USABLE signal test) ===
+  module-name appears in PS first line: 13/129 (10%)
+
+=== base_commit (USABLE: it's the repo state) ===
+  distinct base_commits: 127 across 129 tasks. shared commits: 2
+
+=== hints_text ===
+  non-empty hints_text: 0/129

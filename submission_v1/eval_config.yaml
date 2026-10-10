@@ -1,0 +1,10 @@
+# Per-task budget failsafe.
+# Host-confirmed (forum): tasks run SEQUENTIALLY; 12h GLOBAL limit currently ERRORS the whole
+# submission if hit; eval_config default is NO LIMIT. So an uncapped run risks one slow task
+# zeroing everything. 129 tasks / 12h = ~5.6 min/task if spread evenly. We cap BELOW that so all
+# 129 are attempted and the run never approaches the 12h wall.
+evaluation:
+  max_time_minutes: 5        # hard per-task wall-clock cap (fast single-pass; move on if not converging)
+  max_tool_calls: 25         # enough for locate -> read -> sibling -> edit -> targeted test -> submit
+  max_turns: 40
+  timeout_seconds: 120       # single shell command (pytest) cap; targeted tests only

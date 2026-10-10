@@ -1,0 +1,41 @@
+'charmap' codec can't encode character '\U0001f4d8' in position 48: character maps to <undefined>
+ref,title,author,lastRunTime,totalVotes
+
+jek1wantaufik/gemma-4-agent-research-artifact,Gemma 4 Agent Research Artifact,Jeki Wan Taufik,2026-10-02 02:45:42.247000,0
+
+jek1wantaufik/gemma-4-developer-agent-lean,Gemma 4 Developer Agent - Lean,Jeki Wan Taufik,2026-10-02 02:11:43.060000,0
+
+matterhorn3838/gemma-4-superagent,Gemma 4 SuperAgent,Matterhorn3838,2026-10-01 04:41:19.907000,16
+
+haideptry/gemma-develop-first-try,Gemma develop first try,haideptry,2026-10-01 11:17:48.347000,23
+
+heliosli/gemma-4-dual-agent-reproducible-baseline,Gemma 4 Dual Agent Reproducible Baseline,Heliosli,2026-10-01 23:41:39.327000,0
+
+matterhorn3838/gemma-gemini-the-ultimate-duo,Gemma + Gemini - The Ultimate Duo,Matterhorn3838,2026-10-01 22:43:44.413000,1
+
+flexonafft/gemma-4-budget-aware-coding-agent,Gemma 4 | Budget-Aware Coding Agent,Igor Zharov,2026-10-01 10:31:49.210000,2
+
+abelog/pass2,pass2,AbelOG,2026-10-01 17:39:23.390000,0
+
+dmitriigluzdov/gemma-4-measure-before-you-tune,Gemma 4: Measure Before You Tune,Dmitrii Gluzdov,2026-10-01 17:28:55.667000,0
+
+rajrajak99/tfd-agent-autonomous-swe-bench-resolution-with-ge,TFD-Agent: Autonomous SWE-bench Resolution with Ge,Raja Rajak,2026-10-01 13:45:09.970000,2
+
+dalezhong/repair-manifold-ablation,repair-manifold-ablation,Dale Zhong,2026-10-01 15:16:16.140000,0
+
+prvsiyan/gemma-and-the-shape-of-doubt,Gemma and the Shape of Doubt,prvsiyan,2026-09-30 16:01:04.383000,24
+
+dariushafshar/gemma-4-a-16384-output-cap-refuses-long-prompts,Gemma 4: A 16384 Output Cap Refuses Long Prompts,Dariush Afshar,2026-10-01 13:27:33.497000,3
+
+mizeroluckygall/pathfinder-gemma-4-agent-eda-baseline,Pathfinder  | Gemma 4 Agent: EDA + Baseline+,Mizero Lucky Gall,2026-09-25 19:41:46.330000,35
+
+nursrijan/gemma-4-swe-agent-complete-eda-adk-starter-kit,Gemma 4 SWE Agent: Complete EDA & ADK Starter Kit,Nur Srijan,2026-09-23 16:47:59.803000,44
+
+nihilisticneuralnet/0-10-gemma-4-developer-agent-submission,[0.10]: Gemma 4 Developer Agent Submission,parthenos,2026-09-25 14:51:49.003000,20
+
+zhukovoleksiy/gemma-4-walkthrough-first-submission,Gemma 4 | Walkthrough & First Submission,Oleksii Zhukov,2026-09-30 15:08:00.037000,65
+
+manuelgagofernandez/google-the-gemma-4-developer-agent-competition,Google - The Gemma 4 Developer Agent Competition,Manuel Gago Fernandez,2026-09-24 23:08:43.890000,31
+
+kozykappa/gemma-4-triad-lb-score-0-03,Gemma 4 Triad LB score 0.03,Kydyrbek Kozykorpesh,2026-09-28 10:04:23.290000,3
+

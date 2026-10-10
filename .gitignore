@@ -1,0 +1,40 @@
+# ---- environments / caches (do NOT push) ----
+.train_env/
+__pycache__/
+*.pyc
+.pytest_cache/
+.hypothesis/
+
+# ---- extracted wheels / wheel inspection (large, reproducible) ----
+_whl_inspect/
+_whl_meta/
+*.whl
+
+# ---- cloned repos + competition data blobs (large, re-pullable) ----
+local_eval/repos/
+comp_files/graphs/
+comp_files/embeddings/
+comp_files/snapshots/
+comp_files/*.jsonl
+comp_files/docker/
+comp_files/*.safetensors
+
+# ---- model weights / adapters (large) ----
+*.safetensors
+*.pt
+*.pth
+*.gguf
+*.tar.gz
+train_kaggle/_out/
+train/adapters/
+train/llamacpp_src/
+
+# ---- kaggle pull dumps / scratch ----
+_v*_pull/
+_v6out/
+submission*.zip
+*.zip
+
+# ---- creds ----
+kaggle.json
+*.kaggle

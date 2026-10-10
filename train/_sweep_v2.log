@@ -1,0 +1,20 @@
+
+=== base ===
+  [base] rich_3718   degen=0 edit=False produced=False submit=False calls=4
+  [base] rich_3934   degen=0 edit=False produced=False submit=False calls=7
+  [base] rich_3953   degen=0 edit=False produced=False submit=False calls=8
+  [base] rich_3944   degen=0 edit=False produced=False submit=False calls=11
+  [base] rich_3942   degen=0 edit=False produced=False submit=False calls=11
+  [base] rich_3938   degen=0 edit=False produced=False submit=False calls=5
+  [base] rich_3882   degen=0 edit=False produced=False submit=False calls=5
+  [base] rich_3894   degen=0 edit=False produced=False submit=False calls=12
+  [base] rich_3935   degen=0 edit=False produced=False submit=False calls=4
+  [base] rich_3930   degen=0 edit=False produced=False submit=False calls=10
+[base] produced=0/10 total_degen=0 made_edit=0/10
+
+=== r8@0.25 ===
+  [r8@0.25] rich_3718   degen=0 edit=False produced=False submit=False calls=6
+  [r8@0.25] rich_3934   degen=0 edit=False produced=False submit=False calls=6
+  [r8@0.25] rich_3953   degen=0 edit=False produced=False submit=False calls=5
+  [r8@0.25] rich_3944   degen=0 edit=False produced=False submit=False calls=9
+  [r8@0.25] rich_3942   degen=0 edit=False produced=False submit=False calls=13

@@ -1,0 +1,24 @@
+tasks measured (graph available): 128   (skipped, no graph yet: 0)
+--------------------------------------------------------------------
+  T1_function_sibling     :   4 ( 3.1%)   [cumulative  3.1%]
+  T2_line_context         :   1 ( 0.8%)   [cumulative  3.9%]
+  T3_multi_donor          :   1 ( 0.8%)   [cumulative  4.7%]
+  MISS_novel_synthesis    : 122 (95.3%)   [cumulative 100.0%]
+--------------------------------------------------------------------
+T1+T2 coverage        : 3.9%
+T3 marginal add       : 0.8%  (build T3 only if >=10%)
+CEILING (T1+T2+T3)    : 4.7%
+novel-synthesis floor : 95.3%  (method cannot reach)
+--------------------------------------------------------------------
+T3 '70/30' check: median donors used = 3, max = 3
+  T3 single-best-donor coverage vs total (sample): [(0.75, 1.0)]
+  (if single-best is already ~1.0 these are mislabeled T1; if ~0.5-0.7 the multi-donor assembly is real)
+--------------------------------------------------------------------
+PER-REPO tier counts:
+  fastapi   T1:1 T2:0 T3:0 MISS:66
+  httpx     T1:0 T2:0 T3:0 MISS:1
+  requests  T1:0 T2:0 T3:0 MISS:12
+  rich      T1:3 T2:1 T3:1 MISS:43
+====================================================================
+CAVEAT: this is the RECOVERY CEILING (donor material exists). It is NOT proof the
+frozen quantized model emits the patch when given the donor. Only swegemma eval confirms.

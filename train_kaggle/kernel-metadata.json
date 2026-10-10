@@ -1,0 +1,21 @@
+{
+  "id": "comfyops/gemma-localizer-lora-train",
+  "title": "Gemma Localizer LoRA Train",
+  "code_file": "gemma-localizer-lora-train.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [
+    "google/gemma-4/Transformers/gemma-4-31b-it-qat-q4_0-unquantized/2"
+  ],
+  "machine_shape": "NvidiaL4"
+}

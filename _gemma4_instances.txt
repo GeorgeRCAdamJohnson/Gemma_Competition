@@ -1,0 +1,11 @@
+﻿python : usage: __main__.py models instances versions [-h]
+At line:1 char:52
++ ... E\.kaggle"; python -m kaggle models instances versions google/gemma-4 ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (usage: __main__...s versions [-h]:String) [], RemoteExce 
+   ption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+                                             {init,create,download,delete,files,list} ...
+__main__.py models instances versions: error: argument command: invalid choice: 'google/gemma-4' 
+(choose from 'init', 'create', 'download', 'delete', 'files', 'list')

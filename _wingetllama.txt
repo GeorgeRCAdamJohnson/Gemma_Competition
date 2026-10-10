@@ -1,0 +1,24 @@
+﻿Found llama.cpp [ggml.llamacpp] Version b11193
+This application is licensed to you by its owner.
+Microsoft is not responsible for, nor does it grant any licenses to, third-party packages.
+This package requires the following dependencies:
+  - Packages
+      Microsoft.VCRedist.2015+.x64
+Downloading https://github.com/ggml-org/llama.cpp/releases/download/b11193/llama-b11193-bin-win-vulkan-x64.zip
+Successfully verified installer hash
+Extracting archive...
+Successfully extracted archive
+Starting package install...
+Path environment variable modified; restart your shell to use the new value.
+Command line alias added: "llama-batched-bench"
+Command line alias added: "llama-bench"
+Command line alias added: "llama-cli"
+Command line alias added: "llama-gguf-split"
+Command line alias added: "llama-imatrix"
+Command line alias added: "llama-mtmd-cli"
+Command line alias added: "llama-perplexity"
+Command line alias added: "llama-quantize"
+Command line alias added: "llama-server"
+Command line alias added: "llama-tokenize"
+Command line alias added: "llama-tts"
+Successfully installed

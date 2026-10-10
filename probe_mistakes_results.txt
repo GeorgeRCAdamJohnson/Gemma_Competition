@@ -1,0 +1,30 @@
+==================================================================
+total tasks: 129
+==================================================================
+DIFF SIZE:
+  single-hunk patches : 60/129 (47%)
+  <=1 added line      : 26/129 (20%)
+  added-lines median  : 7  mean 126.2  max 11870
+  code-hunks/patch    : 1:60, 2:21, 3:10, 4:4, 5:34
+------------------------------------------------------------------
+MISTAKE-SHAPE DISTRIBUTION (dominant hunk per patch):
+   45 (34.9%)  multiline_other              e.g. fastapi_14964,fastapi_14986   [cum 35%]
+   20 (15.5%)  add_condition_branch         e.g. requests_7427,fastapi_14851   [cum 50%]
+   14 (10.9%)  multiline_logic_in_func      e.g. fastapi_15588,fastapi_15023   [cum 61%]
+    8 ( 6.2%)  add_other                    e.g. fastapi_15589,fastapi_14978   [cum 67%]
+    8 ( 6.2%)  single_line_other            e.g. requests_7205,fastapi_14794   [cum 74%]
+    7 ( 5.4%)  add_return                   e.g. fastapi_14962,requests_7505   [cum 79%]
+    5 ( 3.9%)  add_raise/except             e.g. fastapi_15661,fastapi_15030   [cum 83%]
+    5 ( 3.9%)  single_token_change          e.g. requests_7328,fastapi_14786   [cum 87%]
+    4 ( 3.1%)  signature/arg_change         e.g. requests_7502,rich_3882   [cum 90%]
+    3 ( 2.3%)  pure_deletion                e.g. requests_7315,fastapi_14609   [cum 92%]
+    3 ( 2.3%)  string/message_change        e.g. fastapi_14492,rich_3454
+    3 ( 2.3%)  add_import                   e.g. fastapi_13713,rich_3930
+    1 ( 0.8%)  add_none_guard               e.g. fastapi_14873
+    1 ( 0.8%)  off_by_one                   e.g. rich_3944
+    1 ( 0.8%)  add_def/class                e.g. fastapi_14605
+    1 ( 0.8%)  operator/comparison_change   e.g. rich_3006
+------------------------------------------------------------------
+TOP-10 SHAPES COVER: 119/129 = 92.2%
+PRE-REGISTERED BAR: >=50% TRACTABLE | 25-50% PARTIAL | <25% DEAD
+distinct shapes total: 16

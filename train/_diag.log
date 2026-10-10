@@ -1,0 +1,4 @@
+py 3.12.12 (main, Dec  9 2025, 19:02:55) [MSC v.1944 64 bit (AMD64)]
+path0 ['C:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma\\train', 'C:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma\\train\\llamacpp_src\\gguf-py', 'C:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma\\train\\llamacpp_src', 'C:\\Users\\Biges\\AppData\\Roaming\\uv\\python\\cpython-3.12.12-windows-x86_64-none\\python312.zip']
+conversion imported from C:\Users\Biges\OneDrive\Documents\Desktop\kAGGLE\Gemma\train\llamacpp_src\conversion\__init__.py
+symbols ok

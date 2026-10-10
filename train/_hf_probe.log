@@ -1,0 +1,7 @@
+loaded base+adapter; effective lora scale alpha/r = 2.0
+prompt tokens: 1590
+
+===== HF PEFT native (adapter on, alpha/r=2.0), gen 24 chars in 4s =====
+  bare-int-arg (collapse) markers: 0
+  RAW GEN (first 1500 chars):
+  call:search_code{query:}

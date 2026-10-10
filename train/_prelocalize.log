@@ -1,0 +1,17 @@
+indexed 52 fastapi .py files
+
+task           gold                               in_top5?  rank  via_stacktrace?
+fastapi_15588  fastapi/sse.py                     False     0     False
+    top5: ['fastapi/applications.py', 'fastapi/_compat/main.py', 'fastapi/openapi/models.py', 'fastapi/cli.py', 'fastapi/datastructures.py']
+fastapi_14458  fastapi/dependencies/models.py     True      1     False
+    top5: ['fastapi/dependencies/models.py', 'fastapi/middleware/asyncexitstack.py', 'fastapi/security/http.py', 'fastapi/applications.py', 'fastapi/middleware/httpsredirect.py']
+fastapi_14479  fastapi/dependencies/utils.py      True      2     True
+    top5: ['fastapi/routing.py', 'fastapi/dependencies/utils.py', 'fastapi/datastructures.py', 'fastapi/temp_pydantic_v1_params.py', 'fastapi/types.py']
+fastapi_5624   fastapi/dependencies/utils.py      False     0     False
+    top5: ['fastapi/params.py', 'fastapi/param_functions.py']
+fastapi_14873  fastapi/routing.py                 True      1     False
+    top5: ['fastapi/routing.py', 'fastapi/__init__.py', 'fastapi/dependencies/__init__.py', 'fastapi/middleware/__init__.py', 'fastapi/openapi/__init__.py']
+fastapi_15763  fastapi/routing.py                 False     0     False
+    top5: ['fastapi/_compat/main.py', 'fastapi/openapi/models.py', 'fastapi/encoders.py', 'fastapi/requests.py', 'fastapi/__main__.py']
+
+PRE-LOCALIZER top-5 recall: 3/6

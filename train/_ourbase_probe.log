@@ -1,0 +1,4 @@
+finish_reason: tool_calls
+n_tool_calls: 1
+  TOOLCALL read_file  args={"path":"fastapi/dependencies/utils.py","start_line":480}
+`1`-collapse markers: 0

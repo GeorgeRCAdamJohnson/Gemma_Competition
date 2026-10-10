@@ -1,0 +1,18 @@
+tasks scored (have graph + non-test def gold): 122
+  TF-IDF gold-symbol top1: 6/122 = 5%
+  TF-IDF gold-symbol top5: 30/122 = 25%
+  TF-IDF gold-symbol top10: 40/122 = 33%
+
+per-repo top10:
+  fastapi    16/64 = 25%
+  httpx      1/1 = 100%
+  requests   9/12 = 75%
+  rich       14/45 = 31%
+
+held-out 6:
+  fastapi_15588    top1=False top5=False top10=False
+  fastapi_14873    top1=False top5=True top10=True
+  fastapi_14479    top1=False top5=False top10=False
+  fastapi_14458    top1=False top5=False top10=False
+  fastapi_5624     top1=False top5=False top10=True
+  fastapi_15763    top1=False top5=False top10=False

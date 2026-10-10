@@ -1,0 +1,9 @@
+﻿python : 404 Client Error: Not Found for url: 
+https://api.kaggle.com/v1/models.ModelApiService/ListModelInstanceVersionFiles
+At line:1 char:52
++ ... E\.kaggle"; python -m kaggle models instances files "google/gemma-4/O ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (404 Client Erro...nceVersionFiles:String) [], RemoteExce 
+   ption
+    + FullyQualifiedErrorId : NativeCommandError
+ 

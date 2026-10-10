@@ -1,0 +1,3 @@
+﻿application/vnd.ollama.image.model  16.75 GB  digest sha256:7121486771cbfe218851513210c40b35dbdee93ab1ef43fe36283c883980f0df
+application/vnd.ollama.image.license  0 GB  digest sha256:7339fa418c9ad3e8e12e74ad0fd26a9cc4be8703f9c110728a992b193be85cb2
+application/vnd.ollama.image.params  0 GB  digest sha256:56380ca2ab89f1f68c283f4d50863c0bcab52ae3f1b9a88e4ab5617b176f71a3

@@ -1,0 +1,37 @@
+graph lines loaded for fastapi: 14312
+graph lines loaded for rich: 13492
+graph lines loaded for requests: 4614
+==================================================================
+total tasks: 129
+==================================================================
+PER-REPO (patches with >=1 non-trivial added line):
+  LOCAL = donor next to edit (context/removed) | REPO = donor in ANOTHER node
+  fastapi    n= 67  LOCAL-conformable= 47 (70%)  mean_local_frac=0.66
+             REPO-conformable= 46 (69%)  mean_REPO_frac=0.64  mean_EXACT_repo_frac=0.64
+  httpx      n=  1  LOCAL-conformable=  0 (0%)  mean_local_frac=0.06
+             REPO-conformable=  0 (0%)  mean_REPO_frac=0.00  mean_EXACT_repo_frac=0.00
+  requests   n= 12  LOCAL-conformable=  8 (67%)  mean_local_frac=0.63
+             REPO-conformable=  8 (67%)  mean_REPO_frac=0.63  mean_EXACT_repo_frac=0.63
+  rich       n= 48  LOCAL-conformable= 40 (83%)  mean_local_frac=0.79
+             REPO-conformable= 38 (79%)  mean_REPO_frac=0.75  mean_EXACT_repo_frac=0.75
+------------------------------------------------------------------
+GLOBAL: 95/128 patches sibling-conformable = 74.2%
+PRE-REGISTERED BAR:  >=30% INTERESTING | 15-30% WEAK | <15% DEAD
+==================================================================
+per-patch donor-fraction: mean=0.70 median=0.87 n(frac=1.0)=55 n(frac=0.0)=15
+
+top sibling-conformable patches:
+   1.00  fastapi_15589  fastapi   (1 added lines)
+   1.00  fastapi_15023  fastapi   (15 added lines)
+   1.00  fastapi_14986  fastapi   (17 added lines)
+   1.00  requests_7502  requests  (1 added lines)
+   1.00  requests_7433  requests  (2 added lines)
+   1.00  requests_7427  requests  (4 added lines)
+
+least conformable (novel synthesis):
+   0.00  requests_6644  requests  (2 added lines)
+   0.00  requests_6592  requests  (1 added lines)
+   0.00  rich_3454      rich      (1 added lines)
+   0.00  rich_3278      rich      (1 added lines)
+   0.00  rich_3105      rich      (1 added lines)
+   0.00  rich_3067      rich      (1 added lines)

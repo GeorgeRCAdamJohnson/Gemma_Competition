@@ -1,0 +1,124 @@
+================================================================================
+TASK fastapi_15588  | gold files: ['fastapi/sse.py']
+GOLD HUNK HEADERS (line, enclosing-context): [('33', 'class EventSourceResponse(StreamingResponse):'), ('96', 'class ServerSentEvent(BaseModel):')]
+--- hints_text (0 chars) ---
+(empty)
+--- problem_statement (1891 chars) ---
+♻️ Validate Server Sent Event fields to avoid applications from sending broken data
+
+## Pull Request
+
+<!--
+Please start with a GitHub Discussion.
+
+Once a team member asks you to open a PR, create it and link the discussion here.
+
+Obvious typo fixes can be made in a PR without starting a discussion.
+-->
+
+Discussion: <!-- Link to the GitHub Discussion -->
+
+## Description
+
+♻️ Validate Server Sent Event fields to avoid applications from sending broken data
+
+This was reported multiple times as a "vulnerability" by users probably using automated AI tools, with the argument that if input was taken from the request and passed directly to an event unfiltered, it could break the client.
+
+If an app sets an `id` or `event` with multi-line content, I would consider that app broken, and probably the app itself vulnerable to something, not FastAPI. With this change, if any app sets invalid multi-line values (sourced from unfiltered input or in any other way), FastAPI will make it a server error (which it is, as the app is sending invalid data).
+
+I don't think the code before this PR has a bug, less a vulnerability. This change is mainly a quality of life improvement to prevent
+
+================================================================================
+TASK fastapi_5624  | gold files: ['fastapi/dependencies/utils.py']
+GOLD HUNK HEADERS (line, enclosing-context): [('278', 'def get_dependant(')]
+--- hints_text (0 chars) ---
+(empty)
+--- problem_statement (63 chars) ---
+🐛 Fix hierarchical security scope propagation
+
+see defect #5623
+
+================================================================================
+TASK fastapi_15763  | gold files: ['fastapi/routing.py']
+GOLD HUNK HEADERS (line, enclosing-context): [('2435', 'def read_users():')]
+--- hints_text (0 chars) ---
+(empty)
+--- problem_statement (1064 chars) ---
+🐛 Fix bug, allow empty path in path operation in prefixless router
+
+## Pull Request
+
+🐛 Fix bug, allow empty path in path operation in prefixless router
+
+Related to https://github.com/fastapi/fastapi/issues/15762
+
+<!--
+Please start with a GitHub Discussion.
+
+Once a team member asks you to open a PR, create it and link the discussion here.
+
+Obvious typo fixes can be made in a PR without starting a discussion.
+-->
+
+Discussion: <!-- Link to the GitHub Discussion -->
+
+## Description
+
+<!-- Write the description of your PR here -->
+
+## AI Disclaimer
+
+<!-- If using AI, write here the prompt and model used -->
+
+<details>
+<summary>AI transcript</summary>
+
+<!-- Paste here the entire AI transcript -->
+
+</details>
+
+## Checklist
+
+- [ ] This PR is an obvious typo fix, or it links to a GitHub Discussion for the proposed code change.
+- [ ] I added tests for the change.
+- [ ] The new or updated tests fail on the main branch and pass on this PR.
+- [ ] Coverage stays at 100%.
+- [ ] The documentation explains the change if needed.
+
+
+================================================================================
+TASK fastapi_14479  | gold files: ['fastapi/dependencies/utils.py']
+GOLD HUNK HEADERS (line, enclosing-context): [('552', 'def analyze_param(')]
+--- hints_text (0 chars) ---
+(empty)
+--- problem_statement (2455 chars) ---
+🚸 Improve error message for invalid query parameter type annotations
+
+When I bumped FastAPI from 0.181.1 to 0.181.2, project started crashing on startup with AssertionError. The traceback didn’t provide any helpful context. After debugging, I found that issue was caused by incorrectly typed query parameters after the changes introduced in PR #12942 
+
+This PR adds a clearer error message to assertion, indicating that query parameter type is incorrect, and updates tests to ensure that new message is present.
+
+Below is an example of a wrongly typed query parameter that didn’t fail before 0.181.2, but starts failing in 0.181.2 and later:
+```python
+from typing import Annotated, Any
+from fastapi import FastAPI, Query
+from pydantic import BeforeValidator, WithJsonSchema
+
+app = FastAPI()
+
+FilterableStr = Annotated[
+    str | dict,
+    BeforeValidator(lambda x: x),
+    WithJsonSchema({"type": "string"}, mode="serialization"),
+]
+
+@app.get("/hello")
+async def get_hello(data: FilterableStr | None = Query(default=None)) -> Any:
+    return data
+```
+
+
+Stacktrace before:
+```python
+  File "/Users/tony/Projects/fastapi_exampl/.venv/lib/python3.13/site-packages/fastapi/routi
+

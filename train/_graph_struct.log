@@ -1,0 +1,15 @@
+TOP TYPE: dict
+TOP KEYS: ['directed', 'multigraph', 'graph', 'nodes', 'edges']
+  directed: bool len=-
+  multigraph: bool len=-
+  graph: dict len=1
+  nodes: list len=4269
+  edges: list len=2668
+
+[nodes] sample[0]: {"name": "pdm_build.pdm_build_initialize", "text": "def pdm_build_initialize(context: Context) -> None:\n    metadata = context.config.metadata\n    # Get custom config for the current package, from the env var\n    config: dict[str, Any] = context.config.data[\"tool\"][\"tiangolo\"][\n        \"_internal-slim-build\"\n    ][\"packages\"].get(TIANGOLO_BUILD_PACKAGE)\n    if not config:\n        return\n    project_config: dict[str, Any] = config[\"project\"]\n    # Override main [project] config
+[nodes] sample[1]: {"name": "scripts.sponsors.SponsorEntity", "text": "class SponsorEntity(BaseModel):\n    None", "id": "scripts.sponsors.SponsorEntity"}
+
+[edges] sample[0]: {"type": "calls", "source": "scripts.sponsors.Settings", "target": "scripts.sponsors.main", "key": 0}
+[edges] sample[1]: {"type": "calls", "source": "scripts.sponsors.get_graphql_response", "target": "scripts.sponsors.get_graphql_sponsor_edges", "key": 0}
+
+EMBEDDINGS (.npz) found: 1 ['C:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma\\comp_files\\probe\\fastapi_016ab760faba1813ba235d5582a014a58bd2f417.npz']

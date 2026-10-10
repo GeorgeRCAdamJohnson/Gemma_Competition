@@ -1,0 +1,12 @@
+﻿python : 404 Client Error: Not Found for url: https://ap
+i.kaggle.com/v1/datasets.DatasetApiService/GetDatasetSta
+tus
+At line:1 char:101
++ ... tion).Path; python -m kaggle datasets status 
+metric/gemma-4-developer ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (404 Client 
+    Erro...etDatasetStatus:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

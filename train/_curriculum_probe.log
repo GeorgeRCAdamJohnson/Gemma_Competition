@@ -1,0 +1,21 @@
+TOTAL 129 | clean (file+>=40char symptom): 127 | library-code targets: 112 | docs/scripts fixtures: 15
+
+=== SAMPLE (metadata-stripped symptom -> gold location) ===
+
+[fastapi_15588] -> FILE fastapi/sse.py  SYMS ['EventSourceResponse', 'ServerSentEvent']  HUNKS [('33', 'EventSourceResponse'), ('96', 'ServerSentEvent')]
+  STRIPPED SYMPTOM: 'Validate Server Sent Event fields to avoid applications from sending broken data'
+
+[fastapi_15589] -> FILE fastapi/dependencies/utils.py  SYMS ['request_params_to_args']  HUNKS [('826', 'request_params_to_args')]
+  STRIPPED SYMPTOM: 'Do not accept underscore headers when using `convert_underscores=True` (the default)'
+
+[fastapi_15030] -> FILE docs_src/server_sent_events/tutorial001_py310.py  SYMS ['__init__', '_async_stream_jsonl', '_sync_stream_jsonl']  HUNKS [('1', ''), ('1', '')]
+  STRIPPED SYMPTOM: 'Add support for Server Sent Events\n\n Add support for Server Sent Events\r\n\r\nThis will be available in FastAPI 0.135.0, released in the next hours.'
+
+[fastapi_14962] -> FILE docs_src/custom_response/tutorial010_py310.py  SYMS ['app', 'serialize', 'serialize_response']  HUNKS [('1', 'from'), ('199', 'serialize')]
+  STRIPPED SYMPTOM: "Serialize JSON response with Pydantic (in Rust), when there's a Pydantic return type or response model\n\n Serialize JSON response with Pydantic (in Rust), when there's a Pydantic return type or respons"
+
+[fastapi_15280] -> FILE docs_src/vibe/tutorial001_py310.py  SYMS ['trace_item']  HUNKS [('1', ''), ('10', 'request_validation_exception_handler')]
+  STRIPPED SYMPTOM: 'Add support for `@app.vibe()`\n\n Add support for `@app.vibe()`'
+
+[fastapi_14964] -> FILE fastapi/responses.py  SYMS []  HUNKS [('1', 'from'), ('22', 'orjson')]
+  STRIPPED SYMPTOM: "Deprecate `ORJSONResponse` and `UJSONResponse`\n\n Deprecate `ORJSONResponse` and `UJSONResponse`\r\n\r\nNow that there's better performance by default, with response models: https://github.com/fastapi/fast"

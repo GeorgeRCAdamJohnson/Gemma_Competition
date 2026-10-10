@@ -1,0 +1,4 @@
+﻿registry.ollama.ai\library\gemma4
+registry.ollama.ai\library\gemma4\12b
+registry.ollama.ai\library\gemma4\26b
+registry.ollama.ai\library\gemma4\latest

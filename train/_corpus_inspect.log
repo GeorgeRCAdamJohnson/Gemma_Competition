@@ -1,0 +1,78 @@
+TOTAL TASKS: 129
+
+=== REPO SPLIT ===
+  fastapi    67
+  rich       48
+  requests   13
+  httpx      1
+
+=== LOCALIZATION SIGNAL (does problem_statement point to the gold site?) ===
+repo          n  file_named  sym_named  stacktrace   none
+fastapi      67           8         16          11     46
+rich         48           1         10           2     38
+requests     13           0          6           0      7
+httpx         1           0          1           0      0
+ALL         129           9         33          13     91
+  => file named: 7%  sym named: 26%  stacktrace: 10%  NO signal: 71%
+
+=== PATCH SIZE (gold fixes) ===
+  lines added: median 8  mean 138.6  max 12170  <=5 lines: 44%  <=15: 63%
+  files touched: median 1  1-file: 71%  >=2: 29%
+  hunks: median 2  1-hunk: 45%
+
+=== FILE CONCENTRATION (which files hold the bugs?) ===
+  fastapi (67 tasks, 68 distinct files): top6 cover 82/165 edits
+       27  fastapi/dependencies/utils.py
+       16  fastapi/routing.py
+       13  fastapi/_compat/v2.py
+       12  fastapi/openapi/utils.py
+        7  fastapi/applications.py
+        7  fastapi/dependencies/models.py
+  requests (13 tasks, 8 distinct files): top6 cover 13/15 edits
+        5  src/requests/utils.py
+        3  src/requests/models.py
+        2  src/requests/adapters.py
+        1  src/requests/_types.py
+        1  src/requests/sessions.py
+        1  src/requests/compat.py
+  rich (48 tasks, 55 distinct files): top6 cover 30/91 edits
+        7  rich/console.py
+        6  rich/cells.py
+        5  rich/segment.py
+        5  rich/markdown.py
+        4  rich/syntax.py
+        3  rich/default_styles.py
+  httpx (1 tasks, 7 distinct files): top6 cover 6/7 edits
+        1  src/ahttpx/_parsers.py
+        1  src/ahttpx/_pool.py
+        1  src/ahttpx/_server.py
+        1  src/httpx/_network.py
+        1  src/httpx/_parsers.py
+        1  src/httpx/_pool.py
+
+=== NO-SIGNAL TASKS (91) — hardest to localize (concept->symbol needed) ===
+  fastapi_15661    -> scripts/prepare_release.py   syms=['bump_version', 'current_version', 'get_current_version']
+  fastapi_15588    -> fastapi/sse.py   syms=['EventSourceResponse', 'ServerSentEvent', '_check_event_single_line']
+  fastapi_15589    -> fastapi/dependencies/utils.py   syms=['request_params_to_args']
+  fastapi_15030    -> docs_src/server_sent_events/tutorial001_py310.py   syms=['EventSourceResponse', 'Item', 'Prompt']
+  fastapi_14962    -> docs_src/custom_response/tutorial010_py310.py   syms=['__hash__', 'app', 'serialize']
+  fastapi_14964    -> fastapi/responses.py   syms=[]
+  fastapi_15023    -> docs_src/stream_data/tutorial002_py310.py   syms=['PNGStreamingResponse', 'stream_image_no_async_yield_from']
+  fastapi_14986    -> fastapi/applications.py   syms=['_html_safe_json', 'get_swagger_ui_html', 'openapi']
+  fastapi_14978    -> docs_src/strict_content_type/tutorial001_py310.py   syms=['Item', '__init__', 'add_api_route']
+  requests_7427    -> src/requests/utils.py   syms=['get_proxy']
+  requests_7328    -> src/requests/sessions.py   syms=['resolve_redirects']
+  requests_7309    -> src/requests/utils.py   syms=['get_encodings_from_content']
+  requests_7205    -> src/requests/utils.py   syms=['get_netrc_auth']
+  rich_4079        -> rich/markdown.py   syms=['__init__']
+  rich_4076        -> rich/ansi.py   syms=['decode']
+  rich_4075        -> rich/console.py   syms=['export_text', 'print', 'save_text']
+  fastapi_14258    -> fastapi/routing.py   syms=['read_users']
+  fastapi_14851    -> fastapi/routing.py   syms=['_AsyncLiftContextManager', '_DefaultLifespan', '__aenter__']
+  fastapi_13920    -> fastapi/dependencies/utils.py   syms=['analyze_param']
+  fastapi_14492    -> docs_src/metadata/tutorial001_1_py39.py   syms=[]
+  fastapi_12942    -> fastapi/_compat.py   syms=['field_annotation_is_complex']
+  fastapi_14099    -> docs_src/dependencies/tutorial013_an_py310.py   syms=['AsyncExitStackMiddleware', 'Item', 'User']
+  fastapi_14609    -> docs_src/request_form_models/tutorial002_pv1_an_py39.py   syms=['AnyUrl', 'BaseConfig', 'BaseModel']
+  fastapi_14372    -> fastapi/dependencies/utils.py   syms=['__init__', 'analyze_param']
+  fastapi_14349    -> fastapi/_compat/v2.py   syms=['_replace_refs']

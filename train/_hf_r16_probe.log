@@ -1,0 +1,7 @@
+r16 adapter loaded; alpha/r = 32/16 = 2.0 (same effective scale as r8's 16/8)
+prompt tokens: 1590
+
+===== HF r16 forced-long gen: 252 chars =====
+  `1`-collapse markers: 0
+  RAW GEN (first 2000 chars):
+  call:read_file{path:fastapi/dependencies/utils.py,start_line:480}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}

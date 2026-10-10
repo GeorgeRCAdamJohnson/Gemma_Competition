@@ -1,0 +1,23 @@
+TRACK-B retrieval localizer | holdout n=16
+  top-1 file recall: 2/16 = 12%
+  top-3 file recall: 5/16 = 31%
+  top-5 file recall: 7/16 = 44%
+  top-10 file recall: 11/16 = 69%
+
+per-task (rank of gold file, 0=miss):
+  rich_4075        rank=1   rich/console.py
+  rich_3675        rank=1   rich/console.py
+  rich_2943        rank=2   rich/style.py
+  fastapi_5624     rank=2   fastapi/dependencies/utils.py
+  fastapi_15763    rank=2   fastapi/routing.py
+  fastapi_14301    rank=4   fastapi/dependencies/utils.py
+  fastapi_14303    rank=4   fastapi/dependencies/utils.py
+  rich_3934        rank=7   rich/live.py
+  rich_3471        rank=7   rich/text.py
+  fastapi_14361    rank=7   fastapi/_compat/v2.py
+  fastapi_14485    rank=10  fastapi/dependencies/utils.py
+  rich_3278        rank=0   rich/ansi.py
+  fastapi_14448    rank=0   fastapi/dependencies/models.py
+  fastapi_14455    rank=0   fastapi/openapi/utils.py
+  fastapi_14419    rank=0   fastapi/dependencies/models.py
+  fastapi_14583    rank=0   fastapi/dependencies/utils.py

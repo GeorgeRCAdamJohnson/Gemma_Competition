@@ -1,0 +1,16 @@
+type          n  med_add  med_files  med_hunks <=15 add %
+none         62        4          1          1        71%
+bug          34        9          1          2        71%
+feature      14       22          1          2        50%
+refactor      7       25          2          4        29%
+docs          3        5          1          1        67%
+ux            2       61          1          6        50%
+logging       2       26          4         13         0%
+build         1      216          1          1         0%
+deprecate     1       44          1          2         0%
+security      1       81          3         14         0%
+rm-dep        1      192         20         92         0%
+upgrade-dep    1        5          3          6       100%
+
+READ: if 'bug' rows show small med_add + high <=15% and 'feature' shows large, the emoji predicts
+fix shape -> agent can condition: bug=find+revert a deviation (small), feature=add code (large).
