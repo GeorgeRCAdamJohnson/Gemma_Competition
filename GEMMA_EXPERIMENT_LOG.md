@@ -5671,3 +5671,45 @@ frame-override is the new base (confirms L577 "complex prompts halve score" on O
 prompt length/frame was NOT the lever; keep v19 prompt. Read BOTH attribution tables together.
 v6/0.12 SACRED; neither v19 nor v20 gets the scored slot unless it clears >=2/5 with a word-trap flip AND the
 winning config is re-confirmed alone (rule 7).
+
+
+## v19 RESULT (external judge) — 1/5 SCORE, but the FAILURE MECHANISM CHANGED. 2 of 4 levers demonstrably worked.
+
+Score: 1/5 (rich_4077 only), same number as v17/v18. BUT the attribution table (new this run) shows the two
+targeted invariants were ELIMINATED — the score didn't move because a NEW, narrower wall is now exposed.
+
+Per-task attribution (calls/first_edit_at/n_edit/edit_fail/search/read/max_repeat):
+```
+rich_4077 True  fe=9   n_edit=1 fail=0 search=0 read=5  rep=1   <- WIN: 1 read-pass, edit@9, 0 search, clean
+rich_4079 False fe=18  n_edit=1 fail=1 search=5 read=11 rep=2
+rich_4076 False fe=18  n_edit=1 fail=1 search=9 read=7  rep=1
+rich_3469 False fe=17  n_edit=1 fail=1 search=5 read=9  rep=1
+rich_4070 False fe=3   n_edit=5 fail=5 search=5 read=9  rep=1   <- edited EARLY, 1047 chars, but all 5 edits FAILED to apply
+```
+Aggregates: NEVER-edited 0/5 (was 4/5 in v18); repeat-loop max_repeat>=3 = 0/5 (was the dominant killer in v18);
+>=1 FAILED edit then more calls = 4/5 (the NEW wall).
+
+### WHAT MOVED (rule 13 mechanism confirmation, from attribution not just score):
+1. freq_penalty 0.4 KILLED the repeat-until-death loop: max_repeat <=2 on every task (v18 looped identical
+   broken calls to budget death). CONFIRMED working.
+2. get_status reserve-tail + edit-SHAPE KILLED search-death: every task now REACHES an edit (first_edit_at not
+   None; v18 had 4/5 never editing). CONFIRMED working.
+=> 2 of the 4 levers did exactly what they were designed to. The big-prompt score stayed 1/5 only because a
+third wall was hiding behind the first two.
+
+### THE NEW WALL (now the single blocker): edits land TOO LATE and the first attempt MISSES.
+- The 3 word-trap losers edit at first_edit_at = 17/18/18 — their SECOND-TO-LAST call — the edit FAILS
+  (edit_fail=1, edit_file could not match the anchor), and they have no budget left to recover. The WIN edits
+  at 9. Timing gap = ~8 calls, spent over-reading (losers read=7-11 + search=5-9; win read=5 search=0).
+- rich_4070 is the clean separator: it edited EARLY (fe=3), tried 5 edits (1047 chars) — ALL 5 FAILED TO APPLY.
+  So early editing is necessary but NOT sufficient: the edit CONTENT/ANCHOR is still wrong. edit_file's 3-tier
+  matcher did not rescue these anchors.
+
+### IMPLICATION FOR v20 (already running, lean prompt): v20 attacks the "too late" half directly — cutting the
+prompt from 1137->307 words should reduce the over-reading preamble that pushes first_edit_at to 17-18. If v20's
+losers edit EARLIER (first_edit_at drops) that confirms the user's frame/length hypothesis. BUT the rich_4070
+signal warns that timing alone won't score — the remaining wall after timing is EDIT-ANCHOR CORRECTNESS (the
+first edit must MATCH). That is the next pre-registered target regardless of v20: why does edit_file fail to
+apply the model's old_string even with the 3-tier matcher? (candidate: model still pastes approximate text, or
+the whole-function anchor is too long to match). Read v20 attribution: if first_edit_at drops but edit_fail
+stays 1, the wall is anchor-correctness -> that is where the LoRA or an edit-by-smaller-anchor rule goes next.
