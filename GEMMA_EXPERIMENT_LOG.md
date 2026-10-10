@@ -5773,3 +5773,44 @@ stays 1/5, the anchor fix WORKED but a further wall (fix-content correctness) re
 fix-content target. If edit_fail does NOT fall, the anchor rule did not take -> the model cannot copy verbatim
 even when told, which is itself a weights finding. v6/0.12 SACRED; v19v3 gets the scored slot ONLY on >=2/5 with
 a flip, re-confirmed. Kernel: comfyops/gemma-sibling-conform-v19v3 version 1, pushed/running.
+
+
+## v19v3 RESULT (external judge) — 1/5. Anchor rule FAILED its bar AND regressed 2 tasks. The edit_fail wall is WEIGHTS-level.
+
+Clean attribution (id / first_edit_at / n_edit / edit_fail / max_repeat / first_thought_chars):
+```
+rich_4077 True  fe=6   n_edit=1 fail=0 rep=1 ft=335   <- WIN, CLEANER than v19 (10 calls vs 13, edit@6 vs 9)
+rich_4079 False fe=None n_edit=0 fail=0 rep=1 ft=732  <- REGRESSED: back to never-editing (v19 reached edit@18)
+rich_4076 False fe=10  n_edit=7 fail=5 rep=6 ft=994   <- edits now (552ch) but 5 FAIL + looped 6x
+rich_3469 False fe=None n_edit=0 fail=0 rep=7 ft=949  <- REGRESSED: never edits, looped 7x
+rich_4070 False fe=4   n_edit=7 fail=7 rep=3 ft=826   <- 1428ch, ALL 7 edits FAILED to apply
+```
+Aggregates vs v19: never-edited 2/5 (v19=0/5, WORSE); repeat-loop>=3 = 3/5 (v19=0/5, WORSE); edit_fail present
+and HIGHER (4076=5, 4070=7 vs v19's 1-each). Pre-registered bar (>=2/5, flip an edit_fail task, edit_fail drops):
+FAILED on all three.
+
+### FINDING 1 (rule 14, same lesson as v20 at smaller scale): ADDING prompt text to this model DEGRADES it.
+v19's prompt was already at the capacity edge. One extra rule block (anchor-correctness, +156 words) tipped
+rich_4079 and rich_3469 BACK into the search-death + repeat-loop failures that v19's four levers had ELIMINATED.
+The model cannot hold v19's levers AND the new rule in its working context at once -> it drops the levers. This
+is now TWICE confirmed (v20 wholesale rewrite, v19v3 incremental add): the prompt channel is SATURATED. More
+instructions = worse, in both directions (cut or add). v19's exact prompt is a local optimum we keep perturbing.
+
+### FINDING 2 (the decisive one): edit_fail is a WEIGHTS limit, not a prompt-fixable one.
+rich_4076 attempted 7 edits (5 failed), rich_4070 attempted 7 edits (ALL 7 failed) — EVEN THOUGH the prompt
+EXPLICITLY said "copy old_string VERBATIM from what you just read, shortest unique, shorten on fail." The model
+STILL could not produce an old_string that matches the file, 12 times across 2 tasks. Telling it to copy exactly
+did not help because the W4A16 model CANNOT reliably reproduce exact source bytes. This is the capability ceiling
+the prompt cannot cross. (It also means edit_file's 3-tier flexible/regex matcher is NOT rescuing these — the
+model's text is too far off even for tier-3.)
+
+### DECISION: the prompt channel is EXHAUSTED (v1-v20 + v19v3, ~20 configs, one durable win rich_4077). Every
+remaining wall is weights-level: (a) can't reproduce exact bytes for an edit anchor; (b) can't hold more than
+~v19's instruction load. BOTH are exactly what a LoRA fixes. STOP prompt iteration. Build the loop/edit-discipline
+LoRA with the SHARPENED target now justified by data:
+  - train terse localize->edit->submit trajectories where the edit is emitted as a SHORT exact anchor copied
+    from a preceding read (teach byte-faithful old_string reproduction — the measured gap);
+  - mask loss to the assistant action tokens; keep trajectories SHORT (the model degrades past v19's load);
+  - penalize repeated-identical-call tails (the repeat-loop that returns the moment prompt load rises).
+v19 (NOT v19v3) remains the best prompt base / the config a LoRA is layered onto. v6/0.12 SACRED; nothing
+submitted. Keep v19's prompt frozen as the local optimum; do not perturb it further by prompt edits.
