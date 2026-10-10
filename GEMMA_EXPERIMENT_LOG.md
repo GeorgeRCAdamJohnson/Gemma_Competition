@@ -5317,3 +5317,42 @@ by call ~10-15. More budget (15) just gave more room to wander. You cannot promp
   helps because the localizer has NO edit tools + one narrow job (easier to keep short), but it is not a hard
   separate budget. If the localizer still blows the pool, that is the signal the LoRA (weights) is required, not
   more architecture. v17 is the last ARCHITECTURE lever before the weights lever.
+
+
+---
+
+## v17 (COMMIT-TO-PATH-FIRST, budget 15, 5-task) = 1/5 — but PINS THE REAL WALL: edit_file TOOL-CALL FORMATTING (2026-10-07)
+
+Result: rich_4077 True(15c,324ch) | rich_4079 F(15c,0) | rich_4076 F(10c,0) | rich_3469 F(15c,0) | rich_4070 F(10c,1843ch). 1/5.
+
+### THE COMMIT-TO-PATH CHANGE WORKED FOR LOCALIZATION (find is now SOLVED on all word-traps):
+- rich_4079: went STRAIGHT to markdown.py, found TableDataElement/on_text/on_child_close. No word-trap.
+- rich_4076: committed markdown.py, REPRODUCED the bug ("Line 1\nLine 2"->"Line 1 Line 2"), knew the fix.
+- rich_3469: declared TARGET, homed to render_number's `+ " "`, derived exact fix (number_width-2).
+Localization is no longer the bottleneck. The anti-word-trap + up-front commit fixed FIND.
+
+### THE WALL IS NOW EDIT-EXECUTION — the model CANNOT reliably emit a valid multi-line edit_file call.
+- rich_4076: tried edit_file ~15 TIMES, every one failed "mandatory input old_string not present". Narrated
+  "I am having a stroke... I keep forgetting old_string" and did it again. Never landed. 0 chars.
+- rich_4070: SAME edit_file-malform loop ~12x on rich/logging.py, then turn-budget died.
+- rich_4079: localized right, WON'T COMMIT the edit (declares the fix in prose, never calls edit_file).
+- rich_4077 WINS only because its fix is ONE tiny method with a clean unique anchor (easy tool call).
+
+### DIAGNOSIS (final, across v15/v16/v17): the gemma4 tool-call parser + the W4A16 model cannot reliably
+produce the edit_file(old_string=..., new_string=...) STRUCTURE for anything but trivial single-line edits.
+This is the g4kit "malformed/lost-argument" finding, now the DOMINANT failure. It is a tool-call-FORMATTING
+/ weights behavior - NOT localization (solved), NOT budget (15 was enough to reach the edit), NOT wandering.
+
+### THE ACTIONABLE LEVER (observed in-run, untested as a config): the model FALLS BACK to run_command sed/
+heredoc edits when edit_file fails, and sed WORKED (rich_3469 and rich_4070 both landed changes via sed where
+edit_file failed 15x). => Candidate v18: instruct the agent to make edits via `run_command` sed/python
+heredoc (which the gemma4 parser emits reliably as a single string arg) INSTEAD of the structured
+edit_file(old_string,new_string) call that it mangles. This sidesteps the malformed-tool-call wall with the
+one tool the model demonstrably formats correctly (run_command takes a single `command` string).
+RISK (rule 9): sed edits can corrupt files / touch test files (anti-tamper reset) - must constrain to the
+committed source file and verify. But it directly attacks the measured wall and is a prompt-only change.
+
+### STANDINGS: v15=v16=v17 ~= 1/word-traps. Localization SOLVED; edit-execution is the wall. Do NOT submit
+v17 (1/5, below 0.12). v6/0.12 sacred. Next lever: edit-via-run_command (v18) OR the loop/edit-discipline LoRA
+(the weights fix for both won't-commit and malformed-edit). v18 is the cheaper probe and attacks the exact
+measured failure; try it before the LoRA build.
