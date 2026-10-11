@@ -33,13 +33,19 @@ def load_quant_base():
     return tok, model
 
 def fresh_adapter(model):
-    allqv = [n for n,mod in model.named_modules()
-             if isinstance(mod, bnn.Linear4bit) and n.endswith(("self_attn.q_proj","self_attn.v_proj"))
-             and "vision" not in n and "audio" not in n]
-    # prefer the text decoder if there's a language_model namespace; else use all non-tower q/v
-    tgt = [n for n in allqv if "language_model" in n] or allqv
-    assert tgt, "no q/v self_attn Linear4bit targets found"
-    print(f"[lora] {len(tgt)} target modules; sample: {tgt[:2]}", flush=True)
+    # v2 (R11): widen q/v-only -> ALL-LINEAR. The v1 q/v-only adapter learned to FIRE edits but not to emit
+    # byte-faithful anchors (edit_fail rose, gate 1/5). Attention-only LoRA is documented-underpowered for a
+    # concrete OUTPUT FORMAT; the anchor-copying skill lives partly in the MLP. Target attention q/k/v/o + MLP
+    # gate/up/down on the text decoder (exclude vision/audio towers).
+    ALL_LINEAR = ("self_attn.q_proj", "self_attn.k_proj", "self_attn.v_proj", "self_attn.o_proj",
+                  "mlp.gate_proj", "mlp.up_proj", "mlp.down_proj")
+    allp = [n for n,mod in model.named_modules()
+            if isinstance(mod, bnn.Linear4bit) and n.endswith(ALL_LINEAR)
+            and "vision" not in n and "audio" not in n]
+    # prefer the text decoder if there's a language_model namespace; else use all non-tower linear projections
+    tgt = [n for n in allp if "language_model" in n] or allp
+    assert tgt, "no all-linear Linear4bit targets found"
+    print(f"[lora] {len(tgt)} target modules (ALL-LINEAR q/k/v/o+mlp); sample: {tgt[:3]}", flush=True)
     lcfg = LoraConfig(r=LORA_R, lora_alpha=LORA_ALPHA, target_modules=tgt, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM")
     return get_peft_model(model, lcfg)
 
