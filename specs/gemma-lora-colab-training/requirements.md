@@ -106,17 +106,22 @@ that only looks good on a dev-internal metric.
 NOTE: E1–E8 are gaps the spec cannot fill from the repo alone — they require a live Colab session to measure or a
 user confirmation. Task 0 and Task 3.1 must record these before the full run (Task 5) proceeds.
 
-### MEASURED (2026-10-10, via GitHub->Colab browser run of colab_env_probe.ipynb):
-- E1 RESOLVED: GPU = **NVIDIA A100-SXM4-40GB** (40GB total, ~42GB free reported). VERDICT: **OK for 31B QLoRA
-  (>=40GB)**. => D4 RESOLVED: the Colab tier holds the 31B QLoRA. Execution mechanism = GitHub->Colab web UI
-  (open https://colab.research.google.com/github/GeorgeRCAdamJohnson/Gemma_Competition/blob/main/<path>.ipynb,
-  set A100 runtime, Run All). This SIDESTEPS the colab-CLI OAuth wall entirely (CLI auth kept failing on
-  invalid_grant; browser login is native). The CLI/MCP paths are abandoned as unnecessary.
-- D1 (rank r=32), D2 (rich-only gold, 23 trajectories built in Task 1) remain the chosen defaults.
-- D3: train a bf16 sibling (NOT W4A16); confirm which id via E2 output (HF access). On a 40GB A100, a 31B bf16
-  base in NF4 4-bit fits; a 27b/12b sibling is the fallback if the 31b bf16 base is gated/unreachable.
-- STILL to confirm from the probe's lower cells: E2 (which bf16 base the HF token reaches), E3 (NF4 load OK),
-  E4 (pinned versions). Paste those if alarming; otherwise the 40GB PASS unblocks Task 3 (Colab training notebook).
+### MEASURED (2026-10-10, GitHub->Colab browser run of colab_env_probe.ipynb) — ALL of E1-E4 CLOSED:
+- E1 RESOLVED: GPU = **NVIDIA A100-SXM4-80GB** (second run; first gave 40GB — the tier grants either). 80GB is
+  roomy for 31B QLoRA, no tight-fit/fallback needed. => D4 RESOLVED.
+- EXECUTION MECHANISM: GitHub->Colab web UI (open
+  https://colab.research.google.com/github/GeorgeRCAdamJohnson/Gemma_Competition/blob/main/<path>.ipynb, set A100,
+  Run All). Sidesteps the colab-CLI OAuth wall (CLI kept failing invalid_grant; browser login is native). CLI/MCP abandoned.
+- E2 RESOLVED (decisive): **google/gemma-4-31b-it is PUBLIC (gated=False, 62.6GB)** — downloads with NO token.
+  google/gemma-4-27b-it = 401/NotFound (id absent/private). google/gemma-4-12b-it public (24GB). => D3 RESOLVED:
+  **train the true 31b bf16 sibling** (best adapter transfer to the W4A16-31b ship model); 80GB holds it in NF4.
+- E3 RESOLVED: NF4 load path works (e2b loaded 38s / 6.9GB). 31B 4-bit ~16-18GB weights + headroom, fine on 80GB.
+- E4 RESOLVED (pinned working combo): torch 2.11.0+cu130, transformers 5.19.0, peft 0.21.2, bitsandbytes 0.50.2,
+  accelerate 1.15.0.
+- D1 r=32, D2 rich-only (23 trajectories, Task 1) unchanged.
+- REMAINING RISK before full train: our trajectories use system/user/assistant/tool roles; must confirm the 31b
+  chat template renders them (apply_chat_template). Mitigated by a SMOKE cell (4a) in colab_train_lora.ipynb that
+  trains 1 epoch on 2 examples first. Only run full train (4b) after the smoke passes.
 
 ### Environment MECHANISMS confirmed (2026-10-10) — resolve the "how", not yet the "measured values"
 - Code/data into Colab: **Colab is connected to the GitHub repo** `GeorgeRCAdamJohnson/Gemma_Competition` →
