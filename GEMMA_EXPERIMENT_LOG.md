@@ -5835,3 +5835,27 @@ attached dataset into adapters/main_lora. ONE variable vs v19. Pushed comfyops/g
 (QUEUED). PRE-REGISTERED BAR: resolved > v19's 1/5 AND edit_fail drops in the attribution table.
 Gate A (does vLLM load the r32 q/v adapter onto W4A16?) is checked at server start; a load failure = debug the
 PEFT config (strip newer fields), NOT idea-death. v6/0.12 SACRED; nothing submitted to the board.
+
+## v19-LORA RESULT (external judge, first real adapter gate) — 1/5. BAR FAILED. edit_fail got WORSE. (2026-10-11)
+
+Gate A PASSED: the r32 q/v bf16-trained adapter LOADED cleanly onto the W4A16 31B via vLLM (--lora-modules),
+server started tp=4. The quantization-transfer + delivery mechanism WORK. That viability question is settled YES.
+
+But the eval is a NULL-to-NEGATIVE. Attribution (calls/first_edit_at/n_edit/edit_fail/max_repeat):
+```
+rich_4077 True  fe=9    n_edit=3  edit_fail=2  rep=1    <- win held but now has 2 failed edits (v19 was clean)
+rich_4079 False fe=17   n_edit=6  edit_fail=6  rep=5
+rich_4076 False fe=None n_edit=0  edit_fail=0  rep=1    <- never edited
+rich_3469 False fe=None n_edit=0  edit_fail=0  rep=14   <- looped 14x, never edited
+rich_4070 False fe=7    n_edit=18 edit_fail=18 rep=11   <- 18 edits, ALL failed, looped 11x
+```
+Pre-registered bar (resolved > 1/5 AND edit_fail drops): FAILED BOTH. edit_fail went UP vs v19 (v19 had 1/loser,
+max_repeat<=2). The adapter made the model emit edit calls MORE aggressively and MALFORMED, and loop harder.
+
+### DIAGNOSIS (rule 3, honest null): the adapter OVERFIT its 23 examples (loss 0.26 @ epoch 3) and learned
+### "fire edit calls" rather than "emit a correct verbatim anchor." On these eval tasks it produces more broken
+### edits + more looping, not fewer. W4A16 may also dull the learned precision. FULL-STRENGTH adapter = REGRESSION.
+
+### NEXT (pre-registered, no-GPU first per spec R6): make_variant.py scale-DOWN (0.5, 0.3) — a memorized
+### adapter applied GENTLY may nudge without the aggressive-broken-edit failure. If scale-down null too:
+### retrain with MORE+VARIED trajectories and FEWER epochs (stop ~loss 0.5, not 0.26). v6/0.12 SACRED, untouched.
