@@ -106,6 +106,18 @@ that only looks good on a dev-internal metric.
 NOTE: E1–E8 are gaps the spec cannot fill from the repo alone — they require a live Colab session to measure or a
 user confirmation. Task 0 and Task 3.1 must record these before the full run (Task 5) proceeds.
 
+### MEASURED (2026-10-10, via GitHub->Colab browser run of colab_env_probe.ipynb):
+- E1 RESOLVED: GPU = **NVIDIA A100-SXM4-40GB** (40GB total, ~42GB free reported). VERDICT: **OK for 31B QLoRA
+  (>=40GB)**. => D4 RESOLVED: the Colab tier holds the 31B QLoRA. Execution mechanism = GitHub->Colab web UI
+  (open https://colab.research.google.com/github/GeorgeRCAdamJohnson/Gemma_Competition/blob/main/<path>.ipynb,
+  set A100 runtime, Run All). This SIDESTEPS the colab-CLI OAuth wall entirely (CLI auth kept failing on
+  invalid_grant; browser login is native). The CLI/MCP paths are abandoned as unnecessary.
+- D1 (rank r=32), D2 (rich-only gold, 23 trajectories built in Task 1) remain the chosen defaults.
+- D3: train a bf16 sibling (NOT W4A16); confirm which id via E2 output (HF access). On a 40GB A100, a 31B bf16
+  base in NF4 4-bit fits; a 27b/12b sibling is the fallback if the 31b bf16 base is gated/unreachable.
+- STILL to confirm from the probe's lower cells: E2 (which bf16 base the HF token reaches), E3 (NF4 load OK),
+  E4 (pinned versions). Paste those if alarming; otherwise the 40GB PASS unblocks Task 3 (Colab training notebook).
+
 ### Environment MECHANISMS confirmed (2026-10-10) — resolve the "how", not yet the "measured values"
 - Code/data into Colab: **Colab is connected to the GitHub repo** `GeorgeRCAdamJohnson/Gemma_Competition` →
   pull train_lora.py + trajectory data directly (no manual upload). (Resolves the delivery half of E8 + Task 3.1 step 1.)
