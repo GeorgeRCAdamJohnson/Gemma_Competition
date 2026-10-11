@@ -5814,3 +5814,24 @@ LoRA with the SHARPENED target now justified by data:
   - penalize repeated-identical-call tails (the repeat-loop that returns the moment prompt load rises).
 v19 (NOT v19v3) remains the best prompt base / the config a LoRA is layered onto. v6/0.12 SACRED; nothing
 submitted. Keep v19's prompt frozen as the local optimum; do not perturb it further by prompt edits.
+
+## LORA TRAINED (first real adapter) + FIRST GATE RUN QUEUED (2026-10-11)
+
+After the prompt channel was declared exhausted (v1-v20+v19v3, one durable rich resolve), moved to the
+weights lever. Full odyssey: Colab CLI OAuth wall (abandoned) -> GitHub->Colab browser notebooks (works) ->
+A100-80GB confirmed, gemma-4-31b-it bf16 base PUBLIC/no-token.
+
+TRAINING (Colab A100, edit-discipline r32):
+- Data: 23 byte-faithful rich trajectories (localize->read->edit[verbatim anchor]->submit), v19 prompt baked in.
+- FIRST run was a NULL (mean_loss=0.0000): train_lora.py masked loss to the LAST turn only + maxlen 1024
+  truncated past the lone learnable turn. SMOKE TEST caught it before we trusted it.
+- FIX: multi-turn masking (unmask ALL assistant turns) + maxlen 3072 + nz>0/loss>0 asserts.
+- REAL run: loss 0.9068 -> 0.4270 -> 0.2621 across 3 epochs. r=32 alpha=64, 110 q/v modules, 43.8M params.
+  Overfit risk on 23 ex (loss 0.26) -> hedged by the make_variant.py scale dial (no retrain).
+- Adapter (167MB safetensors + config) uploaded as Kaggle dataset comfyops/gemma-edit-discipline-r32.
+
+GATE RUN: submit_v19_lora = v19 EXACT config (frozen prompt + 4 levers) + adapter: main_lora, copied from the
+attached dataset into adapters/main_lora. ONE variable vs v19. Pushed comfyops/gemma-sibling-conform-v19-lora
+(QUEUED). PRE-REGISTERED BAR: resolved > v19's 1/5 AND edit_fail drops in the attribution table.
+Gate A (does vLLM load the r32 q/v adapter onto W4A16?) is checked at server start; a load failure = debug the
+PEFT config (strip newer fields), NOT idea-death. v6/0.12 SACRED; nothing submitted to the board.
