@@ -116,17 +116,35 @@ if AGENT_DIR.exists(): shutil.rmtree(AGENT_DIR)
 (AGENT_DIR / 'prompts').mkdir(parents=True, exist_ok=True)
 (AGENT_DIR / 'configs').mkdir(parents=True, exist_ok=True)
 
-# --- v19_lora: copy the edit-discipline adapter from the attached Kaggle dataset into adapters/main_lora ---
+# --- v19_lora_v2: copy OUR edit-discipline adapter into adapters/main_lora ---
+# BUGFIX (v2): the old glob '/kaggle/input/**/adapter_config.json' grabbed the FIRST match anywhere, which was
+# the COMPETITION's sample adapter at .../gemma-4-developer-agent/sample_submission/adapters/tool_lora — so the
+# gate ran the SAMPLE adapter, not ours (log: "copied main_lora from .../sample_submission/adapters/tool_lora").
+# Fix: PREFER a path whose dataset dir name contains our slug 'gemma-edit-discipline', and EXCLUDE any path
+# under the competition dataset / sample_submission. Fail loud if our adapter isn't found (do NOT silently fall
+# back to the sample, which would re-run the wrong adapter).
 import zipfile as _zip
-_cfg = glob.glob('/kaggle/input/**/adapter_config.json', recursive=True)
+def _find_our_adapter():
+    allc = glob.glob('/kaggle/input/**/adapter_config.json', recursive=True)
+    # exclude the competition sample adapter explicitly
+    allc = [c for c in allc if 'sample_submission' not in c and 'gemma-4-developer-agent' not in c]
+    # prefer our dataset slug
+    ours = [c for c in allc if 'gemma-edit-discipline' in c]
+    if ours: return ours
+    return allc  # any non-sample adapter
+_cfg = _find_our_adapter()
 if not _cfg:
     for _z in glob.glob('/kaggle/input/**/*.zip', recursive=True):
+        if 'sample_submission' in _z or 'gemma-4-developer-agent' in _z: continue
         _ex = Path('/tmp/_ad') / Path(_z).stem; _ex.mkdir(parents=True, exist_ok=True)
         with _zip.ZipFile(_z) as _zf: _zf.extractall(_ex)
         _h = glob.glob(str(_ex / '**' / 'adapter_config.json'), recursive=True)
         if _h: _cfg = _h; break
-assert _cfg, f'adapter_config.json NOT mounted; attach comfyops/gemma-edit-discipline-v2-alllinear. /kaggle/input={sorted(glob.glob(chr(34)+"/kaggle/input/*"+chr(34)))}'
+assert _cfg, ('OUR adapter_config.json NOT found (excluding the competition sample). Attach '
+              'comfyops/gemma-edit-discipline-v2-alllinear. /kaggle/input=' + str(sorted(glob.glob('/kaggle/input/*'))))
 _asrc = Path(_cfg[0]).parent
+assert 'sample_submission' not in str(_asrc), f'refusing to use competition sample adapter at {_asrc}'
+print('[adapter] RESOLVED our adapter at', _asrc)
 _adst = AGENT_DIR / 'adapters' / 'main_lora'; _adst.mkdir(parents=True, exist_ok=True)
 for _fn in ('adapter_config.json', 'adapter_model.safetensors'):
     shutil.copy2(_asrc / _fn, _adst / _fn)

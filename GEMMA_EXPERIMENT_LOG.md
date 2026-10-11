@@ -5859,3 +5859,39 @@ max_repeat<=2). The adapter made the model emit edit calls MORE aggressively and
 ### NEXT (pre-registered, no-GPU first per spec R6): make_variant.py scale-DOWN (0.5, 0.3) — a memorized
 ### adapter applied GENTLY may nudge without the aggressive-broken-edit failure. If scale-down null too:
 ### retrain with MORE+VARIED trajectories and FEWER epochs (stop ~loss 0.5, not 0.26). v6/0.12 SACRED, untouched.
+
+## v2 LoRA (all-linear) — TRAINED 2026-10-11 (not yet gated)
+Config: base google/gemma-4-31b-it (bf16, NF4 QLoRA), r=32 alpha=64 maxlen=3072 lr=2e-4, 3 epochs,
+**ALL-LINEAR target modules** (q/k/v/o + MLP gate/up/down) = 410 modules, 244,858,880 trainable params (0.78%).
+Data: 46 all-repo trajectories (23 rich + 23 fastapi), edit_discipline_all.jsonl.
+Loss curve (REAL, after multi-turn-mask fix): e1 0.6060 -> e2 0.2677 -> e3 0.1491. Monotonic, no collapse.
+Adapter on Drive: /content/drive/MyDrive/gemma_lora/edit_discipline_v2_alllinear (~980MB safetensors).
+
+TWO BUGS FOUND + FIXED THIS SESSION (both would have shipped a dead adapter):
+1. First v2 run gave loss=0.0000 flat. Cause: encode_example masked loss to the LAST assistant turn only,
+   which for these localize->edit->submit trajectories is the trivial "Edit applied. Submit." tail (~7% of
+   assistant content). The read_file + edit_file ANCHOR content (turns 1-2) was masked out -> ~0 learnable
+   tokens -> loss ~0, nothing learned. This was the SAME single-turn-mask bug flagged in v1 notes; it had been
+   fixed in a Colab cell but never committed to train_lora.py. FIX: encode_example now walks prefixes and
+   unmasks EVERY assistant turn; added assert n_learn>0 guard. Verified torch-free (turns 1/2/3 learnable,
+   system/user masked, no leakage). Commit 57446d5.
+2. train_lora.py RESUMES any OUT dir with an existing ckpt (RULE A, by design). Repeatedly caused "already done
+   / skipped training" on reruns. FIX in the notebook cells: rm -rf OUT before a fresh train.
+
+Pre-registered v2 gate bar (UNCHANGED judge, raised floor; rule 2): FREE Kaggle 5-task run via
+submit_v19_lora_v2 (= v19 frozen prompt + 4 levers + v2 adapter). PASS = resolve > v19's 1/5 AND edit_fail
+STRICTLY BELOW the v1-lora run (where rich_4070 was 18/18 failed edits). Low train loss (0.15) is NOT a result;
+only the external gate counts. Overfit risk acknowledged (46 ex, 244M params). v6/0.12 SACRED.
+
+## v2 gate run #1 — INVALID (wrong adapter wired). 2026-10-11
+First v2 gate (comfyops/gemma-sibling-conform-v19-lora-v2, version 1) is a NULL-INVALID, not a real v2 reading.
+Log line 15: "[adapter] copied main_lora from /kaggle/input/competitions/gemma-4-developer-agent/sample_submission/
+adapters/tool_lora". The notebook's glob `/kaggle/input/**/adapter_config.json` grabbed the FIRST match anywhere,
+and the COMPETITION dataset's sample adapter (sample_submission/adapters/tool_lora) won over our attached
+comfyops/gemma-edit-discipline-v2-alllinear. So the run tested the SAMPLE adapter, not v2.
+Result of that invalid run: 1/5 (rich_4077 True 5calls/396ch; rich_4079 F turns-exceeded 0ch; rich_4076 F 473ch;
+rich_3469 F 0ch; rich_4070 F turns-exceeded 514ch). NOT attributable to v2.
+IMPLICATION: the v1-lora gate (also 1/5) used the SAME glob and may ALSO have tested the sample adapter, not v1.
+The v1 "edit_fail got worse" conclusion is therefore SUSPECT and may have been the sample adapter all along.
+FIX: adapter resolver now excludes 'sample_submission'/'gemma-4-developer-agent' paths and prefers the
+'gemma-edit-discipline' slug; asserts it did NOT pick the sample. Re-pushing gate version 2. Bar unchanged.
