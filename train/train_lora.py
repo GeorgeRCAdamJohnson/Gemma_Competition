@@ -57,19 +57,35 @@ def read_jsonl(path, cap=None):
     return recs
 
 def encode_example(tok, rec):
-    """Return (input_ids, labels) tensors. For 'messages', render via chat template and MASK loss to the
-    assistant turn only (fix #1b). For 'text', plain completion (labels = inputs)."""
+    """Return (input_ids, labels) tensors. For 'messages', render via chat template and unmask loss on EVERY
+    assistant turn (not just the last). For 'text', plain completion (labels = inputs).
+
+    BUGFIX (v2): the previous version masked everything up to the final prompt boundary, so loss was computed
+    only on the LAST assistant turn. For these localize->edit->submit trajectories the last turn is the trivial
+    'Edit applied. Submit.' tail (~7% of assistant content); the read_file + edit_file anchor content lives in
+    turns 1-2 and was masked out -> loss collapsed to ~0 and the model learned nothing. We now unmask ALL
+    assistant turns by rendering the conversation incrementally and marking each assistant span as learnable.
+    """
     if "messages" in rec:
         msgs = rec["messages"]
-        # full rendered conversation
         full = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=False)
-        # prompt = everything up to and including the assistant generation header (mask these)
-        prompt = tok.apply_chat_template(msgs[:-1], tokenize=False, add_generation_prompt=True)
         full_ids = tok(full, return_tensors="pt", truncation=True, max_length=MAXLEN)["input_ids"][0]
-        prompt_ids = tok(prompt, return_tensors="pt", truncation=True, max_length=MAXLEN)["input_ids"][0]
-        labels = full_ids.clone()
-        n_mask = min(len(prompt_ids), len(labels))
-        labels[:n_mask] = -100  # ignore prompt tokens in loss -> learn only to PRODUCE the assistant turn
+        labels = torch.full_like(full_ids, -100)  # mask everything by default
+        # Walk prefixes: for each assistant message, the tokens between the prefix-before-it (with gen prompt)
+        # and the prefix-including-it are that turn's assistant tokens -> unmask them.
+        for i, m in enumerate(msgs):
+            if m.get("role") != "assistant":
+                continue
+            pre = tok.apply_chat_template(msgs[:i], tokenize=False, add_generation_prompt=True)
+            inc = tok.apply_chat_template(msgs[:i+1], tokenize=False, add_generation_prompt=False)
+            pre_ids = tok(pre, return_tensors="pt", truncation=True, max_length=MAXLEN)["input_ids"][0]
+            inc_ids = tok(inc, return_tensors="pt", truncation=True, max_length=MAXLEN)["input_ids"][0]
+            s = min(len(pre_ids), len(labels))
+            e = min(len(inc_ids), len(labels))
+            if e > s:
+                labels[s:e] = full_ids[s:e]  # learnable: this assistant turn
+        n_learn = int((labels != -100).sum())
+        assert n_learn > 0, f"no learnable (assistant) tokens after masking — check chat template / roles (rec roles={[m.get('role') for m in msgs]})"
         return full_ids.unsqueeze(0), labels.unsqueeze(0)
     else:
         ids = tok(rec["text"], return_tensors="pt", truncation=True, max_length=MAXLEN)["input_ids"]
