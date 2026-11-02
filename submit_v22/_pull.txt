@@ -1,0 +1,11 @@
+﻿kaggle.exe : 'charmap' codec can't encode character '\u2588' in position 6619: character maps to <undefined>
+At line:1 char:1
++ & "C:\Users\Biges\AppData\Local\Packages\PythonSoftwareFoundation.Pyt ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('charmap' codec... to <undefined>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output file downloaded to .\out_v22\submission/agent.yaml
+Output file downloaded to .\out_v22\submission/configs/sampling.yaml
+Output file downloaded to .\out_v22\submission/eval_config.yaml
+Output file downloaded to .\out_v22\submission/prompts/system.md

@@ -13,7 +13,7 @@
   ],
   "dataset_sources": [
     "metric/gemma-4-developer-agent-wheelhouse",
-    "comfyops/gemma-edit-discipline-v2-alllinear"
+    "comfyops/gemma-edit-discipline-v2-s05"
   ],
   "kernel_sources": [],
   "competition_sources": [

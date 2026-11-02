@@ -1,0 +1,36 @@
+{
+  "_comment": "Curated, hand-maintained baseline + label pointers for the Gemma KB. The builder reads this and never rewrites it. The policy baseline is the one named here; it is confirmed against curated/submissions.csv (external source: Kaggle `competitions submissions gemma-4-developer-agent --csv`, pulled 2026-10-13 by the top-level session).",
+  "baseline": {
+    "label": "v6w",
+    "lb": 0.15,
+    "submission_ref": 57098497,
+    "submission_date": "2026-10-12",
+    "status": "COMPLETE",
+    "confirmed_against": "curated/submissions.csv",
+    "note": "v6w SCORED 0.15 (submission 57098497), beating v6 @ 0.12 (submission 56806249, 2026-10-03). This supersedes the old 'v6 @ 0.12 sacred' baseline from the user brief and gemma-submission-protocol.md. The log's live-best claim (~L8389-8436) is SUPPORTED by submissions history. Config: 0.18 budget (28 calls / 8 min / 80 turns / 240s timeout), 9-tool surface with edit_file primary, thinking_budget 1024.",
+    "config_source_hint": "look for the submit dir / notebook whose config matches 28/8/80/240 + edit_file-primary 9-tool surface + thinking_budget 1024; label v6w; slug family ...-v6w (backs ~10 dirs)"
+  },
+  "prior_baseline": {
+    "label": "v6",
+    "lb": 0.12,
+    "submission_ref": 56806249,
+    "submission_date": "2026-10-03",
+    "status": "COMPLETE",
+    "run_dir_hint": "Gemma/_v6out",
+    "note": "Former live-best, superseded by v6w @ 0.15 on 2026-10-12. Still the reference for several logged A/Bs; keep for prior-art diffs."
+  },
+  "pending": [
+    {
+      "label": "branch_final",
+      "submission_ref": 57146757,
+      "submission_date": "2026-10-13",
+      "status": "PENDING",
+      "staged_dir_hint": "Gemma/submit_branch_final",
+      "note": "PER-TASK BRANCHING; resolved rich_3676 on its gate (described as first hard-task resolve). NO public score yet (PENDING) -> cannot be the baseline; any verdict depending on its score is NEEDS-DATA until it scores."
+    }
+  ],
+  "notes": [
+    "LB scores by version are authoritative from curated/submissions.csv, not from the log or config-label '0.18' strings (those are budget labels, not scores).",
+    "Submission 57054171 'kjhgiughj' scored 0.05; 56835583 v10 ERRORED (no score)."
+  ]
+}

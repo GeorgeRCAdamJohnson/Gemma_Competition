@@ -1,0 +1,16 @@
+﻿Output file downloaded to .\out_v21\results/logs/rich_3469.log
+Output file downloaded to .\out_v21\results/logs/rich_4070.log
+Output file downloaded to .\out_v21\results/logs/rich_4076.log
+Output file downloaded to .\out_v21\results/logs/rich_4077.log
+Output file downloaded to .\out_v21\results/logs/rich_4079.log
+Output file downloaded to .\out_v21\results/traces/trace_rich_3469.json
+Output file downloaded to .\out_v21\results/traces/trace_rich_4070.json
+Output file downloaded to .\out_v21\results/traces/trace_rich_4076.json
+Output file downloaded to .\out_v21\results/traces/trace_rich_4077.json
+Output file downloaded to .\out_v21\results/traces/trace_rich_4079.json
+Output file downloaded to .\out_v21\submission.zip
+Output file downloaded to .\out_v21\submission/agent.yaml
+Output file downloaded to .\out_v21\submission/configs/sampling.yaml
+Output file downloaded to .\out_v21\submission/eval_config.yaml
+Output file downloaded to .\out_v21\submission/prompts/system.md
+Kernel log downloaded to .\out_v21\gemma-sibling-conform-v21.log 

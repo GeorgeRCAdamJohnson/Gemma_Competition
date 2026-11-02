@@ -1,0 +1,229 @@
+[
+ {
+  "task": "fastapi_14851",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_router_events.py"
+  ],
+  "test_fns": [
+   "test_router_async_shutdown_handler",
+   "test_router_sync_generator_lifespan",
+   "test_router_async_generator_lifespan"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_router_events.py::test_router_async_shutdown_handler",
+   "tests/test_router_events.py::test_router_sync_generator_lifespan",
+   "tests/test_router_events.py::test_router_async_generator_lifespan"
+  ],
+  "pytest_tail": "no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14851_nw9ua6z0\\tests\\test_router_events.py::test_router_sync_generator_lifespan\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14851_nw9ua6z0\\tests\\test_router_events.py::test_router_async_generator_lifespan\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14786",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_security_http_base.py",
+   "tests/test_security_oauth2_authorization_code_bearer.py"
+  ],
+  "test_fns": [
+   "test_security_http_base_with_whitespaces",
+   "test_security_http_base_no_credentials",
+   "test_token_with_whitespaces",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_security_http_base.py::test_security_http_base_with_whitespaces",
+   "tests/test_security_http_base.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_base.py::test_token_with_whitespaces",
+   "tests/test_security_http_base.py::test_openapi_schema",
+   "tests/test_security_oauth2_authorization_code_bearer.py::test_security_http_base_with_whitespaces",
+   "tests/test_security_oauth2_authorization_code_bearer.py::test_security_http_base_no_credentials",
+   "tests/test_security_oauth2_authorization_code_bearer.py::test_token_with_whitespaces",
+   "tests/test_security_oauth2_authorization_code_bearer.py::test_openapi_schema"
+  ],
+  "pytest_tail": "s\\AppData\\Local\\Temp\\r_fastapi_14786_gtmlpzwq\\tests\\test_security_oauth2_authorization_code_bearer.py::test_token_with_whitespaces\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14786_gtmlpzwq\\tests\\test_security_oauth2_authorization_code_bearer.py::test_openapi_schema\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14463",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_additional_responses_union_duplicate_anyof.py"
+  ],
+  "test_fns": [
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_additional_responses_union_duplicate_anyof.py::test_openapi_schema"
+  ],
+  "pytest_tail": "hort test summary info ===========================\nERROR tests/test_additional_responses_union_duplicate_anyof.py\n1 error in 0.42s\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14463_hj1fe9mv\\tests\\test_additional_responses_union_duplicate_anyof.py::test_openapi_schema\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14301",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_yield_scope.py"
+  ],
+  "test_fns": [
+   "test_router_level_dep_scope_function",
+   "test_router_level_dep_scope_request",
+   "test_app_level_dep_scope_function",
+   "test_app_level_dep_scope_request"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_dependency_yield_scope.py::test_router_level_dep_scope_function",
+   "tests/test_dependency_yield_scope.py::test_router_level_dep_scope_request",
+   "tests/test_dependency_yield_scope.py::test_app_level_dep_scope_function",
+   "tests/test_dependency_yield_scope.py::test_app_level_dep_scope_request"
+  ],
+  "pytest_tail": "s for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14301_omckhf90\\tests\\test_dependency_yield_scope.py::test_app_level_dep_scope_function\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14301_omckhf90\\tests\\test_dependency_yield_scope.py::test_app_level_dep_scope_request\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14077",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_enforce_once_required_parameter.py"
+  ],
+  "test_fns": [
+   "test_schema",
+   "test_get_invalid",
+   "test_get_valid"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_enforce_once_required_parameter.py::test_schema",
+   "tests/test_enforce_once_required_parameter.py::test_get_invalid",
+   "tests/test_enforce_once_required_parameter.py::test_get_valid"
+  ],
+  "pytest_tail": "ound no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14077_70imfq9n\\tests\\test_enforce_once_required_parameter.py::test_get_invalid\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14077_70imfq9n\\tests\\test_enforce_once_required_parameter.py::test_get_valid\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3894",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_inspect.py"
+  ],
+  "test_fns": [
+   "test_qualname_in_slots"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_inspect.py::test_qualname_in_slots"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.93s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "rich_3905",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_progress.py"
+  ],
+  "test_fns": [
+   "test_no_output_if_progress_is_disabled_non_interactive",
+   "test_open"
+  ],
+  "counts": {
+   "passed": 2
+  },
+  "nodes": [
+   "tests/test_progress.py::test_no_output_if_progress_is_disabled_non_interactive",
+   "tests/test_progress.py::test_open"
+  ],
+  "pytest_tail": "..                                                                       [100%]\n2 passed in 0.83s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "requests_6644",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_adapters.py"
+  ],
+  "test_fns": [
+   "test_request_url_trims_leading_path_separators"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_adapters.py::test_request_url_trims_leading_path_separators"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.23s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "rich_3454",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_highlighter.py"
+  ],
+  "test_fns": [
+   "test_wrong_type"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_highlighter.py::test_wrong_type"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.50s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "rich_3006",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_repr.py"
+  ],
+  "test_fns": [
+   "test_rich_repr"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_repr.py::test_rich_repr"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.70s\n",
+  "resolved_here": true
+ }
+]

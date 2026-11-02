@@ -1,0 +1,203 @@
+Warning: Looks like you're using an outdated `kaggle` version (installed: 2.2.4), please consider upgrading to the latest version (2.2.5)
+ref,title,author,lastRunTime,totalVotes
+
+comfyops/ci-tools-probe,ci tools probe,Adam Johnson,2026-10-31 17:15:53.257000,0
+
+comfyops/gemma-sibling-conform-v6c,Gemma Sibling-Conform v6c,Adam Johnson,2026-10-11 23:49:43.193000,0
+
+comfyops/biohub-cell-tracking-submission,Biohub Cell Tracking Submission,Adam Johnson,2026-08-24 05:19:04.787000,0
+
+comfyops/gemma-sibling-conform-m12,Gemma Sibling-Conform m12,Adam Johnson,2026-10-14 01:48:29.657000,0
+
+comfyops/gemma-sibling-conform-cover-rich,Gemma Sibling-Conform Cover Rich,Adam Johnson,2026-10-17 04:53:26.070000,0
+
+comfyops/gemma-sibling-conform-v6b,Gemma Sibling-Conform v6b,Adam Johnson,2026-10-11 22:03:47.253000,0
+
+comfyops/gemma-sibling-conform-remap-e2b,Gemma Sibling-Conform Remap e2b,Adam Johnson,2026-10-17 20:19:11.210000,0
+
+comfyops/gemma-sibling-conform-remap-e4b,Gemma Sibling-Conform Remap e4b,Adam Johnson,2026-10-17 20:19:07.517000,0
+
+comfyops/gemma-sibling-conform-repeat-live,Gemma Sibling-Conform Repeat Live,Adam Johnson,2026-10-18 18:59:19.363000,0
+
+comfyops/gemma-sibling-conform-size-12b,Gemma Sibling-Conform Size 12b,Adam Johnson,2026-10-17 19:39:37.053000,0
+
+comfyops/gemma-sibling-conform-v6w,Gemma Sibling-Conform v6w,Adam Johnson,2026-10-14 03:48:02.877000,0
+
+comfyops/gemma-sibling-conform-12b-a11-tight-fails,Gemma Sibling-Conform 12b A11 tight fails,Adam Johnson,2026-10-19 15:52:06.663000,0
+
+comfyops/gemma-sibling-conform-v6s-stock-prompt-control,Gemma Sibling-Conform v6s (STOCK PROMPT CONTROL),Adam Johnson,2026-10-12 00:29:08.030000,0
+
+comfyops/gemma-sibling-conform-12b-a6-r3006,Gemma Sibling-Conform 12b A6 r3006,Adam Johnson,2026-10-19 03:36:38.707000,0
+
+comfyops/gemma-localizer-lora-train,Gemma Localizer LoRA Train,Adam Johnson,2026-10-04 12:20:36.763000,0
+
+comfyops/gemma-submission-packager-ca5-anchor,Gemma Submission Packager ca5 anchor,Adam Johnson,2026-10-28 06:43:55.297000,0
+
+comfyops/gemma-sibling-conform-size-e2b,Gemma Sibling-Conform Size e2b,Adam Johnson,2026-10-17 18:25:44.003000,0
+
+comfyops/gemma-sibling-conform-size-e4b,Gemma Sibling-Conform Size e4b,Adam Johnson,2026-10-17 18:25:39.697000,0
+
+comfyops/gemma-sibling-conform-12b-a14-tmp-fix,Gemma Sibling-Conform 12b A14 tmp fix,Adam Johnson,2026-10-19 06:16:59.847000,0
+
+comfyops/attack-benchmark-harness,Attack Benchmark Harness,Adam Johnson,2026-08-29 23:27:29.317000,0
+
+comfyops/gemma-sibling-conform-12b-a5-rerun3006,Gemma Sibling-Conform 12b A5 rerun3006,Adam Johnson,2026-10-19 03:47:21.580000,0
+
+comfyops/gemma-sibling-conform-12b-a3-rerun3006,Gemma Sibling-Conform 12b A3 rerun3006,Adam Johnson,2026-10-19 03:09:30.423000,0
+
+comfyops/biohub-cellpose-v2,Biohub Cellpose v2,Adam Johnson,2026-08-23 19:39:04.893000,0
+
+comfyops/biohub-graft-v5-fast,biohub-graft-v5-fast,Adam Johnson,2026-09-29 05:39:58.217000,0
+
+comfyops/gemma-sibling-conform-v7-e2b,Gemma Sibling-Conform v7 e2b,Adam Johnson,2026-10-17 17:56:32.357000,0
+
+comfyops/biohub-ref-0947-deepcenter-ilp,biohub-ref-0947-deepcenter-ilp,Adam Johnson,2026-09-23 05:23:13.547000,0
+
+comfyops/gemma-sibling-conform-v19v3,Gemma Sibling-Conform v19v3,Adam Johnson,2026-10-10 17:40:53.863000,0
+
+comfyops/biohub-ref-geometric-fusion,biohub-ref-geometric-fusion,Adam Johnson,2026-09-23 05:16:36.867000,0
+
+comfyops/gemma-sibling-conform-v7-e4b,Gemma Sibling-Conform v7 e4b,Adam Johnson,2026-10-17 17:39:42.227000,0
+
+comfyops/gemma-sibling-conform-12b-a13-nol48-fails,Gemma Sibling-Conform 12b A13 noL48 fails,Adam Johnson,2026-10-19 05:43:04.317000,0
+
+comfyops/gemma-sibling-conform-v6,Gemma Sibling-Conform v6,Adam Johnson,2026-10-11 21:14:15.933000,0
+
+comfyops/gemma-sibling-conform-31b-a3-hard,Gemma Sibling-Conform 31b A3 hard,Adam Johnson,2026-10-25 18:40:57.017000,0
+
+comfyops/gemma-sibling-conform-v6y,Gemma Sibling-Conform v6y,Adam Johnson,2026-10-12 05:24:43.973000,0
+
+comfyops/gemma-sibling-conform-v6x,Gemma Sibling-Conform v6x,Adam Johnson,2026-10-12 05:24:38.023000,0
+
+comfyops/biohub-graft-0947-ours,biohub-graft-0947-ours,Adam Johnson,2026-09-28 23:07:19.067000,0
+
+comfyops/gemma-sibling-conform-v10,Gemma Sibling-Conform v10,Adam Johnson,2026-10-04 22:20:17.690000,0
+
+comfyops/gemma-sibling-conform-v1,Gemma Sibling-Conform v1,Adam Johnson,2026-10-02 11:19:07.230000,0
+
+comfyops/gemma-sibling-conform-v16,Gemma Sibling-Conform v16,Adam Johnson,2026-10-10 02:02:03.560000,0
+
+comfyops/gemma-sibling-conform-v5,Gemma Sibling-Conform v5,Adam Johnson,2026-10-03 12:05:33.630000,0
+
+comfyops/gemma-sibling-conform-v17,Gemma Sibling-Conform v17,Adam Johnson,2026-10-10 05:03:35.567000,0
+
+comfyops/gemma-sibling-conform-v19,Gemma Sibling-Conform v19,Adam Johnson,2026-10-10 17:08:36.517000,0
+
+comfyops/gemma-sibling-conform-v6v,Gemma Sibling-Conform v6v,Adam Johnson,2026-10-12 04:48:22.717000,0
+
+comfyops/biohub-graft-tight70,biohub-graft-tight70,Adam Johnson,2026-09-29 07:35:00,0
+
+comfyops/gemma-sibling-conform-v15-cpu,Gemma Sibling-Conform v15 cpu,Adam Johnson,2026-10-07 01:47:28.787000,0
+
+comfyops/gemma-sibling-conform-v6t,Gemma Sibling-Conform v6t,Adam Johnson,2026-10-13 04:43:52.267000,0
+
+comfyops/gemma-sibling-conform-v21,Gemma Sibling-Conform v21,Adam Johnson,2026-10-11 19:40:50.567000,0
+
+comfyops/gemma-submission-packager-a25-router,Gemma Submission Packager A25 router,Adam Johnson,2026-10-28 01:54:12.067000,0
+
+comfyops/gemma-sibling-conform-31b-a22-arm,Gemma Sibling-Conform 31b A22 arm,Adam Johnson,2026-10-25 22:51:52.763000,0
+
+comfyops/biohub-v10-0947-neverdelete,biohub-v10-0947-neverdelete,Adam Johnson,2026-10-01 01:16:18.660000,0
+
+comfyops/gemma-sibling-conform-v7-d-l4x4,Gemma Sibling-Conform v7 D L4x4,Adam Johnson,2026-10-15 04:27:21.943000,0
+
+comfyops/biohub-v11-0947-flowprior,biohub-v11-0947-flowprior,Adam Johnson,2026-10-01 04:11:57.317000,0
+
+comfyops/probe-unq,Probe Unq,Adam Johnson,2026-10-17 18:41:40.090000,0
+
+comfyops/biohub-0902-repro-validate,biohub-0902-repro-validate,Adam Johnson,2026-08-29 21:36:07.293000,0
+
+comfyops/gemma-sibling-conform-12b-a10-ones-oracle-9t,Gemma Sibling-Conform 12b A10 ones+oracle 9t,Adam Johnson,2026-10-19 04:19:45.473000,0
+
+comfyops/gemma-sibling-conform-12b-a5-9t,Gemma Sibling-Conform 12b A5 9t,Adam Johnson,2026-10-19 03:53:44.587000,0
+
+comfyops/gemma-sibling-conform-12b-a3-9t,Gemma Sibling-Conform 12b A3 9t,Adam Johnson,2026-10-19 01:19:06.620000,0
+
+comfyops/gemma-sibling-conform-e4b-a5,Gemma Sibling-Conform e4b A5,Adam Johnson,2026-10-18 22:17:59.790000,0
+
+comfyops/gemma-sibling-conform-e4b-a3,Gemma Sibling-Conform e4b A3,Adam Johnson,2026-10-18 22:17:55.733000,0
+
+comfyops/gemma-sibling-conform-v2,Gemma Sibling-Conform v2,Adam Johnson,2026-10-02 12:09:17.487000,0
+
+comfyops/gemma-submission-packager,Gemma Submission Packager,Adam Johnson,2026-10-26 04:19:38.533000,0
+
+comfyops/detect-suspicious-value-transfers-solution-writeup,detect suspicious value transfers solution writeup,Adam Johnson,2026-09-21 00:31:30.273000,1
+
+comfyops/gold-fastapi,gold fastapi,Adam Johnson,2026-11-01 15:47:40.077000,0
+
+comfyops/replay-base,replay base,Adam Johnson,2026-11-01 08:53:40,0
+
+comfyops/tmpl-probe,tmpl probe,Adam Johnson,2026-11-01 07:43:43.830000,0
+
+comfyops/replay-k10,replay k10,Adam Johnson,2026-11-01 06:31:32.597000,0
+
+comfyops/replay-verify,replay verify,Adam Johnson,2026-11-01 06:25:05.977000,0
+
+comfyops/ca5-e4b-full129-eval,ca5 e4b full129 eval,Adam Johnson,2026-11-02 00:46:11.883000,0
+
+comfyops/ca5-31b-full129-eval,ca5 31b full129 eval,Adam Johnson,2026-10-31 06:12:54.963000,0
+
+comfyops/gemma-sibling-conform-31b-a23-arm,Gemma Sibling-Conform 31b A23 arm,Adam Johnson,2026-10-26 01:56:04.857000,0
+
+comfyops/gemma-sibling-conform-31b-a21-arm,Gemma Sibling-Conform 31b A21 arm,Adam Johnson,2026-10-25 17:58:18.183000,0
+
+,[Private Notebook],,2010-04-01 00:00:00,0
+
+comfyops/gemma-sibling-conform-12b-a5,Gemma Sibling-Conform 12b A5,Adam Johnson,2026-10-19 00:41:14.030000,0
+
+comfyops/gemma-sibling-conform-12b-a3,Gemma Sibling-Conform 12b A3,Adam Johnson,2026-10-19 00:41:03.917000,0
+
+comfyops/notebook47b3aaa952,notebook47b3aaa952,Adam Johnson,2026-10-18 15:15:55.823000,0
+
+comfyops/probe-models,Probe Models,Adam Johnson,2026-10-17 16:21:14.697000,0
+
+,[Private Notebook],,2010-04-01 00:00:00,0
+
+,[Private Notebook],,2010-04-01 00:00:00,0
+
+comfyops/gemma-sibling-conform-v7-d-t4x2,Gemma Sibling-Conform v7 D T4x2,Adam Johnson,2026-10-15 03:57:43.397000,0
+
+comfyops/notebookcaa323b4c8,notebookcaa323b4c8,Adam Johnson,2026-10-13 05:42:35.147000,0
+
+comfyops/gemma-sibling-conform-v6z,Gemma Sibling-Conform v6z,Adam Johnson,2026-10-12 16:44:50.457000,0
+
+comfyops/gemma-sibling-conform-v6u,Gemma Sibling-Conform v6u,Adam Johnson,2026-10-12 04:19:26.667000,0
+
+comfyops/gemma-sibling-conform-v22,Gemma Sibling-Conform v22,Adam Johnson,2026-10-11 21:46:32.617000,0
+
+comfyops/gemma-sibling-conform-v19-lora-v2,Gemma Sibling-Conform v19-lora-v2,Adam Johnson,2026-10-11 17:35:57.367000,0
+
+comfyops/gemma-sibling-conform-v19-lora,Gemma Sibling-Conform v19-lora,Adam Johnson,2026-10-11 01:56:59.277000,0
+
+comfyops/gemma-sibling-conform-v20,Gemma Sibling-Conform v20,Adam Johnson,2026-10-10 17:14:02.787000,0
+
+comfyops/gemma-sibling-conform-v18,Gemma Sibling-Conform v18,Adam Johnson,2026-10-10 15:31:46.183000,0
+
+comfyops/gemma-sibling-conform-v15,Gemma Sibling-Conform v15,Adam Johnson,2026-10-10 01:41:10.997000,0
+
+comfyops/gemma-sibling-conform-v14-rich,Gemma Sibling-Conform v14 rich,Adam Johnson,2026-10-07 01:39:31.917000,0
+
+comfyops/gemma-sibling-conform-v13-v2,Gemma Sibling-Conform v13 v2,Adam Johnson,2026-10-05 05:06:23.397000,0
+
+comfyops/gemma-sibling-conform-v13,Gemma Sibling-Conform v13,Adam Johnson,2026-10-05 03:46:42.063000,0
+
+comfyops/gemma-sibling-conform-v12,Gemma Sibling-Conform v12,Adam Johnson,2026-10-05 02:26:46.630000,0
+
+comfyops/gemma-sibling-conform-v11,Gemma Sibling-Conform v11,Adam Johnson,2026-10-04 22:29:46.257000,0
+
+comfyops/gemma-sibling-conform-v9,Gemma Sibling-Conform v9,Adam Johnson,2026-10-04 18:20:07.233000,0
+
+comfyops/gemma-sibling-conform-v7,Gemma Sibling-Conform v7,Adam Johnson,2026-10-04 12:27:47.860000,0
+
+comfyops/gemma-sibling-conform-v4,Gemma Sibling-Conform v4,Adam Johnson,2026-10-03 07:25:50.280000,0
+
+comfyops/gemma-sibling-conform-v3,Gemma Sibling-Conform v3,Adam Johnson,2026-10-03 05:25:39.460000,0
+
+comfyops/biohub-v12-divilp,biohub-v12-divilp,Adam Johnson,2026-10-02 02:10:29.703000,0
+
+comfyops/biohub-v9-neverdelete,biohub-v9-neverdelete,Adam Johnson,2026-10-01 01:16:24.453000,0
+
+comfyops/biohub-test-bidir0,biohub-test-bidir0,Adam Johnson,2026-09-28 05:22:50.367000,0
+
+comfyops/biohub-fusion-cache-extract,biohub-fusion-cache-extract,Adam Johnson,2026-09-27 07:58:55.203000,0
+

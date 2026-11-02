@@ -38,3 +38,27 @@ submission*.zip
 # ---- creds ----
 kaggle.json
 *.kaggle
+
+# ---- bulk run artifacts / snapshots (25 GB; regenerable or re-pullable) ----
+train/
+Outputs/
+kaggle_archive/
+v2_gate*/
+adapter_dataset*/
+adapter_v2_*/
+kaggle_pkg/snapshots_ds/
+kaggle_pkg/out_*/
+local_eval/snapshots/
+local_eval/_snap*/
+local_eval/runs/
+local_eval/push_*/
+local_eval/pull_*/
+local_eval/parity_rig/m1_*/
+local_eval/parity_rig/runs/
+local_eval/parity_rig/gold_patches/
+local_eval/parity_rig/empty_patches/
+kb/pulled/
+kb/replays/
+out_*/
+pulled_v6/
+*.sqlite

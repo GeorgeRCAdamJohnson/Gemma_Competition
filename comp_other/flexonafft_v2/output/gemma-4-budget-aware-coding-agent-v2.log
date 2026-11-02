@@ -1,0 +1,23 @@
+[{"stream_name":"stderr","time":10.176580942,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":10.176627891,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":10.176634397,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":10.176638152,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":11.102133978,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":11.102170349,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":11.102176173,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":11.102180258,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":12.599293169,"data":"Configuration checks passed: one agent, 8 minutes, 28 calls, 240-second timeout.\n"}
+,{"stream_name":"stdout","time":12.599328961,"data":"Global runtime and leaderboard score require competition evaluation.\n"}
+,{"stream_name":"stdout","time":12.615963223,"data":"Submission: /kaggle/working/submission.zip\n"}
+,{"stream_name":"stdout","time":12.616004968,"data":"SHA-256: 6ff73d104725cc31deadd18787f3f55e5ce534889cec82387e3b280637d34887\n"}
+,{"stream_name":"stdout","time":12.616009152,"data":"Archive files: ['agent.yaml', 'configs/sampling.yaml', 'eval_config.yaml', 'prompts/system.md']\n"}
+,{"stream_name":"stdout","time":12.616011996,"data":"Official model compilation and leaderboard scoring were not run.\n"}
+,{"stream_name":"stderr","time":15.913991451,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":15.914046766,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":16.134739294,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":16.134764251,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":16.980553853,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":17.378294039,"data":"[NbConvertApp] Writing 15903 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":20.715406119,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":21.804490368,"data":"[NbConvertApp] Writing 297626 bytes to __results__.html\n"}
+]

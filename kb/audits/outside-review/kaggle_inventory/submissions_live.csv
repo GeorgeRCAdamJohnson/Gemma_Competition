@@ -1,0 +1,53 @@
+ref,fileName,date,description,status,publicScore,privateScore
+
+57847285,submission.zip,2026-10-31 18:24:26.797000,"ca5: pre-edit anchor-grep rule, no sub-agents, v10 config (resubmit of 0.20 pack ref 57760641, identical bytes)",SubmissionStatus.PENDING,,
+
+57807043,submission.zip,2026-10-30 13:38:29.263000,"E4B ca5 anchor-grep: pre-edit rule, no sub-agents, v10 caps (small-model candidate)",SubmissionStatus.COMPLETE,0.03,
+
+57760641,submission.zip,2026-10-29 05:56:50.567000,"ca5: pre-edit anchor-grep rule, no sub-agents, v10 config",SubmissionStatus.COMPLETE,0.20,
+
+57720023,submission.zip,2026-10-28 01:57:10.570000,"A25 router blind: classify-dispatch, 2 sub-agents, summarized returns, v10 caps",SubmissionStatus.COMPLETE,0.13,
+
+57681095,submission.zip,2026-10-26 23:27:29.713000,,SubmissionStatus.COMPLETE,0.15,
+
+57640430,submission.zip,2026-10-25 19:04:53.587000,.26?,SubmissionStatus.COMPLETE,0.17,
+
+57582998,submission.zip,2026-10-24 04:58:00.787000,Lucy ,SubmissionStatus.COMPLETE,0.17,
+
+57551592,submission.zip,2026-10-23 06:20:51.590000,again,SubmissionStatus.COMPLETE,0.12,
+
+57530249,submission.zip,2026-10-22 15:40:08.550000,sadgdvzxgv,SubmissionStatus.COMPLETE,0.18,
+
+57470483,submission.zip,2026-10-21 06:55:00.930000,Why not,SubmissionStatus.COMPLETE,,
+
+57424022,submission.zip,2026-10-20 05:35:08.683000,Lets go bishes,SubmissionStatus.COMPLETE,0.18,
+
+57399296,submission.zip,2026-10-19 14:22:10.367000,A17 @31B: v6c structure + time-first framing + de-hedged triggers + THE fix granularity,SubmissionStatus.COMPLETE,0.15,
+
+57359160,submission.zip,2026-10-18 15:12:43.450000,testing,SubmissionStatus.COMPLETE,0.13,
+
+57317996,submission.zip,2026-10-17 16:23:56.247000,"MODEL-SIZE LADDER, single axis vs v6w(0.15): agent.yaml model line only, gemma-4-31b-it-qat-w4a16-ct -> gemma-4-12b-it-qat-w4a16-ct. sha-verified: prompts/system.md, configs/sampling.yaml, eval_config.yaml BYTE-IDENTICAL to v6w; budget stays 28/8/80/240, thinking_budget 1024, temp 0.2, 9 tools. NO adapter. WHY THIS CELL IS EMPTY UNTIL NOW: log L8509 tested 12B only as a LOCAL gate (viability PASS, quality negative); L6349-6357 tested E2B/E4B/12B only WITH adapters attached; L8705 kjhgiughj=0.05 was a LoRA arm, which CONFOUNDS model size with the adapter. Bare smaller-model + v6w prompt + no adapter has never been scored on the board. TWO OPEN QUESTIONS THIS SETTLES: (1) L6408 flagged an unresolved viability risk that 12B is too slow for the real competition clock and we must fall back to E4B - only a board run can settle that, since local gates do not enforce the scorer clock; (2) whether the 31B advantage is capability or format adherence, which decides whether 12B becomes a cheap LoRA target with Colab credits. E4B variant is staged for the next slot.",SubmissionStatus.COMPLETE,,
+
+57276407,submission.zip,2026-10-16 16:51:32.647000,"BUDGET RAISE, single axis vs v6w(0.15): eval_config only. max_tool_calls 28->100, max_turns 80->500, max_time_minutes 8->60 (harness inference.py defaults). timeout_seconds held at 240. agent.yaml + sampling.yaml + system.md byte-identical (sha-verified). WHY: measured never_committed is 26-33pct of rich failures and means NEVER LANDED THE EDIT, not forgot-to-submit, since a landed edit always scores via automatic git add -N . and git diff. edit_file IS budget-gated while submit_patch and get_status are free, so a tight budget starves the only scoring action. v6w ran 3.6x under the harness default. Every prior lever (8 LoRA, temp, thinking, L1-L4) optimised for FEWER calls; none ever raised the budget. Chosen because only large effects are legible past measured gate noise.",SubmissionStatus.COMPLETE,,
+
+57201051,submission.zip,2026-10-15 01:15:05.580000,v6w + temperature 1.0 / top_k 64 (only change vs the 0.15 v6w baseline),SubmissionStatus.COMPLETE,0.13,
+
+57146757,submission.zip,2026-10-13 14:31:31.723000,"PER-TASK BRANCHING: first use of ADK {problem_description} templating - system.md now interpolates the task text and branches CASE A (target named -> locate+edit fast) vs CASE B (target NOT named -> find the sibling in-repo and copy its name EXACTLY). Same 0.18 budget/tool-surface/sampling as v6w (0.15 baseline). Gate: rich_3676 resolved, first hard-task resolve in project (gate was 0/6); git grep fired 4/4 tasks vs 0/4 static; turns 30->14.",SubmissionStatus.COMPLETE,0.12,
+
+57098497,submission.zip,2026-10-12 06:44:05.790000,v6w: 0.18 budget (28/8/80/240) + 9-tool surface with edit_file primary + thinking_budget 1024. Gate 4/6 tied with v6t but ~32s/task faster (235s vs 267s mean).,SubmissionStatus.COMPLETE,0.15,
+
+57054171,submission.zip,2026-10-10 23:01:55.280000,kjhgiughj,SubmissionStatus.COMPLETE,0.05,
+
+56896956,submission.zip,2026-10-07 01:48:09.260000,"v15 short-trajectory (no sub-agent, thinking 256, budget 12) via CPU packaging notebook",SubmissionStatus.COMPLETE,0.10,
+
+56856000,submission.zip,2026-10-05 15:43:10.847000,v15 short-trajectory: anti-word-trap localization + no sub-agent + thinking 256 + budget 12 (compaction-aware),SubmissionStatus.COMPLETE,0.08,
+
+56835719,submission.zip,2026-10-04 23:36:10.717000,"v10 budget-40 agent (300s), uploaded from V1 committed output",SubmissionStatus.COMPLETE,0.08,
+
+56835583,submission.zip,2026-10-04 23:26:08.053000,Notebook Gemma Sibling-Conform v10 | Version 2,SubmissionStatus.ERROR,,
+
+56806249,submission.zip,2026-10-03 20:34:11.603000,"beat...beat....no one else can be defeated
+",SubmissionStatus.COMPLETE,0.12,
+
+56775978,submission.zip,2026-10-02 14:35:58.847000,One shot,SubmissionStatus.COMPLETE,0.10,
+

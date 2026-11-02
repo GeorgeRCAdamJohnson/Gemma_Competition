@@ -1,0 +1,6 @@
+name: gated_agent
+agent_class: SequentialAgent
+description: fixer edits, verifier gates the edit with an in-sandbox check and is the only agent that submits
+sub_agents:
+  - config_path: sub_agents/fixer.yaml
+  - config_path: sub_agents/verifier.yaml

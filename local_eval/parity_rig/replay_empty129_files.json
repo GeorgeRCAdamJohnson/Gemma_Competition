@@ -1,0 +1,3177 @@
+[
+ {
+  "task": "fastapi_15661",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_prepare_release.py"
+  ],
+  "test_fns": [
+   "test_bump_version",
+   "test_update_version_file",
+   "test_update_version_file_requires_newer_version",
+   "test_update_release_notes",
+   "test_update_release_notes_rejects_existing_version",
+   "test_get_release_notes_body_with_dated_heading",
+   "test_get_release_notes_body_with_plain_heading",
+   "test_get_release_notes_body_allows_non_version_h2_content",
+   "test_get_release_notes_body_requires_version_section",
+   "test_get_release_notes_body_requires_non_empty_section",
+   "test_cli_updates_configured_files",
+   "test_cli_accepts_env_vars",
+   "test_cli_prints_current_version",
+   "test_cli_prints_release_notes"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_prepare_release.py"
+  ],
+  "pytest_tail": "packages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n1 error in 3.50s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_15588",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_sse.py"
+  ],
+  "test_fns": [
+   "test_server_sent_event_single_line_fields_reject_newlines",
+   "test_server_sent_event_negative_retry_rejected"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_sse.py"
+  ],
+  "pytest_tail": "packages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n1 error in 2.67s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_15589",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_query_cookie_header_model_extra_params.py"
+  ],
+  "test_fns": [
+   "test_query_pass_extra_list",
+   "test_header_model_prefers_hyphenated_header_with_convert_underscores",
+   "test_header_model_rejects_underscore_header_with_convert_underscores",
+   "test_cookie_pass_extra_list"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_query_cookie_header_model_extra_params.py"
+  ],
+  "pytest_tail": "packages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n1 error in 2.67s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_15030",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_sse.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial001.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial002.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial003.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial004.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial005.py"
+  ],
+  "test_fns": [
+   "test_async_generator_with_model",
+   "test_sync_generator_with_model",
+   "test_async_generator_no_annotation",
+   "test_sync_generator_no_annotation",
+   "test_dict_items",
+   "test_post_method_sse",
+   "test_sse_events_with_fields",
+   "test_mixed_plain_and_sse_events",
+   "test_string_data_json_encoded",
+   "test_server_sent_event_null_id_rejected",
+   "test_server_sent_event_negative_retry_rejected",
+   "test_server_sent_event_float_retry_rejected",
+   "test_raw_data_sent_without_json_encoding",
+   "test_data_and_raw_data_mutually_exclusive",
+   "test_sse_on_router_included_in_app",
+   "test_keepalive_ping_async",
+   "test_keepalive_ping_sync",
+   "test_no_keepalive_when_fast",
+   "test_stream_items",
+   "test_openapi_schema",
+   "test_stream_logs",
+   "test_stream_all_items",
+   "test_resume_from_last_event_id",
+   "test_resume_from_last_item",
+   "test_stream_chat"
+  ],
+  "counts": {
+   "error": 6
+  },
+  "nodes": [
+   "tests/test_sse.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial001.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial002.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial003.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial004.py",
+   "tests/test_tutorial/test_server_sent_events/test_tutorial005.py"
+  ],
+  "pytest_tail": "ackages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n6 errors in 2.96s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14962",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dump_json_fast_path.py",
+   "tests/test_tutorial/test_custom_response/test_tutorial001.py",
+   "tests/test_tutorial/test_custom_response/test_tutorial010.py"
+  ],
+  "test_fns": [
+   "test_default_response_class_skips_json_dumps",
+   "test_explicit_response_class_uses_json_dumps",
+   "test_get_custom_response",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 3
+  },
+  "nodes": [
+   "tests/test_dump_json_fast_path.py",
+   "tests/test_tutorial/test_custom_response/test_tutorial001.py",
+   "tests/test_tutorial/test_custom_response/test_tutorial010.py"
+  ],
+  "pytest_tail": "===========================\nERROR tests/test_dump_json_fast_path.py\nERROR tests/test_tutorial/test_custom_response/test_tutorial001.py\nERROR tests/test_tutorial/test_custom_response/test_tutorial010.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!\n3 errors in 2.93s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_15280",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_vibe.py"
+  ],
+  "test_fns": [
+   "test_vibe_raises"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_vibe.py"
+  ],
+  "pytest_tail": "packages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n1 error in 2.66s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14964",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_deprecated_responses.py",
+   "tests/test_orjson_response_class.py",
+   "tests/test_tutorial/test_custom_response/test_tutorial001.py",
+   "tests/test_tutorial/test_custom_response/test_tutorial001b.py"
+  ],
+  "test_fns": [
+   "test_orjson_response_returns_correct_data",
+   "test_orjson_response_emits_deprecation_warning",
+   "test_ujson_response_returns_correct_data",
+   "test_ujson_response_emits_deprecation_warning"
+  ],
+  "counts": {
+   "error": 4
+  },
+  "nodes": [
+   "tests/test_deprecated_responses.py",
+   "tests/test_orjson_response_class.py",
+   "tests/test_tutorial/test_custom_response/test_tutorial001.py",
+   "tests/test_tutorial/test_custom_response/test_tutorial001b.py"
+  ],
+  "pytest_tail": "_deprecated_responses.py\nERROR tests/test_orjson_response_class.py\nERROR tests/test_tutorial/test_custom_response/test_tutorial001.py\nERROR tests/test_tutorial/test_custom_response/test_tutorial001b.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!\n4 errors in 2.99s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_15023",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_tutorial/test_stream_data/test_tutorial002.py"
+  ],
+  "test_fns": [
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_tutorial/test_stream_data/test_tutorial002.py"
+  ],
+  "pytest_tail": "packages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n1 error in 2.60s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14986",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_openapi_cache_root_path.py",
+   "tests/test_swagger_ui_escape.py"
+  ],
+  "test_fns": [
+   "test_root_path_does_not_persist_across_requests",
+   "test_multiple_different_root_paths_do_not_accumulate",
+   "test_legitimate_root_path_still_appears",
+   "test_configured_servers_not_mutated",
+   "test_init_oauth_html_chars_are_escaped",
+   "test_swagger_ui_parameters_html_chars_are_escaped",
+   "test_normal_init_oauth_still_works"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_openapi_cache_root_path.py",
+   "tests/test_swagger_ui_escape.py"
+  ],
+  "pytest_tail": "FoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_openapi_cache_root_path.py\nERROR tests/test_swagger_ui_escape.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 2.76s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14978",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_strict_content_type_app_level.py",
+   "tests/test_strict_content_type_nested.py",
+   "tests/test_strict_content_type_router_level.py",
+   "tests/test_tutorial/test_body/test_tutorial001.py",
+   "tests/test_tutorial/test_strict_content_type/test_tutorial001.py"
+  ],
+  "test_fns": [
+   "test_default_strict_rejects_no_content_type",
+   "test_default_strict_accepts_json_content_type",
+   "test_lax_accepts_no_content_type",
+   "test_lax_accepts_json_content_type",
+   "test_strict_inner_on_lax_app_rejects_no_content_type",
+   "test_default_inner_inherits_lax_from_app",
+   "test_strict_inner_accepts_json_content_type",
+   "test_default_inner_accepts_json_content_type",
+   "test_lax_outer_on_strict_app_accepts_no_content_type",
+   "test_strict_inner_on_lax_outer_rejects_no_content_type",
+   "test_lax_outer_accepts_json_content_type",
+   "test_strict_inner_on_lax_outer_accepts_json_content_type",
+   "test_lax_router_on_strict_app_accepts_no_content_type",
+   "test_strict_router_on_strict_app_rejects_no_content_type",
+   "test_default_router_inherits_strict_from_app",
+   "test_lax_router_accepts_json_content_type",
+   "test_strict_router_accepts_json_content_type",
+   "test_default_router_accepts_json_content_type",
+   "test_no_content_type_json",
+   "test_lax_post_without_content_type_is_parsed_as_json",
+   "test_lax_post_with_json_content_type",
+   "test_lax_post_with_text_plain_is_still_rejected"
+  ],
+  "counts": {
+   "error": 5
+  },
+  "nodes": [
+   "tests/test_strict_content_type_app_level.py",
+   "tests/test_strict_content_type_nested.py",
+   "tests/test_strict_content_type_router_level.py",
+   "tests/test_tutorial/test_body/test_tutorial001.py",
+   "tests/test_tutorial/test_strict_content_type/test_tutorial001.py"
+  ],
+  "pytest_tail": "ontent_type_nested.py\nERROR tests/test_strict_content_type_router_level.py\nERROR tests/test_tutorial/test_body/test_tutorial001.py\nERROR tests/test_tutorial/test_strict_content_type/test_tutorial001.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 5 errors during collection !!!!!!!!!!!!!!!!!!!\n5 errors in 3.16s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7505",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_requests.py"
+  ],
+  "test_fns": [
+   "test_post_getattr_proxy_read_only"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 141,
+   "skipped": 1,
+   "error": 197
+  },
+  "nodes": [
+   "tests/test_requests.py"
+  ],
+  "pytest_tail": " tests/test_requests.py::TestPreparingURLs::test_json_decode_persists_doc_attr\nERROR tests/test_requests.py::test_content_length_for_bytes_data\nERROR tests/test_requests.py::test_content_length_for_string_data_counts_bytes\n1 failed, 141 passed, 1 skipped, 1 xfailed, 4 warnings, 197 errors in 21.77s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7502",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_requests.py"
+  ],
+  "test_fns": [
+   "test_post_named_tempfile"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 141,
+   "skipped": 1,
+   "error": 196
+  },
+  "nodes": [
+   "tests/test_requests.py"
+  ],
+  "pytest_tail": " tests/test_requests.py::TestPreparingURLs::test_json_decode_persists_doc_attr\nERROR tests/test_requests.py::test_content_length_for_bytes_data\nERROR tests/test_requests.py::test_content_length_for_string_data_counts_bytes\n1 failed, 141 passed, 1 skipped, 1 xfailed, 4 warnings, 196 errors in 21.71s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7433",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_requests.py"
+  ],
+  "test_fns": [
+   "test_getattr_proxy_stream_follows_redirect"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 141,
+   "skipped": 1,
+   "error": 195
+  },
+  "nodes": [
+   "tests/test_requests.py"
+  ],
+  "pytest_tail": " tests/test_requests.py::TestPreparingURLs::test_json_decode_persists_doc_attr\nERROR tests/test_requests.py::test_content_length_for_bytes_data\nERROR tests/test_requests.py::test_content_length_for_string_data_counts_bytes\n1 failed, 141 passed, 1 skipped, 1 xfailed, 4 warnings, 195 errors in 21.81s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7427",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "test_fns": [
+   "test_should_bypass_proxies_no_proxy_domain_boundary"
+  ],
+  "counts": {
+   "failed": 8,
+   "passed": 220,
+   "skipped": 1
+  },
+  "nodes": [
+   "tests/test_utils.py"
+  ],
+  "pytest_tail": "mething ; \"boundary2=something_else\" ; no_equals -expected7]\nFAILED tests/test_utils.py::test_get_encoding_from_headers[value3-ISO-8859-1]\nFAILED tests/test_utils.py::test_should_bypass_proxies_no_proxy_domain_boundary[http://prelocalhost/-False]\n8 failed, 220 passed, 1 skipped, 6 warnings in 1.02s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7315",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_adapters.py"
+  ],
+  "test_fns": [
+   "test_request_url_handles_leading_path_separators"
+  ],
+  "counts": {
+   "failed": 1
+  },
+  "nodes": [
+   "tests/test_adapters.py"
+  ],
+  "pytest_tail": "t '//v:h' == '/v:h'\nE         \nE         - /v:h\nE         + //v:h\nE         ? +\n\ntests\\test_adapters.py:8: AssertionError\n=========================== short test summary info ===========================\nFAILED tests/test_adapters.py::test_request_url_handles_leading_path_separators\n1 failed in 0.49s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7328",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_requests.py"
+  ],
+  "test_fns": [
+   "test_redirect_history_no_self_reference",
+   "test_HTTP_307_ALLOW_REDIRECT_POST"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 141,
+   "skipped": 1,
+   "error": 194
+  },
+  "nodes": [
+   "tests/test_requests.py"
+  ],
+  "pytest_tail": " tests/test_requests.py::TestPreparingURLs::test_json_decode_persists_doc_attr\nERROR tests/test_requests.py::test_content_length_for_bytes_data\nERROR tests/test_requests.py::test_content_length_for_string_data_counts_bytes\n1 failed, 141 passed, 1 skipped, 1 xfailed, 4 warnings, 194 errors in 21.72s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7309",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "test_fns": [
+   "test_parse_dict_header",
+   "test__parse_content_type_header",
+   "test_get_encoding_from_headers"
+  ],
+  "counts": {
+   "failed": 6,
+   "passed": 213,
+   "skipped": 1
+  },
+  "nodes": [
+   "tests/test_utils.py"
+  ],
+  "pytest_tail": "s -expected6]\nFAILED tests/test_utils.py::test__parse_content_type_header[multipart/form-data; boundary = something ; \"boundary2=something_else\" ; no_equals -expected7]\nFAILED tests/test_utils.py::test_get_encoding_from_headers[value3-ISO-8859-1]\n6 failed, 213 passed, 1 skipped, 6 warnings in 0.88s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7205",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "test_fns": [
+   "test_empty_default_credentials_ignored"
+  ],
+  "counts": {
+   "failed": 2,
+   "passed": 216,
+   "skipped": 1
+  },
+  "nodes": [
+   "tests/test_utils.py"
+  ],
+  "pytest_tail": "l\n=========================== short test summary info ===========================\nFAILED tests/test_utils.py::TestGetNetrcAuth::test_empty_default_credentials_ignored\nFAILED tests/test_utils.py::TestExtractZippedPaths::test_zipped_paths_extracted\n2 failed, 216 passed, 1 skipped, 6 warnings in 0.80s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_4070",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_console.py",
+   "tests/test_syntax.py"
+  ],
+  "test_fns": [],
+  "counts": {
+   "failed": 1,
+   "passed": 112,
+   "skipped": 11
+  },
+  "nodes": [
+   "tests/test_console.py",
+   "tests/test_syntax.py"
+  ],
+  "pytest_tail": "mpt, stream)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED tests\\test_console.py::test_input_password - OSError: pytest: reading ...\n1 failed, 112 passed, 11 skipped, 1 warning in 1.73s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_4077",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_file_proxy.py"
+  ],
+  "test_fns": [
+   "test_isatty"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 3
+  },
+  "nodes": [
+   "tests/test_file_proxy.py"
+  ],
+  "pytest_tail": " 0x000002300A668E20> = <rich.file_proxy.FileProxy object at 0x000002300A668E20>.isatty\n\ntests\\test_file_proxy.py:54: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_file_proxy.py::test_isatty - assert False\n1 failed, 3 passed in 0.83s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_4079",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_markdown.py"
+  ],
+  "test_fns": [
+   "test_inline_code_in_table_cells"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 7
+  },
+  "nodes": [
+   "tests/test_markdown.py"
+  ],
+  "pytest_tail": ";36;40m'\\x1b[0m\\x1b[1;36;40m)\\x1b[0m\\x1b[1;36;40m;\\x1b[0m\\x1b[36m \\x1b[0m\\n\\x1b[36m                 \\x1b[0m\\n\"\n=========================== short test summary info ===========================\nFAILED tests\\test_markdown.py::test_inline_code_in_table_cells - AssertionErr...\n1 failed, 7 passed in 1.05s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_4076",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_ansi.py"
+  ],
+  "test_fns": [
+   "test_decode_newlines"
+  ],
+  "counts": {
+   "error": 4,
+   "failed": 4,
+   "passed": 20
+  },
+  "nodes": [
+   "tests/test_ansi.py"
+  ],
+  "pytest_tail": "t '\\x1b...\nFAILED tests\\test_ansi.py::test_decode_issue_2688[\\x1b[31mFound 4 errors in 2 files (checked 18 source files)\\x1b(B\\x1b[m\\n-Found 4 errors in 2 files (checked 18 source files)\\n]\nFAILED tests\\test_ansi.py::test_decode_newlines - AssertionError: assert '' =...\n4 failed, 20 passed in 0.92s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_4075",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_console.py"
+  ],
+  "test_fns": [
+   "test_print_empty_with_end",
+   "test_print_multiple"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 92,
+   "skipped": 7
+  },
+  "nodes": [
+   "tests/test_console.py"
+  ],
+  "pytest_tail": "ping them using repr()\nE         - '!'\nE         + '\\n'\n\ntests\\test_console.py:198: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_console.py::test_print_empty_with_end - AssertionError: ass...\n1 failed, 92 passed, 7 skipped in 1.16s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_4006",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_cells.py"
+  ],
+  "test_fns": [
+   "test_chop_cells_zero_width",
+   "test_is_single_cell_widths"
+  ],
+  "error": "TimeoutExpired: Command '['C:\\\\Users\\\\Biges\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\\\python.exe', '-m', 'pytest', '-q', '--no-header', '-p', 'no:cacheprovider', 'tests/test_cells.py']' timed out after 1800 seconds"
+ },
+ {
+  "task": "fastapi_14258",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_router_circular_import.py"
+  ],
+  "test_fns": [
+   "test_router_circular_import"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_router_circular_import.py"
+  ],
+  "pytest_tail": "te import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_router_circular_import.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 5.11s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14851",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_router_events.py"
+  ],
+  "test_fns": [
+   "test_router_async_shutdown_handler",
+   "test_router_sync_generator_lifespan",
+   "test_router_async_generator_lifespan"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_router_events.py"
+  ],
+  "pytest_tail": "m starlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_router_events.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 4.04s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14873",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_router_events.py"
+  ],
+  "test_fns": [
+   "test_startup_shutdown_handlers_as_parameters"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_router_events.py"
+  ],
+  "pytest_tail": "m starlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_router_events.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.79s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_13920",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_pep695.py"
+  ],
+  "test_fns": [
+   "test_pep695_type_dependencies"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_dependency_pep695.py"
+  ],
+  "pytest_tail": "arlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_dependency_pep695.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.57s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14794",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_response_dependency.py"
+  ],
+  "test_fns": [
+   "test_response_with_depends_annotated",
+   "test_response_with_depends_default",
+   "test_response_without_depends",
+   "test_response_dependency_chain",
+   "test_response_dependency_returns_different_response_instance",
+   "test_request_with_depends_annotated",
+   "test_background_tasks_with_depends_annotated"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_response_dependency.py"
+  ],
+  "pytest_tail": "lette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_response_dependency.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.36s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14786",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_security_http_base.py",
+   "tests/test_security_oauth2_authorization_code_bearer.py"
+  ],
+  "test_fns": [
+   "test_security_http_base_with_whitespaces",
+   "test_security_http_base_no_credentials",
+   "test_token_with_whitespaces",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_security_http_base.py",
+   "tests/test_security_oauth2_authorization_code_bearer.py"
+  ],
+  "pytest_tail": "le named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_security_http_base.py\nERROR tests/test_security_oauth2_authorization_code_bearer.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 3.59s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14492",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_tutorial/test_metadata/test_tutorial001_1.py"
+  ],
+  "test_fns": [
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_tutorial/test_metadata/test_tutorial001_1.py"
+  ],
+  "pytest_tail": " status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_tutorial/test_metadata/test_tutorial001_1.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.75s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14479",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_invalid_sequence_param.py"
+  ],
+  "test_fns": [
+   "test_invalid_sequence",
+   "test_invalid_tuple",
+   "test_invalid_dict",
+   "test_invalid_simple_dict"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_invalid_sequence_param.py"
+  ],
+  "pytest_tail": "te import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_invalid_sequence_param.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 3.25s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14463",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_additional_responses_union_duplicate_anyof.py"
+  ],
+  "test_fns": [
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_additional_responses_union_duplicate_anyof.py"
+  ],
+  "pytest_tail": "status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_additional_responses_union_duplicate_anyof.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.48s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_12942",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_union_body_discriminator.py"
+  ],
+  "test_fns": [
+   "test_discriminator_pydantic_v2"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_union_body_discriminator.py"
+  ],
+  "pytest_tail": " import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_union_body_discriminator.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 3.17s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14099",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_after_yield_raise.py",
+   "tests/test_dependency_after_yield_streaming.py",
+   "tests/test_dependency_after_yield_websockets.py",
+   "tests/test_dependency_contextmanager.py",
+   "tests/test_route_scope.py",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py"
+  ],
+  "test_fns": [
+   "test_catching",
+   "test_broken_raise",
+   "test_broken_no_raise",
+   "test_broken_return_finishes",
+   "test_regular_no_stream",
+   "test_stream_simple",
+   "test_stream_session",
+   "test_broken_session_data",
+   "test_broken_session_data_no_raise",
+   "test_broken_session_stream_raise",
+   "test_broken_session_stream_no_raise",
+   "test_websocket_dependency_after_yield",
+   "test_websocket_dependency_after_yield_broken"
+  ],
+  "counts": {
+   "error": 6
+  },
+  "nodes": [
+   "tests/test_dependency_after_yield_raise.py",
+   "tests/test_dependency_after_yield_streaming.py",
+   "tests/test_dependency_after_yield_websockets.py",
+   "tests/test_dependency_contextmanager.py",
+   "tests/test_route_scope.py",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py"
+  ],
+  "pytest_tail": "g.py\nERROR tests/test_dependency_after_yield_websockets.py\nERROR tests/test_dependency_contextmanager.py\nERROR tests/test_route_scope.py\nERROR tests/test_tutorial/test_dependencies/test_tutorial008c.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 6 errors during collection !!!!!!!!!!!!!!!!!!!\n6 errors in 2.28s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14609",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_compat.py",
+   "tests/test_compat_params_v1.py",
+   "tests/test_datetime_custom_encoder.py",
+   "tests/test_filter_pydantic_sub_model/app_pv1.py",
+   "tests/test_filter_pydantic_sub_model/test_filter_pydantic_sub_model_pv1.py",
+   "tests/test_get_model_definitions_formfeed_escape.py",
+   "tests/test_inherited_custom_class.py",
+   "tests/test_jsonable_encoder.py"
+  ],
+  "test_fns": [
+   "test_json_encoder_error_with_pydanticv1"
+  ],
+  "counts": {
+   "error": 5
+  },
+  "nodes": [
+   "tests/test_compat.py",
+   "tests/test_compat_params_v1.py",
+   "tests/test_datetime_custom_encoder.py",
+   "tests/test_filter_pydantic_sub_model/app_pv1.py",
+   "tests/test_filter_pydantic_sub_model/test_filter_pydantic_sub_model_pv1.py",
+   "tests/test_get_model_definitions_formfeed_escape.py",
+   "tests/test_inherited_custom_class.py",
+   "tests/test_jsonable_encoder.py"
+  ],
+  "pytest_tail": "ests/test_compat.py\nERROR tests/test_datetime_custom_encoder.py\nERROR tests/test_get_model_definitions_formfeed_escape.py\nERROR tests/test_inherited_custom_class.py\nERROR tests/test_jsonable_encoder.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 5 errors during collection !!!!!!!!!!!!!!!!!!!\n5 errors in 3.66s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14372",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_depends_hashable.py"
+  ],
+  "test_fns": [
+   "test_depends_hashable"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_depends_hashable.py"
+  ],
+  "pytest_tail": "tarlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_depends_hashable.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.29s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14349",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_schema_ref_pydantic_v2.py"
+  ],
+  "test_fns": [
+   "test_get",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_schema_ref_pydantic_v2.py"
+  ],
+  "pytest_tail": "te import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_schema_ref_pydantic_v2.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.15s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14512",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_union_body_discriminator_annotated.py"
+  ],
+  "test_fns": [
+   "test_union_body_discriminator_assignment",
+   "test_union_body_discriminator_annotated",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_union_body_discriminator_annotated.py"
+  ],
+  "pytest_tail": "atus as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_union_body_discriminator_annotated.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.91s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14487",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_tutorial/test_handling_errors/test_tutorial004.py"
+  ],
+  "test_fns": [
+   "test_get_validation_error",
+   "test_get_http_error"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_tutorial/test_handling_errors/test_tutorial004.py"
+  ],
+  "pytest_tail": "us\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_tutorial/test_handling_errors/test_tutorial004.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.29s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_11355",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_stringified_annotations_simple.py"
+  ],
+  "test_fns": [
+   "test_stringified_annotations"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_stringified_annotations_simple.py"
+  ],
+  "pytest_tail": "t status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_stringified_annotations_simple.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.39s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14485",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_stringified_annotation_dependency.py"
+  ],
+  "test_fns": [
+   "test_get",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_stringified_annotation_dependency.py"
+  ],
+  "pytest_tail": "tatus as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_stringified_annotation_dependency.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.33s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14482",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_arbitrary_types.py"
+  ],
+  "test_fns": [
+   "test_get",
+   "test_typeadapter",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_arbitrary_types.py"
+  ],
+  "pytest_tail": "starlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_arbitrary_types.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.54s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14306",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_validation_error_context.py"
+  ],
+  "test_fns": [
+   "test_request_validation_error_includes_endpoint_context",
+   "test_response_validation_error_includes_endpoint_context",
+   "test_websocket_validation_error_includes_endpoint_context",
+   "test_subapp_request_validation_error_includes_endpoint_context",
+   "test_subapp_websocket_validation_error_includes_endpoint_context",
+   "test_validation_error_with_only_path",
+   "test_validation_error_with_no_context"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_validation_error_context.py"
+  ],
+  "pytest_tail": " import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_validation_error_context.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.36s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14458",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_class.py"
+  ],
+  "test_fns": [
+   "test_class_dependency"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_dependency_class.py"
+  ],
+  "pytest_tail": "tarlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_dependency_class.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.33s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14459",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_security_oauth2_authorization_code_bearer_scopes_openapi.py",
+   "tests/test_security_oauth2_authorization_code_bearer_scopes_openapi_simple.py"
+  ],
+  "test_fns": [
+   "test_read_with_oauth2_scheme",
+   "test_read_with_get_token",
+   "test_read_token",
+   "test_read_admin",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_security_oauth2_authorization_code_bearer_scopes_openapi.py",
+   "tests/test_security_oauth2_authorization_code_bearer_scopes_openapi_simple.py"
+  ],
+  "pytest_tail": "summary info ===========================\nERROR tests/test_security_oauth2_authorization_code_bearer_scopes_openapi.py\nERROR tests/test_security_oauth2_authorization_code_bearer_scopes_openapi_simple.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 2.03s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14448",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_wrapped.py"
+  ],
+  "test_fns": [
+   "test_class_dependency"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_dependency_wrapped.py"
+  ],
+  "pytest_tail": "rlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_dependency_wrapped.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.98s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14455",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_security_oauth2_authorization_code_bearer_scopes_openapi.py"
+  ],
+  "test_fns": [
+   "test_root",
+   "test_read_token",
+   "test_create_token",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_security_oauth2_authorization_code_bearer_scopes_openapi.py"
+  ],
+  "pytest_tail": "uleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_security_oauth2_authorization_code_bearer_scopes_openapi.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.92s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_9753",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_partial.py"
+  ],
+  "test_fns": [
+   "test_dependency_types_with_partial"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_dependency_partial.py"
+  ],
+  "pytest_tail": "rlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_dependency_partial.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.90s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14430",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_compat.py"
+  ],
+  "test_fns": [
+   "test_serialize_sequence_value_with_optional_list_pipe_union"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_compat.py"
+  ],
+  "pytest_tail": "    from starlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_compat.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.92s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_5077",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/forward_reference_type.py",
+   "tests/test_wrapped_method_forward_reference.py"
+  ],
+  "test_fns": [
+   "test_wrapped_method_type_inference"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/forward_reference_type.py",
+   "tests/test_wrapped_method_forward_reference.py"
+  ],
+  "pytest_tail": "r: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/forward_reference_type.py\nERROR tests/test_wrapped_method_forward_reference.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 1.92s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_9555",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_wrapped.py"
+  ],
+  "test_fns": [
+   "test_class_dependency"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_dependency_wrapped.py"
+  ],
+  "pytest_tail": "rlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_dependency_wrapped.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.89s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14361",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_schema_compat_pydantic_v2.py"
+  ],
+  "test_fns": [
+   "test_get",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_schema_compat_pydantic_v2.py"
+  ],
+  "pytest_tail": "import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_schema_compat_pydantic_v2.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.89s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_13207",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_computed_fields.py"
+  ],
+  "test_fns": [
+   "test_get",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_computed_fields.py"
+  ],
+  "pytest_tail": "starlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_computed_fields.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.85s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14360",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_request_param_model_by_alias.py"
+  ],
+  "test_fns": [
+   "test_query_model_with_alias",
+   "test_header_model_with_alias",
+   "test_cookie_model_with_alias",
+   "test_query_model_with_alias_by_name",
+   "test_header_model_with_alias_by_name",
+   "test_cookie_model_with_alias_by_name"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_request_param_model_by_alias.py"
+  ],
+  "pytest_tail": "ort status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_request_param_model_by_alias.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.96s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14356",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_query_cookie_header_model_extra_params.py",
+   "tests/test_tutorial/test_header_param_models/test_tutorial003.py"
+  ],
+  "test_fns": [
+   "test_query_pass_extra_list",
+   "test_query_pass_extra_single",
+   "test_header_pass_extra_list",
+   "test_header_pass_extra_single",
+   "test_cookie_pass_extra_list"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_query_cookie_header_model_extra_params.py",
+   "tests/test_tutorial/test_header_param_models/test_tutorial003.py"
+  ],
+  "pytest_tail": "=================== short test summary info ===========================\nERROR tests/test_query_cookie_header_model_extra_params.py\nERROR tests/test_tutorial/test_header_param_models/test_tutorial003.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 1.96s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_5624",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_security_scopes_dont_propagate.py"
+  ],
+  "test_fns": [
+   "test_security_scopes_dont_propagate"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_security_scopes_dont_propagate.py"
+  ],
+  "pytest_tail": "t status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_security_scopes_dont_propagate.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.89s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14419",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_security_scopes.py",
+   "tests/test_security_scopes_sub_dependency.py"
+  ],
+  "test_fns": [
+   "test_security_scopes_dependency_called_once",
+   "test_security_scopes_sub_dependency_caching"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_security_scopes.py",
+   "tests/test_security_scopes_sub_dependency.py"
+  ],
+  "pytest_tail": "Error: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_security_scopes.py\nERROR tests/test_security_scopes_sub_dependency.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 1.97s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14301",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_yield_scope.py"
+  ],
+  "test_fns": [
+   "test_router_level_dep_scope_function",
+   "test_router_level_dep_scope_request",
+   "test_app_level_dep_scope_function",
+   "test_app_level_dep_scope_request"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_dependency_yield_scope.py"
+  ],
+  "pytest_tail": "te import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_dependency_yield_scope.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.82s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14262",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_yield_scope.py",
+   "tests/test_dependency_yield_scope_websockets.py",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py"
+  ],
+  "test_fns": [
+   "test_function_scope",
+   "test_request_scope",
+   "test_two_scopes",
+   "test_sub",
+   "test_broken_scope",
+   "test_named_function_scope",
+   "test_regular_function_scope",
+   "test_get_users_me"
+  ],
+  "counts": {
+   "error": 3
+  },
+  "nodes": [
+   "tests/test_dependency_yield_scope.py",
+   "tests/test_dependency_yield_scope_websockets.py",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py"
+  ],
+  "pytest_tail": "ummary info ===========================\nERROR tests/test_dependency_yield_scope.py\nERROR tests/test_dependency_yield_scope_websockets.py\nERROR tests/test_tutorial/test_dependencies/test_tutorial008e.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!\n3 errors in 1.95s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14266",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_top_level_security_scheme_in_openapi.py"
+  ],
+  "test_fns": [
+   "test_get_root",
+   "test_get_root_no_token",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_top_level_security_scheme_in_openapi.py"
+  ],
+  "pytest_tail": "us as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_top_level_security_scheme_in_openapi.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.94s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14246",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_no_schema_split.py",
+   "tests/test_pydantic_v1_v2_multifile/test_multifile.py"
+  ],
+  "test_fns": [
+   "test_create_message",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_no_schema_split.py",
+   "tests/test_pydantic_v1_v2_multifile/test_multifile.py"
+  ],
+  "pytest_tail": " module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_no_schema_split.py\nERROR tests/test_pydantic_v1_v2_multifile/test_multifile.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 1.92s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14186",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_compat.py",
+   "tests/test_get_model_definitions_formfeed_escape.py",
+   "tests/test_response_model_as_return_annotation.py"
+  ],
+  "test_fns": [
+   "test_model_field_default_required",
+   "test_is_uploadfile_sequence_annotation",
+   "test_model_description_escaped_with_formfeed",
+   "test_v1_plain_validator_function",
+   "test_is_pv1_scalar_field",
+   "test_get_model_fields_cached",
+   "test_invalid_response_model_field_pv1"
+  ],
+  "counts": {
+   "error": 3
+  },
+  "nodes": [
+   "tests/test_compat.py",
+   "tests/test_get_model_definitions_formfeed_escape.py",
+   "tests/test_response_model_as_return_annotation.py"
+  ],
+  "pytest_tail": "======== short test summary info ===========================\nERROR tests/test_compat.py\nERROR tests/test_get_model_definitions_formfeed_escape.py\nERROR tests/test_response_model_as_return_annotation.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!\n3 errors in 2.06s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_9425",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_return_none_stringified_annotations.py"
+  ],
+  "test_fns": [
+   "test_no_content"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_return_none_stringified_annotations.py"
+  ],
+  "pytest_tail": "tus as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_return_none_stringified_annotations.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.63s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_13713",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/main.py",
+   "tests/test_application.py"
+  ],
+  "test_fns": [
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/main.py",
+   "tests/test_application.py"
+  ],
+  "pytest_tail": "status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/main.py\nERROR tests/test_application.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 1.77s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14077",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_enforce_once_required_parameter.py"
+  ],
+  "test_fns": [
+   "test_schema",
+   "test_get_invalid",
+   "test_get_valid"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_enforce_once_required_parameter.py"
+  ],
+  "pytest_tail": " status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_enforce_once_required_parameter.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.62s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3718",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_panel.py"
+  ],
+  "test_fns": [
+   "test_title_text_with_border_color",
+   "test_title_text_with_panel_background"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 12
+  },
+  "nodes": [
+   "tests/test_panel.py"
+  ],
+  "pytest_tail": "[44m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\\x1b[0m\\x1b[1;35m subtitle \\x1b[0m\\x1b[44m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\\x1b[0m\\x1b[44m\u2500\u256f\\x1b[0m\\n'\n=========================== short test summary info ===========================\nFAILED tests\\test_panel.py::test_title_text_with_panel_background - Assertion...\n1 failed, 12 passed in 0.95s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3934",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_live.py"
+  ],
+  "test_fns": [
+   "test_live_empty"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 10
+  },
+  "nodes": [
+   "tests/test_live.py"
+  ],
+  "pytest_tail": "------------------------ Captured stdout call -----------------------------\n'\\x1b[?25l\\r\\x1b[2K\\n\\x1b[?25h\\r'\n=========================== short test summary info ===========================\nFAILED tests\\test_live.py::test_live_empty - AssertionError: assert '\\n' not ...\n1 failed, 10 passed in 2.79s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3953",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_cells.py"
+  ],
+  "test_fns": [
+   "test_zwj",
+   "test_non_printable"
+  ],
+  "counts": {
+   "failed": 2,
+   "passed": 54
+  },
+  "nodes": [
+   "tests/test_cells.py"
+  ],
+  "pytest_tail": " cell_len('\\x01')\n\ntests\\test_cells.py:206: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_cells.py::test_zwj - StopIteration\nFAILED tests\\test_cells.py::test_non_printable - AssertionError: assert 1 == 0\n2 failed, 54 passed in 0.80s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3944",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_cells.py"
+  ],
+  "test_fns": [
+   "test_nerd_font"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 53
+  },
+  "nodes": [
+   "tests/test_cells.py"
+  ],
+  "pytest_tail": "AssertionError: assert 0 == 1\nE        +  where 0 = cell_len('\\U000f024d')\n\ntests\\test_cells.py:189: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_cells.py::test_nerd_font - AssertionError: assert 0 == 1\n1 failed, 53 passed in 0.74s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3942",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/_card_render.py",
+   "tests/test_markdown.py",
+   "tests/test_markdown_no_hyperlinks.py"
+  ],
+  "test_fns": [
+   "test_markdown_table",
+   "test_inline_styles_in_table",
+   "test_inline_styles_with_justification",
+   "test_markdown_render",
+   "test_partial_table"
+  ],
+  "counts": {
+   "failed": 6,
+   "passed": 2
+  },
+  "nodes": [
+   "tests/_card_render.py",
+   "tests/test_markdown.py",
+   "tests/test_markdown_no_hyperlinks.py"
+  ],
+  "pytest_tail": "_table - AssertionError: ...\nFAILED tests\\test_markdown.py::test_inline_styles_with_justification - Assert...\nFAILED tests\\test_markdown.py::test_partial_table - AssertionError: assert '\\...\nFAILED tests\\test_markdown_no_hyperlinks.py::test_markdown_render - Assertion...\n6 failed, 2 passed in 1.33s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3938",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_segment.py",
+   "tests/test_text.py"
+  ],
+  "test_fns": [
+   "test_split_lines_terminator",
+   "test_split_lines_terminator_single_line",
+   "test_split_and_crop_lines",
+   "test_soft_wrap_styled"
+  ],
+  "counts": {
+   "failed": 3,
+   "passed": 171
+  },
+  "nodes": [
+   "tests/test_segment.py",
+   "tests/test_text.py"
+  ],
+  "pytest_tail": "==========================\nFAILED tests\\test_segment.py::test_split_lines_terminator - AttributeError: t...\nFAILED tests\\test_segment.py::test_split_lines_terminator_single_line - Attri...\nFAILED tests\\test_text.py::test_soft_wrap_styled - AssertionError: assert '\\x...\n3 failed, 171 passed in 1.06s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3882",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_prompt.py"
+  ],
+  "test_fns": [
+   "test_prompt_confirm_markup"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 7
+  },
+  "nodes": [
+   "tests/test_prompt.py"
+  ],
+  "pytest_tail": "pt.invalid]Please enter Y or N\\ncontinue [y/n] (y): [prompt.invalid]Please enter Y or N\\ncontinue [y/n] (y): '\n=========================== short test summary info ===========================\nFAILED tests\\test_prompt.py::test_prompt_confirm_markup - AssertionError: ass...\n1 failed, 7 passed in 0.69s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3894",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_inspect.py"
+  ],
+  "test_fns": [
+   "test_qualname_in_slots"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 41,
+   "skipped": 4
+  },
+  "nodes": [
+   "tests/test_inspect.py"
+  ],
+  "pytest_tail": "r Text can be appended to Text\nE           assert False\n\ntests\\test_inspect.py:417: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_inspect.py::test_qualname_in_slots - AssertionError: Class ...\n1 failed, 41 passed, 4 skipped in 0.80s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3935",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_columns.py",
+   "tests/test_table.py"
+  ],
+  "test_fns": [
+   "test_padding_width"
+  ],
+  "counts": {
+   "failed": 2,
+   "passed": 20
+  },
+  "nodes": [
+   "tests/test_columns.py",
+   "tests/test_table.py"
+  ],
+  "pytest_tail": "  aaa aaa \n'aaa  aaa aaa \\n'\n=========================== short test summary info ===========================\nFAILED tests\\test_columns.py::test_render - AssertionError: assert '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...\nFAILED tests\\test_table.py::test_padding_width - AssertionError: assert 'aaa ...\n2 failed, 20 passed in 0.81s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3905",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_progress.py"
+  ],
+  "test_fns": [
+   "test_no_output_if_progress_is_disabled_non_interactive",
+   "test_open"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 38
+  },
+  "nodes": [
+   "tests/test_progress.py"
+  ],
+  "pytest_tail": "589: AssertionError\n---------------------------- Captured stdout call -----------------------------\n'\\n'\n=========================== short test summary info ===========================\nFAILED tests\\test_progress.py::test_no_output_if_progress_is_disabled_non_interactive\n1 failed, 38 passed in 1.17s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3930",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_cells.py",
+   "tests/test_text.py",
+   "tests/test_unicode_data.py"
+  ],
+  "test_fns": [
+   "test_get_character_cell_size",
+   "test_split_text",
+   "test_chop_cells",
+   "test_split_graphemes",
+   "test_wrap_long_multi_codepoint",
+   "test_wrap_overflow",
+   "test_wrap_multi_codepoint",
+   "test_wrap_long_words_justify_left",
+   "test_load",
+   "test_parse_version",
+   "test_load_version",
+   "test_load_version_invalid"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_cells.py",
+   "tests/test_text.py",
+   "tests/test_unicode_data.py"
+  ],
+  "pytest_tail": "\nE   ModuleNotFoundError: No module named 'rich._unicode_data'\n=========================== short test summary info ===========================\nERROR tests\\test_cells.py\nERROR tests\\test_unicode_data.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 0.85s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "httpx_3672",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_parsers.py"
+  ],
+  "test_fns": [
+   "test_parser",
+   "test_parser_server",
+   "test_parser_repr",
+   "test_client_connection_close",
+   "test_server_connection_close"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_parsers.py"
+  ],
+  "pytest_tail": "st_parsers.py:1: in <module>\n    import httpx\nE   ModuleNotFoundError: No module named 'httpx'\n=========================== short test summary info ===========================\nERROR tests/test_parsers.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.57s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14791",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_additional_properties.py",
+   "tests/test_additional_properties_bool.py",
+   "tests/test_additional_responses_custom_model_in_callback.py",
+   "tests/test_additional_responses_default_validationerror.py",
+   "tests/test_annotated.py",
+   "tests/test_application.py",
+   "tests/test_dependency_duplicates.py",
+   "tests/test_enforce_once_required_parameter.py",
+   "tests/test_extra_routes.py",
+   "tests/test_filter_pydantic_sub_model_pv2.py",
+   "tests/test_forms_single_param.py",
+   "tests/test_generate_unique_id_function.py",
+   "tests/test_get_model_definitions_formfeed_escape.py",
+   "tests/test_get_request_body.py",
+   "tests/test_include_router_defaults_overrides.py",
+   "tests/test_infer_param_optionality.py",
+   "tests/test_modules_same_name_body/test_main.py",
+   "tests/test_multi_body_errors.py",
+   "tests/test_multi_query_errors.py",
+   "tests/test_no_schema_split.py",
+   "tests/test_openapi_examples.py",
+   "tests/test_openapi_query_parameter_extension.py",
+   "tests/test_openapi_separate_input_output_schemas.py",
+   "tests/test_param_in_path_and_dependency.py",
+   "tests/test_param_include_in_schema.py",
+   "tests/test_put_no_body.py",
+   "tests/test_regex_deprecated_body.py",
+   "tests/test_regex_deprecated_params.py",
+   "tests/test_repeated_dependency_schema.py"
+  ],
+  "test_fns": [
+   "test_openapi_schema",
+   "test_openapi",
+   "test_openapi_schema_no_separate"
+  ],
+  "counts": {
+   "error": 29
+  },
+  "nodes": [
+   "tests/test_additional_properties.py",
+   "tests/test_additional_properties_bool.py",
+   "tests/test_additional_responses_custom_model_in_callback.py",
+   "tests/test_additional_responses_default_validationerror.py",
+   "tests/test_annotated.py",
+   "tests/test_application.py",
+   "tests/test_dependency_duplicates.py",
+   "tests/test_enforce_once_required_parameter.py",
+   "tests/test_extra_routes.py",
+   "tests/test_filter_pydantic_sub_model_pv2.py",
+   "tests/test_forms_single_param.py",
+   "tests/test_generate_unique_id_function.py",
+   "tests/test_get_model_definitions_formfeed_escape.py",
+   "tests/test_get_request_body.py",
+   "tests/test_include_router_defaults_overrides.py",
+   "tests/test_infer_param_optionality.py",
+   "tests/test_modules_same_name_body/test_main.py",
+   "tests/test_multi_body_errors.py",
+   "tests/test_multi_query_errors.py",
+   "tests/test_no_schema_split.py",
+   "tests/test_openapi_examples.py",
+   "tests/test_openapi_query_parameter_extension.py",
+   "tests/test_openapi_separate_input_output_schemas.py",
+   "tests/test_param_in_path_and_dependency.py",
+   "tests/test_param_include_in_schema.py",
+   "tests/test_put_no_body.py",
+   "tests/test_regex_deprecated_body.py",
+   "tests/test_regex_deprecated_params.py",
+   "tests/test_repeated_dependency_schema.py"
+  ],
+  "pytest_tail": "sts/test_param_include_in_schema.py\nERROR tests/test_put_no_body.py\nERROR tests/test_regex_deprecated_body.py\nERROR tests/test_regex_deprecated_params.py\nERROR tests/test_repeated_dependency_schema.py\n!!!!!!!!!!!!!!!!!! Interrupted: 29 errors during collection !!!!!!!!!!!!!!!!!!!\n29 errors in 4.87s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_15800",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_frontend.py"
+  ],
+  "test_fns": [
+   "test_frontend_exact_prefix_path_serves_index",
+   "test_apirouter_frontend_with_router_prefix_and_frontend_subpath",
+   "test_frontend_fallback_rejects_invalid_fallback",
+   "test_index_fallback_ignores_invalid_q_value",
+   "test_frontend_static_files_lookup_errors",
+   "test_frontend_route_group_helpers",
+   "test_included_low_priority_routes_cache_is_reused",
+   "test_low_priority_api_route_handles_with_context",
+   "test_included_low_priority_api_route_handles_with_context",
+   "test_normal_route_partial_match_returns_before_frontend",
+   "test_normal_route_partial_match_wins_before_frontend",
+   "test_basic_file_serving",
+   "test_existing_api_route_wins_over_frontend",
+   "test_api_route_404_is_not_replaced_by_frontend_fallback",
+   "test_index_fallback_for_navigation_request",
+   "test_index_fallback_parses_accept_parameters",
+   "test_index_fallback_ignores_q_zero_accept",
+   "test_index_fallback_respects_explicit_html_rejection_with_wildcard",
+   "test_index_fallback_respects_explicit_xhtml_rejection_with_wildcard",
+   "test_index_fallback_does_not_handle_asset_like_or_non_html_requests",
+   "test_404_fallback_handles_missing_assets",
+   "test_auto_fallback_prefers_404_over_index",
+   "test_auto_fallback_uses_index_when_404_is_missing",
+   "test_auto_fallback_returns_normal_404_without_fallback_files",
+   "test_no_fallback_returns_normal_404",
+   "test_directory_index_and_redirect",
+   "test_path_validation_and_trailing_slash_normalization",
+   "test_frontend_path_matching_uses_segment_boundaries",
+   "test_multiple_frontends_use_longest_matching_prefix",
+   "test_apirouter_frontend_uses_include_prefix",
+   "test_global_priority_across_included_routers",
+   "test_nested_apirouter_frontend_uses_all_include_prefixes",
+   "test_low_priority_cache_updates_after_route_added_to_included_router",
+   "test_normal_route_slash_redirect_wins_before_frontend_redirect",
+   "test_frontend_respects_root_path",
+   "test_websocket_route_wins_over_frontend",
+   "test_head_requests_work",
+   "test_unsupported_methods_return_405",
+   "test_path_traversal_cannot_escape_directory",
+   "test_symlink_outside_directory_is_not_served",
+   "test_check_dir_true_fails_early_for_missing_directory",
+   "test_check_dir_false_allows_missing_directory_and_fails_on_request",
+   "test_explicit_fallback_files_fail_clearly_when_missing",
+   "test_frontend_routes_are_not_in_openapi",
+   "test_docs_frontend_examples",
+   "test_low_priority_routes_can_store_non_frontend_routes",
+   "test_included_low_priority_routes_can_store_non_frontend_routes"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_frontend.py"
+  ],
+  "pytest_tail": "packages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n1 error in 3.97s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_15785",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_router_include_context.py"
+  ],
+  "test_fns": [
+   "test_iter_route_contexts_returns_direct_route_context",
+   "test_iter_route_contexts_supports_nested_conflict_detection",
+   "test_get_openapi_accepts_filtered_route_contexts_with_effective_paths",
+   "test_get_openapi_accepts_webhook_route_contexts",
+   "test_router_include_context_matches_flattened_include_metadata"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_router_include_context.py"
+  ],
+  "pytest_tail": "packages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n1 error in 2.14s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14371",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_request_params/test_body/test_list.py",
+   "tests/test_request_params/test_body/test_optional_list.py",
+   "tests/test_request_params/test_body/test_optional_str.py",
+   "tests/test_request_params/test_body/test_required_str.py",
+   "tests/test_request_params/test_cookie/test_optional_str.py",
+   "tests/test_request_params/test_cookie/test_required_str.py",
+   "tests/test_request_params/test_file/test_list.py",
+   "tests/test_request_params/test_file/test_optional.py",
+   "tests/test_request_params/test_file/test_optional_list.py",
+   "tests/test_request_params/test_file/test_required.py",
+   "tests/test_request_params/test_form/test_list.py",
+   "tests/test_request_params/test_form/test_optional_list.py",
+   "tests/test_request_params/test_form/test_optional_str.py",
+   "tests/test_request_params/test_form/test_required_str.py",
+   "tests/test_request_params/test_header/test_list.py",
+   "tests/test_request_params/test_header/test_optional_list.py",
+   "tests/test_request_params/test_header/test_optional_str.py",
+   "tests/test_request_params/test_header/test_required_str.py",
+   "tests/test_request_params/test_path/test_required_str.py",
+   "tests/test_request_params/test_query/test_list.py",
+   "tests/test_request_params/test_query/test_optional_list.py",
+   "tests/test_request_params/test_query/test_optional_str.py",
+   "tests/test_request_params/test_query/test_required_str.py"
+  ],
+  "test_fns": [
+   "test_required_list_validation_alias_schema",
+   "test_required_list_validation_alias_missing",
+   "test_required_list_validation_alias_by_name",
+   "test_required_list_alias_and_validation_alias_schema",
+   "test_required_list_alias_and_validation_alias_missing",
+   "test_required_list_alias_and_validation_alias_by_name",
+   "test_required_list_alias_and_validation_alias_by_alias",
+   "test_optional_list_validation_alias_missing_empty_dict",
+   "test_optional_list_alias_and_validation_alias_by_name",
+   "test_optional_list_alias_and_validation_alias_by_validation_alias",
+   "test_model_optional_validation_alias_missing_empty_dict",
+   "test_optional_alias_and_validation_alias_by_name",
+   "test_required_validation_alias_schema",
+   "test_required_validation_alias_missing",
+   "test_required_validation_alias_by_name",
+   "test_required_alias_and_validation_alias_schema",
+   "test_required_alias_and_validation_alias_missing",
+   "test_required_alias_and_validation_alias_by_name",
+   "test_required_alias_and_validation_alias_by_alias",
+   "test_optional_alias_by_name",
+   "test_optional_validation_alias_missing",
+   "test_optional_validation_alias_by_name",
+   "test_optional_validation_alias_by_validation_alias",
+   "test_optional_alias_and_validation_alias_by_alias",
+   "test_optional_alias_and_validation_alias_by_validation_alias",
+   "test_required_alias_missing",
+   "test_required_alias_by_name",
+   "test_list_validation_alias_schema",
+   "test_list_validation_alias_missing",
+   "test_list_validation_alias_by_name",
+   "test_list_validation_alias_by_validation_alias",
+   "test_list_alias_and_validation_alias_schema",
+   "test_list_alias_and_validation_alias_missing",
+   "test_list_alias_and_validation_alias_by_name",
+   "test_list_alias_and_validation_alias_by_alias",
+   "test_list_alias_and_validation_alias_by_validation_alias",
+   "test_optional_list_missing",
+   "test_optional_list_alias_by_name",
+   "test_required_list_alias_missing",
+   "test_required_list_alias_by_name",
+   "test_optional_list_validation_alias_missing",
+   "test_optional_list_alias_and_validation_alias_by_alias",
+   "test_required_list_validation_alias_by_validation_alias",
+   "test_required_list_alias_and_validation_alias_by_validation_alias",
+   "test_optional_list_validation_alias_by_validation_alias",
+   "test_schema",
+   "test_optional_list_validation_alias_by_name",
+   "test_required_validation_alias_by_validation_alias",
+   "test_required_alias_and_validation_alias_by_validation_alias",
+   "test_optional_alias_by_alias",
+   "test_required_alias_by_alias",
+   "test_required_list_alias_by_alias",
+   "test_optional_list_alias_by_alias"
+  ],
+  "counts": {
+   "error": 23
+  },
+  "nodes": [
+   "tests/test_request_params/test_body/test_list.py",
+   "tests/test_request_params/test_body/test_optional_list.py",
+   "tests/test_request_params/test_body/test_optional_str.py",
+   "tests/test_request_params/test_body/test_required_str.py",
+   "tests/test_request_params/test_cookie/test_optional_str.py",
+   "tests/test_request_params/test_cookie/test_required_str.py",
+   "tests/test_request_params/test_file/test_list.py",
+   "tests/test_request_params/test_file/test_optional.py",
+   "tests/test_request_params/test_file/test_optional_list.py",
+   "tests/test_request_params/test_file/test_required.py",
+   "tests/test_request_params/test_form/test_list.py",
+   "tests/test_request_params/test_form/test_optional_list.py",
+   "tests/test_request_params/test_form/test_optional_str.py",
+   "tests/test_request_params/test_form/test_required_str.py",
+   "tests/test_request_params/test_header/test_list.py",
+   "tests/test_request_params/test_header/test_optional_list.py",
+   "tests/test_request_params/test_header/test_optional_str.py",
+   "tests/test_request_params/test_header/test_required_str.py",
+   "tests/test_request_params/test_path/test_required_str.py",
+   "tests/test_request_params/test_query/test_list.py",
+   "tests/test_request_params/test_query/test_optional_list.py",
+   "tests/test_request_params/test_query/test_optional_str.py",
+   "tests/test_request_params/test_query/test_required_str.py"
+  ],
+  "pytest_tail": "list.py\nERROR tests/test_request_params/test_query/test_optional_list.py\nERROR tests/test_request_params/test_query/test_optional_str.py\nERROR tests/test_request_params/test_query/test_required_str.py\n!!!!!!!!!!!!!!!!!! Interrupted: 23 errors during collection !!!!!!!!!!!!!!!!!!!\n23 errors in 3.70s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14605",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/benchmarks/test_general_performance.py",
+   "tests/test_compat_params_v1.py",
+   "tests/test_pydantic_v1_deprecation_warnings.py",
+   "tests/test_regex_deprecated_body.py",
+   "tests/test_regex_deprecated_params.py",
+   "tests/test_schema_extra_examples.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial002.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial003.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial004.py",
+   "tests/test_tutorial/test_query_params_str_validations/test_tutorial004.py",
+   "tests/test_tutorial/test_request_form_models/test_tutorial002_pv1.py",
+   "tests/test_tutorial/test_schema_extra_example/test_tutorial001_pv1.py"
+  ],
+  "test_fns": [
+   "test_body_repr",
+   "test_query_regex_deprecation_warning",
+   "test_body_regex_deprecation_warning",
+   "test_query_example_deprecation_warning",
+   "test_body_example_deprecation_warning"
+  ],
+  "counts": {
+   "error": 12
+  },
+  "nodes": [
+   "tests/benchmarks/test_general_performance.py",
+   "tests/test_compat_params_v1.py",
+   "tests/test_pydantic_v1_deprecation_warnings.py",
+   "tests/test_regex_deprecated_body.py",
+   "tests/test_regex_deprecated_params.py",
+   "tests/test_schema_extra_examples.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial002.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial003.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial004.py",
+   "tests/test_tutorial/test_query_params_str_validations/test_tutorial004.py",
+   "tests/test_tutorial/test_request_form_models/test_tutorial002_pv1.py",
+   "tests/test_tutorial/test_schema_extra_example/test_tutorial001_pv1.py"
+  ],
+  "pytest_tail": "_query_params_str_validations/test_tutorial004.py\nERROR tests/test_tutorial/test_request_form_models/test_tutorial002_pv1.py\nERROR tests/test_tutorial/test_schema_extra_example/test_tutorial001_pv1.py\n!!!!!!!!!!!!!!!!!! Interrupted: 12 errors during collection !!!!!!!!!!!!!!!!!!!\n12 errors in 3.72s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_15763",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_router_include_context.py"
+  ],
+  "test_fns": [
+   "test_no_prefix_include_validation_sees_effective_api_route_path",
+   "test_no_prefix_include_validation_sees_effective_starlette_route_path",
+   "test_no_prefix_include_validation_rejects_empty_effective_api_route_path",
+   "test_apirouter_matches_fallback_without_include_context"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_router_include_context.py"
+  ],
+  "pytest_tail": "packages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n1 error in 2.80s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14583",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/benchmarks/test_general_performance.py",
+   "tests/test_compat_params_v1.py",
+   "tests/test_datetime_custom_encoder.py",
+   "tests/test_filter_pydantic_sub_model/app_pv1.py",
+   "tests/test_get_model_definitions_formfeed_escape.py",
+   "tests/test_pydantic_v1_deprecation_warnings.py",
+   "tests/test_pydantic_v1_v2_01.py",
+   "tests/test_pydantic_v1_v2_list.py",
+   "tests/test_pydantic_v1_v2_mixed.py",
+   "tests/test_pydantic_v1_v2_multifile/main.py",
+   "tests/test_pydantic_v1_v2_noneable.py",
+   "tests/test_read_with_orm_mode.py",
+   "tests/test_response_model_as_return_annotation.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial002.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial003.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial004.py",
+   "tests/test_tutorial/test_request_form_models/test_tutorial002_pv1.py",
+   "tests/test_tutorial/test_schema_extra_example/test_tutorial001_pv1.py"
+  ],
+  "test_fns": [
+   "test_warns_pydantic_v1_model_in_endpoint_param",
+   "test_warns_pydantic_v1_model_in_return_type",
+   "test_warns_pydantic_v1_model_in_response_model",
+   "test_warns_pydantic_v1_model_in_additional_responses_model"
+  ],
+  "counts": {
+   "error": 18
+  },
+  "nodes": [
+   "tests/benchmarks/test_general_performance.py",
+   "tests/test_compat_params_v1.py",
+   "tests/test_datetime_custom_encoder.py",
+   "tests/test_filter_pydantic_sub_model/app_pv1.py",
+   "tests/test_get_model_definitions_formfeed_escape.py",
+   "tests/test_pydantic_v1_deprecation_warnings.py",
+   "tests/test_pydantic_v1_v2_01.py",
+   "tests/test_pydantic_v1_v2_list.py",
+   "tests/test_pydantic_v1_v2_mixed.py",
+   "tests/test_pydantic_v1_v2_multifile/main.py",
+   "tests/test_pydantic_v1_v2_noneable.py",
+   "tests/test_read_with_orm_mode.py",
+   "tests/test_response_model_as_return_annotation.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial002.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial003.py",
+   "tests/test_tutorial/test_pydantic_v1_in_v2/test_tutorial004.py",
+   "tests/test_tutorial/test_request_form_models/test_tutorial002_pv1.py",
+   "tests/test_tutorial/test_schema_extra_example/test_tutorial001_pv1.py"
+  ],
+  "pytest_tail": "torial/test_pydantic_v1_in_v2/test_tutorial004.py\nERROR tests/test_tutorial/test_request_form_models/test_tutorial002_pv1.py\nERROR tests/test_tutorial/test_schema_extra_example/test_tutorial001_pv1.py\n!!!!!!!!!!!!!!!!!! Interrupted: 18 errors during collection !!!!!!!!!!!!!!!!!!!\n18 errors in 3.83s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_15745",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_custom_route_class.py",
+   "tests/test_router_include_context.py"
+  ],
+  "test_fns": [
+   "test_router_include_context_matches_flattened_include_metadata",
+   "test_live_route_addition_uses_include_metadata_for_runtime_and_openapi",
+   "test_openapi_cache_updates_after_live_route_addition",
+   "test_nested_router_added_after_parent_inclusion_is_live",
+   "test_repeated_deep_inclusions_handle_all_concrete_paths",
+   "test_url_path_for_uses_effective_context_for_live_included_route",
+   "test_url_path_for_uses_distinct_repeated_inclusion_contexts",
+   "test_indirect_router_inclusion_cycles_are_rejected",
+   "test_original_api_route_subclass_instance_is_called_after_inclusion",
+   "test_original_api_route_get_route_handler_is_called_after_inclusion",
+   "test_original_api_route_matches_is_called_after_inclusion",
+   "test_effective_route_context_is_available_in_scope_during_request",
+   "test_original_api_router_matches_is_called_after_inclusion",
+   "test_original_nested_api_router_subclasses_are_called_after_inclusion",
+   "test_router_and_include_prefix_path_params_reach_endpoint_and_openapi",
+   "test_effective_body_fields_from_app_router_include_and_route_match_openapi",
+   "test_later_full_match_wins_over_earlier_included_partial_match",
+   "test_included_partial_match_returns_405_when_no_later_full_match_exists",
+   "test_included_slash_redirect_does_not_block_later_exact_match",
+   "test_failed_included_match_does_not_leak_effective_context_to_later_route",
+   "test_included_starlette_mount_keeps_prefix_runtime_and_url_path_for",
+   "test_included_starlette_host_keeps_prefix_runtime_and_url_path_for",
+   "test_restore_fastapi_scope_key_ignores_non_dict_fastapi_scope",
+   "test_included_api_route_without_app_scope_returns_405_response",
+   "test_effective_api_route_context_does_not_match_websocket_scope",
+   "test_effective_api_route_context_url_path_for_no_match",
+   "test_included_starlette_host_without_prefix_keeps_original_app",
+   "test_included_unknown_route_is_ignored_and_can_return_default_404",
+   "test_no_prefix_include_validation_sees_effective_starlette_route_candidates",
+   "test_apirouter_matches_fallback_without_include_context",
+   "test_apirouter_handle_fallback_without_include_context"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_custom_route_class.py",
+   "tests/test_router_include_context.py"
+  ],
+  "pytest_tail": "ackages\\_pytest\\config\\__init__.py\", line 1605, in issue_config_time_warning\nINTERNALERROR>     warnings.warn(warning, stacklevel=stacklevel)\nINTERNALERROR>     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nINTERNALERROR> pytest.PytestConfigWarning: Unknown config option: timeout\n\n2 errors in 2.59s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14297",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_compat.py",
+   "tests/test_optional_file_list.py"
+  ],
+  "test_fns": [
+   "test_serialize_sequence_value_with_optional_list",
+   "test_serialize_sequence_value_with_none_first_in_union",
+   "test_optional_bytes_list",
+   "test_optional_bytes_list_no_files"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_compat.py",
+   "tests/test_optional_file_list.py"
+  ],
+  "pytest_tail": "us\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_compat.py\nERROR tests/test_optional_file_list.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n2 errors in 2.36s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14303",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_forms_single_model.py"
+  ],
+  "test_fns": [
+   "test_extra_param_single",
+   "test_extra_param_list"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_forms_single_model.py"
+  ],
+  "pytest_tail": "rlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_forms_single_model.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.85s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_13537",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_form_default.py"
+  ],
+  "test_fns": [
+   "test_form_default_url_encoded",
+   "test_form_default_multi_part"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_form_default.py"
+  ],
+  "pytest_tail": "om starlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_form_default.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.92s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14953",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_request_params/test_file/test_list.py",
+   "tests/test_request_params/test_file/test_optional.py",
+   "tests/test_request_params/test_file/test_optional_list.py",
+   "tests/test_request_params/test_file/test_required.py",
+   "tests/test_tutorial/test_json_base64_bytes/test_tutorial001.py",
+   "tests/test_tutorial/test_request_files/test_tutorial001.py",
+   "tests/test_tutorial/test_request_files/test_tutorial001_02.py",
+   "tests/test_tutorial/test_request_files/test_tutorial001_03.py",
+   "tests/test_tutorial/test_request_files/test_tutorial002.py",
+   "tests/test_tutorial/test_request_files/test_tutorial003.py",
+   "tests/test_tutorial/test_request_forms_and_files/test_tutorial001.py"
+  ],
+  "test_fns": [
+   "test_post_data",
+   "test_get_data",
+   "test_post_data_in_out",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 11
+  },
+  "nodes": [
+   "tests/test_request_params/test_file/test_list.py",
+   "tests/test_request_params/test_file/test_optional.py",
+   "tests/test_request_params/test_file/test_optional_list.py",
+   "tests/test_request_params/test_file/test_required.py",
+   "tests/test_tutorial/test_json_base64_bytes/test_tutorial001.py",
+   "tests/test_tutorial/test_request_files/test_tutorial001.py",
+   "tests/test_tutorial/test_request_files/test_tutorial001_02.py",
+   "tests/test_tutorial/test_request_files/test_tutorial001_03.py",
+   "tests/test_tutorial/test_request_files/test_tutorial002.py",
+   "tests/test_tutorial/test_request_files/test_tutorial003.py",
+   "tests/test_tutorial/test_request_forms_and_files/test_tutorial001.py"
+  ],
+  "pytest_tail": "R tests/test_tutorial/test_request_files/test_tutorial002.py\nERROR tests/test_tutorial/test_request_files/test_tutorial003.py\nERROR tests/test_tutorial/test_request_forms_and_files/test_tutorial001.py\n!!!!!!!!!!!!!!!!!! Interrupted: 11 errors during collection !!!!!!!!!!!!!!!!!!!\n11 errors in 3.44s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_13786",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_security_api_key_cookie.py",
+   "tests/test_security_api_key_cookie_description.py",
+   "tests/test_security_api_key_header.py",
+   "tests/test_security_api_key_header_description.py",
+   "tests/test_security_api_key_query.py",
+   "tests/test_security_api_key_query_description.py",
+   "tests/test_security_http_base.py",
+   "tests/test_security_http_base_description.py",
+   "tests/test_security_http_basic_optional.py",
+   "tests/test_security_http_basic_realm.py",
+   "tests/test_security_http_basic_realm_description.py",
+   "tests/test_security_http_bearer.py",
+   "tests/test_security_http_bearer_description.py",
+   "tests/test_security_http_digest.py",
+   "tests/test_security_http_digest_description.py",
+   "tests/test_security_oauth2.py",
+   "tests/test_security_openid_connect.py"
+  ],
+  "test_fns": [
+   "test_security_http_basic_invalid_credentials",
+   "test_security_http_basic_non_basic_credentials",
+   "test_security_oauth2_password_other_header",
+   "test_security_api_key_no_key",
+   "test_openapi_schema",
+   "test_security_http_base_no_credentials",
+   "test_security_http_bearer_no_credentials",
+   "test_security_http_bearer_incorrect_scheme_credentials",
+   "test_security_http_digest_no_credentials",
+   "test_security_http_digest_incorrect_scheme_credentials",
+   "test_security_oauth2_password_bearer_no_header",
+   "test_strict_login_no_data"
+  ],
+  "counts": {
+   "error": 17
+  },
+  "nodes": [
+   "tests/test_security_api_key_cookie.py",
+   "tests/test_security_api_key_cookie_description.py",
+   "tests/test_security_api_key_header.py",
+   "tests/test_security_api_key_header_description.py",
+   "tests/test_security_api_key_query.py",
+   "tests/test_security_api_key_query_description.py",
+   "tests/test_security_http_base.py",
+   "tests/test_security_http_base_description.py",
+   "tests/test_security_http_basic_optional.py",
+   "tests/test_security_http_basic_realm.py",
+   "tests/test_security_http_basic_realm_description.py",
+   "tests/test_security_http_bearer.py",
+   "tests/test_security_http_bearer_description.py",
+   "tests/test_security_http_digest.py",
+   "tests/test_security_http_digest_description.py",
+   "tests/test_security_oauth2.py",
+   "tests/test_security_openid_connect.py"
+  ],
+  "pytest_tail": "http_bearer_description.py\nERROR tests/test_security_http_digest.py\nERROR tests/test_security_http_digest_description.py\nERROR tests/test_security_oauth2.py\nERROR tests/test_security_openid_connect.py\n!!!!!!!!!!!!!!!!!! Interrupted: 17 errors during collection !!!!!!!!!!!!!!!!!!!\n17 errors in 3.26s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14616",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_json_type.py"
+  ],
+  "test_fns": [
+   "test_form_json_list",
+   "test_query_json_list",
+   "test_header_json_list",
+   "test_cookie_json_list"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_json_type.py"
+  ],
+  "pytest_tail": " from starlette import status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_json_type.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 2.76s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_11194",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_file_and_form_order_issue_9116.py"
+  ],
+  "test_fns": [
+   "test_file_form_order",
+   "test_file_list_form_order"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_file_and_form_order_issue_9116.py"
+  ],
+  "pytest_tail": "t status as status\nE   ModuleNotFoundError: No module named 'starlette'\n=========================== short test summary info ===========================\nERROR tests/test_file_and_form_order_issue_9116.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 1.79s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_6757",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_requests.py"
+  ],
+  "test_fns": [
+   "test_content_length_for_bytes_data",
+   "test_content_length_for_string_data_counts_bytes",
+   "test_json_decode_errors_are_serializable_deserializable"
+  ],
+  "counts": {
+   "failed": 2,
+   "passed": 138,
+   "skipped": 1,
+   "error": 187
+  },
+  "nodes": [
+   "tests/test_requests.py"
+  ],
+  "pytest_tail": " tests/test_requests.py::TestPreparingURLs::test_json_decode_persists_doc_attr\nERROR tests/test_requests.py::test_content_length_for_bytes_data\nERROR tests/test_requests.py::test_content_length_for_string_data_counts_bytes\n2 failed, 138 passed, 1 skipped, 1 xfailed, 4 warnings, 187 errors in 19.15s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_6629",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_requests.py"
+  ],
+  "test_fns": [
+   "test_json_decode_errors_are_serializable_deserializable"
+  ],
+  "counts": {
+   "passed": 136,
+   "skipped": 1,
+   "error": 185
+  },
+  "nodes": [
+   "tests/test_requests.py"
+  ],
+  "pytest_tail": "1-InvalidURL]\nERROR tests/test_requests.py::TestPreparingURLs::test_post_json_nan\nERROR tests/test_requests.py::TestPreparingURLs::test_json_decode_compatibility\nERROR tests/test_requests.py::TestPreparingURLs::test_json_decode_persists_doc_attr\n136 passed, 1 skipped, 1 xfailed, 185 errors in 4.56s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_6644",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_adapters.py"
+  ],
+  "test_fns": [
+   "test_request_url_trims_leading_path_separators"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_adapters.py"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.27s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "requests_6589",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_requests.py"
+  ],
+  "test_fns": [
+   "test_content_length_for_bytes_data",
+   "test_content_length_for_string_data_counts_bytes",
+   "test_nonhttp_schemes_dont_check_URLs"
+  ],
+  "counts": {
+   "passed": 135,
+   "skipped": 1,
+   "error": 187
+  },
+  "nodes": [
+   "tests/test_requests.py"
+  ],
+  "pytest_tail": "1-InvalidURL]\nERROR tests/test_requests.py::TestPreparingURLs::test_post_json_nan\nERROR tests/test_requests.py::TestPreparingURLs::test_json_decode_compatibility\nERROR tests/test_requests.py::TestPreparingURLs::test_json_decode_persists_doc_attr\n135 passed, 1 skipped, 1 xfailed, 187 errors in 4.54s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_6592",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_requests.py"
+  ],
+  "test_fns": [
+   "test_status_code_425"
+  ],
+  "counts": {
+   "passed": 135,
+   "skipped": 1,
+   "error": 185
+  },
+  "nodes": [
+   "tests/test_requests.py"
+  ],
+  "pytest_tail": "1-InvalidURL]\nERROR tests/test_requests.py::TestPreparingURLs::test_post_json_nan\nERROR tests/test_requests.py::TestPreparingURLs::test_json_decode_compatibility\nERROR tests/test_requests.py::TestPreparingURLs::test_json_decode_persists_doc_attr\n135 passed, 1 skipped, 1 xfailed, 185 errors in 4.53s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3180",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_cells.py",
+   "tests/test_text.py"
+  ],
+  "test_fns": [
+   "test_chop_cells",
+   "test_chop_cells_double_width_boundary",
+   "test_chop_cells_mixed_width",
+   "test_wrap_cjk_mixed",
+   "test_wrap_long",
+   "test_wrap_long_words_followed_by_other_words",
+   "test_wrap_long_word_preceeded_by_word_of_full_line_length",
+   "test_wrap_multiple_consecutive_spaces",
+   "test_wrap_long_words_justify_left",
+   "test_wrap_leading_and_trailing_whitespace",
+   "test_no_wrap_no_crop"
+  ],
+  "counts": {
+   "failed": 4,
+   "passed": 110
+  },
+  "nodes": [
+   "tests/test_cells.py",
+   "tests/test_text.py"
+  ],
+  "pytest_tail": "onError: assert ['kji', ...\nFAILED tests\\test_cells.py::test_chop_cells_double_width_boundary - Assertion...\nFAILED tests\\test_cells.py::test_chop_cells_mixed_width - AssertionError: ass...\nFAILED tests\\test_text.py::test_wrap_cjk_mixed - AssertionError: assert '123...\n4 failed, 110 passed in 1.06s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3486",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_traceback.py"
+  ],
+  "test_fns": [
+   "test_traceback_finely_grained_missing",
+   "test_traceback_finely_grained"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 18,
+   "skipped": 2
+  },
+  "nodes": [
+   "tests/test_traceback.py"
+  ],
+  "pytest_tail": "r: 'Frame' object has no attribute 'last_instruction'\n\ntests\\test_traceback.py:354: AttributeError\n=========================== short test summary info ===========================\nFAILED tests\\test_traceback.py::test_traceback_finely_grained - AttributeErro...\n1 failed, 18 passed, 2 skipped in 2.80s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3777",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_console.py"
+  ],
+  "test_fns": [
+   "test_tty_interactive",
+   "test_tty_compatible"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 91,
+   "skipped": 7
+  },
+  "nodes": [
+   "tests/test_console.py"
+  ],
+  "pytest_tail": "alse\nE        +  where False = <console width=79 None>.is_interactive\n\ntests\\test_console.py:1050: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_console.py::test_tty_interactive - assert False\n1 failed, 91 passed, 7 skipped in 0.93s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3468",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_console.py"
+  ],
+  "test_fns": [
+   "test_brokenpipeerror"
+  ],
+  "counts": {
+   "passed": 91,
+   "skipped": 7
+  },
+  "nodes": [
+   "tests/test_console.py"
+  ],
+  "pytest_tail": "..sss................................................................... [ 73%]\n..ss.............s.......s                                               [100%]\n91 passed, 7 skipped in 0.77s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3782",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_syntax.py"
+  ],
+  "test_fns": [
+   "test_blank_lines",
+   "test_python_render",
+   "test_python_render_simple",
+   "test_python_render_simple_passing_lexer_instance",
+   "test_python_render_simple_indent_guides",
+   "test_python_render_line_range_indent_guides",
+   "test_python_render_indent_guides",
+   "test_pygments_syntax_theme_non_str",
+   "test_pygments_syntax_theme",
+   "test_get_line_color_none",
+   "test_highlight_background_color",
+   "test_get_number_styles",
+   "test_get_style_for_token",
+   "test_option_no_wrap",
+   "test_syntax_highlight_ranges",
+   "test_ansi_theme",
+   "test_from_path",
+   "test_from_path_unknown_lexer",
+   "test_from_path_lexer_override",
+   "test_from_path_lexer_override_invalid_lexer",
+   "test_syntax_guess_lexer",
+   "test_syntax_padding",
+   "test_syntax_measure",
+   "test_background_color_override_includes_padding",
+   "test_padding_plus_wrap"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 20,
+   "skipped": 4
+  },
+  "nodes": [
+   "tests/test_syntax.py"
+  ],
+  "pytest_tail": "d stdout call -----------------------------\n\"   'Hello, World. Thi   \\n   should wrap.'        \\n\"\n=========================== short test summary info ===========================\nFAILED tests\\test_syntax.py::test_padding_plus_wrap - assert \"   'Hello, W......\n1 failed, 20 passed, 4 skipped in 1.14s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3772",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_traceback.py"
+  ],
+  "test_fns": [
+   "test_recursive_exception"
+  ],
+  "error": "TimeoutExpired: Command '['C:\\\\Users\\\\Biges\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\\\python.exe', '-m', 'pytest', '-q', '--no-header', '-p', 'no:cacheprovider', 'tests/test_traceback.py']' timed out after 1800 seconds"
+ },
+ {
+  "task": "rich_3296",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_syntax.py"
+  ],
+  "test_fns": [
+   "test_background_color_override_includes_padding"
+  ],
+  "counts": {
+   "failed": 3,
+   "passed": 17,
+   "skipped": 4
+  },
+  "nodes": [
+   "tests/test_syntax.py"
+  ],
+  "pytest_tail": "====================\nFAILED tests\\test_syntax.py::test_blank_lines - AssertionError: assert '\\x1b[...\nFAILED tests\\test_syntax.py::test_python_render_simple_indent_guides - assert...\nFAILED tests\\test_syntax.py::test_background_color_override_includes_padding\n3 failed, 17 passed, 4 skipped in 1.57s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3675",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_console.py"
+  ],
+  "test_fns": [
+   "test_dumb_terminal",
+   "test_soft_wrap",
+   "test_16color_terminal",
+   "test_truecolor_terminal",
+   "test_kitty_terminal",
+   "test_console_options_update",
+   "test_console_options_update_height",
+   "test_init",
+   "test_size",
+   "test_repr",
+   "test_print",
+   "test_print_multiple",
+   "test_print_text",
+   "test_print_text_multiple",
+   "test_print_json",
+   "test_print_json_error",
+   "test_print_json_data",
+   "test_print_json_ensure_ascii",
+   "test_print_json_with_default_ensure_ascii",
+   "test_print_json_indent_none",
+   "test_console_null_file",
+   "test_log",
+   "test_log_milliseconds",
+   "test_print_empty",
+   "test_markup_highlight",
+   "test_print_style",
+   "test_show_cursor",
+   "test_clear",
+   "test_clear_no_terminal",
+   "test_get_style",
+   "test_get_style_default",
+   "test_get_style_error",
+   "test_render_error",
+   "test_control",
+   "test_capture",
+   "test_input",
+   "test_input_password",
+   "test_status",
+   "test_justify_none",
+   "test_justify_left",
+   "test_justify_center",
+   "test_justify_right",
+   "test_justify_renderable_none",
+   "test_justify_renderable_left",
+   "test_justify_renderable_center",
+   "test_justify_renderable_right",
+   "test_render_broken_renderable",
+   "test_export_text",
+   "test_export_html",
+   "test_export_html_inline",
+   "test_export_svg",
+   "test_export_svg_specified_unique_id",
+   "test_save_svg",
+   "test_save_text",
+   "test_save_html",
+   "test_no_wrap",
+   "test_no_color",
+   "test_quiet",
+   "test_no_nested_live",
+   "test_screen",
+   "test_screen_update",
+   "test_height",
+   "test_columns_env",
+   "test_lines_env",
+   "test_screen_update_class",
+   "test_is_alt_screen",
+   "test_set_console_title",
+   "test_update_screen",
+   "test_update_screen_lines",
+   "test_update_options_markup",
+   "test_print_width_zero",
+   "test_size_properties",
+   "test_print_newline_start",
+   "test_is_terminal_broken_file",
+   "test_detect_color_system",
+   "test_reset_height",
+   "test_render_lines_height_minus_vertical_pad_is_negative",
+   "test_recording_no_stdout_and_no_stderr_files",
+   "test_capturing_no_stdout_and_no_stderr_files",
+   "test_force_color",
+   "test_force_color_jupyter",
+   "test_tty_compatible"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 91,
+   "skipped": 7
+  },
+  "nodes": [
+   "tests/test_console.py"
+  ],
+  "pytest_tail": "rt False\nE        +  where False = <console width=79 None>.is_terminal\n\ntests\\test_console.py:1082: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_console.py::test_tty_compatible - assert False\n1 failed, 91 passed, 7 skipped in 0.98s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3676",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_traceback.py"
+  ],
+  "test_fns": [
+   "test_notes"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 19,
+   "skipped": 2
+  },
+  "nodes": [
+   "tests/test_traceback.py"
+  ],
+  "pytest_tail": "tributeError: 'Stack' object has no attribute 'notes'\n\ntests\\test_traceback.py:375: AttributeError\n=========================== short test summary info ===========================\nFAILED tests\\test_traceback.py::test_notes - AttributeError: 'Stack' object h...\n1 failed, 19 passed, 2 skipped in 1.40s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3518",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_table.py"
+  ],
+  "test_fns": [
+   "test_columns_highlight_added_by_add_row"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 19
+  },
+  "nodes": [
+   "tests/test_table.py"
+  ],
+  "pytest_tail": "d   True = <rich.table.Table object at 0x0000023E97E67ED0>.highlight\n\ntests\\test_table.py:371: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_table.py::test_columns_highlight_added_by_add_row - Asserti...\n1 failed, 19 passed in 0.91s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3535",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_cells.py"
+  ],
+  "test_fns": [
+   "test_is_single_cell_widths"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 7
+  },
+  "nodes": [
+   "tests/test_cells.py"
+  ],
+  "pytest_tail": "sert None\nE                +  where None = _is_single_cell_widths('p')\n\ntests\\test_cells.py:70: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_cells.py::test_is_single_cell_widths - AssertionError: asse...\n1 failed, 7 passed in 0.80s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3521",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_segment.py"
+  ],
+  "test_fns": [
+   "test_split_cells_mixed"
+  ],
+  "counts": {
+   "failed": 4,
+   "passed": 55
+  },
+  "nodes": [
+   "tests/test_segment.py"
+  ],
+  "pytest_tail": "segment1] - AssertionErr...\nFAILED tests\\test_segment.py::test_split_cells_mixed[segment3] - AssertionErr...\nFAILED tests\\test_segment.py::test_split_cells_mixed[segment4] - AssertionErr...\nFAILED tests\\test_segment.py::test_split_cells_mixed[segment7] - AssertionErr...\n4 failed, 55 passed in 0.86s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3506",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_segment.py"
+  ],
+  "test_fns": [
+   "test_split_cells_mixed",
+   "test_split_cells_doubles",
+   "test_split_cells_single",
+   "test_segment_lines_renderable"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 51
+  },
+  "nodes": [
+   "tests/test_segment.py"
+  ],
+  "pytest_tail": "n('\u65e9\u4e59\u5973\u30ea ')\nE            +    where '\u65e9\u4e59\u5973\u30ea ' = Segment('\u65e9\u4e59\u5973\u30ea ').text\n\ntests\\test_segment.py:294: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_segment.py::test_split_cells_mixed - AssertionError: assert...\n1 failed, 51 passed in 0.91s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3480",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_text.py"
+  ],
+  "test_fns": [
+   "test_append_loop_regression"
+  ],
+  "error": "TimeoutExpired: Command '['C:\\\\Users\\\\Biges\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\\\python.exe', '-m', 'pytest', '-q', '--no-header', '-p', 'no:cacheprovider', 'tests/test_text.py']' timed out after 1800 seconds"
+ },
+ {
+  "task": "rich_3472",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_pretty.py"
+  ],
+  "test_fns": [
+   "test_dataclass_no_attribute"
+  ],
+  "counts": {
+   "failed": 2,
+   "passed": 49,
+   "skipped": 1
+  },
+  "nodes": [
+   "tests/test_pretty.py"
+  ],
+  "pytest_tail": "6: AttributeError\n=========================== short test summary info ===========================\nFAILED tests\\test_pretty.py::test_attrs_broken_310 - assert 'Foo(\\n    ba... ...\nFAILED tests\\test_pretty.py::test_dataclass_no_attribute - AttributeError: 'B...\n2 failed, 49 passed, 1 skipped in 1.41s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3454",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_highlighter.py"
+  ],
+  "test_fns": [
+   "test_wrong_type"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 82
+  },
+  "nodes": [
+   "tests/test_highlighter.py"
+  ],
+  "pytest_tail": "---------- Captured stdout call -----------------------------\n[Span(0, 24, 'repr.url')]\n=========================== short test summary info ===========================\nFAILED tests\\test_highlighter.py::test_highlight_regex[https://www.youtube.com/@LinusTechTips-spans38]\n1 failed, 82 passed in 0.93s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3471",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_text.py"
+  ],
+  "test_fns": [
+   "test_append_tokens"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 107
+  },
+  "nodes": [
+   "tests/test_text.py"
+  ],
+  "pytest_tail": "^^^^^^^^^^^^^^^^^^^^^\nE                   IndexError: list index out of range\n\nrich\\text.py:1164: IndexError\n=========================== short test summary info ===========================\nFAILED tests\\test_text.py::test_append_tokens - IndexError: list index out of...\n1 failed, 107 passed in 1.09s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3470",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_console.py"
+  ],
+  "test_fns": [
+   "test_capture_and_record"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 90,
+   "skipped": 7
+  },
+  "nodes": [
+   "tests/test_console.py"
+  ],
+  "pytest_tail": "int 0\\nPrint 1\\nPrint 1\\nPrint 2\\nPrint 1\\nPrint 2\\nPrint 3\\nPrint 1\\nPrint 2\\nPrint 3\\nPrint 4\\n'\n=========================== short test summary info ===========================\nFAILED tests\\test_console.py::test_capture_and_record - AssertionError: asser...\n1 failed, 90 passed, 7 skipped in 1.13s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3469",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_markdown.py"
+  ],
+  "test_fns": [
+   "test_table_with_empty_cells"
+  ],
+  "counts": {
+   "failed": 2,
+   "passed": 5
+  },
+  "nodes": [
+   "tests/test_markdown.py"
+  ],
+  "pytest_tail": "                                \\n'\n=========================== short test summary info ===========================\nFAILED tests\\test_markdown.py::test_inline_code - AssertionError: assert 'inl...\nFAILED tests\\test_markdown.py::test_table_with_empty_cells - assert 9 == 7\n2 failed, 5 passed in 0.99s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3052",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_prompt.py"
+  ],
+  "test_fns": [
+   "test_prompt_str_case_insensitive",
+   "test_prompt_str_default"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 6
+  },
+  "nodes": [
+   "tests/test_prompt.py"
+  ],
+  "pytest_tail": "rror: PromptBase.ask() got an unexpected keyword argument 'case_sensitive'\n\ntests\\test_prompt.py:27: TypeError\n=========================== short test summary info ===========================\nFAILED tests\\test_prompt.py::test_prompt_str_case_insensitive - TypeError: Pr...\n1 failed, 6 passed in 0.76s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3278",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_ansi.py"
+  ],
+  "test_fns": [
+   "test_strip_private_escape_sequences"
+  ],
+  "counts": {
+   "failed": 16,
+   "passed": 7
+  },
+  "nodes": [
+   "tests/test_ansi.py"
+  ],
+  "pytest_tail": "sequences[<] - Assertion...\nFAILED tests\\test_ansi.py::test_strip_private_escape_sequences[=] - Assertion...\nFAILED tests\\test_ansi.py::test_strip_private_escape_sequences[>] - Assertion...\nFAILED tests\\test_ansi.py::test_strip_private_escape_sequences[?] - Assertion...\n16 failed, 7 passed in 0.88s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_2943",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_style.py"
+  ],
+  "test_fns": [
+   "test_clear_meta_and_links_clears_hash"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 26
+  },
+  "nodes": [
+   "tests/test_style.py"
+  ],
+  "pytest_tail": "color=Color('black', ColorType.STANDARD, number=0), bold=True)._hash\n\ntests\\test_style.py:267: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_style.py::test_clear_meta_and_links_clears_hash - Assertion...\n1 failed, 26 passed in 0.92s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_2725",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_table.py"
+  ],
+  "test_fns": [
+   "test_placement_table_box_elements"
+  ],
+  "counts": {
+   "failed": 4,
+   "passed": 15
+  },
+  "nodes": [
+   "tests/test_table.py"
+  ],
+  "pytest_tail": "Month2Nickname 2Cost2Gross3\\nefffffgfffffffffgffffgfffffh\\n4Dec  5Skywalker5275M5375M 6\\n4May  5Solo     5275M5393M 6\\nijjjjjkjjjjjjjjjkjjjjkjjjjjl\\n4Dec  5Last Jedi5262M51333M6\\nmnnnnnonnnnnnnnnonnnnonnnnnp\\n7MONTH8NICKNAME 8COST8GROSS9\\nqrrrrrsrrrrrrrrrsrrrrsrrrrrt\\n]\n4 failed, 15 passed in 0.87s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3105",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_console.py"
+  ],
+  "test_fns": [
+   "test_export_html",
+   "test_export_html_inline",
+   "test_save_text",
+   "test_save_html"
+  ],
+  "counts": {
+   "failed": 3,
+   "passed": 87,
+   "skipped": 6
+  },
+  "nodes": [
+   "tests/test_console.py"
+  ],
+  "pytest_tail": "================\nFAILED tests\\test_console.py::test_export_html - assert '<!DOCTYPE ht...y>\\n<...\nFAILED tests\\test_console.py::test_export_html_inline - assert '<!DOCTYPE ht....\nFAILED tests\\test_console.py::test_save_html - assert '<!DOCTYPE ht...y>\\n</h...\n3 failed, 87 passed, 6 skipped in 0.97s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3130",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_markdown.py"
+  ],
+  "test_fns": [
+   "test_inline_styles_in_table",
+   "test_inline_styles_with_justification"
+  ],
+  "counts": {
+   "failed": 5,
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_markdown.py"
+  ],
+  "pytest_tail": "sertionError: assert 'inl...\nFAILED tests\\test_markdown.py::test_markdown_table - AssertionError: assert '...\nFAILED tests\\test_markdown.py::test_inline_styles_in_table - AssertionError: ...\nFAILED tests\\test_markdown.py::test_inline_styles_with_justification - Assert...\n5 failed, 1 passed in 0.98s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3043",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_console.py"
+  ],
+  "test_fns": [
+   "test_export_html",
+   "test_export_html_inline",
+   "test_save_text",
+   "test_save_html"
+  ],
+  "counts": {
+   "failed": 3,
+   "passed": 87,
+   "skipped": 6
+  },
+  "nodes": [
+   "tests/test_console.py"
+  ],
+  "pytest_tail": "================\nFAILED tests\\test_console.py::test_export_html - assert '<!DOCTYPE ht...y>\\n<...\nFAILED tests\\test_console.py::test_export_html_inline - assert '<!DOCTYPE ht....\nFAILED tests\\test_console.py::test_save_html - assert '<!DOCTYPE ht...y>\\n</h...\n3 failed, 87 passed, 6 skipped in 0.94s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3067",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_highlighter.py"
+  ],
+  "test_fns": [
+   "test_wrong_type"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 81
+  },
+  "nodes": [
+   "tests/test_highlighter.py"
+  ],
+  "pytest_tail": "-------------------- Captured stdout call -----------------------------\n[Span(1, 20, 'repr.url')]\n=========================== short test summary info ===========================\nFAILED tests\\test_highlighter.py::test_highlight_regex[ http://example.org/~folder -spans39]\n1 failed, 81 passed in 0.76s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3006",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_repr.py"
+  ],
+  "test_fns": [
+   "test_rich_repr"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 7
+  },
+  "nodes": [
+   "tests/test_repr.py"
+  ],
+  "pytest_tail": "90>, extinct=<tests.test_repr.NotStupid object at 0x00000135FF93B250>)\n\ntests\\test_repr.py:129: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_repr.py::test_rich_repr_auto - assert \"Bird('pengui...135FF...\n1 failed, 7 passed in 0.75s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3064",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_markdown.py"
+  ],
+  "test_fns": [
+   "test_partial_table"
+  ],
+  "counts": {
+   "failed": 3,
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_markdown.py"
+  ],
+  "pytest_tail": "t summary info ===========================\nFAILED tests\\test_markdown.py::test_markdown_render - AssertionError: assert ...\nFAILED tests\\test_markdown.py::test_inline_code - AssertionError: assert 'inl...\nFAILED tests\\test_markdown.py::test_partial_table - AssertionError\n3 failed, 1 passed in 0.87s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3063",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_markup.py"
+  ],
+  "test_fns": [
+   "test_escape_backslash_end",
+   "test_render_escape"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 20
+  },
+  "nodes": [
+   "tests/test_markup.py"
+  ],
+  "pytest_tail": "C:\\\\\\\\'\nE         \nE         - C:\\\\\nE         ?    -\nE         + C:\\\n\ntests\\test_markup.py:50: AssertionError\n=========================== short test summary info ===========================\nFAILED tests\\test_markup.py::test_escape_backslash_end - AssertionError: asse...\n1 failed, 20 passed in 0.65s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3061",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_panel.py",
+   "tests/test_text.py"
+  ],
+  "test_fns": [
+   "test_tabs_to_spaces_spans",
+   "test_markup_switch",
+   "test_extend_style"
+  ],
+  "counts": {
+   "failed": 12,
+   "passed": 100
+  },
+  "nodes": [
+   "tests/test_panel.py",
+   "tests/test_text.py"
+  ],
+  "pytest_tail": "LED tests\\test_text.py::test_tabs_to_spaces_spans[[bold]\\U0001f4a9\\U0001f4a9\\U0001f4a9\\U0001f4a9\\t\\U0001f4a9-8-\\U0001f4a9\\U0001f4a9\\U0001f4a9\\U0001f4a9        \\U0001f4a9-expected_spans11]\nFAILED tests\\test_text.py::test_extend_style - AttributeError: 'Text' object ...\n12 failed, 100 passed in 0.99s\n",
+  "resolved_here": false
+ }
+]

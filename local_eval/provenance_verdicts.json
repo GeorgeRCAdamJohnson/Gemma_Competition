@@ -1,0 +1,1202 @@
+[
+ {
+  "task": "fastapi_11194",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/dependencies/utils.py:999"
+  ],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_11355",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/params.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_12942",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/params.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_13207",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/openapi/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_13537",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_13713",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/applications.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_13786",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/security/api_key.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_13920",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14077",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "fastapi/exception_handlers.py",
+   "fastapi/openapi/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14099",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14186",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/_compat/v1.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14246",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14258",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14262",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/models.py",
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14266",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/openapi/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14297",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/_compat/v2.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14301",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14303",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14306",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/exceptions.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14349",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/openapi/models.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14360",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14361",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/_compat/v2.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14371",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/params.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14372",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/models.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14419",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/models.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14430",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14448",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/routing.py:5"
+  ],
+  "touched": [
+   "fastapi/dependencies/utils.py",
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14455",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/security/oauth2.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14458",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/dependencies/utils.py:661",
+   "fastapi/dependencies/utils.py:575",
+   "fastapi/dependencies/utils.py:670",
+   "fastapi/dependencies/utils.py:661"
+  ],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14459",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/models.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14463",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "fastapi/openapi/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14479",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/dependencies/utils.py:283",
+   "fastapi/dependencies/utils.py:547",
+   "fastapi/dependencies/utils.py:283",
+   "fastapi/dependencies/utils.py:547"
+  ],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14482",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14485",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14487",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "docs/en/docs/tutorial/handling-errors.md"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14492",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "docs/de/docs/index.md",
+   "docs/en/docs/css/termynal.css",
+   "docs/es/docs/index.md",
+   "docs/fr/docs/index.md",
+   "docs/ja/docs/index.md",
+   "docs/ko/docs/index.md",
+   "docs/zh-hant/docs/index.md",
+   "docs/zh/docs/index.md"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14512",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14583",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/_compat/v1.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14605",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/_compat/v1.py:11",
+   "fastapi/_compat/v1.py:11",
+   "fastapi/_compat/v1.py:11",
+   "fastapi/_compat/v1.py:11"
+  ],
+  "touched": [
+   "fastapi/_compat/v1.py",
+   "fastapi/exceptions.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14609",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/_compat/__init__.py:1",
+   "fastapi/_compat/v1.py:208",
+   "fastapi/_compat/__init__.py:1",
+   "fastapi/_compat/v1.py:208"
+  ],
+  "touched": [
+   "fastapi/_compat/__init__.py",
+   "fastapi/_compat/v1.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14616",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/params.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14786",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "fastapi/security/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14791",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/openapi/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14794",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/dependencies/utils.py:281",
+   "fastapi/dependencies/utils.py:464"
+  ],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14851",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "fastapi/applications.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14873",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/routing.py:203",
+   "fastapi/routing.py:203"
+  ],
+  "touched": [
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14953",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/datastructures.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14962",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/routing.py:710",
+   "fastapi/routing.py:740",
+   "fastapi/routing.py:710",
+   "fastapi/routing.py:740"
+  ],
+  "touched": [
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14964",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/responses.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14978",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/__init__.py",
+   "fastapi/middleware/strict_json.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_14986",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/openapi/docs.py",
+   "fastapi/openapi/models.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_15023",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/responses.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_15030",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/responses.py",
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_15280",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/applications.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_15588",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/sse.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_15589",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/openapi/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_15661",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "scripts/add_latest_release_date.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_15763",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/routing.py:2442"
+  ],
+  "touched": [
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_15785",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_15800",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/applications.py:6"
+  ],
+  "touched": [
+   "fastapi/applications.py",
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_5077",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_5624",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_9425",
+  "verdict": "AGENT",
+  "in_patch": [
+   "fastapi/routing.py:1003",
+   "fastapi/routing.py:942",
+   "fastapi/routing.py:516"
+  ],
+  "touched": [
+   "fastapi/routing.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_9555",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/utils.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "fastapi_9753",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "fastapi/dependencies/models.py"
+  ],
+  "repo": "fastapi"
+ },
+ {
+  "task": "httpx_3672",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "src/httpx/_parsers.py",
+   "src/httpx/_server.py"
+  ],
+  "repo": "httpx"
+ },
+ {
+  "task": "requests_6589",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "src/requests/utils.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_6592",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "src/requests/status_codes.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_6629",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "src/requests/exceptions.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_6644",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "src/requests/models.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_6757",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "setup.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_7205",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "src/requests/utils.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_7309",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "src/requests/utils.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_7315",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "src/requests/adapters.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_7328",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "src/requests/sessions.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_7427",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "src/requests/utils.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_7433",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "src/requests/models.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_7502",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "src/requests/models.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "requests_7505",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "src/requests/models.py"
+  ],
+  "repo": "requests"
+ },
+ {
+  "task": "rich_2725",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_2943",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3006",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/repr.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3043",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   ".pre-commit-config.yaml"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3052",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/prompt.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3061",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/text.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3063",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3064",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/table.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3067",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/style.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3105",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/highlighter.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3130",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3180",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/_wrap.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3278",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/ansi.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3296",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/style.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3454",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/highlighter.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3468",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/console.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3469",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/segment.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3470",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/repr.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3471",
+  "verdict": "AGENT",
+  "in_patch": [
+   "rich/text.py:694",
+   "rich/text.py:1235",
+   "rich/text.py:1165"
+  ],
+  "touched": [
+   "rich/text.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3472",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/table.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3480",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/cells.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3486",
+  "verdict": "AGENT",
+  "in_patch": [
+   "rich/traceback.py:106"
+  ],
+  "touched": [
+   "rich/traceback.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3506",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/segment.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3518",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/table.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3521",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/segment.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3535",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/cells.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3675",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/console.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3676",
+  "verdict": "AGENT",
+  "in_patch": [
+   "rich/traceback.py:109"
+  ],
+  "touched": [
+   "rich/traceback.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3718",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/panel.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3772",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/traceback.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3777",
+  "verdict": "ENV",
+  "in_patch": [],
+  "touched": [
+   "rich/status.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3782",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/syntax.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3882",
+  "verdict": "AGENT",
+  "in_patch": [
+   "rich/prompt.py:247",
+   "rich/prompt.py:149",
+   "rich/prompt.py:301",
+   "rich/prompt.py:265"
+  ],
+  "touched": [
+   "rich/prompt.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3894",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/_inspect.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3905",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/progress.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3930",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/cells.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3934",
+  "verdict": "AGENT",
+  "in_patch": [
+   "rich/live.py:189",
+   "rich/live.py:165",
+   "rich/live.py:267"
+  ],
+  "touched": [
+   "rich/live.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3935",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/padding.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3942",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/default_styles.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3944",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/cells.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_3953",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/cells.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_4006",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/cells.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_4070",
+  "verdict": "UNKNOWN",
+  "in_patch": [],
+  "touched": [
+   "rich/console.py",
+   "rich/logging.py",
+   "rich/segment.py",
+   "rich/theme.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_4075",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_4076",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/text.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_4077",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/console.py"
+  ],
+  "repo": "rich"
+ },
+ {
+  "task": "rich_4079",
+  "verdict": "REAL",
+  "in_patch": [],
+  "touched": [
+   "rich/table.py"
+  ],
+  "repo": "rich"
+ }
+]

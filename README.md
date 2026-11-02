@@ -40,3 +40,25 @@ prompts, configs, optional LoRA adapters) — no arbitrary Python entrypoint.
 
 ## Author
 George / Adam Johnson (Kaggle: comfyops, HF: bigesta)
+
+## Check history before another experiment
+
+In the VS Code chat agent picker, select **Gemma Experiment Reviewer**. The
+[agent definition](../.github/agents/gemma-experiment-reviewer.agent.md) lives in the
+parent Kaggle workspace's `.github/agents/` folder; open that workspace to discover it.
+It is read-only and uses targeted searches of the log, existing KB, proposals,
+submission records, and actual run artifacts rather than loading the entire history.
+The [workspace instructions](../.github/copilot-instructions.md) also require a
+history check for Gemma experiment recommendations in normal chats.
+
+Example requests:
+
+- "Have we already tested this idea: shorten the E4B prompt? Compare the nearest runs."
+- "12B fails with hidden_size 3840 versus 256. Find the existing fix before changing code."
+- "Review submit_remap_e4b against submit_size_e4b. What is measured, and what remains unproven?"
+
+The reviewer returns **ALREADY-TESTED**, **KNOWN-FIX**, **REPLICATE**, **NEW-AXIS**,
+**CONFOUNDED**, or **NEEDS-EVIDENCE**, with source links and one recommended next action.
+It cannot run experiments, edit the log, or submit to Kaggle. Its recommendation is
+advisory, not a deterministic execution block. The generated KB may lag newer runs;
+the reviewer must check the underlying evidence and later corrections.

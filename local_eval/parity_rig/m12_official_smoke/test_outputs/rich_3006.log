@@ -1,0 +1,25 @@
+STDOUT:
+...F....                                                                 [100%]
+=================================== FAILURES ===================================
+_____________________________ test_rich_repr_auto ______________________________
+
+    def test_rich_repr_auto() -> None:
+        assert repr(Egg("hello", egg=2)) == "Egg('hello', egg=2)"
+        stupid_class = StupidClass(9)
+        not_stupid = NotStupid()
+>       assert (
+            repr(Bird("penguin", ["fish"], another=stupid_class, extinct=not_stupid))
+            == f"Bird('penguin', ['fish'], another={repr(stupid_class)}, extinct={repr(not_stupid)})"
+        )
+E       assert "Bird('pengui...0ecfe357ed0>)" == "Bird('pengui...0ecfe357ed0>)"
+E         
+E         - Bird('penguin', ['fish'], another=<tests.test_repr.StupidClass object at 0x70ecfe357d90>, extinct=<tests.test_repr.NotStupid object at 0x70ecfe357ed0>)
+E         ?                           --------
+E         + Bird('penguin', ['fish'], <tests.test_repr.StupidClass object at 0x70ecfe357d90>, extinct=<tests.test_repr.NotStupid object at 0x70ecfe357ed0>)
+
+tests/test_repr.py:129: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_repr.py::test_rich_repr_auto - assert "Bird('pengui...0ecfe...
+1 failed, 7 passed in 0.15s
+
+STDERR:

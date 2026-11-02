@@ -1,0 +1,211 @@
+[
+ {
+  "task": "fastapi_14246",
+  "repo": "fastapi/fastapi",
+  "resolved": 0,
+  "n": 6,
+  "chars": 273,
+  "named": false,
+  "files": 1,
+  "edits": 1,
+  "symptom": "contract"
+ },
+ {
+  "task": "fastapi_14356",
+  "repo": "fastapi/fastapi",
+  "resolved": 0,
+  "n": 6,
+  "chars": 1481,
+  "named": false,
+  "files": 1,
+  "edits": 1,
+  "symptom": "parse"
+ },
+ {
+  "task": "fastapi_14485",
+  "repo": "fastapi/fastapi",
+  "resolved": 0,
+  "n": 7,
+  "chars": 317,
+  "named": false,
+  "files": 1,
+  "edits": 2,
+  "symptom": "contract"
+ },
+ {
+  "task": "fastapi_14487",
+  "repo": "fastapi/fastapi",
+  "resolved": 0,
+  "n": 6,
+  "chars": 204,
+  "named": false,
+  "files": 1,
+  "edits": 1,
+  "symptom": "render"
+ },
+ {
+  "task": "fastapi_15588",
+  "repo": "fastapi/fastapi",
+  "resolved": 0,
+  "n": 2,
+  "chars": 1891,
+  "named": false,
+  "files": 1,
+  "edits": 2,
+  "symptom": "contract"
+ },
+ {
+  "task": "fastapi_15661",
+  "repo": "fastapi/fastapi",
+  "resolved": 0,
+  "n": 2,
+  "chars": 1025,
+  "named": false,
+  "files": 0,
+  "edits": 0,
+  "symptom": "?"
+ },
+ {
+  "task": "requests_7315",
+  "repo": "psf/requests",
+  "resolved": 0,
+  "n": 6,
+  "chars": 694,
+  "named": false,
+  "files": 0,
+  "edits": 0,
+  "symptom": "?"
+ },
+ {
+  "task": "requests_7502",
+  "repo": "psf/requests",
+  "resolved": 0,
+  "n": 6,
+  "chars": 67,
+  "named": false,
+  "files": 0,
+  "edits": 0,
+  "symptom": "?"
+ },
+ {
+  "task": "rich_3469",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 18,
+  "chars": 75,
+  "named": false,
+  "files": 1,
+  "edits": 1,
+  "symptom": "other"
+ },
+ {
+  "task": "rich_3486",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 1,
+  "chars": 98,
+  "named": false,
+  "files": 3,
+  "edits": 12,
+  "symptom": "io"
+ },
+ {
+  "task": "rich_3535",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 8,
+  "chars": 193,
+  "named": false,
+  "files": 2,
+  "edits": 2,
+  "symptom": "render"
+ },
+ {
+  "task": "rich_3675",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 8,
+  "chars": 168,
+  "named": false,
+  "files": 2,
+  "edits": 5,
+  "symptom": "io"
+ },
+ {
+  "task": "rich_3718",
+  "repo": "Textualize/rich",
+  "resolved": 1,
+  "n": 1,
+  "chars": 749,
+  "named": false,
+  "files": 1,
+  "edits": 3,
+  "symptom": "render"
+ },
+ {
+  "task": "rich_3934",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 6,
+  "chars": 64,
+  "named": false,
+  "files": 2,
+  "edits": 3,
+  "symptom": "other"
+ },
+ {
+  "task": "rich_3953",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 1,
+  "chars": 130,
+  "named": false,
+  "files": 1,
+  "edits": 2,
+  "symptom": "other"
+ },
+ {
+  "task": "rich_4006",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 1,
+  "chars": 96,
+  "named": true,
+  "files": 1,
+  "edits": 2,
+  "symptom": "other"
+ },
+ {
+  "task": "rich_4070",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 13,
+  "chars": 3096,
+  "named": true,
+  "files": 9,
+  "edits": 33,
+  "symptom": "render"
+ },
+ {
+  "task": "rich_4075",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 1,
+  "chars": 101,
+  "named": false,
+  "files": 1,
+  "edits": 4,
+  "symptom": "other"
+ },
+ {
+  "task": "rich_4076",
+  "repo": "Textualize/rich",
+  "resolved": 0,
+  "n": 33,
+  "chars": 71,
+  "named": false,
+  "files": 1,
+  "edits": 1,
+  "symptom": "other"
+ }
+]

@@ -1,0 +1,19 @@
+{
+  "_comment": "Curated minimum replay set (design §13.6). The builder reads this and NEVER rewrites it. Each entry names a (run_id, task) the gold-first replay engine must attempt; `all_runs` rules expand to every run with a trace for that task. Rationale for each is in the task brief / design §13.6.",
+  "min_set": [
+    {"run_id": "submit_v6b/out_v6b", "task": "rich_4079", "why": "python-replace on rich/markdown.py step_id 31, ended REFUSED at the call wall; + counterfactual"},
+    {"run_id": "submit_v6b/out_v6b", "task": "rich_4070", "why": "python-replace on rich/console.py step_id 32, ended REFUSED; + counterfactual"},
+    {"run_id": "submit_v6b/out_v6b", "task": "rich_4076", "why": "python-replace attempts with quoting/anchor errors; did any applied variant pass? what did the submitted 448-char patch score?"},
+    {"run_id": "submit_v21/out_v21", "task": "rich_3469", "why": "v21 losing-task edit attempt (all edits failed per attribution table)"},
+    {"run_id": "submit_v21/out_v21", "task": "rich_4070", "why": "v21 losing-task edit attempt (heredoc PY' terminator)"},
+    {"run_id": "submit_v21/out_v21", "task": "rich_4076", "why": "v21 losing-task edit attempt (heredoc PY' terminator)"},
+    {"run_id": "submit_v21/out_v21", "task": "rich_4079", "why": "v21 losing-task edit attempt"},
+    {"run_id": "_v6out", "task": "rich_4070", "why": "the on-disk v6 run's rich_4070 (patch_chars=2223). The 5,228-char 'live v6' run is NOT on disk (DATA-ABSENT)."}
+  ],
+  "all_runs_rules": [
+    {"task": "rich_4079", "all_runs": true, "why": "replay every run with a rich_4079 trace, resolved or not — compare resolvers vs near-miss non-resolvers against gold"}
+  ],
+  "data_absent": [
+    {"run": "v6 rich_4070 unsubmitted ~5228-char patch", "status": "DATA-ABSENT", "note": "exists only in GEMMA_EXPERIMENT_LOG.md (~L6735/L6795) and submit_v6b/notebook_src.py comments; no on-disk trace. Confirmed by searching Gemma/myshit, Gemma/_v6out, Gemma/pulled_v6, kb/pulled. Not fabricated."}
+  ]
+}

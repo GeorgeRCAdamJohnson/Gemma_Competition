@@ -1,0 +1,227 @@
+[
+ {
+  "task": "requests_7427",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "test_fns": [
+   "test_should_bypass_proxies_no_proxy_domain_boundary"
+  ],
+  "counts": {
+   "failed": 1,
+   "passed": 8
+  },
+  "nodes": [
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy_domain_boundary"
+  ],
+  "pytest_tail": "erdomain.com, newdomain.com:1234, .d.o.t')\n\ntests\\test_utils.py:867: AssertionError\n=========================== short test summary info ===========================\nFAILED tests/test_utils.py::test_should_bypass_proxies_no_proxy_domain_boundary[http://prelocalhost/-False]\n1 failed, 8 passed in 0.53s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7315",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_adapters.py"
+  ],
+  "test_fns": [
+   "test_request_url_handles_leading_path_separators"
+  ],
+  "counts": {
+   "failed": 1
+  },
+  "nodes": [
+   "tests/test_adapters.py::test_request_url_handles_leading_path_separators"
+  ],
+  "pytest_tail": "t '//v:h' == '/v:h'\nE         \nE         - /v:h\nE         + //v:h\nE         ? +\n\ntests\\test_adapters.py:8: AssertionError\n=========================== short test summary info ===========================\nFAILED tests/test_adapters.py::test_request_url_handles_leading_path_separators\n1 failed in 0.44s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7309",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "test_fns": [
+   "test_parse_dict_header",
+   "test__parse_content_type_header",
+   "test_get_encoding_from_headers"
+  ],
+  "counts": {
+   "failed": 5,
+   "passed": 10
+  },
+  "nodes": [
+   "tests/test_utils.py::test_parse_dict_header",
+   "tests/test_utils.py::test__parse_content_type_header",
+   "tests/test_utils.py::test_get_encoding_from_headers"
+  ],
+  "pytest_tail": "mething_else' ; no_equals -expected6]\nFAILED tests/test_utils.py::test__parse_content_type_header[multipart/form-data; boundary = something ; \"boundary2=something_else\" ; no_equals -expected7]\nFAILED tests/test_utils.py::test_get_encoding_from_headers[value3-ISO-8859-1]\n5 failed, 10 passed in 0.57s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14786",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_security_http_base.py",
+   "tests/test_security_oauth2_authorization_code_bearer.py"
+  ],
+  "test_fns": [
+   "test_security_http_base_with_whitespaces",
+   "test_security_http_base_no_credentials",
+   "test_token_with_whitespaces",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_security_http_base.py::test_security_http_base_with_whitespaces",
+   "tests/test_security_http_base.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_base.py::test_token_with_whitespaces",
+   "tests/test_security_http_base.py::test_openapi_schema",
+   "tests/test_security_oauth2_authorization_code_bearer.py::test_security_http_base_with_whitespaces",
+   "tests/test_security_oauth2_authorization_code_bearer.py::test_security_http_base_no_credentials",
+   "tests/test_security_oauth2_authorization_code_bearer.py::test_token_with_whitespaces",
+   "tests/test_security_oauth2_authorization_code_bearer.py::test_openapi_schema"
+  ],
+  "pytest_tail": "s\\AppData\\Local\\Temp\\r_fastapi_14786_ta117dzx\\tests\\test_security_oauth2_authorization_code_bearer.py::test_token_with_whitespaces\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14786_ta117dzx\\tests\\test_security_oauth2_authorization_code_bearer.py::test_openapi_schema\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14463",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_additional_responses_union_duplicate_anyof.py"
+  ],
+  "test_fns": [
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_additional_responses_union_duplicate_anyof.py::test_openapi_schema"
+  ],
+  "pytest_tail": "hort test summary info ===========================\nERROR tests/test_additional_responses_union_duplicate_anyof.py\n1 error in 0.50s\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14463_aqil39rs\\tests\\test_additional_responses_union_duplicate_anyof.py::test_openapi_schema\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14301",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_yield_scope.py"
+  ],
+  "test_fns": [
+   "test_router_level_dep_scope_function",
+   "test_router_level_dep_scope_request",
+   "test_app_level_dep_scope_function",
+   "test_app_level_dep_scope_request"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_dependency_yield_scope.py::test_router_level_dep_scope_function",
+   "tests/test_dependency_yield_scope.py::test_router_level_dep_scope_request",
+   "tests/test_dependency_yield_scope.py::test_app_level_dep_scope_function",
+   "tests/test_dependency_yield_scope.py::test_app_level_dep_scope_request"
+  ],
+  "pytest_tail": "s for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14301_8vbre60b\\tests\\test_dependency_yield_scope.py::test_app_level_dep_scope_function\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14301_8vbre60b\\tests\\test_dependency_yield_scope.py::test_app_level_dep_scope_request\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3905",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_progress.py"
+  ],
+  "test_fns": [
+   "test_no_output_if_progress_is_disabled_non_interactive",
+   "test_open"
+  ],
+  "counts": {
+   "passed": 2
+  },
+  "nodes": [
+   "tests/test_progress.py::test_no_output_if_progress_is_disabled_non_interactive",
+   "tests/test_progress.py::test_open"
+  ],
+  "pytest_tail": "..                                                                       [100%]\n2 passed in 1.08s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "rich_3454",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_highlighter.py"
+  ],
+  "test_fns": [
+   "test_wrong_type"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_highlighter.py::test_wrong_type"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.58s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "rich_3067",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_highlighter.py"
+  ],
+  "test_fns": [
+   "test_wrong_type"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_highlighter.py::test_wrong_type"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.56s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "rich_3006",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_repr.py"
+  ],
+  "test_fns": [
+   "test_rich_repr"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_repr.py::test_rich_repr"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.76s\n",
+  "resolved_here": true
+ }
+]

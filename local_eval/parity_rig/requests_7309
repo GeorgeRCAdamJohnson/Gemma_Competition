@@ -1,0 +1,147 @@
+[
+ {
+  "task": "fastapi_9753",
+  "extract_rc": 0,
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 128,
+  "test_patch_3way_rc": 128,
+  "test_patch_tail": "error: corrupt patch at line 254\n",
+  "test_files": [
+   "tests/test_dependency_partial.py"
+  ],
+  "pytest_rc": 4,
+  "counts": {},
+  "pytest_tail": "\nno tests ran in 0.00s\nERROR: file or directory not found: tests/test_dependency_partial.py\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7309",
+  "extract_rc": 0,
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 128,
+  "test_patch_3way_rc": 128,
+  "test_patch_tail": "error: corrupt patch at line 45\n",
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "pytest_rc": 1,
+  "counts": {
+   "failed": 4,
+   "passed": 202,
+   "skipped": 13
+  },
+  "pytest_tail": "thing_else\" ; no_equals -expected5]\nFAILED tests/test_utils.py::test__parse_content_type_header[multipart/form-data; boundary = something ; 'boundary2=something_else' ; no_equals -expected6]\nFAILED tests/test_utils.py::test__parse_content_type_header[multipart/form-data; boundary = something ; \"boundary2=something_else\" ; no_equals -expected7]\n4 failed, 202 passed, 13 skipped, 6 warnings in 0.30s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7315",
+  "extract_rc": 0,
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 128,
+  "test_patch_3way_rc": 128,
+  "test_patch_tail": "error: corrupt patch at line 13\n",
+  "test_files": [
+   "tests/test_adapters.py"
+  ],
+  "pytest_rc": 1,
+  "counts": {
+   "failed": 1
+  },
+  "pytest_tail": ".1:10000//v:h\").prepare()\n>       assert \"/v:h\" == a.request_url(p, {})\nE       AssertionError: assert '/v:h' == '//v:h'\nE         \nE         - //v:h\nE         ? -\nE         + /v:h\n\ntests/test_adapters.py:8: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_adapters.py::test_request_url_trims_leading_path_separators\n1 failed in 0.04s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7427",
+  "extract_rc": 0,
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 128,
+  "test_patch_3way_rc": 128,
+  "test_patch_tail": "error: corrupt patch at line 32\n",
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "pytest_rc": 0,
+  "counts": {
+   "passed": 207,
+   "skipped": 13
+  },
+  "pytest_tail": "st_precedence\n  /usr/local/lib/python3.13/site-packages/requests/utils.py:527: DeprecationWarning: In requests 3.0, get_encodings_from_content will be removed. For more information, please see the discussion on issue #2266. (This warning should only appear once.)\n    warnings.warn(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n207 passed, 13 skipped, 6 warnings in 0.23s\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14616",
+  "extract_rc": 0,
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 128,
+  "test_patch_3way_rc": 128,
+  "test_patch_tail": "error: corrupt patch at line 66\n",
+  "test_files": [
+   "tests/test_json_type.py"
+  ],
+  "pytest_rc": 4,
+  "counts": {},
+  "pytest_tail": "\nno tests ran in 0.00s\nERROR: file or directory not found: tests/test_json_type.py\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_9425",
+  "extract_rc": 0,
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 128,
+  "test_patch_3way_rc": 128,
+  "test_patch_tail": "error: corrupt patch at line 20\n",
+  "test_files": [
+   "tests/test_return_none_stringified_annotations.py"
+  ],
+  "pytest_rc": 4,
+  "counts": {},
+  "pytest_tail": "\nno tests ran in 0.00s\nERROR: file or directory not found: tests/test_return_none_stringified_annotations.py\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3067",
+  "extract_rc": 0,
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 128,
+  "test_patch_3way_rc": 128,
+  "test_patch_tail": "error: corrupt patch at line 19\n",
+  "test_files": [
+   "tests/test_highlighter.py"
+  ],
+  "pytest_rc": 0,
+  "counts": {
+   "passed": 79
+  },
+  "pytest_tail": "........................................................................ [ 91%]\n.......                                                                  [100%]\n79 passed in 0.13s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "rich_3882",
+  "extract_rc": 0,
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 128,
+  "test_patch_3way_rc": 128,
+  "test_patch_tail": "error: corrupt patch at line 19\n",
+  "test_files": [
+   "tests/test_prompt.py"
+  ],
+  "pytest_rc": 0,
+  "counts": {
+   "passed": 7
+  },
+  "pytest_tail": ".......                                                                  [100%]\n7 passed in 0.15s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "/rig/_replay_local.json",
+  "error": "no snapshot"
+ }
+]

@@ -1,0 +1,892 @@
+[
+ {
+  "task": "fastapi_11355",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_stringified_annotations_simple.py"
+  ],
+  "test_fns": [
+   "test_stringified_annotations"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_stringified_annotations_simple.py::test_stringified_annotations"
+  ],
+  "pytest_tail": "============= short test summary info ===========================\nERROR tests/test_stringified_annotations_simple.py\n1 error in 5.52s\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_11355_oozxti9w\\tests\\test_stringified_annotations_simple.py::test_stringified_annotations\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_12942",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_union_body_discriminator.py"
+  ],
+  "test_fns": [
+   "test_discriminator_pydantic_v2"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_union_body_discriminator.py::test_discriminator_pydantic_v2"
+  ],
+  "pytest_tail": "======================= short test summary info ===========================\nERROR tests/test_union_body_discriminator.py\n1 error in 2.05s\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_12942_gqvaulht\\tests\\test_union_body_discriminator.py::test_discriminator_pydantic_v2\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_13207",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_computed_fields.py"
+  ],
+  "test_fns": [
+   "test_get",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_computed_fields.py::test_get",
+   "tests/test_computed_fields.py::test_openapi_schema"
+  ],
+  "pytest_tail": "fields.py\n1 error in 2.12s\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_13207_v58923ui\\tests\\test_computed_fields.py::test_get\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_13207_v58923ui\\tests\\test_computed_fields.py::test_openapi_schema\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_13713",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/main.py",
+   "tests/test_application.py"
+  ],
+  "test_fns": [
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/main.py::test_openapi_schema",
+   "tests/test_application.py::test_openapi_schema"
+  ],
+  "pytest_tail": "st_application.py\n2 errors in 1.90s\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_13713_i_znyye2\\tests\\main.py::test_openapi_schema\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_13713_i_znyye2\\tests\\test_application.py::test_openapi_schema\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_13786",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_security_api_key_cookie.py",
+   "tests/test_security_api_key_cookie_description.py",
+   "tests/test_security_api_key_header.py",
+   "tests/test_security_api_key_header_description.py",
+   "tests/test_security_api_key_query.py",
+   "tests/test_security_api_key_query_description.py",
+   "tests/test_security_http_base.py",
+   "tests/test_security_http_base_description.py",
+   "tests/test_security_http_basic_optional.py",
+   "tests/test_security_http_basic_realm.py",
+   "tests/test_security_http_basic_realm_description.py",
+   "tests/test_security_http_bearer.py",
+   "tests/test_security_http_bearer_description.py",
+   "tests/test_security_http_digest.py",
+   "tests/test_security_http_digest_description.py",
+   "tests/test_security_oauth2.py",
+   "tests/test_security_openid_connect.py"
+  ],
+  "test_fns": [
+   "test_security_http_basic_invalid_credentials",
+   "test_security_http_basic_non_basic_credentials",
+   "test_security_oauth2_password_other_header",
+   "test_security_api_key_no_key",
+   "test_openapi_schema",
+   "test_security_http_base_no_credentials",
+   "test_security_http_bearer_no_credentials",
+   "test_security_http_bearer_incorrect_scheme_credentials",
+   "test_security_http_digest_no_credentials",
+   "test_security_http_digest_incorrect_scheme_credentials",
+   "test_security_oauth2_password_bearer_no_header",
+   "test_strict_login_no_data"
+  ],
+  "counts": {
+   "error": 17
+  },
+  "nodes": [
+   "tests/test_security_api_key_cookie.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_api_key_cookie.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_api_key_cookie.py::test_security_oauth2_password_other_header",
+   "tests/test_security_api_key_cookie.py::test_security_api_key_no_key",
+   "tests/test_security_api_key_cookie.py::test_openapi_schema",
+   "tests/test_security_api_key_cookie.py::test_security_http_base_no_credentials",
+   "tests/test_security_api_key_cookie.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_api_key_cookie.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_api_key_cookie.py::test_security_http_digest_no_credentials",
+   "tests/test_security_api_key_cookie.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_api_key_cookie.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_api_key_cookie.py::test_strict_login_no_data",
+   "tests/test_security_api_key_cookie_description.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_api_key_cookie_description.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_api_key_cookie_description.py::test_security_oauth2_password_other_header",
+   "tests/test_security_api_key_cookie_description.py::test_security_api_key_no_key",
+   "tests/test_security_api_key_cookie_description.py::test_openapi_schema",
+   "tests/test_security_api_key_cookie_description.py::test_security_http_base_no_credentials",
+   "tests/test_security_api_key_cookie_description.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_api_key_cookie_description.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_api_key_cookie_description.py::test_security_http_digest_no_credentials",
+   "tests/test_security_api_key_cookie_description.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_api_key_cookie_description.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_api_key_cookie_description.py::test_strict_login_no_data",
+   "tests/test_security_api_key_header.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_api_key_header.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_api_key_header.py::test_security_oauth2_password_other_header",
+   "tests/test_security_api_key_header.py::test_security_api_key_no_key",
+   "tests/test_security_api_key_header.py::test_openapi_schema",
+   "tests/test_security_api_key_header.py::test_security_http_base_no_credentials",
+   "tests/test_security_api_key_header.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_api_key_header.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_api_key_header.py::test_security_http_digest_no_credentials",
+   "tests/test_security_api_key_header.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_api_key_header.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_api_key_header.py::test_strict_login_no_data",
+   "tests/test_security_api_key_header_description.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_api_key_header_description.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_api_key_header_description.py::test_security_oauth2_password_other_header",
+   "tests/test_security_api_key_header_description.py::test_security_api_key_no_key",
+   "tests/test_security_api_key_header_description.py::test_openapi_schema",
+   "tests/test_security_api_key_header_description.py::test_security_http_base_no_credentials",
+   "tests/test_security_api_key_header_description.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_api_key_header_description.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_api_key_header_description.py::test_security_http_digest_no_credentials",
+   "tests/test_security_api_key_header_description.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_api_key_header_description.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_api_key_header_description.py::test_strict_login_no_data",
+   "tests/test_security_api_key_query.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_api_key_query.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_api_key_query.py::test_security_oauth2_password_other_header",
+   "tests/test_security_api_key_query.py::test_security_api_key_no_key",
+   "tests/test_security_api_key_query.py::test_openapi_schema",
+   "tests/test_security_api_key_query.py::test_security_http_base_no_credentials",
+   "tests/test_security_api_key_query.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_api_key_query.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_api_key_query.py::test_security_http_digest_no_credentials",
+   "tests/test_security_api_key_query.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_api_key_query.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_api_key_query.py::test_strict_login_no_data",
+   "tests/test_security_api_key_query_description.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_api_key_query_description.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_api_key_query_description.py::test_security_oauth2_password_other_header",
+   "tests/test_security_api_key_query_description.py::test_security_api_key_no_key",
+   "tests/test_security_api_key_query_description.py::test_openapi_schema",
+   "tests/test_security_api_key_query_description.py::test_security_http_base_no_credentials",
+   "tests/test_security_api_key_query_description.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_api_key_query_description.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_api_key_query_description.py::test_security_http_digest_no_credentials",
+   "tests/test_security_api_key_query_description.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_api_key_query_description.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_api_key_query_description.py::test_strict_login_no_data",
+   "tests/test_security_http_base.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_http_base.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_http_base.py::test_security_oauth2_password_other_header",
+   "tests/test_security_http_base.py::test_security_api_key_no_key",
+   "tests/test_security_http_base.py::test_openapi_schema",
+   "tests/test_security_http_base.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_base.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_http_base.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_http_base.py::test_security_http_digest_no_credentials",
+   "tests/test_security_http_base.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_http_base.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_http_base.py::test_strict_login_no_data",
+   "tests/test_security_http_base_description.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_http_base_description.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_http_base_description.py::test_security_oauth2_password_other_header",
+   "tests/test_security_http_base_description.py::test_security_api_key_no_key",
+   "tests/test_security_http_base_description.py::test_openapi_schema",
+   "tests/test_security_http_base_description.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_base_description.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_http_base_description.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_http_base_description.py::test_security_http_digest_no_credentials",
+   "tests/test_security_http_base_description.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_http_base_description.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_http_base_description.py::test_strict_login_no_data",
+   "tests/test_security_http_basic_optional.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_http_basic_optional.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_http_basic_optional.py::test_security_oauth2_password_other_header",
+   "tests/test_security_http_basic_optional.py::test_security_api_key_no_key",
+   "tests/test_security_http_basic_optional.py::test_openapi_schema",
+   "tests/test_security_http_basic_optional.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_basic_optional.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_http_basic_optional.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_http_basic_optional.py::test_security_http_digest_no_credentials",
+   "tests/test_security_http_basic_optional.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_http_basic_optional.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_http_basic_optional.py::test_strict_login_no_data",
+   "tests/test_security_http_basic_realm.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_http_basic_realm.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_http_basic_realm.py::test_security_oauth2_password_other_header",
+   "tests/test_security_http_basic_realm.py::test_security_api_key_no_key",
+   "tests/test_security_http_basic_realm.py::test_openapi_schema",
+   "tests/test_security_http_basic_realm.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_basic_realm.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_http_basic_realm.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_http_basic_realm.py::test_security_http_digest_no_credentials",
+   "tests/test_security_http_basic_realm.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_http_basic_realm.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_http_basic_realm.py::test_strict_login_no_data",
+   "tests/test_security_http_basic_realm_description.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_http_basic_realm_description.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_http_basic_realm_description.py::test_security_oauth2_password_other_header",
+   "tests/test_security_http_basic_realm_description.py::test_security_api_key_no_key",
+   "tests/test_security_http_basic_realm_description.py::test_openapi_schema",
+   "tests/test_security_http_basic_realm_description.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_basic_realm_description.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_http_basic_realm_description.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_http_basic_realm_description.py::test_security_http_digest_no_credentials",
+   "tests/test_security_http_basic_realm_description.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_http_basic_realm_description.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_http_basic_realm_description.py::test_strict_login_no_data",
+   "tests/test_security_http_bearer.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_http_bearer.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_http_bearer.py::test_security_oauth2_password_other_header",
+   "tests/test_security_http_bearer.py::test_security_api_key_no_key",
+   "tests/test_security_http_bearer.py::test_openapi_schema",
+   "tests/test_security_http_bearer.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_bearer.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_http_bearer.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_http_bearer.py::test_security_http_digest_no_credentials",
+   "tests/test_security_http_bearer.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_http_bearer.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_http_bearer.py::test_strict_login_no_data",
+   "tests/test_security_http_bearer_description.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_http_bearer_description.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_http_bearer_description.py::test_security_oauth2_password_other_header",
+   "tests/test_security_http_bearer_description.py::test_security_api_key_no_key",
+   "tests/test_security_http_bearer_description.py::test_openapi_schema",
+   "tests/test_security_http_bearer_description.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_bearer_description.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_http_bearer_description.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_http_bearer_description.py::test_security_http_digest_no_credentials",
+   "tests/test_security_http_bearer_description.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_http_bearer_description.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_http_bearer_description.py::test_strict_login_no_data",
+   "tests/test_security_http_digest.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_http_digest.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_http_digest.py::test_security_oauth2_password_other_header",
+   "tests/test_security_http_digest.py::test_security_api_key_no_key",
+   "tests/test_security_http_digest.py::test_openapi_schema",
+   "tests/test_security_http_digest.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_digest.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_http_digest.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_http_digest.py::test_security_http_digest_no_credentials",
+   "tests/test_security_http_digest.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_http_digest.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_http_digest.py::test_strict_login_no_data",
+   "tests/test_security_http_digest_description.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_http_digest_description.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_http_digest_description.py::test_security_oauth2_password_other_header",
+   "tests/test_security_http_digest_description.py::test_security_api_key_no_key",
+   "tests/test_security_http_digest_description.py::test_openapi_schema",
+   "tests/test_security_http_digest_description.py::test_security_http_base_no_credentials",
+   "tests/test_security_http_digest_description.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_http_digest_description.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_http_digest_description.py::test_security_http_digest_no_credentials",
+   "tests/test_security_http_digest_description.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_http_digest_description.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_http_digest_description.py::test_strict_login_no_data",
+   "tests/test_security_oauth2.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_oauth2.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_oauth2.py::test_security_oauth2_password_other_header",
+   "tests/test_security_oauth2.py::test_security_api_key_no_key",
+   "tests/test_security_oauth2.py::test_openapi_schema",
+   "tests/test_security_oauth2.py::test_security_http_base_no_credentials",
+   "tests/test_security_oauth2.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_oauth2.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_oauth2.py::test_security_http_digest_no_credentials",
+   "tests/test_security_oauth2.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_oauth2.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_oauth2.py::test_strict_login_no_data",
+   "tests/test_security_openid_connect.py::test_security_http_basic_invalid_credentials",
+   "tests/test_security_openid_connect.py::test_security_http_basic_non_basic_credentials",
+   "tests/test_security_openid_connect.py::test_security_oauth2_password_other_header",
+   "tests/test_security_openid_connect.py::test_security_api_key_no_key",
+   "tests/test_security_openid_connect.py::test_openapi_schema",
+   "tests/test_security_openid_connect.py::test_security_http_base_no_credentials",
+   "tests/test_security_openid_connect.py::test_security_http_bearer_no_credentials",
+   "tests/test_security_openid_connect.py::test_security_http_bearer_incorrect_scheme_credentials",
+   "tests/test_security_openid_connect.py::test_security_http_digest_no_credentials",
+   "tests/test_security_openid_connect.py::test_security_http_digest_incorrect_scheme_credentials",
+   "tests/test_security_openid_connect.py::test_security_oauth2_password_bearer_no_header",
+   "tests/test_security_openid_connect.py::test_strict_login_no_data"
+  ],
+  "pytest_tail": "\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_13786_e8zbtg0g\\tests\\test_security_openid_connect.py::test_security_oauth2_password_bearer_no_header\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_13786_e8zbtg0g\\tests\\test_security_openid_connect.py::test_strict_login_no_data\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14077",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_enforce_once_required_parameter.py"
+  ],
+  "test_fns": [
+   "test_schema",
+   "test_get_invalid",
+   "test_get_valid"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_enforce_once_required_parameter.py::test_schema",
+   "tests/test_enforce_once_required_parameter.py::test_get_invalid",
+   "tests/test_enforce_once_required_parameter.py::test_get_valid"
+  ],
+  "pytest_tail": "ound no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14077_ly_5p_8w\\tests\\test_enforce_once_required_parameter.py::test_get_invalid\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14077_ly_5p_8w\\tests\\test_enforce_once_required_parameter.py::test_get_valid\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14099",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_after_yield_raise.py",
+   "tests/test_dependency_after_yield_streaming.py",
+   "tests/test_dependency_after_yield_websockets.py",
+   "tests/test_dependency_contextmanager.py",
+   "tests/test_route_scope.py",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py"
+  ],
+  "test_fns": [
+   "test_catching",
+   "test_broken_raise",
+   "test_broken_no_raise",
+   "test_broken_return_finishes",
+   "test_regular_no_stream",
+   "test_stream_simple",
+   "test_stream_session",
+   "test_broken_session_data",
+   "test_broken_session_data_no_raise",
+   "test_broken_session_stream_raise",
+   "test_broken_session_stream_no_raise",
+   "test_websocket_dependency_after_yield",
+   "test_websocket_dependency_after_yield_broken"
+  ],
+  "counts": {
+   "error": 6
+  },
+  "nodes": [
+   "tests/test_dependency_after_yield_raise.py::test_catching",
+   "tests/test_dependency_after_yield_raise.py::test_broken_raise",
+   "tests/test_dependency_after_yield_raise.py::test_broken_no_raise",
+   "tests/test_dependency_after_yield_raise.py::test_broken_return_finishes",
+   "tests/test_dependency_after_yield_raise.py::test_regular_no_stream",
+   "tests/test_dependency_after_yield_raise.py::test_stream_simple",
+   "tests/test_dependency_after_yield_raise.py::test_stream_session",
+   "tests/test_dependency_after_yield_raise.py::test_broken_session_data",
+   "tests/test_dependency_after_yield_raise.py::test_broken_session_data_no_raise",
+   "tests/test_dependency_after_yield_raise.py::test_broken_session_stream_raise",
+   "tests/test_dependency_after_yield_raise.py::test_broken_session_stream_no_raise",
+   "tests/test_dependency_after_yield_raise.py::test_websocket_dependency_after_yield",
+   "tests/test_dependency_after_yield_raise.py::test_websocket_dependency_after_yield_broken",
+   "tests/test_dependency_after_yield_streaming.py::test_catching",
+   "tests/test_dependency_after_yield_streaming.py::test_broken_raise",
+   "tests/test_dependency_after_yield_streaming.py::test_broken_no_raise",
+   "tests/test_dependency_after_yield_streaming.py::test_broken_return_finishes",
+   "tests/test_dependency_after_yield_streaming.py::test_regular_no_stream",
+   "tests/test_dependency_after_yield_streaming.py::test_stream_simple",
+   "tests/test_dependency_after_yield_streaming.py::test_stream_session",
+   "tests/test_dependency_after_yield_streaming.py::test_broken_session_data",
+   "tests/test_dependency_after_yield_streaming.py::test_broken_session_data_no_raise",
+   "tests/test_dependency_after_yield_streaming.py::test_broken_session_stream_raise",
+   "tests/test_dependency_after_yield_streaming.py::test_broken_session_stream_no_raise",
+   "tests/test_dependency_after_yield_streaming.py::test_websocket_dependency_after_yield",
+   "tests/test_dependency_after_yield_streaming.py::test_websocket_dependency_after_yield_broken",
+   "tests/test_dependency_after_yield_websockets.py::test_catching",
+   "tests/test_dependency_after_yield_websockets.py::test_broken_raise",
+   "tests/test_dependency_after_yield_websockets.py::test_broken_no_raise",
+   "tests/test_dependency_after_yield_websockets.py::test_broken_return_finishes",
+   "tests/test_dependency_after_yield_websockets.py::test_regular_no_stream",
+   "tests/test_dependency_after_yield_websockets.py::test_stream_simple",
+   "tests/test_dependency_after_yield_websockets.py::test_stream_session",
+   "tests/test_dependency_after_yield_websockets.py::test_broken_session_data",
+   "tests/test_dependency_after_yield_websockets.py::test_broken_session_data_no_raise",
+   "tests/test_dependency_after_yield_websockets.py::test_broken_session_stream_raise",
+   "tests/test_dependency_after_yield_websockets.py::test_broken_session_stream_no_raise",
+   "tests/test_dependency_after_yield_websockets.py::test_websocket_dependency_after_yield",
+   "tests/test_dependency_after_yield_websockets.py::test_websocket_dependency_after_yield_broken",
+   "tests/test_dependency_contextmanager.py::test_catching",
+   "tests/test_dependency_contextmanager.py::test_broken_raise",
+   "tests/test_dependency_contextmanager.py::test_broken_no_raise",
+   "tests/test_dependency_contextmanager.py::test_broken_return_finishes",
+   "tests/test_dependency_contextmanager.py::test_regular_no_stream",
+   "tests/test_dependency_contextmanager.py::test_stream_simple",
+   "tests/test_dependency_contextmanager.py::test_stream_session",
+   "tests/test_dependency_contextmanager.py::test_broken_session_data",
+   "tests/test_dependency_contextmanager.py::test_broken_session_data_no_raise",
+   "tests/test_dependency_contextmanager.py::test_broken_session_stream_raise",
+   "tests/test_dependency_contextmanager.py::test_broken_session_stream_no_raise",
+   "tests/test_dependency_contextmanager.py::test_websocket_dependency_after_yield",
+   "tests/test_dependency_contextmanager.py::test_websocket_dependency_after_yield_broken",
+   "tests/test_route_scope.py::test_catching",
+   "tests/test_route_scope.py::test_broken_raise",
+   "tests/test_route_scope.py::test_broken_no_raise",
+   "tests/test_route_scope.py::test_broken_return_finishes",
+   "tests/test_route_scope.py::test_regular_no_stream",
+   "tests/test_route_scope.py::test_stream_simple",
+   "tests/test_route_scope.py::test_stream_session",
+   "tests/test_route_scope.py::test_broken_session_data",
+   "tests/test_route_scope.py::test_broken_session_data_no_raise",
+   "tests/test_route_scope.py::test_broken_session_stream_raise",
+   "tests/test_route_scope.py::test_broken_session_stream_no_raise",
+   "tests/test_route_scope.py::test_websocket_dependency_after_yield",
+   "tests/test_route_scope.py::test_websocket_dependency_after_yield_broken",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_catching",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_broken_raise",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_broken_no_raise",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_broken_return_finishes",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_regular_no_stream",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_stream_simple",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_stream_session",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_broken_session_data",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_broken_session_data_no_raise",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_broken_session_stream_raise",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_broken_session_stream_no_raise",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_websocket_dependency_after_yield",
+   "tests/test_tutorial/test_dependencies/test_tutorial008c.py::test_websocket_dependency_after_yield_broken"
+  ],
+  "pytest_tail": "9qid\\tests\\test_tutorial\\test_dependencies\\test_tutorial008c.py::test_websocket_dependency_after_yield\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14099_3gsw9qid\\tests\\test_tutorial\\test_dependencies\\test_tutorial008c.py::test_websocket_dependency_after_yield_broken\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14186",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_compat.py",
+   "tests/test_get_model_definitions_formfeed_escape.py",
+   "tests/test_response_model_as_return_annotation.py"
+  ],
+  "test_fns": [
+   "test_model_field_default_required",
+   "test_is_uploadfile_sequence_annotation",
+   "test_model_description_escaped_with_formfeed",
+   "test_v1_plain_validator_function",
+   "test_is_pv1_scalar_field",
+   "test_get_model_fields_cached",
+   "test_invalid_response_model_field_pv1"
+  ],
+  "counts": {
+   "error": 3
+  },
+  "nodes": [
+   "tests/test_compat.py::test_model_field_default_required",
+   "tests/test_compat.py::test_is_uploadfile_sequence_annotation",
+   "tests/test_compat.py::test_model_description_escaped_with_formfeed",
+   "tests/test_compat.py::test_v1_plain_validator_function",
+   "tests/test_compat.py::test_is_pv1_scalar_field",
+   "tests/test_compat.py::test_get_model_fields_cached",
+   "tests/test_compat.py::test_invalid_response_model_field_pv1",
+   "tests/test_get_model_definitions_formfeed_escape.py::test_model_field_default_required",
+   "tests/test_get_model_definitions_formfeed_escape.py::test_is_uploadfile_sequence_annotation",
+   "tests/test_get_model_definitions_formfeed_escape.py::test_model_description_escaped_with_formfeed",
+   "tests/test_get_model_definitions_formfeed_escape.py::test_v1_plain_validator_function",
+   "tests/test_get_model_definitions_formfeed_escape.py::test_is_pv1_scalar_field",
+   "tests/test_get_model_definitions_formfeed_escape.py::test_get_model_fields_cached",
+   "tests/test_get_model_definitions_formfeed_escape.py::test_invalid_response_model_field_pv1",
+   "tests/test_response_model_as_return_annotation.py::test_model_field_default_required",
+   "tests/test_response_model_as_return_annotation.py::test_is_uploadfile_sequence_annotation",
+   "tests/test_response_model_as_return_annotation.py::test_model_description_escaped_with_formfeed",
+   "tests/test_response_model_as_return_annotation.py::test_v1_plain_validator_function",
+   "tests/test_response_model_as_return_annotation.py::test_is_pv1_scalar_field",
+   "tests/test_response_model_as_return_annotation.py::test_get_model_fields_cached",
+   "tests/test_response_model_as_return_annotation.py::test_invalid_response_model_field_pv1"
+  ],
+  "pytest_tail": "ta\\Local\\Temp\\r_fastapi_14186_2xvq98el\\tests\\test_response_model_as_return_annotation.py::test_get_model_fields_cached\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14186_2xvq98el\\tests\\test_response_model_as_return_annotation.py::test_invalid_response_model_field_pv1\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14246",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_no_schema_split.py",
+   "tests/test_pydantic_v1_v2_multifile/test_multifile.py"
+  ],
+  "test_fns": [
+   "test_create_message",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_no_schema_split.py::test_create_message",
+   "tests/test_no_schema_split.py::test_openapi_schema",
+   "tests/test_pydantic_v1_v2_multifile/test_multifile.py::test_create_message",
+   "tests/test_pydantic_v1_v2_multifile/test_multifile.py::test_openapi_schema"
+  ],
+  "pytest_tail": ":\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14246_apauf9a2\\tests\\test_pydantic_v1_v2_multifile\\test_multifile.py::test_create_message\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14246_apauf9a2\\tests\\test_pydantic_v1_v2_multifile\\test_multifile.py::test_openapi_schema\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14258",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_router_circular_import.py"
+  ],
+  "test_fns": [
+   "test_router_circular_import"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_router_circular_import.py::test_router_circular_import"
+  ],
+  "pytest_tail": "e'\n=========================== short test summary info ===========================\nERROR tests/test_router_circular_import.py\n1 error in 6.65s\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14258_v65gpv6m\\tests\\test_router_circular_import.py::test_router_circular_import\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14262",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_yield_scope.py",
+   "tests/test_dependency_yield_scope_websockets.py",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py"
+  ],
+  "test_fns": [
+   "test_function_scope",
+   "test_request_scope",
+   "test_two_scopes",
+   "test_sub",
+   "test_broken_scope",
+   "test_named_function_scope",
+   "test_regular_function_scope",
+   "test_get_users_me"
+  ],
+  "counts": {
+   "error": 3
+  },
+  "nodes": [
+   "tests/test_dependency_yield_scope.py::test_function_scope",
+   "tests/test_dependency_yield_scope.py::test_request_scope",
+   "tests/test_dependency_yield_scope.py::test_two_scopes",
+   "tests/test_dependency_yield_scope.py::test_sub",
+   "tests/test_dependency_yield_scope.py::test_broken_scope",
+   "tests/test_dependency_yield_scope.py::test_named_function_scope",
+   "tests/test_dependency_yield_scope.py::test_regular_function_scope",
+   "tests/test_dependency_yield_scope.py::test_get_users_me",
+   "tests/test_dependency_yield_scope_websockets.py::test_function_scope",
+   "tests/test_dependency_yield_scope_websockets.py::test_request_scope",
+   "tests/test_dependency_yield_scope_websockets.py::test_two_scopes",
+   "tests/test_dependency_yield_scope_websockets.py::test_sub",
+   "tests/test_dependency_yield_scope_websockets.py::test_broken_scope",
+   "tests/test_dependency_yield_scope_websockets.py::test_named_function_scope",
+   "tests/test_dependency_yield_scope_websockets.py::test_regular_function_scope",
+   "tests/test_dependency_yield_scope_websockets.py::test_get_users_me",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py::test_function_scope",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py::test_request_scope",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py::test_two_scopes",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py::test_sub",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py::test_broken_scope",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py::test_named_function_scope",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py::test_regular_function_scope",
+   "tests/test_tutorial/test_dependencies/test_tutorial008e.py::test_get_users_me"
+  ],
+  "pytest_tail": "pData\\Local\\Temp\\r_fastapi_14262_3_jnzky1\\tests\\test_tutorial\\test_dependencies\\test_tutorial008e.py::test_regular_function_scope\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14262_3_jnzky1\\tests\\test_tutorial\\test_dependencies\\test_tutorial008e.py::test_get_users_me\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14266",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_top_level_security_scheme_in_openapi.py"
+  ],
+  "test_fns": [
+   "test_get_root",
+   "test_get_root_no_token",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_top_level_security_scheme_in_openapi.py::test_get_root",
+   "tests/test_top_level_security_scheme_in_openapi.py::test_get_root_no_token",
+   "tests/test_top_level_security_scheme_in_openapi.py::test_openapi_schema"
+  ],
+  "pytest_tail": "r C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14266_64iczlvj\\tests\\test_top_level_security_scheme_in_openapi.py::test_get_root_no_token\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14266_64iczlvj\\tests\\test_top_level_security_scheme_in_openapi.py::test_openapi_schema\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14297",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_compat.py",
+   "tests/test_optional_file_list.py"
+  ],
+  "test_fns": [
+   "test_serialize_sequence_value_with_optional_list",
+   "test_serialize_sequence_value_with_none_first_in_union",
+   "test_optional_bytes_list",
+   "test_optional_bytes_list_no_files"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_compat.py::test_serialize_sequence_value_with_optional_list",
+   "tests/test_compat.py::test_serialize_sequence_value_with_none_first_in_union",
+   "tests/test_compat.py::test_optional_bytes_list",
+   "tests/test_compat.py::test_optional_bytes_list_no_files",
+   "tests/test_optional_file_list.py::test_serialize_sequence_value_with_optional_list",
+   "tests/test_optional_file_list.py::test_serialize_sequence_value_with_none_first_in_union",
+   "tests/test_optional_file_list.py::test_optional_bytes_list",
+   "tests/test_optional_file_list.py::test_optional_bytes_list_no_files"
+  ],
+  "pytest_tail": "und no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14297_wb997v13\\tests\\test_optional_file_list.py::test_optional_bytes_list\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14297_wb997v13\\tests\\test_optional_file_list.py::test_optional_bytes_list_no_files\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14303",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_forms_single_model.py"
+  ],
+  "test_fns": [
+   "test_extra_param_single",
+   "test_extra_param_list"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_forms_single_model.py::test_extra_param_single",
+   "tests/test_forms_single_model.py::test_extra_param_list"
+  ],
+  "pytest_tail": "36s\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14303_2up9c9en\\tests\\test_forms_single_model.py::test_extra_param_single\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14303_2up9c9en\\tests\\test_forms_single_model.py::test_extra_param_list\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14349",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_schema_ref_pydantic_v2.py"
+  ],
+  "test_fns": [
+   "test_get",
+   "test_openapi_schema"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_schema_ref_pydantic_v2.py::test_get",
+   "tests/test_schema_ref_pydantic_v2.py::test_openapi_schema"
+  ],
+  "pytest_tail": "ror in 2.27s\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14349_ft757e1o\\tests\\test_schema_ref_pydantic_v2.py::test_get\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14349_ft757e1o\\tests\\test_schema_ref_pydantic_v2.py::test_openapi_schema\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14356",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_query_cookie_header_model_extra_params.py",
+   "tests/test_tutorial/test_header_param_models/test_tutorial003.py"
+  ],
+  "test_fns": [
+   "test_query_pass_extra_list",
+   "test_query_pass_extra_single",
+   "test_header_pass_extra_list",
+   "test_header_pass_extra_single",
+   "test_cookie_pass_extra_list"
+  ],
+  "counts": {
+   "error": 2
+  },
+  "nodes": [
+   "tests/test_query_cookie_header_model_extra_params.py::test_query_pass_extra_list",
+   "tests/test_query_cookie_header_model_extra_params.py::test_query_pass_extra_single",
+   "tests/test_query_cookie_header_model_extra_params.py::test_header_pass_extra_list",
+   "tests/test_query_cookie_header_model_extra_params.py::test_header_pass_extra_single",
+   "tests/test_query_cookie_header_model_extra_params.py::test_cookie_pass_extra_list",
+   "tests/test_tutorial/test_header_param_models/test_tutorial003.py::test_query_pass_extra_list",
+   "tests/test_tutorial/test_header_param_models/test_tutorial003.py::test_query_pass_extra_single",
+   "tests/test_tutorial/test_header_param_models/test_tutorial003.py::test_header_pass_extra_list",
+   "tests/test_tutorial/test_header_param_models/test_tutorial003.py::test_header_pass_extra_single",
+   "tests/test_tutorial/test_header_param_models/test_tutorial003.py::test_cookie_pass_extra_list"
+  ],
+  "pytest_tail": "pi_14356_bgiwnsdk\\tests\\test_tutorial\\test_header_param_models\\test_tutorial003.py::test_header_pass_extra_single\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14356_bgiwnsdk\\tests\\test_tutorial\\test_header_param_models\\test_tutorial003.py::test_cookie_pass_extra_list\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14360",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_request_param_model_by_alias.py"
+  ],
+  "test_fns": [
+   "test_query_model_with_alias",
+   "test_header_model_with_alias",
+   "test_cookie_model_with_alias",
+   "test_query_model_with_alias_by_name",
+   "test_header_model_with_alias_by_name",
+   "test_cookie_model_with_alias_by_name"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_request_param_model_by_alias.py::test_query_model_with_alias",
+   "tests/test_request_param_model_by_alias.py::test_header_model_with_alias",
+   "tests/test_request_param_model_by_alias.py::test_cookie_model_with_alias",
+   "tests/test_request_param_model_by_alias.py::test_query_model_with_alias_by_name",
+   "tests/test_request_param_model_by_alias.py::test_header_model_with_alias_by_name",
+   "tests/test_request_param_model_by_alias.py::test_cookie_model_with_alias_by_name"
+  ],
+  "pytest_tail": "s\\AppData\\Local\\Temp\\r_fastapi_14360_bg8hmzh9\\tests\\test_request_param_model_by_alias.py::test_header_model_with_alias_by_name\n\nERROR: found no collectors for C:\\Users\\Biges\\AppData\\Local\\Temp\\r_fastapi_14360_bg8hmzh9\\tests\\test_request_param_model_by_alias.py::test_cookie_model_with_alias_by_name\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_14361",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14371",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14430",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14448",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14455",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14459",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14482",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14485",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14512",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14583",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14605",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14609",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14791",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14851",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14953",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14962",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14964",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_14978",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_15023",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_15030",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_15280",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_15661",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_15745",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_15785",
+  "error": "extract failed"
+ },
+ {
+  "task": "fastapi_15800",
+  "error": "extract failed"
+ },
+ {
+  "task": "httpx_3672",
+  "error": "extract failed"
+ },
+ {
+  "task": "rich_3675",
+  "error": "extract failed"
+ },
+ {
+  "task": "rich_3930",
+  "error": "extract failed"
+ },
+ {
+  "task": "rich_4070",
+  "error": "extract failed"
+ }
+]

@@ -1,0 +1,71 @@
+{
+ "counts": {
+  "claims": 1229,
+  "eval_runs": 7,
+  "pasted_logs": 14,
+  "pulled_runs": 8,
+  "rig_runs": 220,
+  "rows_by_run_kind": {
+   "kaggle-kernel": 1750,
+   "kaggle-pulled": 40,
+   "kaggle-pulled-legacy": 4,
+   "local-rig": 1857,
+   "local-sweep": 1574,
+   "pasted-log": 206
+  },
+  "rows_by_track": {
+   "dev-proxy": 1736,
+   "main": 1366,
+   "small-model": 2329
+  },
+  "run_dirs": 102,
+  "runs_rows": 5431,
+  "sweep_tags": 779,
+  "tasks_gold": 129,
+  "traces": 3651
+ },
+ "discovery_fingerprint": "cee60c41944b",
+ "engine_versions": {
+  "claims": "cl-4",
+  "cm": "cm-2",
+  "dh": "dh-1",
+  "fc": "fc-3",
+  "lv": "lv-1",
+  "nm": "nm-3",
+  "rp": "rp-5"
+ },
+ "gemma_root": "c:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma",
+ "generated_files": [
+  "KB_SUMMARY.md",
+  "STANDING_TRUTHS.md",
+  "build_log.txt",
+  "build_meta.json",
+  "build_stamp.json",
+  "curated/_proposed_updates.md",
+  "log_claims.jsonl",
+  "log_claims.md",
+  "near_miss.jsonl",
+  "replays/gold_coverage.json",
+  "runs.jsonl",
+  "tasks_gold.json"
+ ],
+ "inputs_count": 7540,
+ "inputs_fingerprint": "38480c3f7658e93f25b865c085b7b98971568d204223a0cc6ee94da53777c28f",
+ "log_lines": 16645,
+ "log_sha256": "6d32e081aa5984f7ffd92ae1ea3cffb9f64fe7b5af15591bcc691ca0a0f9c313",
+ "near_miss_fp": {
+  "bar": 0.01,
+  "pairs": 126832,
+  "passes_bar": true,
+  "sampling": "hash-cap-40",
+  "wrote_gold_change_fp": 652,
+  "wrote_gold_change_fp_rate": 0.00514
+ },
+ "newest_input": {
+  "mtime_utc": "2026-11-02T12:41:39Z",
+  "path": "local_eval/out_submit_mobile/submission/agent.yaml"
+ },
+ "replays_pending": 0,
+ "schema": "build_meta/3",
+ "warnings": 0
+}

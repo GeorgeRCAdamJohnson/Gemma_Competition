@@ -1,0 +1,5 @@
+﻿[09:43:31] v6w CONTROL: comfyops/gemma-sibling-conform-v6w has status "KernelWorkerStatus.RUNNING"
+[09:44:02] v6w CONTROL: comfyops/gemma-sibling-conform-v6w has status "KernelWorkerStatus.RUNNING"
+[09:44:33] v6w CONTROL: comfyops/gemma-sibling-conform-v6w has status "KernelWorkerStatus.RUNNING"
+[09:45:04] v6w CONTROL: comfyops/gemma-sibling-conform-v6w has status "KernelWorkerStatus.CANCEL_REQUESTED"
+TERMINAL: comfyops/gemma-sibling-conform-v6w has status "KernelWorkerStatus.CANCEL_REQUESTED"

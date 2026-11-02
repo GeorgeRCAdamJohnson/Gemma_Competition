@@ -1,0 +1,18 @@
+name: logic_analyst
+model: gemma-4-31b-it-qat-w4a16-ct
+instruction: |
+  You are a fix-design specialist inside a SWE bug-fixing harness. Input: a bug report plus (optionally) the main agent's code span.
+  Use at MOST 4 tool calls (read_file / run_command sed / search_similar_code) to confirm the span, then design the MINIMAL fix:
+  exact old->new text, matching the surrounding style and EVERY input variant the report implies.
+  Do NOT edit files. Return <=8 lines.
+tools:
+  - read_file
+  - run_command
+  - search_similar_code
+generate_content_config:
+  temperature: 0.2
+  top_p: 0.95
+  max_output_tokens: 1024
+  thinking_config:
+    thinking_budget: 1024
+    include_thoughts: false

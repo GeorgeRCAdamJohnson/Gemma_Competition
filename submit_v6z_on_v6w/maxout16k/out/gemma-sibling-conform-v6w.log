@@ -1,0 +1,79 @@
+[{"stream_name":"stderr","time":9.418647267,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":9.418688668,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":10.738743358,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":10.738762096,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":10.738764961,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":10.73876708,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":11.462874036,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":11.462898974,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":11.462901919,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":11.462904004,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":13.04494592,"data":"Installing 41 wheels...\n"}
+,{"stream_name":"stdout","time":71.408933153,"data":"Wheelhouse installation complete.\n"}
+,{"stream_name":"stdout","time":107.101445267,"data":"Agent dir written (v6t = v6c + edit_file/write_file RESTORED as primary edit mechanism; 0.18 budget, budget oracle + commit-by-remaining + bank-as-you-go, same 6 tasks): /kaggle/working/submission\n"}
+,{"stream_name":"stdout","time":107.101474536,"data":"Loaded 129 tasks\n"}
+,{"stream_name":"stdout","time":119.744225833,"data":"[import] validate_single_declared_model NOT FOUND; using no-op (single-model rule satisfied by agent.yaml)\n"}
+,{"stream_name":"stdout","time":578.379874343,"data":"vLLM server started on http://127.0.0.1:8000/v1 (tp=4)\n"}
+,{"stream_name":"stderr","time":578.534603438,"data":"/usr/local/lib/python3.12/dist-packages/google/adk/features/_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.AGENT_CONFIG is enabled.\n"}
+,{"stream_name":"stderr","time":578.534624621,"data":"  check_feature_enabled()\n"}
+,{"stream_name":"stderr","time":578.534628098,"data":"/tmp/ipykernel_65/1114253236.py:59: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":578.534631705,"data":"  events_compaction_config=EventsCompactionConfig(compaction_interval=15, overlap_size=2,\n"}
+,{"stream_name":"stderr","time":578.534634531,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5e69bb4d-81f, creating venv without pip: Command '['/tmp/swegemma_sandbox_5e69bb4d-81f_i1x_3rxt/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":578.534637702,"data":"\n"}
+,{"stream_name":"stderr","time":578.534640018,"data":"/usr/local/lib/python3.12/dist-packages/google/adk/features/_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.AGENT_CONFIG is enabled.\n"}
+,{"stream_name":"stderr","time":578.534642705,"data":"  check_feature_enabled()\n"}
+,{"stream_name":"stderr","time":578.534644968,"data":"/tmp/ipykernel_65/1114253236.py:59: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":578.534656324,"data":"  events_compaction_config=EventsCompactionConfig(compaction_interval=15, overlap_size=2,\n"}
+,{"stream_name":"stderr","time":578.534658518,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 5e69bb4d-81f, creating venv without pip: Command '['/tmp/swegemma_sandbox_5e69bb4d-81f_i1x_3rxt/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":578.57786448,"data":"RICH-ONLY gate (4 tasks): ['rich_3675', 'rich_3676', 'rich_3535', 'rich_3934']\n"}
+,{"stream_name":"stdout","time":578.577881668,"data":"[1/4] rich_3675 (Textualize/rich)...\n"}
+,{"stream_name":"stderr","time":730.415537406,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 1a065a5d-791, creating venv without pip: Command '['/tmp/swegemma_sandbox_1a065a5d-791_y4cb3kp7/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":730.415563853,"data":"\n"}
+,{"stream_name":"stderr","time":730.415567579,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 1a065a5d-791, creating venv without pip: Command '['/tmp/swegemma_sandbox_1a065a5d-791_y4cb3kp7/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":734.157259989,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox d7ad590a-6ac, creating venv without pip: Command '['/tmp/swegemma_sandbox_d7ad590a-6ac_i8dpivfy/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":734.157288549,"data":"\n"}
+,{"stream_name":"stderr","time":734.1572922,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox d7ad590a-6ac, creating venv without pip: Command '['/tmp/swegemma_sandbox_d7ad590a-6ac_i8dpivfy/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":734.232510089,"data":"  -\u003e resolved=False duration=155.6s tool_calls=11 patch_chars=723\n"}
+,{"stream_name":"stdout","time":734.232528915,"data":"[2/4] rich_3676 (Textualize/rich)...\n"}
+,{"stream_name":"stderr","time":931.82253392,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 51423830-cb6, creating venv without pip: Command '['/tmp/swegemma_sandbox_51423830-cb6_np9txv6l/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":931.822572664,"data":"\n"}
+,{"stream_name":"stderr","time":931.822576529,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 51423830-cb6, creating venv without pip: Command '['/tmp/swegemma_sandbox_51423830-cb6_np9txv6l/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":936.02879073,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 6b663fc5-361, creating venv without pip: Command '['/tmp/swegemma_sandbox_6b663fc5-361_ku5dkiue/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":936.028816965,"data":"\n"}
+,{"stream_name":"stderr","time":936.028820376,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 6b663fc5-361, creating venv without pip: Command '['/tmp/swegemma_sandbox_6b663fc5-361_ku5dkiue/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":936.102092242,"data":"  -\u003e resolved=False duration=201.8s tool_calls=19 patch_chars=1732\n"}
+,{"stream_name":"stdout","time":936.102112371,"data":"[3/4] rich_3535 (Textualize/rich)...\n"}
+,{"stream_name":"stderr","time":1090.136383505,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f253bf24-302, creating venv without pip: Command '['/tmp/swegemma_sandbox_f253bf24-302_n9vvb60g/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1090.136419865,"data":"\n"}
+,{"stream_name":"stderr","time":1090.136423735,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox f253bf24-302, creating venv without pip: Command '['/tmp/swegemma_sandbox_f253bf24-302_n9vvb60g/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1092.537058281,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 2b1b1637-763, creating venv without pip: Command '['/tmp/swegemma_sandbox_2b1b1637-763_a5x1iu70/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1092.537107173,"data":"\n"}
+,{"stream_name":"stderr","time":1092.537110962,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 2b1b1637-763, creating venv without pip: Command '['/tmp/swegemma_sandbox_2b1b1637-763_a5x1iu70/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1092.610422001,"data":"  -\u003e resolved=False duration=156.5s tool_calls=12 patch_chars=465\n"}
+,{"stream_name":"stdout","time":1092.610449676,"data":"[4/4] rich_3934 (Textualize/rich)...\n"}
+,{"stream_name":"stderr","time":1499.874554984,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 28d303be-ecc, creating venv without pip: Command '['/tmp/swegemma_sandbox_28d303be-ecc_bpukqauv/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1499.874591904,"data":"\n"}
+,{"stream_name":"stderr","time":1499.874596246,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 28d303be-ecc, creating venv without pip: Command '['/tmp/swegemma_sandbox_28d303be-ecc_bpukqauv/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1504.250741474,"data":"  -\u003e resolved=False duration=411.8s tool_calls=23 patch_chars=811\n"}
+,{"stream_name":"stdout","time":1504.250772105,"data":"\n"}
+,{"stream_name":"stdout","time":1504.250775558,"data":"===== v6c SUMMARY =====\n"}
+,{"stream_name":"stdout","time":1504.250778486,"data":"       id repo  resolved  duration_s  tool_calls  patch_chars\n"}
+,{"stream_name":"stdout","time":1504.250780849,"data":"rich_3675 rich     False       155.6          11          723\n"}
+,{"stream_name":"stdout","time":1504.250783186,"data":"rich_3676 rich     False       201.8          19         1732\n"}
+,{"stream_name":"stdout","time":1504.250785616,"data":"rich_3535 rich     False       156.5          12          465\n"}
+,{"stream_name":"stdout","time":1504.250787946,"data":"rich_3934 rich     False       411.8          23          811\n"}
+,{"stream_name":"stdout","time":1504.250790204,"data":"\n"}
+,{"stream_name":"stdout","time":1504.250792456,"data":"RESOLVED: 0/4\n"}
+,{"stream_name":"stdout","time":1504.250794785,"data":"Max tool_calls used: 23 | max dur: 412 s (cap 300)\n"}
+,{"stream_name":"stdout","time":1504.250806327,"data":"BASELINE to beat (v6b, same rich tasks): rich_4077=True/13 calls/424ch, rich_4079=False/28/0ch, rich_4076=False/21/448ch -\u003e 1/3\n"}
+,{"stream_name":"stdout","time":1504.250808627,"data":"fresh EASY tasks (3471/3278/3882) were never run -\u003e any resolve is new ground\n"}
+,{"stream_name":"stdout","time":1504.27070182,"data":"Created /kaggle/working/submission.zip (4.2 KiB)\n"}
+,{"stream_name":"stderr","time":1509.344740443,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1509.34476072,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1509.544293278,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1509.544321042,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1510.386348674,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":1510.714609079,"data":"[NbConvertApp] Writing 197392 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":1513.472950563,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1514.230767669,"data":"[NbConvertApp] Writing 447600 bytes to __results__.html\n"}
+]

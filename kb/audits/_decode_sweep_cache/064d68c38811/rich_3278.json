@@ -1,0 +1,43 @@
+{
+ "config_name": "pres_02",
+ "config_hash": "064d68c38811",
+ "pass": "single",
+ "task": "rich_3278",
+ "easy_hard": "EASY",
+ "split": "CONFIRM",
+ "arm_decode": {
+  "temperature": 0.2,
+  "top_p": 0.95,
+  "top_k": 64,
+  "freq_penalty": 0.0,
+  "presence_penalty": 0.2,
+  "nudge_mode": "kaggle",
+  "nudge_max": 3
+ },
+ "status": "RAN",
+ "reason": "",
+ "resolved": false,
+ "tool_calls": 8,
+ "first_edit_at": 3,
+ "no_edit": false,
+ "patch_chars": 0,
+ "submitted": true,
+ "end_reason": "submitted",
+ "edit_ok": 0,
+ "edit_err": 4,
+ "nudges": 0,
+ "tool_counts": {
+  "search_similar_code": 1,
+  "read_file": 2,
+  "edit_file": 4,
+  "submit_patch": 1
+ },
+ "duration_s": 36,
+ "result_criterion": "harness_like",
+ "scorer_result": "RAN",
+ "required_pass": false,
+ "gold_relative": false,
+ "harness_like": false,
+ "scorer_engine": "rp-5",
+ "_cache_hit": false
+}

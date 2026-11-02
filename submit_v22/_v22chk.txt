@@ -1,0 +1,13 @@
+﻿MODEL: ['model: gemma-4-12b-it-qat-w4a16-ct']
+eval_config block:
+AGENT_DIR / 'eval_config.yaml').write_text('''evaluation:
+  max_time_minutes: 5
+  max_tool_calls: 28
+  max_turns: 40
+  timeout_seconds: 200
+''', encoding='utf-8')
+
+# v16 system.md = v15 anti-word-trap localization + EDIT
+has env SWE_MAX: False
+has per-task try/except (CRASHED on): False
+enable_lora line: ['enable_lora=True,']

@@ -1,0 +1,118 @@
+{
+  "verdict": "CHANGES_REQUESTED",
+  "findings": [
+    {
+      "id": "D3-1",
+      "severity": "HIGH",
+      "title": "Facts come only from lexicon-matching claims, so most version-bound resolve counts and LB scores are never auto-checked, including the newest LB claim",
+      "where": "design.md 12.3 (claim rules 1-4), 12.4 (facts only from claims; F5 pattern; type-B 'row's first cell must hold a task id'), 7.5 section 7, 19.1/19.2 (armB F1v test)",
+      "problem": "MEASURED with a probe mirroring 12.3 rules 1-4: of log lines that carry a version token, 31/53 F1 lines, 16/25 F5 lines (+2/3 that match only case-insensitively) and 3/9 F1v lines are reached by no claim rule. Misses: the newest LB claim L8389 '## ### v6w SCORED **0.15** ? NEW LIVE-BEST', L8391 'Beats v6 @ 0.12', the LB-history table L8393-8401 ('| date | config | score |', last row v6w ... 0.15 <- LIVE-BEST) and L8436 'v6w @ 0.15 is now the live-best ... v6 @ 0.12 is no longer sacred' (no lexicon word; table first cell 'date' is neither type A nor B), which overturns READ-THIS-FIRST #4 (L27) - the contradiction class the brief requires listing; the first LB anchor L529 '## SUBMISSION v2 - LEADERBOARD SCORE: 0.10' and L531 (F5 case-sensitivity is also unstated); the design's own F1v example L7796 '**armB = 3/6 ...**' (standalone paragraph, never a claim on the real log, so the 19.1 test only passes on a snippet); type-B TOTAL rows such as L7793 '| **TOTAL** | **4/6** | 2/6 | 2/6 | 3/6 | **3/6** |' (first cell not a task id); L790 '## DIAGNOSIS: v3 patches 3/6 but resolves 1/6'. KB_SUMMARY section 7 would lack the first and newest log-claimed LB values and the live-best contradiction is never formed.",
+      "fix": "(1) 12.3 rule 5 'fact lines': outside code fences every line/table row yielding >=1 F1/F1v/F2b/F5/F10 fact whose version binds by attribution rules 1-3 (same line/row token or alias, or the row's version column; not the unit fallback) is a claim (kind: fact-line), regardless of lexicon. (2) F5 case-insensitive with keywords LB|leaderboard|public( score)?|scored?, plus the idiom (<version>)\\s*@\\s*(0\\.\\d{2,3})\\b (L27, L8391, L8436). (3) Type-C LB-history tables: first header cell 'date' or any header 'score'/'LB'/'public'; each row binds to the single version token/alias in its config/version/description cell (0 or >=2 -> free text), F5 from the score cell, and the quoted description (e.g. \\\"beat...beat\\\") is emitted as a description->version mapping hint for section 7. (4) Type-B rows whose first cell is TOTAL/total/sum yield per-version-column F1 from (\\d+)/(\\d+). (5) New fact F10 live_best ((?i)live[- ]best\\s*(=|:|is)\\s*, new live[- ]best, is now the live[- ]best) bound to the nearest version; grouped so a later different version forms a contradiction pair with L27/L163. (6) Real-log tests (content-anchored, see D3-6) on L529, L531, L7793, L7796, L8389, L8391, L8401, L8436 and L27 (-> F5 v6 0.12 via '@', F10 v6)."
+    },
+    {
+      "id": "D3-2",
+      "severity": "MEDIUM",
+      "title": "F1 turns bars and non-resolve counts into resolve outcomes (manufactured CONTRADICTED) and misses the READ-THIS-FIRST #4 count",
+      "where": "design.md 12.4 F1 (keyword anywhere on the line; exclusions only quad chains, N>M, M>200, M=0), F2b, 12.7 example",
+      "problem": "MEASURED: 37 N/M on resolve-keyword lines are bars/comparisons (L816 'Bar for v4: >=2/6', L1029 'Hard bar: **>=2/6 resolved**', L677 'resolve >=1/6', L1183 '<1/6 = regression'); F1 reads them as outcomes, and once T12 pulls v4 (0/6) the bar becomes CONTRADICTED - a manufactured contradiction. 4 N/M are followed by a non-resolve unit (L7829 '0/6 resolved but 6/6 BANKED A REAL PATCH' -> 6/6 CONTRADICTED for the hard gate; L8423 '(0/6, 6/6 patches banked)'; L3977 '7/22 calls'). 26 non-table lines hold >=2 eligible N/M plus a keyword (L790 'v3 patches 3/6 but resolves 1/6' -> 3/6 CONTRADICTED for v3). Recall: L27-29 (RTF #4 '2/6 (rich_4077 + rich_4079)') contain none of resolv|RESOLVED|score|dev, so F1/F2b extract nothing; 12.7's example 'v6 F1 2/6 at L27' is wrong under the design's own rule.",
+      "fix": "Replace the line-level keyword test, in order: (1) Bar: N/M preceded within 12 chars (after stripping *) by >=|>|<=|<|at least|bar|target|need|expect\\w*|ideally (and the unicode >= / <= signs) -> field 'bar', recorded, never checked as an outcome. (2) Unit: N/M followed within 3 chars by calls?|c\\b|patch(es)?|banked|edits?|chars?|ch\\b|tests?|files?|hunks?|turns?|lines?|min -> not F1 (N/M calls stays F3/F3t). (3) Keyed: F1 only if a resolve keyword (resolv\\w*, RESOLVED, scored?, dev) is within 3 tokens, or the N/M is followed by a parenthesized task-id group (F2b idiom, also yields F2b), or it is F1v; else 'unkeyed', recorded, not checked. (4) Unit tests: L790 -> only 1/6; L816 -> bar; L7829 -> only 0/6; L3977 -> no F1; L27 -> F1 2/6 + F2b {rich_4077, rich_4079}."
+    },
+    {
+      "id": "D3-3",
+      "severity": "MEDIUM",
+      "title": "Live-best baseline is a hard-coded constant; the design does not say how to handle the conflict that now exists",
+      "where": "design.md 12.8 ('(b) the live-best v6 config (_v6out/submission)'), 7.5 section 6 ('vs live-best v6'), 17 item 5 (rules check 'v6 @ 0.12 sacred'), 18.4 BLOCK-K/P2/P3",
+      "problem": "MEASURED: the user brief ('Live-best v6 @ 0.12 is sacred') and .kiro\\steering\\gemma-submission-protocol.md L23 (mtime 2026-10-11) say v6 @ 0.12; the log L8389-8436 (2026-10-13) says v6w scored 0.15 (submission 57098497), L8436 'v6w @ 0.15 is now the live-best ... v6 @ 0.12 is no longer sacred', repeated at L8552. Neither is checked against submissions history (not pulled). Levers are diffed against a literal _v6out and the agent hard-codes 'v6 @ 0.12 sacred' with no rule for which source wins, so the audit and refute passes can pick different baselines (spurious disagreement) and a PROCEED bar 'beat the baseline' is ambiguous.",
+      "fix": "(1) Curated pointer curated\\run_labels.json:baseline = {label: v6, run_id: _v6out, lb: 0.12, source: user brief 'Keep these' + gemma-submission-protocol.md L23} (T1 seed); 12.8 (b) and section 6 diff against it; the builder never changes it. (2) KB_SUMMARY section 7 'Live-best claims': every F5/F10 live-best claim (L27, L163, L8389, L8391, L8436, L8552, ...) with status vs submissions.csv; any claim naming a different live-best than the baseline is listed first as BASELINE CONFLICT and in a one-line banner right after the two stamp lines (an ordinary input-determined line, not a stamp line). (3) 17 item 5: the sacred baseline for policy is the one named in gemma-submission-protocol.md (read in full); a conflicting log/LB claim is a reported finding; a PROCEED whose bar depends on the baseline must name which baseline and why, and is NEEDS-DATA while submissions.csv is not pulled (pull --submissions is read-only and allowed); never adopt a new baseline on the log's word. (4) Unit test: the L8436 claim produces BASELINE CONFLICT against the seed."
+    },
+    {
+      "id": "D3-4",
+      "severity": "MEDIUM",
+      "title": "Staged scored-submission configs (submit_t4096, submit_branch_final) are invisible to discovery and config parsing",
+      "where": "design.md 5 kinds table (submit-dir, submission-folder, non-run), 6.3 sources, 7.5 section 7 LB mapping, 6.4",
+      "problem": "MEASURED: Gemma\\submit_t4096\\ and Gemma\\submit_branch_final\\ each hold agent.yaml, eval_config.yaml, configs\\sampling.yaml (thinking_budget 4096 vs 1024), prompts\\system.md and submission.zip (4,121 / 4,163 bytes), with no kernel-metadata.json, no notebook_src.py and no submission\\ subfolder. The log says they are the next scored submissions (L8502 't4096 ... is built and staged, ready for the next slot'; L8501 'Branch submission still PENDING vs 0.15'; L8553-8554). They are not 'submission-folder' (directory name), 'submit-dir' is ambiguous for a top-level submit_* without kernel-metadata.json ('a top-level G\\submit_* dir, or any dir nested inside one ..., that holds kernel-metadata.json'), and they are not among the named non-run items. Either way 6.3 never parses their YAML, so when either is scored the LB row cannot be tied to its config, the lever table cannot diff it, and an audit of 'submit t4096' has no KB config.",
+      "fix": "(1) 5: state that submit-dir (top-level or nested) requires the kernel-metadata.json. (2) New kind 'staged-submission' (before non-run): a directory outside run dirs and pulls that directly holds agent.yaml + eval_config.yaml; parsed with 6.3 field paths relative to it; label = dir name minus 'submit_' (normalized, aliases); prompt sha joins prompt-twin matching. (3) If a sibling submission.zip exists, hash each member (zipfile) vs the loose file and record zip_drift: [paths] (the zip is what is uploaded). (4) 7.5 section 7: a submission row may map to a staged label (basis 'staged-label'); Coverage and Levers list staged configs as columns without outcomes. (5) Acceptance fact: both dirs are staged-submission; submit_t4096 yields thinking_budget 4096, submit_branch_final 1024."
+    },
+    {
+      "id": "D3-5",
+      "severity": "MEDIUM",
+      "title": "Dev-harness parameters set in notebook code (EventsCompactionConfig / ContextCacheConfig) are not captured, so the newest arm's only lever is invisible",
+      "where": "design.md 6.3 (sources/field paths), 7.1 config, 12.8 levers, 11 harness semantics",
+      "problem": "MEASURED: every notebook_src.py under submit_* that builds the dev harness passes events_compaction_config=EventsCompactionConfig(compaction_interval=15, overlap_size=2, token_threshold=14336, event_retention_size=5) and context_cache_config=ContextCacheConfig(min_tokens=2048, ttl_seconds=1800, cache_intervals=10) (e.g. submit_v6 L197, submit_v19_lora_v2 L361, submit_v15 L281; submit_v15_cpu builds none) - except submit_v6z_on_v6w\\compact5\\notebook_src.py L229 (compaction_interval=5; its header L21 says the submission schema has no compaction field, L28 'ONLY compaction_interval changes'). compact5\\out\\submission\\ is hash-identical to branch\\out\\submission\\ in all four files (agent.yaml, eval_config.yaml, configs\\sampling.yaml, prompts\\system.md). submit_v15 mentions compaction_interval=5 in a header comment (L5) while its constructor passes 15 (L281), so only an AST read of the call is reliable. HARNESS_README 7.2 (L554-562) documents the scorer's compaction_interval = 5, and the log (L8441-8445, L8500) claims the 15-vs-5 mismatch affected every gate. 6.3 reads only submission YAML and write_text constants, so compact5 is indistinguishable from branch (no lever; prior art would tag it RE-RUN) and the dev-vs-scorer confound on every gate is not represented.",
+      "fix": "(1) 6.3 tier 2/3: an AST pass over the notebook source records constant keyword arguments of every Call named EventsCompactionConfig or ContextCacheConfig (and any Call passed as a keyword ending in '_config' to the same constructor call) as config.dev_harness = {'EventsCompactionConfig.compaction_interval': {value, source: '<nb>:L<n>'}, ...}; non-constant -> 'dynamic'; unknown classes -> dev_harness_extra; comments never read. (2) Record README 7.2 values (anchor 'compaction_interval = ') as scorer_reference (DOCUMENTED, with line) and a per-run dev_harness_matches_scorer flag. (3) 12.8: dev-harness differences are lever instances (kind: dev-harness); KB_SUMMARY section 9 gets the row 'Does the dev harness match the scorer?' with per-run values. (4) Acceptance: compact5/out -> 5; every other in-scope run whose notebook builds the harness -> 15; compact5 has a lever instance vs branch; submit_v15 -> 15 (not the comment's 5)."
+    },
+    {
+      "id": "D3-6",
+      "severity": "MEDIUM",
+      "title": "Acceptance tests are pinned to absolute line numbers in a log that is edited in place",
+      "where": "design.md 19.1 claims tests (L558-559, L3958-3967, L4451-4489, L3115-3119, L7303, L7391, L6826/L6828, L7723, L6985, L7531, L8094), 19.2 facts 13/18/22, 12.7 tests (12 correction lines)",
+      "problem": "MEASURED: the log grew 8,436 -> 8,555 lines during this review (mtime 2026-10-13 19:16); this time append-only and all pinned anchors still hold. But 2.14 records READ-THIS-FIRST was edited in place once (+28 shift), and RTF #4 (L27 'LIVE-BEST = v6 @ 0.12 ... Never beaten') is now contradicted by L8436, so another in-place edit is likely. One edit above L558 shifts every pinned line at once: the pre-registered bars would be 'missed' for reasons unrelated to the parser, or the coder would edit line numbers post hoc - both forbidden by 19. The design does not say whether unit tests use copied fixtures or the live log.",
+      "fix": "(1) Unit tests read fixture copies under KB\\tests\\fixtures\\log\\, made once in T1, each recording its source line and the log sha256 at copy time. (2) Slow tests on the live log locate anchors by content via one helper find_line(prefix, occurrence=1) and assert spans/offsets, not absolute numbers (e.g. the block starting at the line beginning '### REVISED STANCE: my \\\"v8 is a net negative\\\"' spans 10 lines). (3) build_verification.md records the log sha256 and line count at test time."
+    },
+    {
+      "id": "D3-7",
+      "severity": "NIT",
+      "title": "Snapshot counts and cross-references drifted or disagree",
+      "where": "design.md 0, 2.1, 2.14, 6.4 expected-labels table, 12.4 vs 19.2 fact 18, 19.2 fact 19",
+      "problem": "0 says '2026-10-13 07:28 snapshot' and an '8,384-line' log; 2.1 says 18:24 and 2.14 8,436 lines. Now (MEASURED): 155 traces in 29 run dirs, 30 JSON kernel logs, 8,555 log lines (210 ##, 1,371 ###, 504 blocks); new arms compact5 (slug v6w) and m12 (new slug ...-m12; agent.yaml model gemma-4-12b-it-qat-w4a16-ct -> out_of_scope non-31B); ...-v6w backs 10 dirs, not 8. Fact 19 '(10 traces ...)' for '3 consecutive nudges and nothing after' should be 9: 10 traces reach 3 nudges but Outputs\\v19_lora rich_3469 (3 nudges then 16 valid calls) ended by CALL_CAP (harness event 'Tool call budget (15) exhausted'). 12.4 cites 'L7303 rich_4077' (header) while 19.2 fact 18 cites L7305 (the row).",
+      "fix": "Restate the counts as one snapshot, set fact 19's count to 9, and cite L7305."
+    },
+    {
+      "id": "D3-8",
+      "severity": "NIT",
+      "title": "The 7.1 config example omits fields 6.3 defines",
+      "where": "design.md 7.1 runs.jsonl config block",
+      "problem": "The example lacks stop_sequences and sampling_extra (6.3) and, with D3-5, dev_harness.",
+      "fix": "Add the three fields to the 7.1 example so the schema matches the extractor."
+    },
+    {
+      "id": "D3-9",
+      "severity": "NIT",
+      "title": "PASS_START does not accept the 'Evaluating' form that P1h was widened for",
+      "where": "design.md 6.1 pass segmentation (PASS_START) vs line rule P1h",
+      "problem": "P1h accepts '[i/N] Evaluating <task> (<repo>)...' (S12), but PASS_START '^\\[1/\\d+\\] \\S+ \\(' does not. The format comes from the competition's sample loop (Gemma\\compeition\\getting started L375, L399); a multi-pass log in that format would have its passes merged.",
+      "fix": "Use '^\\[1/\\d+\\] (?:Evaluating )?\\S+ \\(' in PASS_START."
+    },
+    {
+      "id": "D3-10",
+      "severity": "NIT",
+      "title": "A text-form call quoted in prose becomes a duplicate edit attempt",
+      "where": "design.md 6.2 'Calls emitted as text'",
+      "problem": "MEASURED: v2_gate_out2 rich_4070 step 6 repeats its step-4 call in prose ('Wait, looking at my previous response:\\n`call:edit_file{filepath:\\\"rich/logging.py\\\",new_string:...'); 6.2 parses every call:\\w+\\{ match, so this becomes a second AS_TEXT edit attempt.",
+      "fix": "Skip matches inside backticks, or dedupe identical (fn, args_raw) within a trace keeping the first and recording quoted_repeat: n."
+    },
+    {
+      "id": "D3-11",
+      "severity": "NIT",
+      "title": "The read-event definition and the aligned-range table disagree about python output",
+      "where": "design.md 6.2 'Read events' list vs returned-range table ('python prints' under aligned)",
+      "problem": "The table lists 'python prints' as an aligned source, but read events are only read_file, run_command cat|sed -n|head|tail|nl|awk|grep with a path operand, and edit_file diffs, so python prints never become read events.",
+      "fix": "Pick one: either any run_command observation that aligns >=2 consecutive lines of a gold file at that call is a read event for that file (via: aligned), or drop 'python prints' from the table."
+    },
+    {
+      "id": "D3-12",
+      "severity": "NIT",
+      "title": "Paragraphs longer than 12 lines are unspecified",
+      "where": "design.md 12.3 rule 3 ('every paragraph (consecutive non-blank lines, <= 12)')",
+      "problem": "MEASURED: 37 paragraphs exceed 12 lines (e.g. L79-93, L468-482); the design does not say whether they are split, truncated or skipped.",
+      "fix": "Split them at line boundaries into consecutive <=12-line chunks, each a candidate claim with chunk: k/n."
+    },
+    {
+      "id": "D3-13",
+      "severity": "NIT",
+      "title": "A6's timestamp window rejects the earliest runs",
+      "where": "design.md 20 A6 (window 2026-10-01 .. build date) vs 12.1 S13 (2026-09-01)",
+      "problem": "The log has 2026-09-30 dates (3 tokens) and T12 pulls the earliest versions (v1-v5); a 2026-09-30 trace timestamp would be rejected by A6 although S13 accepts the same date for log entries.",
+      "fix": "Use 2026-09-01 as the lower bound for both A6 and S13."
+    },
+    {
+      "id": "D3-14",
+      "severity": "NIT",
+      "title": "A23's stated basis points the wrong way",
+      "where": "design.md 6.2 nudges, 10.3 rule 2, 20 A23",
+      "problem": "README L351 resets the nudge counter when 'turn_has_tool_call == True', which reads as 'the turn emitted a tool call' (includes ARG_REJECTED), while A23 assumes rejected calls do not reset. MEASURED: both variants give identical histograms over 155 traces ({0: 131, 1: 12, 2: 2, 3: 10}), so nothing changes today.",
+      "fix": "Make the any-call reset primary (the README's literal condition), keep the valid-call variant as the alternate, and cite L351 in A23."
+    }
+  ],
+  "reviewDoc": "c:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma\\kb\\curated\\_build_reviews\\design-review.md"
+}

@@ -1,0 +1,10 @@
+[
+ {
+  "task": "requests_7309",
+  "repo": "psf/requests",
+  "mode": "path",
+  "verdict": "NO_JUNIT",
+  "import_from": "Traceback",
+  "raw": "IMPORT_CHECK=Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import requests; print(requests.__file__)\n    ^^^^^^^^^^^^^^^\n  File \"/workspace/src/requests/__init__.py\", line 43, in <module>\n    import urllib3\nModuleNotFoundError: No module named 'urllib3'\nImportError while loading conftest '/workspace/tests/conftest.py'.\ntests/conftest.py:12: in <module>\n    from requests.compat import urljoin\nsrc/requests/__init__.py:43: in <module>\n    import urllib3\nE   ModuleNotFoundError: No module named 'urllib3'\n---JUNIT---\nNO_JUNIT [Errno 2] No such file or directory: '/tmp/j.xml'\n"
+ }
+]

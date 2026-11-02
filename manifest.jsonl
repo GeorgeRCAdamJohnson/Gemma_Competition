@@ -1,0 +1,1 @@
+{"run": "adapter_dataset-r32-s0.25", "src": "adapter_dataset", "r": 32, "lora_alpha": 16, "effective_scale": 0.5, "bytes": 175341936, "sha256": "14cdaa2481fe84b3"}

@@ -1,0 +1,112 @@
+﻿
+================================================================================
+##### verra_0.18  (5929 chars src)
+================================================================================
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+max_tool_calls: ['max_tool_calls: 28\\n  max_time_minutes: 8\\n  max_turns: 80\\n"']
+max_time_minutes: ['max_time_minutes: 8\\n  max_turns: 80\\n"']
+max_turns: ['max_turns: 80\\n"']
+timeout_seconds: ['timeout_seconds: 240\\n  max_tool_calls: 28\\n  max_time_minutes: 8\\n  max_turns: 80\\n"']
+thinking_budget: ['thinking_budget: 4096\\n  include_thoughts: true\\n"']
+max_output_tokens: ['max_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 4096\\n  include_thoughts: true\\n"']
+temperature: ['temperature: 0.2\\ntop_p: 0.95\\nmax_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 4096\\n  include_thoughts: true\\n"']
+top_p: ['top_p: 0.95\\nmax_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 4096\\n  include_thoughts: true\\n"']
+include_thoughts: ['include_thoughts: true\\n"']
+  tool?: run_command
+  tool?: read_file
+  tool?: edit_file
+  tool?: write_file
+  tool?: get_status
+  tool?: submit_patch
+  tool?: get_code_neighbors
+  tool?: search_similar_code
+  tool?: get_code_subgraph
+
+================================================================================
+##### honghanh_0.24  (12383 chars src)
+================================================================================
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct"
+max_tool_calls: ['max_tool_calls: 28', 'max_tool_calls: 28\\n"']
+max_time_minutes: ['max_time_minutes: 8', 'max_time_minutes: 8\\n"']
+max_turns: ['max_turns: 80', 'max_turns: 80\\n"']
+timeout_seconds: ['timeout_seconds: 240', 'timeout_seconds: 240\\n"']
+thinking_budget: ['thinking_budget: 4096']
+max_output_tokens: ['max_output_tokens: 8192', 'max_output_tokens: 8192\\n"']
+temperature: ['temperature: 0.2', 'temperature: 0.2\\n"']
+top_p: ['top_p: 0.95', 'top_p: 0.95\\n"']
+include_thoughts: ['include_thoughts: true', 'include_thoughts: true\\n"):']
+  tool?: run_command
+  tool?: read_file
+  tool?: edit_file
+  tool?: write_file
+  tool?: get_status
+  tool?: submit_patch
+  tool?: get_code_neighbors
+  tool?: search_similar_code
+  tool?: get_code_subgraph
+
+================================================================================
+##### lavinwins  (10563 chars src)
+================================================================================
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct
+max_tool_calls: ['max_tool_calls: 28']
+max_time_minutes: ['max_time_minutes: 8']
+max_turns: ['max_turns: 80']
+timeout_seconds: ['timeout_seconds: 240']
+thinking_budget: ['thinking_budget: 4096']
+max_output_tokens: ['max_output_tokens: 8192']
+temperature: ['temperature: 0.2']
+top_p: ['top_p: 0.95']
+include_thoughts: ['include_thoughts: true']
+  tool?: run_command
+  tool?: read_file
+  tool?: edit_file
+  tool?: write_file
+  tool?: get_status
+  tool?: submit_patch
+  tool?: get_code_neighbors
+  tool?: search_similar_code
+  tool?: get_code_subgraph
+
+================================================================================
+##### dmitrii  (104920 chars src)
+================================================================================
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ndescription:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ndescription:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct"
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+MODEL: model: gemma-4-31b-it-qat-w4a16-ct\ninstruction:
+max_tool_calls: ['max_tool_calls: 100\\n  max_time_minutes: 6\\n  max_turns: 150\\n"]', 'max_tool_calls: 20\\n  max_time_minutes: 5\\n  max_turns: 60\\n"', 'max_tool_calls: 28\\n  max_time_minutes: 8\\n  max_turns: 80\\n"', 'max_tool_calls: 60\\n  max_time_minutes: 4\\n  max_turns: 80\\n"']
+max_time_minutes: ['max_time_minutes: 4\\n  max_turns: 80\\n"', 'max_time_minutes: 5\\n  max_turns: 60\\n"', 'max_time_minutes: 6\\n  max_turns: 150\\n"]', 'max_time_minutes: 8\\n  max_turns: 80\\n"']
+max_turns: ['max_turns: 150\\n"]', 'max_turns: 60\\n"', 'max_turns: 80\\n"']
+timeout_seconds: ['timeout_seconds: 240\\n  max_tool_calls: 28\\n  max_time_minutes: 8\\n  max_turns: 80\\n"', 'timeout_seconds: 300\\n  max_tool_calls: 100\\n  max_time_minutes: 6\\n  max_turns: 150\\n"]', 'timeout_seconds: 45\\n  max_tool_calls: 60\\n  max_time_minutes: 4\\n  max_turns: 80\\n"', 'timeout_seconds: 60\\n  max_tool_calls: 20\\n  max_time_minutes: 5\\n  max_turns: 60\\n"']
+thinking_budget: ['thinking_budget: 0\\n"', 'thinking_budget: 2048\\n  include_thoughts: true\\n"', 'thinking_budget: 4096\\n  include_thoughts: false\\n"', 'thinking_budget: 4096\\n  include_thoughts: true\\n"']
+max_output_tokens: ['max_output_tokens: 1024\\nthinking_config:\\n  include_thoughts: false\\n  thinking_budget: 0\\n"', 'max_output_tokens: 2048\\nthinking_config:\\n  include_thoughts: false\\n  thinking_budget: 0\\n"', 'max_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 2048\\n  include_thoughts: true\\n"', 'max_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 4096\\n  include_thoughts: false\\n"']
+temperature: ['temperature: 0.2\\ntop_p: 0.95\\nmax_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 2048\\n  include_thoughts: true\\n"', 'temperature: 0.2\\ntop_p: 0.95\\nmax_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 4096\\n  include_thoughts: true\\n"', 'temperature: 0.2\\ntop_p: 0.95\\ntop_k: 40\\nmax_output_tokens: 1024\\nthinking_config:\\n  include_thoughts: false\\n  thinking_budget: 0\\n"', 'temperature: 0.2\\ntop_p: 0.95\\ntop_k: 40\\nmax_output_tokens: 2048\\nthinking_config:\\n  include_thoughts: false\\n  thinking_budget: 0\\n"']
+top_p: ['top_p: 0.95\\nmax_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 2048\\n  include_thoughts: true\\n"', 'top_p: 0.95\\nmax_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 4096\\n  include_thoughts: true\\n"', 'top_p: 0.95\\ntop_k: 40\\nmax_output_tokens: 1024\\nthinking_config:\\n  include_thoughts: false\\n  thinking_budget: 0\\n"', 'top_p: 0.95\\ntop_k: 40\\nmax_output_tokens: 2048\\nthinking_config:\\n  include_thoughts: false\\n  thinking_budget: 0\\n"']
+top_k: ['top_k: 40\\nmax_output_tokens: 1024\\nthinking_config:\\n  include_thoughts: false\\n  thinking_budget: 0\\n"', 'top_k: 40\\nmax_output_tokens: 2048\\nthinking_config:\\n  include_thoughts: false\\n  thinking_budget: 0\\n"', 'top_k: 40\\nmax_output_tokens: 8192\\nthinking_config:\\n  thinking_budget: 4096\\n  include_thoughts: false\\n"']
+include_thoughts: ['include_thoughts: false\\n  thinking_budget: 0\\n"', 'include_thoughts: false\\n"', 'include_thoughts: true\\n"']
+  tool?: run_command
+  tool?: read_file
+  tool?: edit_file
+  tool?: write_file
+  tool?: get_status
+  tool?: submit_patch
+  tool?: get_code_neighbors
+  tool?: search_similar_code
+  tool?: get_code_subgraph
+  structure kw: sub_agents
+  structure kw: analyzer
+  structure kw: ParallelAgent
+  structure kw: reviewer
+  structure kw: reconciler
+  structure kw: SequentialAgent
+  structure kw: adapter

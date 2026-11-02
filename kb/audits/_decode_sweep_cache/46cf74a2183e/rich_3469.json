@@ -1,0 +1,43 @@
+{
+ "config_name": "freq_04",
+ "config_hash": "46cf74a2183e",
+ "pass": "single",
+ "task": "rich_3469",
+ "easy_hard": "EASY",
+ "split": "CONFIRM",
+ "arm_decode": {
+  "temperature": 0.2,
+  "top_p": 0.95,
+  "top_k": 64,
+  "freq_penalty": 0.4,
+  "presence_penalty": 0.0,
+  "nudge_mode": "kaggle",
+  "nudge_max": 3
+ },
+ "status": "RAN",
+ "reason": "",
+ "resolved": false,
+ "tool_calls": 17,
+ "first_edit_at": 14,
+ "no_edit": false,
+ "patch_chars": 0,
+ "submitted": true,
+ "end_reason": "submitted",
+ "edit_ok": 1,
+ "edit_err": 1,
+ "nudges": 0,
+ "tool_counts": {
+  "search_similar_code": 3,
+  "read_file": 11,
+  "edit_file": 2,
+  "submit_patch": 1
+ },
+ "duration_s": 48,
+ "result_criterion": "harness_like",
+ "scorer_result": "RAN",
+ "required_pass": false,
+ "gold_relative": false,
+ "harness_like": false,
+ "scorer_engine": "rp-5",
+ "_cache_hit": false
+}

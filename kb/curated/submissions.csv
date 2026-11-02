@@ -1,0 +1,12 @@
+ref,fileName,date,description,status,publicScore,privateScore
+57201051,submission.zip,2026-10-15 01:15:05.580000,v6w + temperature 1.0 / top_k 64 (only change vs the 0.15 v6w baseline),SubmissionStatus.COMPLETE,0.13,
+57146757,submission.zip,2026-10-13 14:31:31.723000,"PER-TASK BRANCHING: first use of ADK {problem_description} templating - system.md now interpolates the task text and branches CASE A (target named -> locate+edit fast) vs CASE B (target NOT named -> find the sibling in-repo and copy its name EXACTLY). Same 0.18 budget/tool-surface/sampling as v6w (0.15 baseline). Gate: rich_3676 resolved, first hard-task resolve in project (gate was 0/6); git grep fired 4/4 tasks vs 0/4 static; turns 30->14.",SubmissionStatus.COMPLETE,0.12,
+57098497,submission.zip,2026-10-12 06:44:05.790000,v6w: 0.18 budget (28/8/80/240) + 9-tool surface with edit_file primary + thinking_budget 1024. Gate 4/6 tied with v6t but ~32s/task faster (235s vs 267s mean).,SubmissionStatus.COMPLETE,0.15,
+57054171,submission.zip,2026-10-10 23:01:55.280000,kjhgiughj,SubmissionStatus.COMPLETE,0.05,
+56896956,submission.zip,2026-10-07 01:48:09.260000,"v15 short-trajectory (no sub-agent, thinking 256, budget 12) via CPU packaging notebook",SubmissionStatus.COMPLETE,0.10,
+56856000,submission.zip,2026-10-05 15:43:10.847000,v15 short-trajectory: anti-word-trap localization + no sub-agent + thinking 256 + budget 12 (compaction-aware),SubmissionStatus.COMPLETE,0.08,
+56835719,submission.zip,2026-10-04 23:36:10.717000,"v10 budget-40 agent (300s), uploaded from V1 committed output",SubmissionStatus.COMPLETE,0.08,
+56835583,submission.zip,2026-10-04 23:26:08.053000,Notebook Gemma Sibling-Conform v10 | Version 2,SubmissionStatus.ERROR,,
+56806249,submission.zip,2026-10-03 20:34:11.603000,"beat...beat....no one else can be defeated
+",SubmissionStatus.COMPLETE,0.12,
+56775978,submission.zip,2026-10-02 14:35:58.847000,One shot,SubmissionStatus.COMPLETE,0.10,

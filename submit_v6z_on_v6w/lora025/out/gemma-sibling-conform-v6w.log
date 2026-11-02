@@ -1,0 +1,89 @@
+[{"stream_name":"stderr","time":6.113239705,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":6.113283528,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":6.930608508,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":6.93062915,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":6.9306321870000005,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":6.930634393,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":7.52366801,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.5237052030000005,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.523707936,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.523710118,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":8.878732115,"data":"[wheelhouse] source dir: /kaggle/input/datasets/metric/gemma-4-developer-agent-wheelhouse\n"}
+,{"stream_name":"stdout","time":8.878751376,"data":"Installing 41 wheels...\n"}
+,{"stream_name":"stdout","time":70.228189623,"data":"Wheelhouse installation complete.\n"}
+,{"stream_name":"stdout","time":103.057261538,"data":"[data] DATA_DIR = /kaggle/input/competitions/gemma-4-developer-agent\n"}
+,{"stream_name":"stdout","time":103.5474738,"data":"[adapter] RESOLVED our adapter at /kaggle/input/gemma-edit-discipline-r32-s025\n"}
+,{"stream_name":"stdout","time":106.339561031,"data":"[adapter] copied main_lora from /kaggle/input/gemma-edit-discipline-r32-s025 -\u003e ['adapter_model.safetensors', 'adapter_config.json']\n"}
+,{"stream_name":"stdout","time":106.339590463,"data":"Agent dir written (v19 = edit_file 3-tier + edit-SHAPE[add/whole-fn] + FREE get_status reserve-tail + freq_penalty anti-repeat, budget 15): /kaggle/working/submission\n"}
+,{"stream_name":"stdout","time":106.33959479,"data":"Loaded 129 tasks\n"}
+,{"stream_name":"stdout","time":113.106822301,"data":"[import] validate_single_declared_model NOT FOUND; using no-op (single-model rule satisfied by agent.yaml)\n"}
+,{"stream_name":"stdout","time":113.106850004,"data":"[model] MODEL_PATH = /kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2\n"}
+,{"stream_name":"stdout","time":533.677258137,"data":"vLLM server started on http://127.0.0.1:8000/v1 (tp=4)\n"}
+,{"stream_name":"stdout","time":533.698963872,"data":"HARD small-gold gate: ['rich_3676', 'rich_3535', 'rich_3675']\n"}
+,{"stream_name":"stdout","time":533.698990143,"data":"[1/3] rich_3676 (Textualize/rich)...\n"}
+,{"stream_name":"stderr","time":533.827002207,"data":"/usr/local/lib/python3.12/dist-packages/google/adk/features/_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.AGENT_CONFIG is enabled.\n"}
+,{"stream_name":"stderr","time":533.827026095,"data":"  check_feature_enabled()\n"}
+,{"stream_name":"stderr","time":533.827029823,"data":"/tmp/ipykernel_65/3535725636.py:36: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":533.827043206,"data":"  events_compaction_config=EventsCompactionConfig(compaction_interval=15, overlap_size=2,\n"}
+,{"stream_name":"stderr","time":533.82704573,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 74fd0837-8a5, creating venv without pip: Command '['/tmp/swegemma_sandbox_74fd0837-8a5_3clsxmvn/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":533.827048011,"data":"\n"}
+,{"stream_name":"stderr","time":533.827049856,"data":"/usr/local/lib/python3.12/dist-packages/google/adk/features/_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.AGENT_CONFIG is enabled.\n"}
+,{"stream_name":"stderr","time":533.827051876,"data":"  check_feature_enabled()\n"}
+,{"stream_name":"stderr","time":533.827053754,"data":"/tmp/ipykernel_65/3535725636.py:36: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.\n"}
+,{"stream_name":"stderr","time":533.827055815,"data":"  events_compaction_config=EventsCompactionConfig(compaction_interval=15, overlap_size=2,\n"}
+,{"stream_name":"stderr","time":533.827057781,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 74fd0837-8a5, creating venv without pip: Command '['/tmp/swegemma_sandbox_74fd0837-8a5_3clsxmvn/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":716.812595468,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox db11ef4d-5d6, creating venv without pip: Command '['/tmp/swegemma_sandbox_db11ef4d-5d6_3c19zxw_/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":716.812631992,"data":"\n"}
+,{"stream_name":"stderr","time":716.812635855,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox db11ef4d-5d6, creating venv without pip: Command '['/tmp/swegemma_sandbox_db11ef4d-5d6_3c19zxw_/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":720.844326748,"data":"  -\u003e resolved=False duration=187.1s tool_calls=15 patch_chars=0\n"}
+,{"stream_name":"stdout","time":720.845093885,"data":"[2/3] rich_3535 (Textualize/rich)...\n"}
+,{"stream_name":"stderr","time":720.971485493,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 75f586c8-e76, creating venv without pip: Command '['/tmp/swegemma_sandbox_75f586c8-e76_91q3je88/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":720.971506518,"data":"\n"}
+,{"stream_name":"stderr","time":720.971509778,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 75f586c8-e76, creating venv without pip: Command '['/tmp/swegemma_sandbox_75f586c8-e76_91q3je88/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":954.141939714,"data":"WARNING:swegemma.harness.agent_runner:Task rich_3535 agent exceeded turns budget.\n"}
+,{"stream_name":"stderr","time":954.141978478,"data":"\n"}
+,{"stream_name":"stderr","time":954.141983789,"data":"WARNING:swegemma.harness.agent_runner:Task rich_3535 agent exceeded turns budget.\n"}
+,{"stream_name":"stdout","time":954.169557701,"data":"  -\u003e resolved=False duration=233.3s tool_calls=15 patch_chars=0\n"}
+,{"stream_name":"stdout","time":954.170117505,"data":"[3/3] rich_3675 (Textualize/rich)...\n"}
+,{"stream_name":"stderr","time":954.298999121,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 038401c1-92b, creating venv without pip: Command '['/tmp/swegemma_sandbox_038401c1-92b_w33yw05_/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":954.299028976,"data":"\n"}
+,{"stream_name":"stderr","time":954.299031973,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox 038401c1-92b, creating venv without pip: Command '['/tmp/swegemma_sandbox_038401c1-92b_w33yw05_/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1128.23204595,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox e4ea7a77-f59, creating venv without pip: Command '['/tmp/swegemma_sandbox_e4ea7a77-f59_eob2i9gn/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stderr","time":1128.232103398,"data":"\n"}
+,{"stream_name":"stderr","time":1128.232108205,"data":"WARNING:swegemma.sandbox.subprocess:ensurepip unavailable in sandbox e4ea7a77-f59, creating venv without pip: Command '['/tmp/swegemma_sandbox_e4ea7a77-f59_eob2i9gn/venv/bin/python3', '-m', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.\n"}
+,{"stream_name":"stdout","time":1131.36413555,"data":"  -\u003e resolved=False duration=177.2s tool_calls=14 patch_chars=723\n"}
+,{"stream_name":"stdout","time":1131.38875808,"data":"\n"}
+,{"stream_name":"stdout","time":1131.388784934,"data":"===== v19-LORA-v2 SUMMARY (ALL-LINEAR adapter, 46 all-repo, multi-turn-mask fixed) (4 levers: edit_file 3-tier + edit-SHAPE + FREE get_status reserve-tail + freq_penalty anti-repeat; budget 15, 5-task; bar: \u003e=2/5 flipping \u003e=1 of rich_4079/4076) =====\n"}
+,{"stream_name":"stdout","time":1131.38879537,"data":"       id repo  resolved  duration_s  tool_calls  patch_chars\n"}
+,{"stream_name":"stdout","time":1131.388798106,"data":"rich_3676 rich     False       187.1          15            0\n"}
+,{"stream_name":"stdout","time":1131.388800792,"data":"rich_3535 rich     False       233.3          15            0\n"}
+,{"stream_name":"stdout","time":1131.38880325,"data":"rich_3675 rich     False       177.2          14          723\n"}
+,{"stream_name":"stdout","time":1131.388805813,"data":"\n"}
+,{"stream_name":"stdout","time":1131.388808031,"data":"RICH RESOLVED: 0/3\n"}
+,{"stream_name":"stdout","time":1131.388810419,"data":"  rich_3676: resolved=False calls=15 chars=0 dur=187.1s\n"}
+,{"stream_name":"stdout","time":1131.388812909,"data":"  rich_3535: resolved=False calls=15 chars=0 dur=233.3s\n"}
+,{"stream_name":"stdout","time":1131.388815557,"data":"  rich_3675: resolved=False calls=14 chars=723 dur=177.2s\n"}
+,{"stream_name":"stdout","time":1131.388818028,"data":"Max tool_calls used: 15 (want edits landing by ~12, not 15) | max dur: 233 s\n"}
+,{"stream_name":"stdout","time":1131.437907984,"data":"\n"}
+,{"stream_name":"stdout","time":1131.437933082,"data":"===== ATTRIBUTION TABLE (per-task mechanism diagnostics) =====\n"}
+,{"stream_name":"stdout","time":1131.437936697,"data":"       id repo  resolved  duration_s  tool_calls  patch_chars  calls  first_edit_at  n_edit  edit_fail  search  read  max_repeat\n"}
+,{"stream_name":"stdout","time":1131.437939558,"data":"rich_3676 rich     False       187.1          15            0     18             17       1          1       3    13           2\n"}
+,{"stream_name":"stdout","time":1131.437942159,"data":"rich_3535 rich     False       233.3          15            0     23             17       4          4       9     5           2\n"}
+,{"stream_name":"stdout","time":1131.437954262,"data":"rich_3675 rich     False       177.2          14          723     21             11       7          6       4     6           6\n"}
+,{"stream_name":"stdout","time":1131.437956394,"data":"\n"}
+,{"stream_name":"stdout","time":1131.437958095,"data":"--- aggregate mechanism signals ---\n"}
+,{"stream_name":"stdout","time":1131.437959945,"data":"resolved: 0/3\n"}
+,{"stream_name":"stdout","time":1131.437961879,"data":"tasks that NEVER edited (first_edit_at=None): 0/3  \u003c- search-death count\n"}
+,{"stream_name":"stdout","time":1131.437963912,"data":"tasks with a repeat-loop (max_repeat\u003e=3): 1/3  \u003c- repeat-until-death count\n"}
+,{"stream_name":"stdout","time":1131.437965929,"data":"tasks with \u003e=1 FAILED edit then more calls: 3/3\n"}
+,{"stream_name":"stdout","time":1131.437967814,"data":"mean search calls/task: 5.3 | mean read: 8.0\n"}
+,{"stream_name":"stdout","time":1140.670466383,"data":"Created /kaggle/working/submission.zip (158756.5 KiB)\n"}
+,{"stream_name":"stderr","time":1145.590765181,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1145.590796643,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1145.747170228,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1145.747198374,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1146.445969433,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":1146.769664083,"data":"[NbConvertApp] Writing 181851 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":1149.402570693,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1150.188907413,"data":"[NbConvertApp] Writing 469786 bytes to __results__.html\n"}
+]

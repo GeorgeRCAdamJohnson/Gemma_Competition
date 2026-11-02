@@ -1,0 +1,112 @@
+Google - The Gemma 4 Developer Agent Competition
+Accelerate research in autonomous coding agents
+
+
+Models
+Most Usage
+Gemma 4 · gemma-4-31b-it-qat-w4a16-ct
+Google · Other · Gemma is a family of lightweight, state-of-the-art open models from Google, built from the same research and technology used to create the Gemini models.
+13 users · Best public score: 0.17
+ModelBuddy · gemma4
+Jeki Wan Taufik · Transformers · An open machine learning model designed for flexible inference, fine-tuning, and AI experimentation
+1 user · Best public score: 0.08
+mt5-base · default
+Mousumiroy250 · Transformers
+1 user
+Gemma 4 · gemma-4-12b-it-qat-w4a16-ct
+Google · Other · Gemma is a family of lightweight, state-of-the-art open models from Google, built from the same research and technology used to create the Gemini models.
+1 user
+Gemma 4 · gemma-4-31b-it
+Google · Transformers · Gemma is a family of lightweight, state-of-the-art open models from Google, built from the same research and technology used to create the Gemini models.
+1 user
+bert-base-multilingual-cased · default
+Muhammad Ukasha · Transformers
+1 user
+![alt text](image.png)
+
+Harness:
+Google - The Gemma 4 Developer Agent Competition
+Accelerate research in autonomous coding agents
+
+
+Google - The Gemma 4 Developer Agent Competition
+
+Submit Prediction
+Ruijie Zhu · 103rd in this Competition · Posted 5 days ago
+Stronger models barely beat Gemma 4 31B in this harness — teacher comparison on 124 public tasks
+Hi all — sharing an experiment in case it saves someone time/money.
+
+Question: is our score limited by the model, or by the harness setup? If a much stronger coding model (one that gets ~80% on SWE-bench Verified) runs through exactly the same agent config, how much better does it do?
+
+Setup (identical for all models)
+
+Same submission YAML (sample prompt, get_code_subgraph removed), same harness (swegemma 0.2.7, 2026-09-30 build), events compaction enabled as in the official notebook, 32k context.
+Budget: 25 min / 50 tool calls per task, one task per process.
+124 of the 129 public tasks. We fixed local test environments so that, for every one of these 124, the gold patch passes and an empty patch fails (5 tasks could not be made scorable locally).
+Gemma: gemma-4-31b-it-qat-w4a16-ct on vLLM 0.19.1, 2 independent passes.
+Teachers via OpenRouter, routed through the same harness: DeepSeek V4 Pro, Qwen3.6-27B, 1 pass each.
+Results
+
+model	resolved	median minutes/task
+Gemma 4 31B, pass 1	54/124	5.2
+Gemma 4 31B, pass 2	53/123	5.2
+DeepSeek V4 Pro	58/124	3.5
+Qwen3.6-27B	59/123	3.9
+The teachers are only +4–5 tasks ahead. For scale: between Gemma's two identical passes, 19 of 123 tasks (15%) flipped between solved and failed.
+Of the 60 tasks Gemma failed in both passes, the two teachers combined solve only 10; 48 are solved by nobody. The teachers also fail 11–12 tasks that Gemma solved at least once.
+Union of all 4 runs: 73/123.
+Takeaways (our interpretation)
+
+In this harness, the ceiling seems to come from the setup (32k context + compaction, call budget, sparse task descriptions — many are just "Fixes #NNNN"), not from raw model strength. Distilling a stronger teacher can't add much "new capability" here; the extra solves are few.
+The teachers are noticeably faster (3.5–3.9 vs 5.2 min median). With ~5.5 min/task available in the 12 h official run, speed may matter more than extra capability.
+Single runs are very noisy — be careful comparing prompt variants on small task batches.
+Two harness gotchas we hit along the way
+
+run_command is a synchronous tool, so it blocks the event loop. If you run several tasks concurrently in one eval process, one slow command (e.g. an agent's script hitting the 300 s timeout) freezes every task in that process, while their time budgets keep ticking. Run one task per process if you care about timing.
+Gemma 4 edit_file calls whose old_string contains a """ docstring sometimes get mangled by vLLM's gemma4 tool-call parser (argument keys like <|"|>,filepath), so ADK rejects them with "mandatory input parameters are not present". The model then tends to retry the identical call many times (27× in one trace). Rejected calls don't count toward the tool-call cap, but they do cost time.
+Happy to answer questions. Numbers are from a single pass per teacher, so treat ±5 tasks as noise.
+
+
+9
+3 Comments
+Hotness
+ 
+Comment here. Be patient, be friendly, and focus on ideas. We're all here to learn and improve!
+
+This comment will be made public once posted.
+
+
+Post Comment
+Varun Gandhi
+Posted 4 days ago
+
+How did you go about fixing local test environments for the 124?
+
+
+Reply
+
+React
+Ayush Thakur
+Posted 5 days ago
+
+· 328th in this Competition
+
+Thanks for sharing this. I had some results which I was thinking to compile and write up a discussion post but this is solid.
+
+All I wanna add is that this is true. The model capability is restrained by the harness and compute capacity. I ran a similar setup with gpt4.1, gpt5, etc. They all kinda came around the same ballpark.
+
+
+Reply
+
+React
+Whisper Last
+Posted 5 days ago
+
+· 928th in this Competition
+
+Blur queries, less than 32k context and limited time make the competition difficult than actually in use, maybe that's why teachers seem like this
+
+
+Reply
+
+React

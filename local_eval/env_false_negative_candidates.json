@@ -1,0 +1,758 @@
+[
+ {
+  "task": "fastapi_11194",
+  "class": "ENV",
+  "signals": "collection_error,name_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_11355",
+  "class": "ENV",
+  "signals": "collection_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_12942",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_13207",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_13537",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_13713",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_13786",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_13920",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14077",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14099",
+  "class": "ENV",
+  "signals": "collection_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14186",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14246",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "no_patch"
+ },
+ {
+  "task": "fastapi_14258",
+  "class": "ENV",
+  "signals": "collection_error,syntax_pyver",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14262",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error,syntax_pyver",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14266",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14297",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14301",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14303",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14306",
+  "class": "ENV",
+  "signals": "collection_error,syntax_pyver",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14349",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14360",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14361",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14371",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14372",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14419",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14430",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14448",
+  "class": "ENV",
+  "signals": "collection_error,syntax_pyver",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14455",
+  "class": "ENV",
+  "signals": "collection_error,syntax_pyver",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14458",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14459",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14463",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14479",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14482",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14485",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14487",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14492",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14512",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "no_patch"
+ },
+ {
+  "task": "fastapi_14583",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14605",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14609",
+  "class": "ENV",
+  "signals": "collection_error,name_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14616",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14786",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14791",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14794",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14851",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14873",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14953",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14962",
+  "class": "ENV",
+  "signals": "collection_error,name_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_14964",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_14978",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error,syntax_pyver",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_14986",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_15023",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_15030",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_15280",
+  "class": "ENV",
+  "signals": "collection_error,syntax_pyver",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_15588",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_15589",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_15661",
+  "class": "ENV",
+  "signals": "collection_error,module_missing,import_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_15763",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_15785",
+  "class": "ENV",
+  "signals": "collection_error,import_error",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_15800",
+  "class": "ENV",
+  "signals": "collection_error,syntax_pyver",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "fastapi_5077",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_5624",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "fastapi_9425",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_9555",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "fastapi_9753",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "httpx_3672",
+  "class": "ENV",
+  "signals": "collection_error",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "requests_6589",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "requests_6592",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "requests_6629",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "requests_6644",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "wrong_file"
+ },
+ {
+  "task": "requests_6757",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "requests_7205",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "requests_7309",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "requests_7315",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "requests_7328",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "requests_7427",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "requests_7433",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "requests_7502",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "requests_7505",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_2725",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "no_patch"
+ },
+ {
+  "task": "rich_2943",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "no_patch"
+ },
+ {
+  "task": "rich_3006",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3043",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3052",
+  "class": "MIXED",
+  "signals": "syntax_pyver,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3061",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3063",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "no_patch"
+ },
+ {
+  "task": "rich_3064",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3067",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3105",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3130",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "no_patch"
+ },
+ {
+  "task": "rich_3180",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3278",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3296",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3454",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3468",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3469",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3470",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3471",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3472",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3480",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3486",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3506",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3518",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3521",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3535",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3675",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3676",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3718",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3772",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3777",
+  "class": "ENV",
+  "signals": "collection_error",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3782",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3882",
+  "class": "REAL",
+  "signals": "test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3894",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3905",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3930",
+  "class": "ENV",
+  "signals": "syntax_pyver",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3934",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3935",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_3942",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_far"
+ },
+ {
+  "task": "rich_3944",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_3953",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_4006",
+  "class": "UNKNOWN",
+  "signals": "",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_4070",
+  "class": "ENV",
+  "signals": "name_error",
+  "position": "gold_file_near"
+ },
+ {
+  "task": "rich_4075",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "no_patch"
+ },
+ {
+  "task": "rich_4076",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_4077",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ },
+ {
+  "task": "rich_4079",
+  "class": "REAL",
+  "signals": "assertion,test_failure",
+  "position": "wrong_file"
+ }
+]

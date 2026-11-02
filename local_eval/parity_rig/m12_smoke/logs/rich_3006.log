@@ -1,0 +1,15 @@
+  [2m[   0.0s][0m [1;35m📋 System Prompt:[0m [2mYou are an expert autonomous code reviewer. You have a HARD budget of ~28 tool calls and 8[0m
+[2mminutes.[0m
+  [2m[   0.0s][0m [1;36m🎯 Task Prompt:[0m [2mYou are evaluating a software engineering task for repository Textualize/rich.[0m
+  [2m[  76.2s][0m [2m💭 (35 chars) "<|channel>thought[0m
+[2m<|channel>thought"[0m
+  [2m[  76.2s][0m [1;36m🎯 Task Prompt:[0m [2mYour previous response reached the token limit while thinking before a tool call was [0m
+[2mcompleted. Do NOT repeat your analy...[0m
+  [2m[ 149.8s][0m [2m💭 (35 chars) "<|channel>thought[0m
+[2m<|channel>thought"[0m
+  [2m[ 149.8s][0m [1;36m🎯 Task Prompt:[0m [2mYour previous response reached the token limit while thinking before a tool call was [0m
+[2mcompleted. Do NOT repeat your analy...[0m
+  [2m[ 223.3s][0m [2m💭 (17 chars) "<|channel>thought"[0m
+  [2m[ 223.3s][0m [1;36m🎯 Task Prompt:[0m [2mYour previous response reached the token limit while thinking before a tool call was [0m
+[2mcompleted. Do NOT repeat your analy...[0m
+  [2m[ 297.4s][0m [2m💭 (17 chars) "<|channel>thought"[0m

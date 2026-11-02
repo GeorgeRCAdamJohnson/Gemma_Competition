@@ -1,0 +1,3 @@
+﻿[09:44:56] comfyops/gemma-sibling-conform-v6z has status "KernelWorkerStatus.RUNNING"
+[09:45:42] comfyops/gemma-sibling-conform-v6z has status "KernelWorkerStatus.ERROR"
+TERMINAL: comfyops/gemma-sibling-conform-v6z has status "KernelWorkerStatus.ERROR"

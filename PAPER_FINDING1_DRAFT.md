@@ -1,5 +1,12 @@
 # Paper Finding #1 — two framings, pending the 1-epoch ablation
 
+> SCOPE NOTE (added 2026-10-11, after inspecting the LB-topping reference kernels verra 0.18 / honghanh 0.24 /
+> lavinwins): the public leaderboard top is a **single agent with NO LoRA adapter** (31b, 28 calls / 8 min / 80
+> turns / thinking_budget 4096). So this LoRA finding is a CAUTIONARY NEGATIVE ("naive agentic SFT degrades
+> tool-call protocol"), NOT a path to the top of this competition. Keep the paper framed as a method/measurement
+> contribution, not as "the way to win." The win lever on the actual board is sampling+budget (thinking 4096 /
+> 28-8-80), which is adapter-free.
+
 > Drafted BEFORE the deciding experiment (1-epoch r8 retrain) returns, deliberately, as a guard against
 > motivated reasoning. When the 1-epoch held-out result lands, exactly ONE of these two framings becomes
 > the paper claim; the other is deleted. The experiment, not the prose, decides. (rules 1, 2, 9, 12)
@@ -51,8 +58,10 @@ AND produced ≤ base. i.e. reducing epochs 4→1 does NOT rescue it, proving th
 the SFT target/method, not an over-training artifact.
 
 **Evidence block (drop the 1-epoch numbers in here):**
-- E2B 4-epoch: base produced 2/6, specialist 0/6 (narration mechanism, raw gens).
-- 12B 4-epoch r16: specialist produced 0/6 vs base 1/6; argument-collapse (degen 9/3 at scale 1.0).
+- E2B 4-epoch: base produced 2/6, specialist 0/6 (narration mechanism, raw gens). [VERIFIED vs train/_ab_results.json 2026-10-11]
+- 12B 4-epoch r16: specialist produced 0/6 vs **base 2/6** (fastapi_14458 1327ch, fastapi_14479 595ch);
+  argument-collapse under greedy. [CORRECTED 2026-10-11: earlier draft said "base 1/6" — the measured file
+  train/_ab12b_base.json shows base produced 2/6. Fixed.]
 - 12B 4-epoch r8: [current sweep result — fill in].
 - **12B 1-epoch r8: [PENDING — if this is ALSO degraded, Framing A stands].**
 

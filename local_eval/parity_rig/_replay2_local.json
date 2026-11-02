@@ -1,0 +1,172 @@
+[
+ {
+  "task": "fastapi_9753",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_dependency_partial.py"
+  ],
+  "test_fns": [
+   "test_dependency_types_with_partial"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_dependency_partial.py::test_dependency_types_with_partial"
+  ],
+  "pytest_tail": "================== short test summary info ============================\nERROR tests/test_dependency_partial.py - DeprecationWarning: The anyio.abc.Bl...\n1 error in 0.31s\nERROR: found no collectors for /tmp/r_fastapi_9753_2vfkn1b7/tests/test_dependency_partial.py::test_dependency_types_with_partial\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "requests_7309",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "test_fns": [
+   "test_parse_dict_header",
+   "test__parse_content_type_header",
+   "test_get_encoding_from_headers"
+  ],
+  "counts": {
+   "passed": 15
+  },
+  "nodes": [
+   "tests/test_utils.py::test_parse_dict_header",
+   "tests/test_utils.py::test__parse_content_type_header",
+   "tests/test_utils.py::test_get_encoding_from_headers"
+  ],
+  "pytest_tail": "...............                                                          [100%]\n15 passed in 0.09s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "requests_7315",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_adapters.py"
+  ],
+  "test_fns": [
+   "test_request_url_handles_leading_path_separators"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_adapters.py::test_request_url_handles_leading_path_separators"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.01s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "requests_7427",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "test_fns": [
+   "test_should_bypass_proxies_no_proxy_domain_boundary"
+  ],
+  "counts": {
+   "passed": 9
+  },
+  "nodes": [
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy_domain_boundary"
+  ],
+  "pytest_tail": ".........                                                                [100%]\n9 passed in 0.06s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "fastapi_14616",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_json_type.py"
+  ],
+  "test_fns": [
+   "test_form_json_list",
+   "test_query_json_list",
+   "test_header_json_list",
+   "test_cookie_json_list"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_json_type.py::test_form_json_list",
+   "tests/test_json_type.py::test_query_json_list",
+   "tests/test_json_type.py::test_header_json_list",
+   "tests/test_json_type.py::test_cookie_json_list"
+  ],
+  "pytest_tail": " for /tmp/r_fastapi_14616_qys75tqe/tests/test_json_type.py::test_query_json_list\n\nERROR: found no collectors for /tmp/r_fastapi_14616_qys75tqe/tests/test_json_type.py::test_header_json_list\n\nERROR: found no collectors for /tmp/r_fastapi_14616_qys75tqe/tests/test_json_type.py::test_cookie_json_list\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "fastapi_9425",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_return_none_stringified_annotations.py"
+  ],
+  "test_fns": [
+   "test_no_content"
+  ],
+  "counts": {
+   "error": 1
+  },
+  "nodes": [
+   "tests/test_return_none_stringified_annotations.py::test_no_content"
+  ],
+  "pytest_tail": "==================== short test summary info ============================\nERROR tests/test_return_none_stringified_annotations.py - DeprecationWarning:...\n1 error in 0.23s\nERROR: found no collectors for /tmp/r_fastapi_9425_t038dw2n/tests/test_return_none_stringified_annotations.py::test_no_content\n\n",
+  "resolved_here": false
+ },
+ {
+  "task": "rich_3067",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_highlighter.py"
+  ],
+  "test_fns": [
+   "test_wrong_type"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_highlighter.py::test_wrong_type"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.08s\n",
+  "resolved_here": true
+ },
+ {
+  "task": "rich_3882",
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 0,
+  "test_files": [
+   "tests/test_prompt.py"
+  ],
+  "test_fns": [
+   "test_prompt_confirm_markup"
+  ],
+  "counts": {
+   "passed": 1
+  },
+  "nodes": [
+   "tests/test_prompt.py::test_prompt_confirm_markup"
+  ],
+  "pytest_tail": ".                                                                        [100%]\n1 passed in 0.14s\n",
+  "resolved_here": true
+ }
+]

@@ -1,0 +1,502 @@
+"""Sweep driver: arms x reps x tasks, with resume, a global budget, and hard per-run caps.
+
+WHY THIS EXISTS
+    The rich_3772 pattern sweep was a bare PowerShell loop over run_guarded.py. It had:
+      * no global wall-clock budget  -> ran 41 jobs until the machine died
+      * no resume                    -> a kill lost every completed run
+      * append-only results          -> the same tag appeared twice with different data,
+                                        so naive aggregation double-counted (A3 0/5 instead
+                                        of 0/3). See GEMMA_EXPERIMENT_LOG.md 2026-10-20.
+    gate_run.py already had --skip-done and --max-time; the loop just never used them,
+    and neither caps the TOTAL sweep.
+
+WHAT IT GUARANTEES
+    1. RESUME      -- completed (arm, rep, task) triples are skipped. Rerun the same
+                      command after a crash and it continues where it stopped.
+    2. BUDGET      -- --budget-min stops LAUNCHING new runs once the wall clock is hit.
+                      The in-flight run is allowed to finish (or is killed at
+                      --max-run-min), then the sweep exits cleanly with results flushed.
+    3. NO DUPES    -- results are rewritten canonically (one row per arm/rep/task,
+                      last-wins) after every run, atomically. No append-log corruption.
+    4. HARD CAP    -- a child exceeding --max-run-min is killed, not left holding VRAM.
+    5. CLEAN EXIT  -- Ctrl+C finishes the in-flight run, flushes, exits 0.
+    6. ONE SWEEP   -- a PID lock file stops two sweeps fighting over the same server.
+
+USAGE
+    python sweep.py --name p3772 --reps 3 --budget-min 60 \
+        --arms A3=prompts/e4b_A3_delim.md,P1=prompts/e4b_P1_chain.md \
+        --tasks-file one3772.txt --repo-dir repos/rich \
+        --model /home/biges/models/gemma-4-E4B-it-qat-w4a16-ct \
+        --thinking on --temp 0.2 --max-tool-calls 28 --max-time 480
+
+    # resume after a crash: the identical command. Completed runs are skipped.
+    # narrow to the missing work only:
+    python sweep.py --name p3772 --reps 3 --arms P1 --tasks-file one3772.txt ...
+
+OUTPUTS (in runs/)
+    <name>.sweep.jsonl     canonical results, one row per (arm, rep, task)
+    <name>.sweep.state.json  progress + budget accounting, for humans
+    <name>_<ARM>_r<N>.guard.jsonl   per-run guard log (same format as run_guarded.py)
+    <name>_<ARM>_r<N>.results.jsonl gate_run's raw row (source of truth for the merge)
+"""
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+import urllib.request
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+RUNS = HERE / "runs"
+SERVER = "http://127.0.0.1:8081"
+TASK_RE = re.compile(r"\[(\d+)/(\d+)\] (\S+) resolved=(\S+)")
+
+# Runs with these end_reasons produced no usable result. They are written to the
+# canonical file so the failure is visible, but resume RETRIES them.
+RETRYABLE = {"driver_crash", "killed_max_run"}
+
+
+def _say(msg, **_kw):
+    """Print that cannot crash on a non-ASCII char in a cp1252 Windows console."""
+    try:
+        print(msg, flush=True)
+    except UnicodeEncodeError:
+        enc = getattr(sys.stdout, "encoding", None) or "ascii"
+        print(msg.encode(enc, "replace").decode(enc, "replace"), flush=True)
+
+
+def server_up(timeout=4):
+    try:
+        urllib.request.urlopen(SERVER + "/v1/models", timeout=timeout)
+        return True
+    except Exception:
+        return False
+
+
+# ---------------------------------------------------------------- canonical store
+def load_done(path):
+    """(arm, rep, task) triples already complete. Last row wins on duplicates.
+
+    A run that produced NO result row (driver_crash / killed_max_run) is NOT done:
+    it is recorded so the failure is visible, but resume must retry it. Otherwise a
+    transient crash permanently poisons the sweep with a false negative.
+    """
+    done = {}
+    if not path.exists():
+        return done
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            r = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        key = (r.get("arm"), r.get("rep"), r.get("task"))
+        if not all(k is not None for k in key):
+            continue
+        if r.get("end_reason") in RETRYABLE:
+            done.pop(key, None)   # a later good row still wins; a crash never does
+            continue
+        done[key] = r
+    return done
+
+
+def write_canonical(path, rows):
+    """Atomic rewrite: one row per (arm, rep, task), last-wins. Never appends dupes.
+
+    A retryable row is dropped if a real result for the same key exists, so a crash
+    followed by a successful retry leaves exactly one row.
+    """
+    by_key = {}
+    for r in rows:
+        key = (r.get("arm"), r.get("rep"), r.get("task"))
+        if not all(k is not None for k in key):
+            continue
+        if r.get("end_reason") in RETRYABLE and key in by_key:
+            continue          # keep the real result, discard the crash marker
+        by_key[key] = r
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
+        for r in by_key.values():
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
+    return by_key
+
+
+# ---------------------------------------------------------------- lock
+class SweepLock:
+    """Stop two sweeps sharing one server. Stale locks (dead PID) are reclaimed."""
+
+    def __init__(self, path):
+        self.path = path
+        self.fh = None
+
+    def acquire(self):
+        if self.path.exists():
+            try:
+                other = json.loads(self.path.read_text(encoding="utf-8"))
+                pid = other.get("pid")
+                if pid and pid != os.getpid() and _pid_alive(pid):
+                    raise SystemExit(
+                        f"another sweep is running (pid {pid}, started {other.get('t')}). "
+                        f"If it is dead, delete {self.path} and retry.")
+            except (json.JSONDecodeError, OSError):
+                pass  # unreadable/corrupt lock -> reclaim
+        self.fh = open(self.path, "w", encoding="utf-8")
+        json.dump({"pid": os.getpid(), "t": time.strftime("%Y-%m-%d %H:%M:%S")}, self.fh)
+        self.fh.flush()
+
+    def release(self):
+        try:
+            if self.fh:
+                self.fh.close()
+            self.path.unlink()
+        except OSError:
+            pass
+
+
+def _pid_alive(pid):
+    if os.name == "nt":
+        try:
+            import ctypes
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            h = ctypes.windll.kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid)
+            if not h:
+                return False
+            try:
+                code = ctypes.c_ulong(0)
+                ok = ctypes.windll.kernel32.GetExitCodeProcess(h, ctypes.byref(code))
+                return bool(ok and code.value == 259)  # STILL_ACTIVE
+            finally:
+                ctypes.windll.kernel32.CloseHandle(h)
+        except Exception:
+            return True  # fail open: assume alive rather than stomp a live sweep
+    else:
+        try:
+            os.kill(pid, 0)
+            return True
+        except OSError:
+            return False
+    return True
+
+
+# ---------------------------------------------------------------- one run
+def run_one(name, arm, rep, task, gate_args, max_run_s, stall_after):
+    """Run gate_run.py for one (arm, rep, task). Returns a result row.
+
+    Enforces a HARD wall cap: the child is killed at max_run_s. run_guarded.py only
+    *recorded* stalls; a hung child holding VRAM is what crashed the machine.
+    """
+    # Tag must be unique per (SWEEP, arm, rep, TASK). Reusing f"{arm}_r{rep}" made all 9 tasks
+    # in a rep write to the same results/guard/trace files, so each task deleted the
+    # previous one's output and only the last survived.
+    # The sweep NAME is part of the tag because two different sweeps that share an arm name
+    # otherwise write the same files: on 2026-10-24 a new sweep silently began overwriting the
+    # 23-run pooled-A3 control baseline (A3_r*_rich_2725/2943) that the D-arm retraction rests
+    # on. Prefixing with --name makes every sweep's artefacts disjoint.
+    tag = f"{name}_{arm}_r{rep}_{task}"
+    res_path = RUNS / f"{tag}.results.jsonl"
+    guard_path = RUNS / f"{tag}.guard.jsonl"
+    for p in (res_path, guard_path):
+        if p.exists():
+            p.unlink()
+
+    # GATE_SERVER=vllm: run_local.py defaults SERVER_KIND to "llama", which sends
+    # llama-server-style thinking params to a vLLM server. Without this the model
+    # emits tool calls as raw text (`<|tool_call>call:read_file(...)<tool_call|>`),
+    # finish_reason="stop", tools=[] -> every run dies as nudges_exhausted with calls=0.
+    child_env = os.environ.copy()
+    child_env.setdefault("GATE_SERVER", "vllm")
+
+    cmd = [sys.executable, "gate_run.py", "--tag", tag, "--tasks", task] + gate_args
+    gfh = open(guard_path, "w", encoding="utf-8")
+
+    def emit(**kw):
+        kw["t"] = time.strftime("%H:%M:%S")
+        gfh.write(json.dumps(kw) + "\n")
+        gfh.flush()
+
+    emit(ev="start", arm=arm, rep=rep, task=task, cmd=" ".join(cmd),
+         server="up" if server_up() else "down")
+
+    t0 = time.time()
+    last_progress = t0
+    row = None
+    killed = {"flag": False}
+    stderr_tail = ""
+
+    proc = subprocess.Popen(cmd, cwd=HERE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            text=True, encoding="utf-8", errors="replace", bufsize=1,
+                            env=child_env)
+    emit(ev="spawn", pid=proc.pid)
+
+    # WATCHDOG: a timer thread, not a check inside the stdout loop. The stdout loop
+    # blocks on readline(), so a check placed there never fires while the child is
+    # silent -- which is precisely the hung case this cap exists for. (Verified: the
+    # in-loop version let a 30s child run to completion against a 12s cap.)
+    def _watchdog():
+        time.sleep(max_run_s)
+        if proc.poll() is None:
+            killed["flag"] = True
+            emit(ev="kill", reason=f"exceeded_max_run_{int(max_run_s)}s", task=task)
+            _kill_tree(proc)
+
+    wd = __import__("threading").Thread(target=_watchdog, daemon=True)
+    wd.start()
+
+    try:
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            now = time.time()
+            line = line.rstrip()
+            m = TASK_RE.match(line)
+            if m:
+                emit(ev="task", task=m.group(3), resolved=m.group(4),
+                     gap_s=round(now - last_progress, 1),
+                     server="up" if server_up() else "down", raw=line[:200])
+                last_progress = now
+            if now - last_progress > stall_after:
+                emit(ev="stall", reason=f"no_progress_{int(now - last_progress)}s",
+                     task=task, server="up" if server_up() else "down",
+                     proc_alive=proc.poll() is None)
+                last_progress = now
+    finally:
+        try:
+            _, err = proc.communicate(timeout=30)
+        except subprocess.TimeoutExpired:
+            _kill_tree(proc)
+            _, err = proc.communicate()
+        stderr_tail = (err or "")[-2000:]
+        emit(ev="exit", code=proc.returncode, dur_s=round(time.time() - t0, 1),
+             stderr_tail=stderr_tail)
+        gfh.close()
+
+    # gate_run writes its row to runs/<tag>.results.jsonl; take the last one.
+    if res_path.exists():
+        for line in res_path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    pass
+
+    if row is None:
+        # No row: the child died before producing one. Record it so resume does not
+        # spin forever on a deterministic crash. Delete the row to retry it.
+        row = {"task": task, "tag": tag, "resolved": False,
+               "end_reason": "killed_max_run" if killed["flag"] else "driver_crash",
+               "calls": 0, "patch_chars": 0, "edit_ok": 0, "edit_err": 0,
+               "first_edit_call": None, "turns": 0, "wall_s": round(time.time() - t0, 1),
+               "stderr_tail": stderr_tail[-500:]}
+    row["arm"] = arm
+    row["rep"] = rep
+    row["killed"] = killed["flag"]
+    return row
+
+
+def _kill_tree(proc):
+    """Kill the child and its descendants. PID-based only."""
+    try:
+        if os.name == "nt":
+            subprocess.run(["taskkill", "/T", "/F", "/PID", str(proc.pid)],
+                           capture_output=True, timeout=20)
+        else:
+            proc.kill()
+    except Exception:
+        try:
+            proc.kill()
+        except Exception:
+            pass
+
+
+# ---------------------------------------------------------------- main
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--name", required=True, help="sweep namespace, e.g. p3772")
+    ap.add_argument("--arms", required=True,
+                    help="comma list of ARM=prompt.md, e.g. A3=prompts/e4b_A3_delim.md,P1=prompts/e4b_P1_chain.md")
+    ap.add_argument("--reps", type=int, default=3)
+    ap.add_argument("--tasks-file", default=None)
+    ap.add_argument("--tasks", default=None, help="comma list of task ids")
+    ap.add_argument("--budget-min", type=float, default=60.0,
+                    help="stop LAUNCHING new runs after this many minutes")
+    ap.add_argument("--max-run-min", type=float, default=12.0,
+                    help="hard per-run wall cap; the child is killed at this point")
+    ap.add_argument("--stall-after", type=int, default=300,
+                    help="seconds with no task line before logging a stall (does not kill)")
+    ap.add_argument("--server-wait-min", type=float, default=10.0,
+                    help="how long to wait for the server before aborting")
+    ap.add_argument("--no-server-check", action="store_true",
+                    help="skip the server health gate (e.g. server on another port)")
+    ap.add_argument("--no-isolate", action="store_true",
+                    help="do NOT give each run its own git worktree. Only use this if you are "
+                         "certain no other gate_run is touching repos\\<repo>.")
+    ap.add_argument("--conc", type=int, default=1,
+                    help="concurrent runs; keep 1 unless the server is proven concurrent")
+    args, gate_extra = ap.parse_known_args()
+
+    RUNS.mkdir(exist_ok=True)
+
+    arms = {}
+    for part in args.arms.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        if "=" not in part:
+            raise SystemExit(f"bad --arms entry {part!r}; expected ARM=prompt.md")
+        k, v = part.split("=", 1)
+        arms[k.strip()] = v.strip()
+    if not arms:
+        raise SystemExit("no arms parsed")
+
+    # GUARD: without --prompt-file, gate_run silently falls back to its DEFAULT system
+    # prompt, so every arm would be measured against the same prompt and the experiment
+    # would be meaningless. This happened once already; fail loudly instead.
+    for a, pf in arms.items():
+        if not Path(pf).exists():
+            raise SystemExit(f"arm {a}: prompt file not found: {pf}")
+    if any(x == "--prompt-file" for x in gate_extra):
+        raise SystemExit("do not pass --prompt-file yourself; the sweep sets it per arm")
+    print(f"[sweep] arm prompts: {arms}")
+
+    if args.tasks_file:
+        # utf-8-sig: PowerShell's Out-File -Encoding utf8 writes a BOM, which would
+        # otherwise become part of the first task id.
+        task_ids = [t.strip() for t in
+                    Path(args.tasks_file).read_text(encoding="utf-8-sig").splitlines() if t.strip()]
+    elif args.tasks:
+        task_ids = [t.strip() for t in args.tasks.split(",") if t.strip()]
+    else:
+        raise SystemExit("need --tasks-file or --tasks")
+
+    # gate_run args. NOTE: gate_run's read_tasks CONCATENATES --tasks and --tasks-file,
+    # so we must pass ONLY --tasks (the single task for this run). Passing both would
+    # silently run every task in the file on every run.
+    # --isolate gives each run its own git worktree. Without it, concurrent runs share
+    # repos\rich and corrupt each other's diffs (91 patches across 25 tags were ruined
+    # this way). It is on by default; --no-isolate opts out.
+    gate_args = ([] if args.no_isolate else ["--isolate"]) + gate_extra
+
+    canon = RUNS / f"{args.name}.sweep.jsonl"
+    state_path = RUNS / f"{args.name}.sweep.state.json"
+    lock = SweepLock(RUNS / f"{args.name}.sweep.lock")
+    lock.acquire()
+
+    done = load_done(canon)
+    rows = list(done.values())
+    # Interleave by rep so wall-clock drift is balanced across arms instead of
+    # confounded with them (the rich_3772 sweep did this by hand).
+    jobs = [(arm, rep, task)
+            for rep in range(args.reps)
+            for arm in arms
+            for task in task_ids]
+    todo = [j for j in jobs if j not in done]
+
+    budget_s = args.budget_min * 60
+    max_run_s = args.max_run_min * 60
+    t0 = time.time()
+
+    _say(f"[sweep] name={args.name} arms={list(arms)} reps={args.reps} "
+          f"tasks={len(task_ids)} -> {len(jobs)} runs, {len(todo)} to do")
+    _say(f"[sweep] budget={args.budget_min:.0f}min  max_run={args.max_run_min:.0f}min  "
+          f"conc={args.conc}  resume_from={len(done)} done")
+    if not todo:
+        _say("[sweep] nothing to do -- all runs already complete")
+        lock.release()
+        return
+
+    if not args.no_server_check and not server_up():
+        _say(f"[sweep] server down; waiting up to {args.server_wait_min:.0f}min ...")
+        waited = 0.0
+        while not server_up() and waited < args.server_wait_min * 60:
+            time.sleep(15); waited += 15
+        if not server_up():
+            _say("[sweep] server never came up -- aborting with no work lost")
+            lock.release()
+            raise SystemExit(1)
+
+    stop = {"flag": False}
+
+    def _on_sigint(signum, frame):
+        _say("\n[sweep] Ctrl+C -- finishing the in-flight run, then exiting cleanly")
+        stop["flag"] = True
+
+    try:
+        import signal
+        signal.signal(signal.SIGINT, _on_sigint)
+        signal.signal(signal.SIGTERM, _on_sigint)
+    except (ImportError, ValueError):
+        pass
+
+    completed = 0
+    try:
+        for arm, rep, task in todo:
+            elapsed = time.time() - t0
+            if stop["flag"]:
+                _say("[sweep] stop requested -- not launching further runs")
+                break
+            if elapsed > budget_s:
+                _say(f"[sweep] BUDGET HIT ({elapsed/60:.1f}min > {args.budget_min:.0f}min) "
+                      f"-- stopping with {len(todo) - completed} runs left")
+                break
+            remaining = len(todo) - completed
+            avg = (elapsed / completed) if completed else None
+            eta = f"{avg*remaining/60:.0f}min" if avg else "?"
+            _say(f"[sweep] {completed+1}/{len(todo)} {arm} r{rep} {task} "
+                  f"(elapsed {elapsed/60:.1f}min, eta {eta})", flush=True)
+
+            row = run_one(args.name, arm, rep, task, gate_args + ["--prompt-file", arms[arm]],
+                          max_run_s, args.stall_after)
+            rows.append(row)
+            # canonical, deduped, atomic -- a crash here loses nothing already written
+            rows = list(write_canonical(canon, rows).values())
+            completed += 1
+
+            state = {"name": args.name, "pid": os.getpid(),
+                     "done": len(rows), "total": len(jobs),
+                     "elapsed_min": round((time.time() - t0) / 60, 1),
+                     "budget_min": args.budget_min,
+                     "last": {"arm": arm, "rep": rep, "task": task,
+                              "resolved": row.get("resolved")},
+                     "updated": time.strftime("%Y-%m-%d %H:%M:%S")}
+            state_path.write_text(json.dumps(state, indent=1), encoding="utf-8")
+
+            _say(f"  -> {arm} r{rep} {task}: {'RESOLVED' if row.get('resolved') else 'fail'} "
+                  f"end={row.get('end_reason')} calls={row.get('calls')} "
+                  f"patch={row.get('patch_chars')} "
+                  f"{'KILLED' if row.get('killed') else ''}", flush=True)
+    finally:
+        rows = list(write_canonical(canon, rows).values())
+        lock.release()
+
+    k = sum(1 for r in rows if r.get("resolved"))
+    _say(f"\n[sweep] DONE {k}/{len(rows)} resolved | "
+          f"{completed} runs this session | {(time.time()-t0)/60:.1f}min")
+    _say(f"[sweep] results: {canon}")
+    _summarise(rows, arms, task_ids)
+
+
+def _summarise(rows, arms, task_ids):
+    from collections import defaultdict
+    agg = defaultdict(list)
+    for r in rows:
+        agg[r.get("arm")].append(r)
+    _say(f"\n{'arm':<6}{'k/n':<8}{'rate':<7}{'calls':<8}{'patch':<8}{'edit_err':<10}")
+    for a in arms:
+        v = agg.get(a, [])
+        if not v:
+            continue
+        k = sum(1 for x in v if x.get("resolved"))
+        _say(f"{a:<6}{f'{k}/{len(v)}':<8}{k/len(v):<7.2f}"
+             f"{sum(x.get('calls') or 0 for x in v)/len(v):<8.1f}"
+             f"{sum(x.get('patch_chars') or 0 for x in v)/len(v):<8.0f}"
+             f"{sum(x.get('edit_err') or 0 for x in v):<10}")
+
+
+if __name__ == "__main__":
+    main()

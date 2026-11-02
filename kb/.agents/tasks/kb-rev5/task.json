@@ -1,0 +1,7 @@
+{
+  "task_id": "task-kb-rev5",
+  "task_description": "Gemma auditor toolkit REVISION 5: absorb 2026-10-16..2026-10-31 run data and log entries into the KB (new stacks: Kaggle full-129 eval kernels, local parity rig, local sweeps, pulled outputs), implement real read-only `pull` with submissions snapshots + attribution mismatch flags, baselines per track with a banner computed from the steering text, D3-4/D3-5, claims cl-4 (§12.4 F1-F10 + supersession), lever matrix, STANDING_TRUTHS.md, replay rp-5 (gold cache, platform-skip INFRA, --required-nodes hunk, replay/gold-gate subcommands, NITs, env-freeze artifact), gold-first for all 48 rich tasks, and update gemma-auditor.md + new gemma-gate-builder.md + gemma-audit.workflow.json. Full plan: c:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma\\kb\\.agents\\tasks\\kb-rev5\\plan.md",
+  "status": "pending",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004", "FEAT-005"],
+  "blocked_reason": null
+}

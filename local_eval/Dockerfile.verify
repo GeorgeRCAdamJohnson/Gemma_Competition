@@ -1,0 +1,22 @@
+# Verification-only sandbox: the Dockerfile.sandbox contract, minus the agent-side
+# imp/telnetlib shims (those exist for the agent's tool code, not for pytest).
+# The point of this image is the part our parity rig was missing: a real /wheels
+# directory and the build backends that `pip install -e /workspace` needs.
+FROM python:3.13-slim
+
+RUN apt-get update -qq \
+    && apt-get install -y -qq --no-install-recommends git patch \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --no-cache-dir \
+         pytest pytest-timeout==2.1.0 typer pdm-backend setuptools wheel \
+         poetry-core hatchling flit-core editables \
+         pytest-httpbin pytest-mock pytest-cov pytest-asyncio pytest-xdist \
+         trustme brotli zstandard chardet \
+    && mkdir -p /wheels
+
+RUN git config --global user.email "agent@eval" \
+    && git config --global user.name "Agent" \
+    && git config --global init.defaultBranch main
+
+ENV TEST_TMPDIR=/tmp
+WORKDIR /workspace

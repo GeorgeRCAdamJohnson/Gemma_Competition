@@ -1,0 +1,22 @@
+[
+ {
+  "task": "requests_7309",
+  "extract_rc": 0,
+  "agent_patch_rc": 0,
+  "agent_patch_tail": "",
+  "test_patch_rc": 128,
+  "test_patch_3way_rc": 128,
+  "test_patch_tail": "error: corrupt patch at line 45\n",
+  "test_files": [
+   "tests/test_utils.py"
+  ],
+  "pytest_rc": 1,
+  "counts": {
+   "failed": 4,
+   "passed": 202,
+   "skipped": 13
+  },
+  "pytest_tail": "thing_else\" ; no_equals -expected5]\nFAILED tests/test_utils.py::test__parse_content_type_header[multipart/form-data; boundary = something ; 'boundary2=something_else' ; no_equals -expected6]\nFAILED tests/test_utils.py::test__parse_content_type_header[multipart/form-data; boundary = something ; \"boundary2=something_else\" ; no_equals -expected7]\n4 failed, 202 passed, 13 skipped, 6 warnings in 0.28s\n",
+  "resolved_here": false
+ }
+]

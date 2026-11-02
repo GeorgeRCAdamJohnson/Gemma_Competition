@@ -1,0 +1,14 @@
+{
+  "verdict": "APPROVED",
+  "blocking": false,
+  "findings": [
+    {
+      "id": "R4-1",
+      "severity": "NIT",
+      "where": "design.md §0 / §2.1 / §2.18 / §25 D4-b vs Gemma\\kb\\curated\\run_labels.json baseline.config_source_hint",
+      "problem": "The design states the \u2026-v6w slug now backs 11 local dirs, while run_labels.json's config_source_hint still says 'backs ~10 dirs'. Both are explicitly snapshots and the acceptance tests assert '\u2265', so neither drives a hard check; the design records the drift honestly. Cosmetic inconsistency only.",
+      "fix": "Optional, at the next curated-file touch: change run_labels.json config_source_hint to '~11 dirs' or drop the count so the design and the curated hint agree. No code or acceptance-test change required."
+    }
+  ],
+  "reviewDoc": "c:\\Users\\Biges\\OneDrive\\Documents\\Desktop\\kAGGLE\\Gemma\\kb\\curated\\_build_reviews\\design-review-r4.md"
+}

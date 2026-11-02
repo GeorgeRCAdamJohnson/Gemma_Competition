@@ -1,0 +1,255 @@
+[{"stream_name":"stderr","time":7.285411174,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":7.285447898,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":8.261233881,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.261255658,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.261273876,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.26127794,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":8.930732914,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.930774743,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.930778489,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.930781281,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":10.341366982,"data":"Installing 41 wheels...\n"}
+,{"stream_name":"stdout","time":80.442366007,"data":"Wheelhouse installation complete.\n"}
+,{"stream_name":"stdout","time":113.302601472,"data":"Agent dir written (candidate D, thinking 4096, batched lookups, edit_file recovery; budget oracle + commit-by-remaining + bank-as-you-go, same 6 tasks): /kaggle/working/submission\n"}
+,{"stream_name":"stdout","time":113.303685112,"data":"Loaded 129 tasks\n"}
+,{"stream_name":"stdout","time":113.303868668,"data":"Created candidate D archive before the GPU gate: /kaggle/working/submission.zip (4789 bytes)\n"}
+,{"stream_name":"stdout","time":124.728977573,"data":"[import] validate_single_declared_model NOT FOUND; using no-op (single-model rule satisfied by agent.yaml)\n"}
+,{"stream_name":"stderr","time":549.673606358,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":549.67527475,"data":"  File \"\u003cstring\u003e\", line 1, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":549.67528357,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/execute.py\", line 131, in execute_notebook\n"}
+,{"stream_name":"stderr","time":549.676552967,"data":"    raise_for_execution_errors(nb, output_path)\n"}
+,{"stream_name":"stderr","time":549.676570372,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/execute.py\", line 251, in raise_for_execution_errors\n"}
+,{"stream_name":"stderr","time":549.676746155,"data":"    raise error\n"}
+,{"stream_name":"stderr","time":549.677085417,"data":"papermill.exceptions.PapermillExecutionError: \n"}
+,{"stream_name":"stderr","time":549.677103503,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":549.677108891,"data":"Exception encountered at \"In [3]\":\n"}
+,{"stream_name":"stderr","time":549.677113316,"data":"---------------------------------------------------------------------------\n"}
+,{"stream_name":"stderr","time":549.677117454,"data":"ServerStartupError                        Traceback (most recent call last)\n"}
+,{"stream_name":"stderr","time":549.67712158,"data":"/tmp/ipykernel_24/4015389389.py in \u003ccell line: 0\u003e()\n"}
+,{"stream_name":"stderr","time":549.67713664,"data":"     37 )\n"}
+,{"stream_name":"stderr","time":549.677140042,"data":"     38 server_instance = VllmServer(vllm_cfg, adapter_manifest=adapters)\n"}
+,{"stream_name":"stderr","time":549.677143455,"data":"---\u003e 39 server_instance.start()\n"}
+,{"stream_name":"stderr","time":549.677146952,"data":"     40 print(f'vLLM server started on {server_instance.base_url} (tp={tp_size})')\n"}
+,{"stream_name":"stderr","time":549.677150321,"data":"     41 models = server_instance.create_model_registry(\n"}
+,{"stream_name":"stderr","time":549.677153604,"data":"\n"}
+,{"stream_name":"stderr","time":549.677156744,"data":"/usr/local/lib/python3.12/dist-packages/adk_submission/server.py in start(self)\n"}
+,{"stream_name":"stderr","time":549.6771618,"data":"    303 \n"}
+,{"stream_name":"stderr","time":549.677164919,"data":"    304         try:\n"}
+,{"stream_name":"stderr","time":549.677168259,"data":"--\u003e 305             self._wait_until_ready()\n"}
+,{"stream_name":"stderr","time":549.677171712,"data":"    306         except BaseException:\n"}
+,{"stream_name":"stderr","time":549.677176744,"data":"    307             self.stop()\n"}
+,{"stream_name":"stderr","time":549.677180007,"data":"\n"}
+,{"stream_name":"stderr","time":549.677183845,"data":"/usr/local/lib/python3.12/dist-packages/adk_submission/server.py in _wait_until_ready(self)\n"}
+,{"stream_name":"stderr","time":549.677187924,"data":"    324             if self.process is not None and self.process.poll() is not None:\n"}
+,{"stream_name":"stderr","time":549.677191982,"data":"    325                 out = self._read_captured_output()\n"}
+,{"stream_name":"stderr","time":549.677195969,"data":"--\u003e 326                 raise ServerStartupError(\n"}
+,{"stream_name":"stderr","time":549.677199774,"data":"    327                     f\"Inference server exited prematurely with code {self.process.returncode}.\",\n"}
+,{"stream_name":"stderr","time":549.677203381,"data":"    328                     output=out,\n"}
+,{"stream_name":"stderr","time":549.677206754,"data":"\n"}
+,{"stream_name":"stderr","time":549.677216992,"data":"ServerStartupError: Inference server exited prematurely with code 1.\n"}
+,{"stream_name":"stderr","time":549.677220413,"data":"Server output:\n"}
+,{"stream_name":"stderr","time":549.677223576,"data":"(APIServer pid=55) INFO 10-15 03:18:14 [utils.py:299] \n"}
+,{"stream_name":"stderr","time":549.677226937,"data":"(APIServer pid=55) INFO 10-15 03:18:14 [utils.py:299]        █     █     █▄   ▄█\n"}
+,{"stream_name":"stderr","time":549.677231017,"data":"(APIServer pid=55) INFO 10-15 03:18:14 [utils.py:299]  ▄▄ ▄█ █     █     █ ▀▄▀ █  version 0.19.1\n"}
+,{"stream_name":"stderr","time":549.677234753,"data":"(APIServer pid=55) INFO 10-15 03:18:14 [utils.py:299]   █▄█▀ █     █     █     █  model   /kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2\n"}
+,{"stream_name":"stderr","time":549.677238579,"data":"(APIServer pid=55) INFO 10-15 03:18:14 [utils.py:299]    ▀▀  ▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀\n"}
+,{"stream_name":"stderr","time":549.677242235,"data":"(APIServer pid=55) INFO 10-15 03:18:14 [utils.py:299] \n"}
+,{"stream_name":"stderr","time":549.677247165,"data":"(APIServer pid=55) INFO 10-15 03:18:14 [utils.py:233] non-default args: {'enable_auto_tool_choice': True, 'tool_call_parser': 'gemma4', 'host': '127.0.0.1', 'model': '/kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2', 'dtype': 'half', 'max_model_len': 32768, 'reasoning_parser': 'gemma4', 'tensor_parallel_size': 2, 'scheduler_reserve_full_isl': False, 'reasoning_config': ReasoningConfig(reasoning_start_str='\u003c|channel\u003e', reasoning_end_str='\u003cchannel|\u003e')}\n"}
+,{"stream_name":"stderr","time":549.677264026,"data":"(APIServer pid=55) INFO 10-15 03:18:38 [model.py:549] Resolved architecture: Gemma4ForConditionalGeneration\n"}
+,{"stream_name":"stderr","time":549.67728227,"data":"(APIServer pid=55) WARNING 10-15 03:18:38 [model.py:2016] Casting torch.bfloat16 to torch.float16.\n"}
+,{"stream_name":"stderr","time":549.677286589,"data":"(APIServer pid=55) INFO 10-15 03:18:38 [model.py:1678] Using max model len 32768\n"}
+,{"stream_name":"stderr","time":549.677290514,"data":"(APIServer pid=55) INFO 10-15 03:18:39 [config.py:104] Gemma4 model has heterogeneous head dimensions (head_dim=256, global_head_dim=512). Forcing TRITON_ATTN backend to prevent mixed-backend numerical divergence.\n"}
+,{"stream_name":"stderr","time":549.677294737,"data":"(APIServer pid=55) INFO 10-15 03:18:39 [vllm.py:790] Asynchronous scheduling is enabled.\n"}
+,{"stream_name":"stderr","time":549.677309274,"data":"(EngineCore pid=104) INFO 10-15 03:19:00 [core.py:105] Initializing a V1 LLM engine (v0.19.1) with config: model='/kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2', speculative_config=None, tokenizer='/kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=32768, download_dir=None, load_format=auto, tensor_parallel_size=2, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=compressed-tensors, enforce_eager=False, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='gemma4', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False), seed=0, served_model_name=/kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': \u003cCompilationMode.VLLM_COMPILE: 3\u003e, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'splitting_ops': ['vllm::unified_attention', 'vllm::unified_attention_with_output', 'vllm::unified_mla_attention', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::linear_attention', 'vllm::plamo2_mamba_mixer', 'vllm::gdn_attention_core', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::kda_attention', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_images_per_batch': 0, 'compile_sizes': [], 'compile_ranges_endpoints': [2048], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'size_asserts': False, 'alignment_asserts': False, 'scalar_asserts': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': \u003cCUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)\u003e, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496, 512], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False}, 'max_cudagraph_capture_size': 512, 'dynamic_shapes_config': {'type': \u003cDynamicShapesType.BACKED: 'backed'\u003e, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': True, 'static_all_moe_layers': []}\n"}
+,{"stream_name":"stderr","time":549.677348239,"data":"(EngineCore pid=104) WARNING 10-15 03:19:00 [multiproc_executor.py:1014] Reducing Torch parallelism from 2 threads to 1 to avoid unnecessary CPU contention. Set OMP_NUM_THREADS in the external environment to tune this value as needed.\n"}
+,{"stream_name":"stderr","time":549.677352192,"data":"(EngineCore pid=104) INFO 10-15 03:19:00 [multiproc_executor.py:134] DP group leader: node_rank=0, node_rank_within_dp=0, master_addr=127.0.0.1, mq_connect_ip=172.19.2.2 (local), world_size=2, local_world_size=2\n"}
+,{"stream_name":"stderr","time":549.677355979,"data":"(Worker pid=127) INFO 10-15 03:19:19 [parallel_state.py:1400] world_size=2 rank=0 local_rank=0 distributed_init_method=tcp://127.0.0.1:57163 backend=nccl\n"}
+,{"stream_name":"stderr","time":549.677359584,"data":"(Worker pid=128) INFO 10-15 03:19:19 [parallel_state.py:1400] world_size=2 rank=1 local_rank=1 distributed_init_method=tcp://127.0.0.1:57163 backend=nccl\n"}
+,{"stream_name":"stderr","time":549.677363213,"data":"[W1015 03:19:27.120093131 socket.cpp:207] [c10d] The hostname of the client socket cannot be retrieved. err=-3\n"}
+,{"stream_name":"stderr","time":549.677366662,"data":"[W1015 03:19:27.444739517 socket.cpp:207] [c10d] The hostname of the client socket cannot be retrieved. err=-3\n"}
+,{"stream_name":"stderr","time":549.677370158,"data":"(Worker pid=127) \u003cfrozen importlib._bootstrap_external\u003e:1301: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.\n"}
+,{"stream_name":"stderr","time":549.677373993,"data":"(Worker pid=128) \u003cfrozen importlib._bootstrap_external\u003e:1301: FutureWarning: The cuda.cudart module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.runtime module instead.\n"}
+,{"stream_name":"stderr","time":549.677378262,"data":"(Worker pid=127) \u003cfrozen importlib._bootstrap_external\u003e:1301: FutureWarning: The cuda.nvrtc module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.nvrtc module instead.\n"}
+,{"stream_name":"stderr","time":549.677382523,"data":"(Worker pid=128) \u003cfrozen importlib._bootstrap_external\u003e:1301: FutureWarning: The cuda.nvrtc module is deprecated and will be removed in a future release, please switch to use the cuda.bindings.nvrtc module instead.\n"}
+,{"stream_name":"stderr","time":549.67739258,"data":"(Worker pid=127) INFO 10-15 03:19:27 [pynccl.py:111] vLLM is using nccl==2.27.5\n"}
+,{"stream_name":"stderr","time":549.67740871,"data":"(Worker pid=127) WARNING 10-15 03:19:28 [symm_mem.py:66] SymmMemCommunicator: Device capability 7.5 not supported, communicator is not available.\n"}
+,{"stream_name":"stderr","time":549.677412824,"data":"(Worker pid=128) WARNING 10-15 03:19:28 [symm_mem.py:66] SymmMemCommunicator: Device capability 7.5 not supported, communicator is not available.\n"}
+,{"stream_name":"stderr","time":549.677416905,"data":"(Worker pid=127) INFO 10-15 03:19:28 [parallel_state.py:1716] rank 0 in world size 2 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank N/A, EPLB rank N/A\n"}
+,{"stream_name":"stderr","time":549.677420904,"data":"(Worker_TP0 pid=127) INFO 10-15 03:19:29 [gpu_model_runner.py:4735] Starting to load model /kaggle/input/models/google/gemma-4/other/gemma-4-31b-it-qat-w4a16-ct/2...\n"}
+,{"stream_name":"stderr","time":549.67742929,"data":"(Worker_TP0 pid=127) INFO 10-15 03:19:29 [vllm.py:790] Asynchronous scheduling is enabled.\n"}
+,{"stream_name":"stderr","time":549.677433187,"data":"(Worker_TP1 pid=128) INFO 10-15 03:19:29 [compressed_tensors_wNa16.py:112] Using MarlinLinearKernel for CompressedTensorsWNA16\n"}
+,{"stream_name":"stderr","time":549.677436683,"data":"(Worker_TP0 pid=127) INFO 10-15 03:19:29 [compressed_tensors_wNa16.py:112] Using MarlinLinearKernel for CompressedTensorsWNA16\n"}
+,{"stream_name":"stderr","time":549.677440147,"data":"(Worker_TP0 pid=127) INFO 10-15 03:19:30 [cuda.py:274] Using AttentionBackendEnum.TRITON_ATTN backend.\n"}
+,{"stream_name":"stderr","time":549.67744357,"data":"(Worker_TP1 pid=128) INFO 10-15 03:19:30 [cuda.py:274] Using AttentionBackendEnum.TRITON_ATTN backend.\n"}
+,{"stream_name":"stderr","time":549.677446986,"data":"(Worker_TP1 pid=128) INFO 10-15 03:19:30 [cuda.py:274] Using AttentionBackendEnum.TRITON_ATTN backend.\n"}
+,{"stream_name":"stderr","time":549.677450391,"data":"(Worker_TP0 pid=127) INFO 10-15 03:19:30 [cuda.py:274] Using AttentionBackendEnum.TRITON_ATTN backend.\n"}
+,{"stream_name":"stderr","time":549.677453907,"data":"(Worker_TP1 pid=128) INFO 10-15 03:19:30 [weight_utils.py:848] Prefetching checkpoint files into page cache started (in background)\n"}
+,{"stream_name":"stderr","time":549.677457371,"data":"(Worker_TP0 pid=127) INFO 10-15 03:19:30 [weight_utils.py:848] Prefetching checkpoint files into page cache started (in background)\n"}
+,{"stream_name":"stderr","time":549.677460834,"data":"(Worker_TP0 pid=127) \n"}
+,{"stream_name":"stderr","time":549.67746406,"data":"Loading safetensors checkpoint shards:   0% Completed | 0/1 [00:00\u003c?, ?it/s]\n"}
+,{"stream_name":"stderr","time":549.677467963,"data":"(Worker_TP1 pid=128) INFO 10-15 03:19:30 [weight_utils.py:843] Prefetching checkpoint files into page cache finished in 0.02s\n"}
+,{"stream_name":"stderr","time":549.677471535,"data":"(Worker_TP0 pid=127) \n"}
+,{"stream_name":"stderr","time":549.677474738,"data":"Loading safetensors checkpoint shards: 100% Completed | 1/1 [02:34\u003c00:00, 154.04s/it]\n"}
+,{"stream_name":"stderr","time":549.677478133,"data":"(Worker_TP0 pid=127) \n"}
+,{"stream_name":"stderr","time":549.677481366,"data":"Loading safetensors checkpoint shards: 100% Completed | 1/1 [02:34\u003c00:00, 154.04s/it]\n"}
+,{"stream_name":"stderr","time":549.677486451,"data":"(Worker_TP0 pid=127) \n"}
+,{"stream_name":"stderr","time":549.677493151,"data":"(Worker_TP0 pid=127) INFO 10-15 03:22:04 [default_loader.py:384] Loading weights took 154.16 seconds\n"}
+,{"stream_name":"stderr","time":549.677508874,"data":"(Worker_TP0 pid=127) INFO 10-15 03:22:06 [gpu_model_runner.py:4820] Model loading took 10.46 GiB memory and 155.831185 seconds\n"}
+,{"stream_name":"stderr","time":549.677513092,"data":"(Worker_TP0 pid=127) INFO 10-15 03:22:06 [gpu_model_runner.py:5753] Encoder cache will be initialized with a budget of 2496 tokens, and profiled with 1 video items of the maximum feature size.\n"}
+,{"stream_name":"stderr","time":549.677517377,"data":"(EngineCore pid=104) INFO 10-15 03:23:07 [shm_broadcast.py:681] No available shared memory broadcast block found in 60 seconds. This typically happens when some processes are hanging or doing some time-consuming work (e.g. compilation, weight/kv cache quantization).\n"}
+,{"stream_name":"stderr","time":549.677522095,"data":"(Worker_TP0 pid=127) INFO 10-15 03:23:18 [backends.py:1051] Using cache directory: /root/.cache/vllm/torch_compile_cache/e5bd493540/rank_0_0/backbone for vLLM's torch.compile\n"}
+,{"stream_name":"stderr","time":549.677526139,"data":"(Worker_TP0 pid=127) INFO 10-15 03:23:18 [backends.py:1111] Dynamo bytecode transform time: 29.29 s\n"}
+,{"stream_name":"stderr","time":549.677532654,"data":"(Worker_TP0 pid=127) INFO 10-15 03:23:34 [backends.py:372] Cache the graph of compile range (1, 2048) for later use\n"}
+,{"stream_name":"stderr","time":549.67753607,"data":"(Worker_TP0 pid=127) INFO 10-15 03:23:41 [weight_utils.py:825] Prefetching checkpoint files: 10% (1/1)\n"}
+,{"stream_name":"stderr","time":549.677539429,"data":"(Worker_TP0 pid=127) INFO 10-15 03:23:41 [weight_utils.py:843] Prefetching checkpoint files into page cache finished in 250.70s\n"}
+,{"stream_name":"stderr","time":549.677542897,"data":"(Worker_TP0 pid=127) INFO 10-15 03:24:00 [backends.py:390] Compiling a graph for compile range (1, 2048) takes 41.27 s\n"}
+,{"stream_name":"stderr","time":549.67754678,"data":"(EngineCore pid=104) INFO 10-15 03:24:07 [shm_broadcast.py:681] No available shared memory broadcast block found in 60 seconds. This typically happens when some processes are hanging or doing some time-consuming work (e.g. compilation, weight/kv cache quantization).\n"}
+,{"stream_name":"stderr","time":549.677550775,"data":"(Worker_TP0 pid=127) INFO 10-15 03:24:08 [decorators.py:655] saved AOT compiled function to /root/.cache/vllm/torch_compile_cache/torch_aot_compile/a79e3c5a0b55553e8b32c0ee1f770c1a20e3345791223999089b6c920ee8a671/rank_0_0/model\n"}
+,{"stream_name":"stderr","time":549.677554521,"data":"(Worker_TP0 pid=127) INFO 10-15 03:24:08 [monitor.py:48] torch.compile took 80.06 s in total\n"}
+,{"stream_name":"stderr","time":549.677557882,"data":"(Worker_TP0 pid=127) INFO 10-15 03:24:09 [monitor.py:76] Initial profiling/warmup run took 1.11 s\n"}
+,{"stream_name":"stderr","time":549.677561225,"data":"(Worker_TP0 pid=127) INFO 10-15 03:24:24 [kv_cache_utils.py:829] Overriding num_gpu_blocks=0 with num_gpu_blocks_override=512\n"}
+,{"stream_name":"stderr","time":549.677564683,"data":"(Worker_TP1 pid=128) INFO 10-15 03:24:24 [kv_cache_utils.py:829] Overriding num_gpu_blocks=0 with num_gpu_blocks_override=512\n"}
+,{"stream_name":"stderr","time":549.677568166,"data":"(Worker_TP0 pid=127) INFO 10-15 03:24:24 [gpu_model_runner.py:5876] Profiling CUDA graph memory: PIECEWISE=51 (largest=512), FULL=35 (largest=256)\n"}
+,{"stream_name":"stderr","time":549.677571749,"data":"(Worker_TP1 pid=128) INFO 10-15 03:24:24 [gpu_model_runner.py:5876] Profiling CUDA graph memory: PIECEWISE=51 (largest=512), FULL=35 (largest=256)\n"}
+,{"stream_name":"stderr","time":549.67757528,"data":"Failed: Cuda error /workspace/csrc/custom_all_reduce.cuh:455 'invalid argument'\n"}
+,{"stream_name":"stderr","time":549.677580297,"data":"Failed: Cuda error /workspace/csrc/custom_all_reduce.cuh:455 'invalid argument'\n"}
+,{"stream_name":"stderr","time":549.677588742,"data":"(EngineCore pid=104) ERROR 10-15 03:24:39 [multiproc_executor.py:273] Worker proc VllmWorker-1 died unexpectedly, shutting down executor.\n"}
+,{"stream_name":"stderr","time":549.677606081,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108] EngineCore failed to start.\n"}
+,{"stream_name":"stderr","time":549.677610476,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108] Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":549.677614314,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 1082, in run_engine_core\n"}
+,{"stream_name":"stderr","time":549.67761875,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)\n"}
+,{"stream_name":"stderr","time":549.677622762,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.67762934,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 848, in __init__\n"}
+,{"stream_name":"stderr","time":549.677633684,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     super().__init__(\n"}
+,{"stream_name":"stderr","time":549.677637125,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 124, in __init__\n"}
+,{"stream_name":"stderr","time":549.677640764,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     kv_cache_config = self._initialize_kv_caches(vllm_config)\n"}
+,{"stream_name":"stderr","time":549.677644294,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677647772,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 247, in _initialize_kv_caches\n"}
+,{"stream_name":"stderr","time":549.677651524,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     available_gpu_memory = self.model_executor.determine_available_memory()\n"}
+,{"stream_name":"stderr","time":549.677655053,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677658629,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/abstract.py\", line 136, in determine_available_memory\n"}
+,{"stream_name":"stderr","time":549.677662447,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     return self.collective_rpc(\"determine_available_memory\")\n"}
+,{"stream_name":"stderr","time":549.677666044,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677669514,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/multiproc_executor.py\", line 397, in collective_rpc\n"}
+,{"stream_name":"stderr","time":549.677673282,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     return aggregate(get_response())\n"}
+,{"stream_name":"stderr","time":549.67767667,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]                      ^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677684847,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/multiproc_executor.py\", line 376, in get_response\n"}
+,{"stream_name":"stderr","time":549.677688377,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     status, result = mq.dequeue(timeout=dequeue_timeout)\n"}
+,{"stream_name":"stderr","time":549.6777049,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.6777162,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/distributed/device_communicators/shm_broadcast.py\", line 755, in dequeue\n"}
+,{"stream_name":"stderr","time":549.677720443,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     with self.acquire_read(timeout, indefinite) as buf:\n"}
+,{"stream_name":"stderr","time":549.677724492,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677728555,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/lib/python3.12/contextlib.py\", line 137, in __enter__\n"}
+,{"stream_name":"stderr","time":549.677735775,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     return next(self.gen)\n"}
+,{"stream_name":"stderr","time":549.677739214,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]            ^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677742574,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]   File \"/usr/local/lib/python3.12/dist-packages/vllm/distributed/device_communicators/shm_broadcast.py\", line 677, in acquire_read\n"}
+,{"stream_name":"stderr","time":549.677746396,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108]     raise RuntimeError(\"cancelled\")\n"}
+,{"stream_name":"stderr","time":549.677749837,"data":"(EngineCore pid=104) ERROR 10-15 03:24:40 [core.py:1108] RuntimeError: cancelled\n"}
+,{"stream_name":"stderr","time":549.677753142,"data":"(EngineCore pid=104) Process EngineCore:\n"}
+,{"stream_name":"stderr","time":549.677756351,"data":"(EngineCore pid=104) Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":549.677759612,"data":"(EngineCore pid=104)   File \"/usr/lib/python3.12/multiprocessing/process.py\", line 314, in _bootstrap\n"}
+,{"stream_name":"stderr","time":549.677763176,"data":"(EngineCore pid=104)     self.run()\n"}
+,{"stream_name":"stderr","time":549.677766406,"data":"(EngineCore pid=104)   File \"/usr/lib/python3.12/multiprocessing/process.py\", line 108, in run\n"}
+,{"stream_name":"stderr","time":549.677769919,"data":"(EngineCore pid=104)     self._target(*self._args, **self._kwargs)\n"}
+,{"stream_name":"stderr","time":549.677773258,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 1112, in run_engine_core\n"}
+,{"stream_name":"stderr","time":549.67777686,"data":"(EngineCore pid=104)     raise e\n"}
+,{"stream_name":"stderr","time":549.67778013,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 1082, in run_engine_core\n"}
+,{"stream_name":"stderr","time":549.677783726,"data":"(EngineCore pid=104)     engine_core = EngineCoreProc(*args, engine_index=dp_rank, **kwargs)\n"}
+,{"stream_name":"stderr","time":549.677788911,"data":"(EngineCore pid=104)                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.67779685,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 848, in __init__\n"}
+,{"stream_name":"stderr","time":549.677812692,"data":"(EngineCore pid=104)     super().__init__(\n"}
+,{"stream_name":"stderr","time":549.677816887,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 124, in __init__\n"}
+,{"stream_name":"stderr","time":549.677821066,"data":"(EngineCore pid=104)     kv_cache_config = self._initialize_kv_caches(vllm_config)\n"}
+,{"stream_name":"stderr","time":549.677825096,"data":"(EngineCore pid=104)                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677829144,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core.py\", line 247, in _initialize_kv_caches\n"}
+,{"stream_name":"stderr","time":549.677832942,"data":"(EngineCore pid=104)     available_gpu_memory = self.model_executor.determine_available_memory()\n"}
+,{"stream_name":"stderr","time":549.677836355,"data":"(EngineCore pid=104)                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677839812,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/abstract.py\", line 136, in determine_available_memory\n"}
+,{"stream_name":"stderr","time":549.677846384,"data":"(EngineCore pid=104)     return self.collective_rpc(\"determine_available_memory\")\n"}
+,{"stream_name":"stderr","time":549.677849897,"data":"(EngineCore pid=104)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677853335,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/multiproc_executor.py\", line 397, in collective_rpc\n"}
+,{"stream_name":"stderr","time":549.677856975,"data":"(EngineCore pid=104)     return aggregate(get_response())\n"}
+,{"stream_name":"stderr","time":549.677860211,"data":"(EngineCore pid=104)                      ^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677863486,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/executor/multiproc_executor.py\", line 376, in get_response\n"}
+,{"stream_name":"stderr","time":549.677867071,"data":"(EngineCore pid=104)     status, result = mq.dequeue(timeout=dequeue_timeout)\n"}
+,{"stream_name":"stderr","time":549.677870457,"data":"(EngineCore pid=104)                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677873771,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/distributed/device_communicators/shm_broadcast.py\", line 755, in dequeue\n"}
+,{"stream_name":"stderr","time":549.677877381,"data":"(EngineCore pid=104)     with self.acquire_read(timeout, indefinite) as buf:\n"}
+,{"stream_name":"stderr","time":549.677880692,"data":"(EngineCore pid=104)          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.67788411,"data":"(EngineCore pid=104)   File \"/usr/lib/python3.12/contextlib.py\", line 137, in __enter__\n"}
+,{"stream_name":"stderr","time":549.677893234,"data":"(EngineCore pid=104)     return next(self.gen)\n"}
+,{"stream_name":"stderr","time":549.67790859,"data":"(EngineCore pid=104)            ^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677912837,"data":"(EngineCore pid=104)   File \"/usr/local/lib/python3.12/dist-packages/vllm/distributed/device_communicators/shm_broadcast.py\", line 677, in acquire_read\n"}
+,{"stream_name":"stderr","time":549.677917181,"data":"(EngineCore pid=104)     raise RuntimeError(\"cancelled\")\n"}
+,{"stream_name":"stderr","time":549.677921719,"data":"(EngineCore pid=104) RuntimeError: cancelled\n"}
+,{"stream_name":"stderr","time":549.677925497,"data":"(APIServer pid=55) Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":549.677929021,"data":"(APIServer pid=55)   File \"\u003cfrozen runpy\u003e\", line 198, in _run_module_as_main\n"}
+,{"stream_name":"stderr","time":549.67793268,"data":"(APIServer pid=55)   File \"\u003cfrozen runpy\u003e\", line 88, in _run_code\n"}
+,{"stream_name":"stderr","time":549.677936207,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py\", line 712, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":549.677939852,"data":"(APIServer pid=55)     uvloop.run(run_server(args))\n"}
+,{"stream_name":"stderr","time":549.677943078,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/uvloop/__init__.py\", line 96, in run\n"}
+,{"stream_name":"stderr","time":549.67794653,"data":"(APIServer pid=55)     return __asyncio.run(\n"}
+,{"stream_name":"stderr","time":549.677949744,"data":"(APIServer pid=55)            ^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677952987,"data":"(APIServer pid=55)   File \"/usr/lib/python3.12/asyncio/runners.py\", line 195, in run\n"}
+,{"stream_name":"stderr","time":549.677959279,"data":"(APIServer pid=55)     return runner.run(main)\n"}
+,{"stream_name":"stderr","time":549.677962567,"data":"(APIServer pid=55)            ^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677965815,"data":"(APIServer pid=55)   File \"/usr/lib/python3.12/asyncio/runners.py\", line 118, in run\n"}
+,{"stream_name":"stderr","time":549.677969258,"data":"(APIServer pid=55)     return self._loop.run_until_complete(task)\n"}
+,{"stream_name":"stderr","time":549.677974664,"data":"(APIServer pid=55)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.677978115,"data":"(APIServer pid=55)   File \"uvloop/loop.pyx\", line 1518, in uvloop.loop.Loop.run_until_complete\n"}
+,{"stream_name":"stderr","time":549.677984174,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/uvloop/__init__.py\", line 48, in wrapper\n"}
+,{"stream_name":"stderr","time":549.67799153,"data":"(APIServer pid=55)     return await main\n"}
+,{"stream_name":"stderr","time":549.678007058,"data":"(APIServer pid=55)            ^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.678011078,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py\", line 672, in run_server\n"}
+,{"stream_name":"stderr","time":549.678015445,"data":"(APIServer pid=55)     await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)\n"}
+,{"stream_name":"stderr","time":549.678019951,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py\", line 686, in run_server_worker\n"}
+,{"stream_name":"stderr","time":549.678024073,"data":"(APIServer pid=55)     async with build_async_engine_client(\n"}
+,{"stream_name":"stderr","time":549.678027471,"data":"(APIServer pid=55)                ^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.67803067,"data":"(APIServer pid=55)   File \"/usr/lib/python3.12/contextlib.py\", line 210, in __aenter__\n"}
+,{"stream_name":"stderr","time":549.678034127,"data":"(APIServer pid=55)     return await anext(self.gen)\n"}
+,{"stream_name":"stderr","time":549.678037705,"data":"(APIServer pid=55)            ^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.678041005,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py\", line 100, in build_async_engine_client\n"}
+,{"stream_name":"stderr","time":549.678044662,"data":"(APIServer pid=55)     async with build_async_engine_client_from_engine_args(\n"}
+,{"stream_name":"stderr","time":549.67804795,"data":"(APIServer pid=55)                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.678051254,"data":"(APIServer pid=55)   File \"/usr/lib/python3.12/contextlib.py\", line 210, in __aenter__\n"}
+,{"stream_name":"stderr","time":549.678054734,"data":"(APIServer pid=55)     return await anext(self.gen)\n"}
+,{"stream_name":"stderr","time":549.678058129,"data":"(APIServer pid=55)            ^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.678061458,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py\", line 136, in build_async_engine_client_from_engine_args\n"}
+,{"stream_name":"stderr","time":549.678065137,"data":"(APIServer pid=55)     async_llm = AsyncLLM.from_vllm_config(\n"}
+,{"stream_name":"stderr","time":549.678068531,"data":"(APIServer pid=55)                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.678071857,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/async_llm.py\", line 225, in from_vllm_config\n"}
+,{"stream_name":"stderr","time":549.678075484,"data":"(APIServer pid=55)     return cls(\n"}
+,{"stream_name":"stderr","time":549.67808772,"data":"(APIServer pid=55)            ^^^^\n"}
+,{"stream_name":"stderr","time":549.678102589,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/async_llm.py\", line 154, in __init__\n"}
+,{"stream_name":"stderr","time":549.678107123,"data":"(APIServer pid=55)     self.engine_core = EngineCoreClient.make_async_mp_client(\n"}
+,{"stream_name":"stderr","time":549.678112164,"data":"(APIServer pid=55)                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.678116497,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core_client.py\", line 130, in make_async_mp_client\n"}
+,{"stream_name":"stderr","time":549.678120583,"data":"(APIServer pid=55)     return AsyncMPClient(*client_args)\n"}
+,{"stream_name":"stderr","time":549.678123936,"data":"(APIServer pid=55)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.678127245,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core_client.py\", line 887, in __init__\n"}
+,{"stream_name":"stderr","time":549.678130771,"data":"(APIServer pid=55)     super().__init__(\n"}
+,{"stream_name":"stderr","time":549.67813401,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/core_client.py\", line 535, in __init__\n"}
+,{"stream_name":"stderr","time":549.678137505,"data":"(APIServer pid=55)     with launch_core_engines(\n"}
+,{"stream_name":"stderr","time":549.678140754,"data":"(APIServer pid=55)          ^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":549.678144106,"data":"(APIServer pid=55)   File \"/usr/lib/python3.12/contextlib.py\", line 144, in __exit__\n"}
+,{"stream_name":"stderr","time":549.678148099,"data":"(APIServer pid=55)     next(self.gen)\n"}
+,{"stream_name":"stderr","time":549.678151378,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/utils.py\", line 998, in launch_core_engines\n"}
+,{"stream_name":"stderr","time":549.678154884,"data":"(APIServer pid=55)     wait_for_engine_startup(\n"}
+,{"stream_name":"stderr","time":549.678158098,"data":"(APIServer pid=55)   File \"/usr/local/lib/python3.12/dist-packages/vllm/v1/engine/utils.py\", line 1057, in wait_for_engine_startup\n"}
+,{"stream_name":"stderr","time":549.678161616,"data":"(APIServer pid=55)     raise RuntimeError(\n"}
+,{"stream_name":"stderr","time":549.678164843,"data":"(APIServer pid=55) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}\n"}
+,{"stream_name":"stderr","time":549.678168313,"data":"/usr/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 2 leaked semaphore objects to clean up at shutdown\n"}
+,{"stream_name":"stderr","time":549.678171876,"data":"  warnings.warn('resource_tracker: There appear to be %d '\n"}
+,{"stream_name":"stderr","time":549.678176954,"data":"/usr/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 3 leaked shared_memory objects to clean up at shutdown\n"}
+,{"stream_name":"stderr","time":549.678184243,"data":"  warnings.warn('resource_tracker: There appear to be %d '\n"}
+,{"stream_name":"stderr","time":549.678199376,"data":"\n"}
+,{"stream_name":"stderr","time":549.678203462,"data":"\n"}
+,{"stream_name":"stderr","time":552.74312557,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":552.743156328,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":553.059792144,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":553.059821821,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":554.210354122,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":554.503081033,"data":"[NbConvertApp] Writing 83241 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":557.233436209,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":558.461093873,"data":"[NbConvertApp] Writing 373038 bytes to __results__.html\n"}
+]

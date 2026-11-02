@@ -1,0 +1,43 @@
+{
+ "config_name": "reserve_tail",
+ "config_hash": "8267fb738d91",
+ "pass": "single",
+ "task": "rich_3935",
+ "easy_hard": "HARD",
+ "split": "DISCOVER",
+ "arm_decode": {
+  "temperature": 0.2,
+  "top_p": 0.95,
+  "top_k": 64,
+  "freq_penalty": 0.0,
+  "presence_penalty": 0.0,
+  "nudge_mode": "kaggle",
+  "nudge_max": 5
+ },
+ "status": "RAN",
+ "reason": "",
+ "resolved": false,
+ "tool_calls": 4,
+ "first_edit_at": 3,
+ "no_edit": false,
+ "patch_chars": 805,
+ "submitted": true,
+ "end_reason": "submitted",
+ "edit_ok": 1,
+ "edit_err": 0,
+ "nudges": 0,
+ "tool_counts": {
+  "search_similar_code": 1,
+  "read_file": 1,
+  "edit_file": 1,
+  "submit_patch": 1
+ },
+ "duration_s": 31,
+ "result_criterion": "harness_like",
+ "scorer_result": "RAN",
+ "required_pass": false,
+ "gold_relative": false,
+ "harness_like": false,
+ "scorer_engine": "rp-5",
+ "_cache_hit": false
+}
