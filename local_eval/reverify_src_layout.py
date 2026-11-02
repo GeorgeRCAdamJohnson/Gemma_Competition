@@ -21,7 +21,7 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RUN = os.path.join(os.path.dirname(HERE), "kaggle_pkg", "out_e4b")
-IMAGE = "gemma-verify:latest"
+IMAGE = os.environ.get("VERIFY_IMAGE", "gemma-verify:latest")
 
 BASH = r"""
 set -u
@@ -33,7 +33,7 @@ src_dir={{srcdir}}
 
 mode={{mode}}
 if [ "$mode" = "install" ]; then
-  pip install -q -e /workspace 2>/tmp/pip.err
+  pip install -q -e "/workspace[all]" 2>/tmp/pip.err || pip install -q -e /workspace 2>/tmp/pip.err
   echo "PIP_RC=$?"
   tail -3 /tmp/pip.err 2>/dev/null
 elif [ "$mode" = "broken" ]; then
@@ -62,7 +62,7 @@ echo "IMPORT_CHECK=$(python -c 'import {{mod}}; print({{mod}}.__file__)' 2>&1)"
 
 {{shim}}if [ -f /workspace/conftest.py ]; then echo "SHIM_PRESENT"; fi
 
-python -m pytest {{tests}} -q -p no:cacheprovider \
+python -m pytest {{tests}} -q -p no:cacheprovider -p no:asyncio \
   --junitxml=/tmp/j.xml -o addopts="" 2>&1 | tail -15
 echo "---JUNIT---"
 python - <<'PY'
@@ -164,7 +164,7 @@ def main():
     for line in io.open(os.path.join(RUN, "tasks.jsonl"), encoding="utf-8"):
         r = json.loads(line)
         tasks[r["instance_id"]] = r
-    if only and "," in only:
+    if only and only != "all":
         keep = set(only.split(","))
         tasks = {k: v for k, v in tasks.items() if k in keep}
     else:

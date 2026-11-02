@@ -1,5 +1,5 @@
-<!-- build-stamp: built=2026-11-02T04:46:29Z inputs=38480c3f7658 discovery=38480c3f7658 -->
-Build stamp: built 2026-11-02T04:46:29Z Â· inputs 38480c3f7658 Â· freshness check: python c:\Users\Biges\OneDrive\Documents\Desktop\kAGGLE\Gemma\kb\build_kb.py check-fresh
+<!-- build-stamp: built=2026-11-02T13:52:33Z inputs=439dc3fe0c4c discovery=439dc3fe0c4c -->
+Build stamp: built 2026-11-02T13:52:33Z Â· inputs 439dc3fe0c4c Â· freshness check: python c:\Users\Biges\OneDrive\Documents\Desktop\kAGGLE\Gemma\kb\build_kb.py check-fresh
 BASELINE: steering says v6w @ 0.15 (ref 57098497, gemma-submission-protocol.md L23); curated baseline v6w @ 0.15 (ref 57098497); LB best main track (from pulled/submissions/20261101T055511Z.csv) ca5: pre-edit anchor-grep rule, no sub-agents, v10 config @ 0.20 (ref 57760641)
 BASELINE CONFLICT: steering=v6w@0.15 57098497 curated=v6w@0.15 57098497 lb_best_main=ca5: pre-edit anchor-grep rule, no sub-agents, v10 config@0.20 57760641 (source pulled/submissions/20261101T055511Z.csv) — nothing adopted; the user decides (see curated/_proposed_updates.md)
 SMALL-MODEL TRACK: lb_best_small=E4B ca5 anchor-grep: pre-edit rule, no sub-agents, v10 ca...@0.03 57807043 (source pulled/submissions/20261101T055511Z.csv); BASELINE CONFLICT (small-model): no curated small-model baseline
@@ -13,17 +13,17 @@ SMALL-MODEL TRACK: lb_best_small=E4B ca5 anchor-grep: pre-edit rule, no sub-agen
 - pasted-logs: 14
 - reference-logs (not our runs, 0 rows): ['compeition/data', 'compeition/getting started', 'getting_started/_cells.txt', 'kaggle_archive/archive_run.log', 'local_eval/decode_sweep_run.log', 'local_eval/decode_sweep_run2.log', 'local_eval/parity_rig/_forensic_4077.out.txt', 'local_eval/parity_rig/_gate_offline_17.log', 'train/_ab12b_ourbase_run.log', 'train/_ab12b_run.log', 'train/_ab12b_spec.log'] [LIVE snapshot â€” this list reflects files present at build time; a file appearing/vanishing in local_eval/runs/ correctly trips freshness]
 - staged-submissions: ['submit_branch_final', 'submit_t4096']
-- trace files parsed: 3651
-- runs.jsonl rows: 5431
+- trace files parsed: 4083
+- runs.jsonl rows: 5863
 - beyond walk depth: []
 
 ### Rows by run_kind / track (REV5 R5.2)
-- by run_kind: kaggle-kernel=1750, kaggle-pulled=40, kaggle-pulled-legacy=4, local-rig=1857, local-sweep=1574, pasted-log=206
-- by (platform, track): kaggle/dev-proxy=59, kaggle/main=1177, kaggle/small-model=764, local-rig/dev-proxy=918, local-rig/main=189, local-rig/small-model=750, local-sweep/dev-proxy=759, local-sweep/small-model=815
-- kaggle-eval-runs: 7; rig-runs: 220; sweep-tags: 779; pulled-runs: ['kb/pulled/gemma-sibling-conform-v1/20261101T062706Z', 'kb/pulled/gemma-sibling-conform-v11/20261101T062717Z', 'kb/pulled/gemma-sibling-conform-v15-cpu/20261101T061857Z', 'kb/pulled/gemma-sibling-conform-v16/20261101T062742Z', 'kb/pulled/gemma-sibling-conform-v17/20261101T062757Z', 'kb/pulled/gemma-sibling-conform-v2/20261101T062807Z', 'kb/pulled/gemma-sibling-conform-v20/20261101T062819Z', 'kb/pulled/v6w_temp1_probe']; partial: []
+- by run_kind: kaggle-kernel=1750, kaggle-pulled=40, kaggle-pulled-legacy=4, local-rig=2289, local-sweep=1574, pasted-log=206
+- by (platform, track): kaggle/dev-proxy=59, kaggle/main=1177, kaggle/small-model=764, local-rig/dev-proxy=1350, local-rig/main=189, local-rig/small-model=750, local-sweep/dev-proxy=759, local-sweep/small-model=815
+- kaggle-eval-runs: 7; rig-runs: 228; sweep-tags: 779; pulled-runs: ['kb/pulled/gemma-sibling-conform-v1/20261101T062706Z', 'kb/pulled/gemma-sibling-conform-v11/20261101T062717Z', 'kb/pulled/gemma-sibling-conform-v15-cpu/20261101T061857Z', 'kb/pulled/gemma-sibling-conform-v16/20261101T062742Z', 'kb/pulled/gemma-sibling-conform-v17/20261101T062757Z', 'kb/pulled/gemma-sibling-conform-v2/20261101T062807Z', 'kb/pulled/gemma-sibling-conform-v20/20261101T062819Z', 'kb/pulled/v6w_temp1_probe']; partial: []
 - foreign tools (listed, never run): ['EXPERIMENT_KB.sqlite', 'build_kb.py', 'kb_query.py']
 - reference kernels (not ours): ['comp_other/flexonafft_v2', 'comp_other/matterhorn_superagent', 'competitor_probe', 'getting_started']
-- outcome sources: None=764, kernel-log=1077, recovered-proxy=120, sweep-pinned=1378, sweep-raw=196, task_results=1896
+- outcome sources: None=764, kernel-log=1077, recovered-proxy=120, sweep-pinned=1378, sweep-raw=196, task_results=2328
 
 ### Staged submissions and scored zips (D3-4: config + zip_drift)
 | dir | kind | zip_drift | config |
@@ -51,7 +51,7 @@ SMALL-MODEL TRACK: lb_best_small=E4B ca5 anchor-grep: pre-edit rule, no sub-agen
 - LB snapshots: ['local_eval/leaderboard/lb.csv']
 
 ### Since the previous build (2026-10-16T07:16:10Z; D5-6)
-- 1381 discovered sources have mtime newer than the previous build stamp, in 314 groups (members listed per group).
+- 1390 discovered sources have mtime newer than the previous build stamp, in 314 groups (members listed per group).
 | kind | path | n | parsed | reason | members |
 |---|---|---|---|---|---|
 | foreign-tool | . | 3 | no | the user's own tool; listed, never run | EXPERIMENT_KB.sqlite, build_kb.py, kb_query.py |
@@ -112,7 +112,7 @@ SMALL-MODEL TRACK: lb_best_small=E4B ca5 anchor-grep: pre-edit rule, no sub-agen
 | rig-run | local_eval/parity_rig/m1_noprompt/agent_ctrl_e4b_noprompt_r0 | 1 | yes | rows emitted | - |
 | rig-run | local_eval/parity_rig/m1_noprompt129/agent_ctrl_e4b_noprompt_r0 | 1 | yes | rows emitted | - |
 | rig-run | local_eval/parity_rig/m1_refdef/agent_ctrl_e4b_def_r0 | 1 | yes | rows emitted | - |
-| rig-run | local_eval/parity_rig/m1_skilltest | 10 | yes | rows emitted | gated_r0, gated_r1, nosub_r0, retry2_r0, retry2_r1, retry2_r9, retry_r0, retry_r1, retry_r2, retry_r9 |
+| rig-run | local_eval/parity_rig/m1_skilltest | 18 | yes | rows emitted | cap15_r0, cmp15_r0, cmp28_r0, cmp28_r1, cmp28_r9, gated_r0, gated_r1, nosub_r0, retry2_r0, retry2_r1, retry2_r2, retry2_r9, retry_r0, retry_r1, retry_r2, retry_r9, tw_r0, tw_r9 |
 | run-dir | . | 3 | yes | rows emitted | out_k_e4ba3, out_k_e4ba5, out_repeat_v2 |
 | run-dir | kaggle_archive/gemma-sibling-conform-12b-a10-ones-oracle-9t/output | 1 | yes | rows emitted | - |
 | run-dir | kaggle_archive/gemma-sibling-conform-12b-a11-tight-fails/output | 1 | yes | rows emitted | - |
@@ -284,7 +284,7 @@ SMALL-MODEL TRACK: lb_best_small=E4B ca5 anchor-grep: pre-edit rule, no sub-agen
 | submit-dir | kaggle_archive/replay-k10/src | 1 | yes | kernel_family=other | - |
 | submit-dir | kaggle_archive/replay-verify/src | 1 | yes | kernel_family=other | - |
 | submit-dir | kaggle_archive/tmpl-probe/src | 1 | yes | kernel_family=probe | - |
-| submit-dir | kaggle_pkg | 2 | yes | kernel_family=full129-eval | push_129_e4b, push_129_off31 |
+| submit-dir | kaggle_pkg | 3 | yes | kernel_family=full129-eval | push_129_e4b, push_129_e4b_cap15, push_129_off31 |
 | submit-dir | kaggle_pkg | 4 | yes | kernel_family=other | push_gold_fa, push_replay, push_replay_base, push_replay_k10 |
 | submit-dir | kaggle_pkg | 2 | yes | kernel_family=probe | push_ci_probe, push_tmpl |
 | submit-dir | local_eval/push_submit_mobile | 1 | yes | kernel_family=other | - |
@@ -368,11 +368,11 @@ SMALL-MODEL TRACK: lb_best_small=E4B ca5 anchor-grep: pre-edit rule, no sub-agen
 | sweep-tag | local_eval/runs/v2_E1* | 6 | yes | summary-only rows (pinned+results+trace); rows emitted | v2_E1_r1, v2_E1_r2, v2_E1_r3, v2_E1_r4, v2_E1_r5, v2_E1_r6 |
 | sweep-tag | local_eval/runs/v3_A3* | 4 | yes | summary-only rows (pinned+results+trace); rows emitted | v3_A3_r1, v3_A3_r2, v3_A3_r3, v3_A3_r4 |
 | sweep-tag | local_eval/runs/v3_E1* | 4 | yes | summary-only rows (pinned+results+trace); rows emitted | v3_E1_r1, v3_E1_r2, v3_E1_r3, v3_E1_r4 |
-- GEMMA_EXPERIMENT_LOG.md: 175 new `## ` units after L10108 (first L10115, last L16608); parsed: yes (claims engine).
+- GEMMA_EXPERIMENT_LOG.md: 181 new `## ` units after L10108 (first L10115, last L16963); parsed: yes (claims engine).
 
 ## 3. Task x run outcome matrix
-- tasks attempted: 129; runs: 1088
-- cell counts: ?=1358, F=156, I=4, L=568, N=507, R=1185, S=92, W=1561
+- tasks attempted: 129; runs: 1096
+- cell counts: ?=1358, F=168, I=4, L=586, N=510, R=1237, S=97, W=1903
 
 Legend: R resolved · W wrong-fix · W* junk-patch-only · N landed-not-submitted · F found-not-landed · S saw-only · L locate · I infra · ? no-trace · · not-in-run · ~ tool-call malformation share>=0.5 · ^ edit after last submit
 
@@ -443,9 +443,9 @@ Legend: R resolved · W wrong-fix · W* junk-patch-only · N landed-not-submitte
   - ref 57317996 [description mentions v6w]: ATTRIBUTION-MISMATCH: pulled output does not explain ref 57317996 (model: pulled 31b vs submission 12b)
 
 ## 8. Log claims
-- engine cl-4: 1229 claims from 1312 `##`/`###` units; by status: {'CONTRADICTED': 1, 'SUPERSEDED': 13, 'SUPPORTED': 121, 'UNVERIFIED': 1094}
-- facts: 1525; auto-checked: 960; decided (SUPPORTED/CONTRADICTED): 594; disagreements NOT asserted (weak binding / different rep / budget sanity, listed in log_claims.md Â§3b): 40
-- supersession: 13 claims SUPERSEDED in 7 chains (9 applied links; 11 unresolved citations; 136 keyword-overlap candidates, never applied)
+- engine cl-4: 1246 claims from 1339 `##`/`###` units; by status: {'CONTRADICTED': 1, 'SUPERSEDED': 13, 'SUPPORTED': 121, 'UNVERIFIED': 1111}
+- facts: 1529; auto-checked: 960; decided (SUPPORTED/CONTRADICTED): 594; disagreements NOT asserted (weak binding / different rep / budget sanity, listed in log_claims.md Â§3b): 40
+- supersession: 13 claims SUPERSEDED in 7 chains (9 applied links; 11 unresolved citations; 137 keyword-overlap candidates, never applied)
 - LB checks against `pulled/submissions/20261101T055511Z.csv`; F10 live-best claims are checked against curated/run_labels.json:baseline only (never adopted)
 - log live-best chain (F10, first line per change): v6 L27 -> v7 L3499 -> v6 L3599 -> v6w L8393 -> ca5 L13760
 - internal-consistency checks before any CONTRADICTED: 9 facts inside quoted retractions (never asserted; 3 quoted-fact supersession links); 2 facts where the log disagrees with itself (log_claims.md §3c); 1 label collision(s):
@@ -457,18 +457,18 @@ Legend: R resolved · W wrong-fix · W* junk-patch-only · N landed-not-submitte
 
 ## 9. Harness semantics
 DOCUMENTED: tool_calls budget per HARNESS_README.md Â§6.1; submit_patch/get_status are free (count_tool_call=False).
-MEASURED (count model cm-2): residual 0 on 2761/2767 traces that carry a harness tool_calls value.
+MEASURED (count model cm-2): residual 0 on 3193/3199 traces that carry a harness tool_calls value.
 Scored state: last successful submit_patch snapshot, else the working tree when submit_patch was never called (README Â§6.1 tool 2 / Â§8.1).
 DOCUMENTED scorer EventsCompactionConfig (comp_files/HARNESS_README.md:L555): compaction_interval = 5, overlap_size = 2, token_threshold = 14336
-MEASURED (dev-harness AST pass dh-1, per run): matches scorer 3, does NOT match 97, unknown 988 of 1088 runs (unknown = no notebook or no EventsCompactionConfig call found; by platform: kaggle=19, local-rig=220, local-sweep=749).
+MEASURED (dev-harness AST pass dh-1, per run): matches scorer 3, does NOT match 97, unknown 996 of 1096 runs (unknown = no notebook or no EventsCompactionConfig call found; by platform: kaggle=19, local-rig=228, local-sweep=749).
 - dev notebook values compaction_interval=15, overlap_size=2, token_threshold=14336: 94 runs
 - dev notebook values compaction_interval=2222, overlap_size=2, token_threshold=14336: 3 runs
 - dev notebook values compaction_interval=5, overlap_size=2, token_threshold=14336: 3 runs
 
 ## 10. Near-miss and cross-task false-positive control
-- near_miss rows: 5431 (3651 with a trace; 3651 scored by the nm-3 line-level matcher).
-- furthest-stage histogram (traced): APPLIED=507, None=402, READ_GOLD_FILE=166, RESOLVED=766, SAW_GOLD_HUNK=92, SCORED_NONEMPTY=1562, TRIED_APPLY=131, WROTE_GOLD_CHANGE=25
-- cross-task FP control (Â§9.4): 652/126832 (trace, other-task) pairs fired WROTE_GOLD_CHANGE = 0.514% (bar <= 1%: PASS; sampling hash-cap-40: per trace the 40 same-repo other tasks with the smallest sha256(task+other), deterministic).
+- near_miss rows: 5863 (4083 with a trace; 4083 scored by the nm-3 line-level matcher).
+- furthest-stage histogram (traced): APPLIED=510, None=415, READ_GOLD_FILE=171, RESOLVED=818, SAW_GOLD_HUNK=97, SCORED_NONEMPTY=1904, TRIED_APPLY=142, WROTE_GOLD_CHANGE=26
+- cross-task FP control (Â§9.4): 736/142120 (trace, other-task) pairs fired WROTE_GOLD_CHANGE = 0.518% (bar <= 1%: PASS; sampling hash-cap-40: per trace the 40 same-repo other tasks with the smallest sha256(task+other), deterministic).
 
 ## 13. Replay table (gold-first)
 - replay records: 1038. Counts by (tier, kind, agent result) (tier 0 = curated min set + all_runs rules; 1 Kaggle main; 2 Kaggle other tracks; 3 local rig; '-' = cached record of a plain build):
@@ -728,7 +728,7 @@ Per (task, run, candidate) — tier-0 rows, plain-build cached rows and every ag
 
 | lever | kind | runs | rows/distinct | labels/arms | stack | transitions | per-task outcomes | LB refs | log mentions | latest verdict |
 |---|---|---|---|---|---|---|---|---|---|---|
-| max_tool_calls | config | 31 | 183/27 | -v10-kaggle-pull, -v6out, v1, v11, v16, v17 +13 | kaggle:30, local-rig:1 | 28->15 (baseline) x20; 28->40 (baseline) x5; 28->22 (baseline) x3 | rich_4077:19R/30 rich_4076:0R/29 rich_4079:2R/29 rich_4070:0R/24 rich_3469:0R/20 | 57098497(0.15), 57276407(-) | 19 | C-423cfd43e5 L13430 (UNVERIFIED) |
+| max_tool_calls | config | 31 | 183/27 | -v10-kaggle-pull, -v6out, v1, v11, v16, v17 +13 | kaggle:30, local-rig:1 | 28->15 (baseline) x20; 28->40 (baseline) x5; 28->22 (baseline) x3 | rich_4077:19R/30 rich_4076:0R/29 rich_4079:2R/29 rich_4070:0R/24 rich_3469:0R/20 | 57098497(0.15), 57276407(-) | 20 | C-423cfd43e5 L13430 (UNVERIFIED) |
 | max_time_minutes | config | 13 | 99/24 | -v10-kaggle-pull, -v6out, repeat-live, v1, v11, v2 +2 | kaggle:12, local-rig:1 | 8->5 (baseline) x10; 5->8 (prev-same-label) x1; 8->9 (baseline) x1 | rich_4077:5R/11 rich_4076:0R/10 rich_4079:2R/10 fastapi_15588:0R/7 fastapi_15661:0R/7 | 57098497(0.15) | 7 | C-d1b542d656 L4992 (UNVERIFIED) |
 | max_turns | config | 69 | 929/129 | -v10-kaggle-pull, -v6out, 31b-a21-arm, 31b-a22-arm, 31b-a3-hard, ca5-31b-full129-eval +23 | kaggle:42, local-rig:27 | 80->120 (baseline) x38; 80->24 (baseline) x20; 80->40 (baseline) x5 | rich_4077:27R/66 rich_3777:2R/37 rich_4079:3R/37 rich_3006:32R/35 rich_3454:31R/35 | 57098497(0.15) | 4 | C-7c08c0ff65 L4383 (UNVERIFIED) |
 | timeout_seconds | config | 67 | 909/129 | -v10-kaggle-pull, -v6out, 31b-a21-arm, 31b-a22-arm, 31b-a3-hard, ca5-31b-full129-eval +22 | kaggle:40, local-rig:27 | 240->300 (baseline) x37; 240->120 (baseline) x30; 120->300 (prev-same-label) x1 | rich_4077:27R/66 rich_4079:3R/37 rich_3777:1R/35 rich_3006:30R/33 rich_3454:29R/33 | 57098497(0.15) | 4 | C-7e30670e57 L767 (UNVERIFIED) |
@@ -751,13 +751,13 @@ Per (task, run, candidate) — tier-0 rows, plain-build cached rows and every ag
 | prompt-compliance-salience | prompt | 64 | 967/129 | -v10-kaggle-pull, -v6out, 31b-a21-arm, 31b-a22-arm, 31b-a3-hard, ca5-31b-full129-eval +22 | kaggle:37, local-rig:27 | absent->present (baseline) x64; absent->present (prev-same-label) x3 | rich_4077:27R/59 rich_3882:18R/47 rich_3777:5R/40 rich_3006:35R/38 rich_3454:34R/38 | - | 13 | C-26959dd8ea L12637 (UNVERIFIED) |
 | prompt-patch-size | prompt | 59 | 925/129 | 31b-a21-arm, 31b-a22-arm, 31b-a3-hard, ca5-31b-full129-eval, cover-rich, ctrl +18 | kaggle:32, local-rig:27 | absent->present (baseline) x59; absent->present (prev-same-label) x3 | rich_4077:23R/54 rich_3882:19R/47 rich_3777:5R/40 rich_3006:35R/38 rich_3454:34R/38 | - | 3 | C-7b20c876d6 L16525 (UNVERIFIED) |
 | prompt-one-to-1 | prompt | 44 | 777/129 | -v6out, 31b-a21-arm, 31b-a3-hard, ca5-31b-full129-eval, ctrl, t0 +9 | kaggle:17, local-rig:27 | present->absent (baseline) x44 | rich_4077:13R/44 rich_3882:7R/35 rich_3006:30R/33 rich_3454:29R/33 rich_3777:1R/33 | - | 6 | C-0fa820c98a L12872 (UNVERIFIED) |
-| dev-harness-compaction | dev-harness | 68 | 558/129 | -v6out, 31b-a21-arm, 31b-a22-arm, 31b-a3-hard, cover-rich, repeat-live +36 | kaggle:68 | 5->15 (scorer) x65; 5->2222 (scorer) x3 | rich_4077:39R/54 rich_4079:7R/52 rich_4076:0R/48 rich_4070:0R/28 rich_3471:5R/22 | 56856000(0.08) | 10 | C-31a0010adf L8490 (UNVERIFIED) |
+| dev-harness-compaction | dev-harness | 68 | 558/129 | -v6out, 31b-a21-arm, 31b-a22-arm, 31b-a3-hard, cover-rich, repeat-live +36 | kaggle:68 | 5->15 (scorer) x65; 5->2222 (scorer) x3 | rich_4077:39R/54 rich_4079:7R/52 rich_4076:0R/48 rich_4070:0R/28 rich_3471:5R/22 | 56856000(0.08) | 12 | C-4d631bd07c L16922 (UNVERIFIED) |
 
 ### Track: small-model (2329 rows / 129 distinct tasks; reference: modal value over the track's runs (no curated baseline); levers with instances: 15/24)
 
 | lever | kind | runs | rows/distinct | labels/arms | stack | transitions | per-task outcomes | LB refs | log mentions | latest verdict |
 |---|---|---|---|---|---|---|---|---|---|---|
-| max_tool_calls | config | 4 | 24/6 | v7-e2b, v7-e4b, v7_e2b, v7_e4b | kaggle:4 | 28->22 (modal) x4 | rich_3006:2R/4 rich_3043:0R/4 rich_3454:2R/4 rich_3782:0R/4 rich_3894:2R/4 | - | 19 | C-04f910f4c6 L14364 (UNVERIFIED) |
+| max_tool_calls | config | 4 | 24/6 | v7-e2b, v7-e4b, v7_e2b, v7_e4b | kaggle:4 | 28->22 (modal) x4 | rich_3006:2R/4 rich_3043:0R/4 rich_3454:2R/4 rich_3782:0R/4 rich_3894:2R/4 | - | 20 | C-04f910f4c6 L14364 (UNVERIFIED) |
 | max_time_minutes | config | 4 | 24/6 | v7-e2b, v7-e4b, v7_e2b, v7_e4b | kaggle:4 | 8->5 (modal) x4 | rich_3006:2R/4 rich_3043:0R/4 rich_3454:2R/4 rich_3782:0R/4 rich_3894:2R/4 | - | 6 | C-d1b542d656 L4992 (UNVERIFIED) |
 | max_turns | config | 16 | 248/45 | e4b-a3, e4b-a5, remap-e2b, remap-e4b, size-e2b, size-e4b +4 | kaggle:16 | 120->80 (modal) x12; 120->40 (modal) x4 | rich_3006:8R/16 rich_3043:0R/16 rich_3454:4R/16 rich_3894:4R/16 rich_3938:0R/16 | - | 2 | - |
 | timeout_seconds | config | 16 | 248/45 | e4b-a3, e4b-a5, remap-e2b, remap-e4b, size-e2b, size-e4b +4 | kaggle:16 | 300->240 (modal) x12; 300->120 (modal) x4 | rich_3006:8R/16 rich_3043:0R/16 rich_3454:4R/16 rich_3894:4R/16 rich_3938:0R/16 | - | 4 | C-7e30670e57 L767 (UNVERIFIED) |
@@ -780,13 +780,13 @@ Per (task, run, candidate) — tier-0 rows, plain-build cached rows and every ag
 | prompt-compliance-salience | prompt | 0 | 0/0 | - | - | - | - | - | 15 | C-00e990d2c2 L12673 (UNVERIFIED) |
 | prompt-patch-size | prompt | 4 | 24/6 | v7-e2b, v7-e4b, v7_e2b, v7_e4b | kaggle:4 | present->absent (modal) x4 | rich_3006:2R/4 rich_3043:0R/4 rich_3454:2R/4 rich_3782:0R/4 rich_3894:2R/4 | - | 4 | C-7b20c876d6 L16525 (UNVERIFIED) |
 | prompt-one-to-1 | prompt | 19 | 1290/129 | agent_ctrl_e4b, agent_ctrl_e4b_def, agent_ctrl_e4b_def2, agent_ctrl_e4b_locate, agent_ctrl_e4b_noprompt, agent_ctrl_e4b_t512 +5 | kaggle:8, local-rig:11 | present->absent (modal) x19 | rich_3006:14R/17 rich_3454:8R/17 rich_3894:3R/17 rich_3043:0R/14 rich_3938:0R/14 | - | 6 | C-0fa820c98a L12872 (UNVERIFIED) |
-| dev-harness-compaction | dev-harness | 16 | 248/45 | e4b-a3, e4b-a5, remap-e2b, remap-e4b, size-e2b, size-e4b +4 | kaggle:16 | 5->15 (scorer) x16 | rich_3006:8R/16 rich_3043:0R/16 rich_3454:4R/16 rich_3894:4R/16 rich_3938:0R/16 | - | 9 | C-7939501484 L8604 (UNVERIFIED) |
+| dev-harness-compaction | dev-harness | 16 | 248/45 | e4b-a3, e4b-a5, remap-e2b, remap-e4b, size-e2b, size-e4b +4 | kaggle:16 | 5->15 (scorer) x16 | rich_3006:8R/16 rich_3043:0R/16 rich_3454:4R/16 rich_3894:4R/16 rich_3938:0R/16 | - | 12 | C-c717cb0e22 L16931 (UNVERIFIED) |
 
-### Track: dev-proxy (1736 rows / 129 distinct tasks; reference: modal value over the track's runs (no curated baseline); levers with instances: 16/24)
+### Track: dev-proxy (2168 rows / 129 distinct tasks; reference: modal value over the track's runs (no curated baseline); levers with instances: 16/24)
 
 | lever | kind | runs | rows/distinct | labels/arms | stack | transitions | per-task outcomes | LB refs | log mentions | latest verdict |
 |---|---|---|---|---|---|---|---|---|---|---|
-| max_tool_calls | config | 77 | 77/77 | A3 | local-sweep:77 | 28->60 (modal) x77; 28->60 (prev-same-label) x1 | fastapi_11194:0R/1 fastapi_13537:0R/1 fastapi_13713:0R/1 fastapi_13786:0R/1 fastapi_14077:0R/1 | 57317996(-) | 18 | C-423cfd43e5 L13430 (UNVERIFIED) |
+| max_tool_calls | config | 77 | 77/77 | A3 | local-sweep:77 | 28->60 (modal) x77; 28->60 (prev-same-label) x1 | fastapi_11194:0R/1 fastapi_13537:0R/1 fastapi_13713:0R/1 fastapi_13786:0R/1 fastapi_14077:0R/1 | 57317996(-) | 19 | C-423cfd43e5 L13430 (UNVERIFIED) |
 | max_time_minutes | config | 0 | 0/0 | - | - | - | - | 57317996(-) | 6 | C-d1b542d656 L4992 (UNVERIFIED) |
 | max_turns | config | 10 | 109/48 | agent_ctrl_12b_locate, router, router_v2, router_v3 | local-rig:10 | 80->120 (modal) x10 | rich_3006:7R/10 rich_3454:10R/10 rich_3882:1R/10 rich_3905:4R/10 rich_4077:1R/10 | 57317996(-) | 2 | - |
 | timeout_seconds | config | 10 | 109/48 | agent_ctrl_12b_locate, router, router_v2, router_v3 | local-rig:10 | 240->300 (modal) x10 | rich_3006:7R/10 rich_3454:10R/10 rich_3882:1R/10 rich_3905:4R/10 rich_4077:1R/10 | 57317996(-) | 4 | C-7e30670e57 L767 (UNVERIFIED) |
@@ -809,7 +809,7 @@ Per (task, run, candidate) — tier-0 rows, plain-build cached rows and every ag
 | prompt-compliance-salience | prompt | 2 | 8/4 | m12, v6z_on_v6w-m12 | kaggle:2 | present->absent (modal) x2 | rich_3535:0R/2 rich_3675:0R/2 rich_3676:0R/2 rich_3934:0R/2 | - | 12 | C-8d142f42df L11603 (UNVERIFIED) |
 | prompt-patch-size | prompt | 2 | 8/4 | m12, v6z_on_v6w-m12 | kaggle:2 | present->absent (modal) x2 | rich_3535:0R/2 rich_3675:0R/2 rich_3676:0R/2 rich_3934:0R/2 | - | 3 | C-7b20c876d6 L16525 (UNVERIFIED) |
 | prompt-one-to-1 | prompt | 1 | 46/46 | agent_ctrl_12b_locate | local-rig:1 | present->absent (modal) x1 | fastapi_11355:0R/1 fastapi_12942:0R/1 fastapi_14099:0R/1 fastapi_14246:0R/1 fastapi_14266:0R/1 | - | 5 | C-0fa820c98a L12872 (UNVERIFIED) |
-| dev-harness-compaction | dev-harness | 13 | 59/17 | 12b-a10-ones-oracle-9t, 12b-a11-tight-fails, 12b-a13-nol48-fails, 12b-a14-tmp-fix, 12b-a3-9t, 12b-a3-rerun3006 +6 | kaggle:13 | 5->15 (scorer) x13 | rich_3006:7R/8 rich_3772:0R/6 rich_3882:2R/6 rich_4077:1R/6 rich_3454:5R/5 | - | 8 | C-31a0010adf L8490 (UNVERIFIED) |
+| dev-harness-compaction | dev-harness | 13 | 59/17 | 12b-a10-ones-oracle-9t, 12b-a11-tight-fails, 12b-a13-nol48-fails, 12b-a14-tmp-fix, 12b-a3-9t, 12b-a3-rerun3006 +6 | kaggle:13 | 5->15 (scorer) x13 | rich_3006:7R/8 rich_3772:0R/6 rich_3882:2R/6 rich_4077:1R/6 rich_3454:5R/5 | - | 10 | C-4d631bd07c L16922 (UNVERIFIED) |
 
 ## 11. Known limitations
 - functions_source=ast@base_commit on 46/48 rich tasks; the 2 misses are pure new-file additions with no base file to parse.

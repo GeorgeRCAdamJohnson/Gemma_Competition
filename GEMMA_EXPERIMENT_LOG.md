@@ -16918,3 +16918,193 @@ per comp_official/HARNESS_README.md:571-574). Next arm: a compaction-faithful dr
   - cmp15 - cmp28 >= +3: the cap helps under compaction, and a 2nd replicate is required before any gate.
   - within +/-2: null.
   - <= -3: the cap hurts.
+
+### RESULT — COMPACTION-FAITHFUL runs (`m1_skilltest/cmp28_r0`, `cmp15_r0`), full 129, local
+
+| run | compaction | max calls | genuine | mean calls | at cap | errors |
+|---|---|---|---|---|---|---|
+| ref ca5 x5 | off | 28 | 12, 7, 9, 11, 11 (mean 10.0) | - | - | - |
+| cap15_r0 | off | 15 | 9 | 7.7 | 16 | 4 |
+| **cmp28_r0** | **on** | 28 | **12** | 8.9 | 1 | 1 |
+| **cmp15_r0** | **on** | 15 | **13** | 8.1 | 19 | 6 |
+
+- **Q1 (does compaction hurt E4B?): NO.** cmp28 = 12 is inside the pre-registered 7-12 "no detectable effect" band,
+  at its top. Compaction does not explain the 2/58 board score. If anything, the two compaction-on runs (12, 13)
+  sit above the no-compaction mean (10.0). That is n=1 each and not claimed.
+- **Q2 (does the 15 cap help under compaction?): NULL.** cmp15 - cmp28 = +1, inside +/-2. cmp15 = 13 is the
+  highest single local E4B genuine count recorded, but the pre-registered comparison is vs cmp28.
+- **New solves never seen in the 7 prior ca5 runs:** fastapi_15589 and rich_3506 (cmp28); rich_3944 (cmp15);
+  rich_2725 (cmp15; previously only the no-prompt run). Compaction changes trajectories enough to reach tasks the
+  uncompacted runs never solved. The E4B reachable union grows from 17 to 21.
+- Not done (by the pre-registered rule): a 2nd replicate. It is warranted only to test the incidental "compaction-on
+  runs score higher" pattern, not as a gate for cap-15.
+
+---
+
+## PRE-REGISTERED: FREE KAGGLE GATE — E4B CAP-15, full 129 (2026-11-02). User-requested; NOT gemma-audited.
+
+**Change vs the measured Kaggle baseline** (`comfyops/ca5-e4b-full129-eval`, runs `out_e4b` 9 genuine and
+`out_e4b_r2` 8 genuine): the embedded eval_config `max_tool_calls 28 -> 15`. That is the only embedded-file
+difference, verified by `_build_cap15_kernel.py`. The prompt sha is asserted b08b32a2438d. Same model source, tasks,
+and caps-from-eval_config path. No compaction, same as the baseline kernel, for comparability.
+- The notebook also carries the print-only per-task logging patch. It does not change execution or scoring.
+- Kernel: `comfyops/ca5-e4b-cap15-full129-eval`. Scored slot NOT used.
+
+**Bar (genuine = resolved minus requests_6644).** Reference: Kaggle baseline 9 and 8.
+- WIN: >= 12.
+- NULL: 6-11.
+- LOSS: <= 5.
+
+A WIN needs a 2nd Kaggle replicate before any scored slot. The local evidence going in is null (cap15 no-compaction
+9; cmp15 13 vs cmp28 12), so the expected outcome is NULL.
+
+---
+
+## MEASUREMENT REPAIR: provenance-aware failure classes, the 14 src/ tasks, and why the board never lost them (2026-11-02)
+
+This entry records a measurement repair plus two retractions. Net effect on the E4B inventory: **genuine 9 -> 13**.
+No new model runs, no GPU, no submission quota - every result below comes from re-verifying patches we had already
+produced.
+
+### 1. The naive failure classifier was wrong 12 times, all in fastapi
+
+`local_eval/classify_test_failures.py` mines the `results/test_outputs/*.log` of a finished 129-run and separates
+sandbox failures from agent failures by text pattern. On `out_e4b` (126 test_outputs) it reported:
+
+| class | n | rule |
+|---|---|---|
+| REAL | 64 | assertion / FAILED |
+| ENV | 44 | collection error, NameError, ModuleNotFoundError, ... |
+| UNKNOWN | 17 | no signal |
+| MIXED | 1 | both |
+
+**That ENV count is inflated.** `local_eval/provenance_verdicts.py` adds the missing check - is the file named in the
+traceback actually one the agent patched? Corrected:
+
+| verdict | n | meaning |
+|---|---|---|
+| REAL | 54 | assertion failed |
+| **ENV** | **36** | test never ran; agent did not touch the erroring file -> **unverifiable** |
+| **AGENT** | **17** | the agent's own edit appears in the traceback |
+| UNKNOWN | 19 | no signal |
+
+The clean example is `fastapi_11194`. The collection error was
+`fastapi/dependencies/utils.py:999: NameError: name 'FastAPIError' is not defined`, and line 999 is the agent's own
+line - it wrote `raise FastAPIError(..., status_code=422)` with no import. Pattern-matching `NameError` called that
+an environment failure; provenance calls it an agent bug. **A symptom class is not a cause class.**
+
+ENV by repo: fastapi 34, httpx 1, rich 1, requests 0. Half of fastapi was unmeasurable.
+
+### 2. The 14 src/ tasks: both models stuck at 1/13
+
+14 of 129 tasks have **every gold file under `src/`** - exactly requests (13) + httpx (1).
+
+| cohort | n | solved | rate |
+|---|---|---|---|
+| root-level (fastapi, rich) | 115 | 35 | **30.4%** |
+| src-layout (requests, httpx) | 14 | 1 | **7%** |
+
+31B is 3.5x better than E4B overall (35/129 vs 10/129), yet per repo it is `requests 1/13` and E4B is also
+`requests 1/13` (L13942, L14237). A 3.5x capability gap cannot vanish on one repo - so the cause is structural.
+The single solve is `requests_6644`, which this log already excludes as degenerate, so genuinely **0/14**.
+
+The agent is not at fault: `local_eval/src_layout_check.py` shows the agent patched the correct `src/requests/*.py`
+path on **13 of 14** tasks (the 14th edited `setup.py`).
+
+### 3. Root cause: the subprocess backend skips the editable install
+
+`harness_src/x/swegemma/harness/container_setup.py:506`:
+
+```python
+def install_editable_package(docker, container_id):
+    if type(docker).__name__ in {'SubprocessManager', 'SubprocessSandbox'}:
+        return
+    docker.exec(container_id,
+        'pip install --no-index --find-links=/wheels --no-build-isolation --no-deps -e /workspace 2>/dev/null || true')
+```
+
+| backend | editable install | consequence |
+|---|---|---|
+| **docker** (grader default, HARNESS_README:247) | runs | src/ tasks graded correctly |
+| **subprocess** (Kaggle notebooks) | **skipped entirely** | `import requests` resolves to site-packages; every `src/` edit is invisible to tests |
+
+Root-level packages (`fastapi/`, `rich/`) import straight from cwd, which is why only src-layout repos were affected.
+Our local `gemma-parity-rig` is docker but had **no `/wheels` and no build backends** (`pdm-backend`, `poetry-core`,
+`hatchling`, `flit-core`, `editables`, `wheel` all absent), so the install failed there too and `|| true` hid it.
+Both of our instruments were blind on the same 14 tasks; the grader was not.
+
+### 4. Re-verification in a correct sandbox
+
+Built `local_eval/Dockerfile.verify` (+ `Dockerfile.fastapi`): python 3.13, pytest, the real build backends, an
+actual `/wheels`, and the test packages. `local_eval/reverify_src_layout.py` replays existing patches under
+`install` / `path` / `broken` modes, with `+shim` and `-noagent` variants.
+
+**src-layout cohort (14 tasks, E4B):**
+
+| outcome | n | tasks |
+|---|---|---|
+| **new genuine solves** | **4** | `requests_7309, 7315, 7433, 7502` |
+| already excluded as degenerate | 1 | `requests_6644` |
+| real agent bugs | 2 | `requests_7205` (`continue` outside loop), `requests_7427` (`host_with_port` used before assignment) |
+| env-blocked (baseline fails identically) | 4 | `httpx_3672, requests_6757, 7328, 7505` |
+| inconclusive | 3 | `requests_6589, 6592, 6629` |
+
+Two of the four conversions (`7433`, `7502`) were previously killed by a **`httpbin` fixture setup error** - test
+dependencies, not the patch. `7309`/`7315` had been written off as **phantoms** (rig importing site-packages); in a
+correct sandbox they genuinely pass. The phantoms were real solves masked by a broken rig.
+
+**Fastapi cohort (the 5 fastapi solves among the 10 recorded):**
+
+| task | verdict | note |
+|---|---|---|
+| `fastapi_14301, 14463, 14077, 14786` | **PASS** | confirmed genuine |
+| `fastapi_14851` | env-blocked | fails on 2 lifespan `DeprecationWarning`s **identically with no patch** |
+
+`fastapi_14786` passing again contradicts our earlier "gold-invalid" call and agrees with the outside review (M1)
+that the official grader resolves it.
+
+Getting fastapi to collect at all required period-correct pins: anyio `>=4.2,<4.7` (4.x emits a `BlockingPortal`
+`DeprecationWarning` that fastapi's `filterwarnings = error` converts into a collection failure) and `-p no:asyncio`
+(the plugin's own `PytestDeprecationWarning` does the same on `pytest_configure`). Same class as the original
+`fastapi_11194` skew - dependency versions, not patches.
+
+**Rich cohort:** 4/4 recorded solves re-confirmed (`rich_3006, 3454, 3894, 3905`).
+
+**Corrected E4B inventory:** 9 genuine -> **13** (12 verified in-sandbox, `fastapi_14851` unverifiable locally).
+The baseline cap15 bar "genuine >= 12 = WIN" therefore sits below the true pool rate and should be read against 13.
+
+### 5. RETRACTED: the conftest shim as a board lever
+
+A root `conftest.py` doing `sys.path.insert(0, "src")` was proved to rescue src-layout tasks locally (2x2:
+`broken` FAIL, `broken+shim` PASS, `install` PASS) and to **not** rescue broken patches (`7205` NO_JUNIT,
+`7427` FAIL, `7328` FAIL). That part stands and is useful for local evaluation only.
+
+**It cannot ship.** `verification.py:62` + `strip_protected_files_from_patch` deletes from the agent patch, before
+grading, every diff section touching: `conftest.py`, `pytest.ini`, `pyproject.toml`, `tox.ini`, `setup.cfg`,
+`.pytest.ini`, `sitecustomize.py`, `usercustomize.py`, `_swegemma_stubs.py`, `*.pth`, `test_*.py`, `*_test.py`,
+and anything under `tests/`. The harness additionally writes its own `/workspace/conftest.py`
+(`container_setup.py:868`, "Hermetic test discovery hook for SWE-gemma"). There is **no agent-side way to influence
+import resolution.**
+
+Two further retractions follow:
+
+- **"The shim is worth 0.20 -> 0.24 on the board."** Wrong. The grader is docker, so it installs editable properly
+  and **already credits src-layout work**. There was never board upside.
+- **"The 4.3-task board anomaly is the 4 src-layout tasks."** Wrong direction. Those tasks were always *in* the
+  board and *missing* from our measurement, not the reverse. Predicted board from the corrected rate is
+  13 x 58/129 = 5.85/58; observed 2/58. The ~3.9-task deficit is **not** src-layout and remains open
+  (`P(K<=10) = 0.026` under a uniform-subset assumption points back at "the public 58 is harder than random").
+
+### 6. What this buys and what it does not
+
+- **Buys:** a verifier that agrees with the grader's backend instead of silently skipping the install. Every
+  notebook-measured arm had the same 14-task blind spot, so arm comparisons were ranking configs on a 115-task
+  instrument. That is now fixable locally.
+- **Does not buy:** board points. The src/ cohort is a measurement defect, not a scoring one.
+- **Still open:** the fastapi half of the benchmark needs the published wheels (`/wheels` + pre-installed
+  site-packages) before it can be measured faithfully; our image now collects it but only with hand-pinned versions.
+
+Tooling added this session: `local_eval/classify_test_failures.py`, `env_false_negatives.py`,
+`provenance_verdicts.py`, `src_layout_check.py`, `reverify_src_layout.py`, `fastapi_deps_probe.py`,
+`Dockerfile.verify`, `Dockerfile.fastapi`.
+

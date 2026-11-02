@@ -1,6 +1,6 @@
-<!-- build-stamp: built=2026-11-02T04:46:29Z inputs=38480c3f7658 discovery=38480c3f7658 -->
-Build stamp: built 2026-11-02T04:46:29Z Â· inputs 38480c3f7658 Â· freshness check: python c:\Users\Biges\OneDrive\Documents\Desktop\kAGGLE\Gemma\kb\build_kb.py check-fresh
-log sha256 (first 12): 6d32e081aa59  lines: 16645  engine: cl-4
+<!-- build-stamp: built=2026-11-02T13:52:33Z inputs=439dc3fe0c4c discovery=439dc3fe0c4c -->
+Build stamp: built 2026-11-02T13:52:33Z Â· inputs 439dc3fe0c4c Â· freshness check: python c:\Users\Biges\OneDrive\Documents\Desktop\kAGGLE\Gemma\kb\build_kb.py check-fresh
+log sha256 (first 12): 9d632c8164a3  lines: 17111  engine: cl-4
 
 ## 2. READ-THIS-FIRST truths
 | id | line | status | reason | evidence | curated-by |
@@ -199,7 +199,7 @@ log sha256 (first 12): 6d32e081aa59  lines: 16645  engine: cl-4
 - U-9136006c7e (L9434) may correct U-8187722e92 (L8544); shared ['adapter-lora', 'v2']
 - U-39ac0196c0 (L9495) may correct U-bb19f94b4b (L9402); shared ['adapter-lora', 'rich_3278']
 - U-8b851329d8 (L9615) may correct U-50a73d1d2a (L9559); shared ['adapter-lora', 'rich_4079']
-- ... 56 more
+- ... 57 more
 
 ### 4d. Live-best chain (F10 facts; checked against the curated baseline, never adopted)
 - L27 v6 live-best (`LIVE-BEST =`) RTF-0c8ed7a5: UNVERIFIED
@@ -1446,6 +1446,23 @@ log sha256 (first 12): 6d32e081aa59  lines: 16645  engine: cl-4
 | C-ccf894dc28 | 16523 | UNVERIFIED | heading | SUBMIT-GATE SKILL: gate detects wrong patches; first live arm is NULL (2026-1... | SUBMIT-GATE SKILL: gate detects wrong patches; first live arm is NULL (2026-11-01, local E4B, n small) | - | judgment claim, not curated |
 | C-7b20c876d6 | 16525 | UNVERIFIED | verdict | SUBMIT-GATE SKILL: gate detects wrong patches; first live arm is NULL (2026-1... | **Arm A: `submit_patch` removed (`agent_ctrl_e4b_nosub`), rich_3894 + fastapi_14616.** This reproduces the user's earlier "it still kept submitting". Mechani... | - | judgment claim, not curated |
 | C-e5b9ce34a1 | 16553 | UNVERIFIED | verdict | SUBMIT-GATE SKILL: gate detects wrong patches; first live arm is NULL (2026-1... | **Live replicate batch:** 6 flaky rich tasks + 2 stable, 2 reps (`_skilltest.py`, caps 28/8/120, conc 2). - Result: gated **8/16 = 0.50** vs ungated **29/56 ... | - | judgment claim, not curated |
+| C-143370486b | 16678 | UNVERIFIED | paragraph | Observed leaderboard (pulled via CLI, 2026-11-02) | **sigma = 1 makes the leaderboard a 10% event; sigma ~ 2 makes it an 87% event.** The board therefore favours **sigma ~ 2**, which is exactly what the outsid... | - | judgment claim, not curated |
+| C-eb2a10dfc3 | 16772 | UNVERIFIED | paragraph | LESSON (added) | **Calibrate against a competitor's published rate before theorising about the leaderboard.** One sentence from the #1 team resolved in a minute what this pro... | - | judgment claim, not curated |
+| C-0f7393812b | 16777 | UNVERIFIED | heading | FRESH-RETRY ARMS (LoopAgent [fixer, verifier], max 3; gate undoes rejected at... | FRESH-RETRY ARMS (LoopAgent [fixer, verifier], max 3; gate undoes rejected attempts, restores best on the last) — NULL on total (2026-11-01) | - | judgment claim, not curated |
+| C-2b434ddf99 | 16845 | UNVERIFIED | paragraph | E4B good_test_rate (Konwinski-style F2P repro tests): 3/17 = 18% per single s... | **Verdict:** - At 1 sample, the repro-gate is not viable. P(good test) = 0.18, while P(test that would falsely reject a correct fix) is about 0.24. - Viable ... | - | judgment claim, not curated |
+| C-2992ea060d | 16867 | UNVERIFIED | paragraph | PRE-REGISTERED: E4B CAP-15 (max_tool_calls 28 -> 15, nothing else), full 129,... | **Bar (genuine = resolved minus the 4 requests phantoms/freebie).** Reference = the 5 local ca5 28-call runs: genuine 7, 9, 11, 11, 12 (mean 10.0). - WIN: ge... | - | judgment claim, not curated |
+| C-90469af0cb | 16879 | UNVERIFIED | heading | RESULT — E4B CAP-15, full 129 local (`m1_skilltest/cap15_r0`): 9 genuine -> N... | RESULT — E4B CAP-15, full 129 local (`m1_skilltest/cap15_r0`): 9 genuine -> NULL (pre-registered band 7-12) | - | judgment claim, not curated |
+| C-4d631bd07c | 16922 | UNVERIFIED | heading | RESULT — COMPACTION-FAITHFUL runs (`m1_skilltest/cmp28_r0`, `cmp15_r0`), full... | RESULT — COMPACTION-FAITHFUL runs (`m1_skilltest/cmp28_r0`, `cmp15_r0`), full 129, local | - | judgment claim, not curated |
+| C-c717cb0e22 | 16931 | UNVERIFIED | verdict | RESULT — COMPACTION-FAITHFUL runs (`m1_skilltest/cmp28_r0`, `cmp15_r0`), full... | - **Q1 (does compaction hurt E4B?): NO.** cmp28 = 12 is inside the pre-registered 7-12 "no detectable effect" band, at its top. Compaction does not explain t... | - | judgment claim, not curated |
+| C-ac107ea2c4 | 16953 | UNVERIFIED | paragraph | PRE-REGISTERED: FREE KAGGLE GATE — E4B CAP-15, full 129 (2026-11-02). User-re... | **Bar (genuine = resolved minus requests_6644).** Reference: Kaggle baseline 9 and 8. - WIN: >= 12. - NULL: 6-11. - LOSS: <= 5. | - | judgment claim, not curated |
+| C-77b24401a6 | 16958 | UNVERIFIED | paragraph | PRE-REGISTERED: FREE KAGGLE GATE — E4B CAP-15, full 129 (2026-11-02). User-re... | A WIN needs a 2nd Kaggle replicate before any scored slot. The local evidence going in is null (cap15 no-compaction 9; cmp15 13 vs cmp28 12), so the expected... | - | judgment claim, not curated |
+| C-bcd8c112df | 16965 | UNVERIFIED | paragraph | MEASUREMENT REPAIR: provenance-aware failure classes, the 14 src/ tasks, and ... | This entry records a measurement repair plus two retractions. Net effect on the E4B inventory: **genuine 9 -> 13**. No new model runs, no GPU, no submission ... | - | judgment claim, not curated |
+| C-d04a48e945 | 16981 | UNVERIFIED | paragraph | 1. The naive failure classifier was wrong 12 times, all in fastapi | **That ENV count is inflated.** `local_eval/provenance_verdicts.py` adds the missing check - is the file named in the traceback actually one the agent patche... | - | judgment claim, not curated |
+| C-00aed58ab9 | 17073 | UNVERIFIED | paragraph | 4. Re-verification in a correct sandbox | **Corrected E4B inventory:** 9 genuine -> **13** (12 verified in-sandbox, `fastapi_14851` unverifiable locally). The baseline cap15 bar "genuine >= 12 = WIN"... | - | judgment claim, not curated |
+| C-c408d1984a | 17076 | UNVERIFIED | heading | 5. RETRACTED: the conftest shim as a board lever | 5. RETRACTED: the conftest shim as a board lever | - | judgment claim, not curated |
+| C-897369a683 | 17078 | UNVERIFIED | verdict | 5. RETRACTED: the conftest shim as a board lever | A root `conftest.py` doing `sys.path.insert(0, "src")` was proved to rescue src-layout tasks locally (2x2: `broken` FAIL, `broken+shim` PASS, `install` PASS)... | - | judgment claim, not curated |
+| C-6b4f7298da | 17089 | UNVERIFIED | verdict | 5. RETRACTED: the conftest shim as a board lever | Two further retractions follow: | - | judgment claim, not curated |
+| C-4e89469618 | 17091 | UNVERIFIED | verdict | 5. RETRACTED: the conftest shim as a board lever | - **"The shim is worth 0.20 -> 0.24 on the board."** Wrong. The grader is docker, so it installs editable properly and **already credits src-layout work**. T... | - | judgment claim, not curated |
 
 ## 6. Curated claims (curated/claims.jsonl, read-only) and orphaned curations
 | id | kind | status | evidence ok | text | evidence |
@@ -1710,6 +1727,12 @@ log sha256 (first 12): 6d32e081aa59  lines: 16645  engine: cl-4
 - L16479: SUBMITTED: third identical draw of the 0.20 pack — ref 57894012 (2026-11-01)
 - L16571: RESUBMIT ATTEMPT REJECTED — daily quota exhausted (2026-11-02 04:15 UTC)
 - L16608: MOBILE-SUBMIT NOTEBOOK BUILT AND RUN — `comfyops/gemma-submit-mobile-ca5` (20...
+- L16649: THE USER WAS RIGHT: sigma is ~2, not 1, and the step size is symmetric — harv...
+- L16715: CALIBRATED AGAINST THE #1 COMPETITOR: the 129-rate maps 1:1 to the LB, and ou...
+- L16854: PRE-REGISTERED: E4B CAP-15 (max_tool_calls 28 -> 15, nothing else), full 129,...
+- L16895: PRE-REGISTERED: COMPACTION-FAITHFUL E4B runs, 28 vs 15 calls, full 129 local ...
+- L16944: PRE-REGISTERED: FREE KAGGLE GATE — E4B CAP-15, full 129 (2026-11-02). User-re...
+- L16963: MEASUREMENT REPAIR: provenance-aware failure classes, the 14 src/ tasks, and ...
 
 ## 10. Suspect dates (heading date replaced by the inherited date)
 - L8098: date_raw 2026-12-12 -> 2026-10-12

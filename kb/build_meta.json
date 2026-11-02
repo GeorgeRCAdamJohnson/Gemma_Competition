@@ -1,30 +1,30 @@
 {
  "counts": {
-  "claims": 1229,
+  "claims": 1246,
   "eval_runs": 7,
   "pasted_logs": 14,
   "pulled_runs": 8,
-  "rig_runs": 220,
+  "rig_runs": 228,
   "rows_by_run_kind": {
    "kaggle-kernel": 1750,
    "kaggle-pulled": 40,
    "kaggle-pulled-legacy": 4,
-   "local-rig": 1857,
+   "local-rig": 2289,
    "local-sweep": 1574,
    "pasted-log": 206
   },
   "rows_by_track": {
-   "dev-proxy": 1736,
+   "dev-proxy": 2168,
    "main": 1366,
    "small-model": 2329
   },
   "run_dirs": 102,
-  "runs_rows": 5431,
+  "runs_rows": 5863,
   "sweep_tags": 779,
   "tasks_gold": 129,
-  "traces": 3651
+  "traces": 4083
  },
- "discovery_fingerprint": "cee60c41944b",
+ "discovery_fingerprint": "c4a80dddad41",
  "engine_versions": {
   "claims": "cl-4",
   "cm": "cm-2",
@@ -49,21 +49,21 @@
   "runs.jsonl",
   "tasks_gold.json"
  ],
- "inputs_count": 7540,
- "inputs_fingerprint": "38480c3f7658e93f25b865c085b7b98971568d204223a0cc6ee94da53777c28f",
- "log_lines": 16645,
- "log_sha256": "6d32e081aa5984f7ffd92ae1ea3cffb9f64fe7b5af15591bcc691ca0a0f9c313",
+ "inputs_count": 7989,
+ "inputs_fingerprint": "439dc3fe0c4cc48e30a916e58652ab69b2477d0b1b545a5ea64cdfd19f49f9c7",
+ "log_lines": 17111,
+ "log_sha256": "9d632c8164a3220dcded3f28fa3bbc1332b36fa969e32d6f4c76e67dfef4d594",
  "near_miss_fp": {
   "bar": 0.01,
-  "pairs": 126832,
+  "pairs": 142120,
   "passes_bar": true,
   "sampling": "hash-cap-40",
-  "wrote_gold_change_fp": 652,
-  "wrote_gold_change_fp_rate": 0.00514
+  "wrote_gold_change_fp": 736,
+  "wrote_gold_change_fp_rate": 0.00518
  },
  "newest_input": {
-  "mtime_utc": "2026-11-02T12:41:39Z",
-  "path": "local_eval/out_submit_mobile/submission/agent.yaml"
+  "mtime_utc": "2026-11-02T13:48:39Z",
+  "path": "local_eval/parity_rig/m1_skilltest/cmp28_r1/summary.json"
  },
  "replays_pending": 0,
  "schema": "build_meta/3",
