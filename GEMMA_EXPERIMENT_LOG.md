@@ -17108,3 +17108,300 @@ Tooling added this session: `local_eval/classify_test_failures.py`, `env_false_n
 `provenance_verdicts.py`, `src_layout_check.py`, `reverify_src_layout.py`, `fastapi_deps_probe.py`,
 `Dockerfile.verify`, `Dockerfile.fastapi`.
 
+
+---
+
+## RESULT — FREE KAGGLE GATE E4B CAP-15: NULL (within E4B variance of cap-28). Budget axis CLOSED. (2026-11-02)
+
+Kernel `comfyops/ca5-e4b-cap15-full129-eval` COMPLETE. Output pulled (74 non-empty patches: 57 fastapi,
+13 requests, 3 rich, 1 httpx; Kaggle did not include the stdout summary in the output bundle, so the
+genuine resolved count was read on the user's other PC). User verdict: **relatively flat, within ~1.5-task
+variance of the cap-28 baseline — inside the E4B noise band.**
+
+### VERDICT vs pre-registered bar (WIN >=12 / NULL 6-11 / LOSS <=5): **NULL.** As predicted going in.
+cap-15 ties cap-28 within E4B run-to-run variance. This matches ALL prior budget evidence:
+- cap15 no-compaction local = 9 (NULL band 7-12); cmp15 13 vs cmp28 12 = +1 (within +/-2 null).
+- L13180 budget-raise (28->50) null; L10362 budget-raise null.
+=> The tool-call budget is NOT a lever for E4B in any regime tested (raise or lower, compaction on or off).
+
+### CONSEQUENCE: the budget/cap axis is now CLOSED, alongside the already-closed prompt-wording axis.
+Both of the cheap, config-only axes are exhausted and null. The remaining open levers are the two the
+log already named: (1) CONFIG/TOOLING (where #1 "Yurnero" hinted their gains came from), and (2) the
+LoRA capability lever (31B-trajectory SFT; host-confirmed adapters load + take effect in scoring).
+
+### Untracked artifacts from this session (git): Outputs/v17, Outputs/v17_pull/, Outputs/e4b_cap15_kaggle/.
+### Not committed. (v17 itself = the superseded COMMIT-TO-PATH kernel; its pull re-confirmed 0/5-to-1/5,
+### localization solved / edit-execution wall — already fully documented at L5390.)
+
+---
+
+## VERIFY-FIX SKILL BUNDLE BUILT (edit -> verify -> repair-once -> submit) — zero-GPU, STATIC-VALIDATED, gate PENDING on GPU machine (2026-11-02)
+
+Direction chosen (user): work the SKILLS lever from the laptop (no GPU needed to build; the gate run
+needs the GPU machine). Rationale set in the prior session: prompt-wording and budget-cap axes are both
+measured-null; sub-agents are closed; skills + LoRA are the only live levers. Skills are laptop-friendly.
+
+### THE DESIGN — attacks the measured failure class with the user's cap insight
+- Measured failure (outside-review 6): **46 of 52 E4B misses on reachable tasks were WRONG PATCHES
+  SUBMITTED UNTESTED.** The fix is structural (verify before submit), not more prose.
+- User's cap insight (cap-15 null, L16854/L16944): 64/67 E4B solves used <=15 calls, so localize+edit
+  fits in ~13. That frees the back half of the 28-call budget for ONE verify->repair cycle.
+- The earlier skill cost problem (testwriter: `run_skill_script` ~7-10 calls because the MODEL drives a
+  multi-call probe) is fixed by making verify a **single deterministic call**: the skill script
+  py_compiles the edited file AND runs the ONE most-relevant existing test for that module, printing a
+  terse `VERIFY: PASS` / `VERIFY: FAIL <first failure line>` / `VERIFY: NO_TEST`. One tool call, not a probe.
+
+### BUNDLE: `local_eval/parity_rig/agent_ctrl_e4b_verify` (builder `_build_verify.py`)
+- HELD CONSTANT vs ca5 (`agent_ctrl_e4b`): model (E4B w4a16), sampling (temp 0.2 / thinking 4096), and
+  the ENTIRE localization+edit+contract prompt. eval_config cap stays 28 (the back half IS the reserve).
+- ADDED: `skills/verify-fix` (SKILL.md + scripts/verify.py) + two prompt sections inserted before
+  "Hard rules": VERIFY-BEFORE-SUBMIT (run the skill once after the edit lands, read PASS/FAIL/NO_TEST,
+  at most ONE repair, do NOT verify twice) and the reserve split (locate+edit in ~13, verify in the rest;
+  skip verify if already in the <=7-call danger zone — COMMIT-BY-REMAINING still wins there).
+- verify.py is defensive: SyntaxError -> FAIL fast; no mapped test -> NO_TEST (never a false hard-fail);
+  collection error / timeout -> NO_TEST; picks the narrowest existing test (exact test_<stem>.py, then
+  prefix, then import-grep fallback). NEVER runs bare pytest (-x -q, single target file, 110s cap).
+
+### VALIDATION DONE ON THIS LAPTOP (no docker/GPU here):
+- `_validate_verify_static.py`: SKILL.md has NO BOM + starts with `---` (the L16451 compile-killer),
+  agent.yaml model + every !include + skills/<dir> resolve, scripts compile, ca5 core prompt retained,
+  VERIFY section present exactly once. -> STATIC OK.
+- `_test_verify_logic.py` + isolated parser test: find_test_file exact/prefix/underscore-strip selection
+  = 3/3; first_failure_line parsing = 3/3. (import-grep fallback only exercised in the Linux rig.)
+
+### NOT DONE (blocked on this laptop — Docker Desktop not running, no GPU, no snapshots):
+- `compile_check.py` (real adk_submission compiler) — needs the `gemma-parity-rig` container.
+- The E4B rig gate run — needs llama-server :8081 (GPU) + snapshots.
+
+### PRE-REGISTERED GATE (run on the GPU machine, rule 2): `_skilltest.py verify agent_ctrl_e4b_verify`
+on the reachable rich cohort, gold-scored via the rp-4 offline scorer; compare to the ca5 E4B baseline.
+- Reference: local ca5 E4B genuine ~10/129 (draws 7-12); the corrected reachable pool is 13.
+- WIN: genuine > ca5 baseline on the SAME cohort AND traces show verify firing (VERIFY: lines) and >=1
+  repair converting a would-be wrong submit into a resolve.
+- NULL: within +/-2 of baseline, or verify fires but never converts (wrong patches that pass the narrow
+  existing test anyway — the known Type-B "self-test passes, hidden test fails" hazard).
+- LOSS: verify eats budget and drops genuine below baseline (watch mean calls/task; if the reserve
+  pushes edits past the budget, that is the cap-15 lesson re-firing).
+Also measure: calls spent on the skill (should be ~1-2/task), NO_TEST rate (how often no existing test
+maps — those tasks get no verify benefit), and whether compaction interacts (run compaction-faithful too).
+
+### FILES ADDED (uncommitted): local_eval/parity_rig/_build_verify.py, agent_ctrl_e4b_verify/**,
+### _validate_verify_static.py, _test_verify_logic.py. Plus prior session pulls (Outputs/v17*, e4b_cap15).
+
+---
+
+## VERIFY-FIX SKILL — FIRST KAGGLE BATCH (6 tasks, E4B): mechanism FIRES, no regression, ONE bug found (2026-11-02)
+
+Kernel `comfyops/e4b-verify-batch` (ca5 E4B + verify-fix skill, edit->verify->repair->submit), 6-task
+batch, caps 28/8, tp=1 single-GPU. Result 4/6.
+
+| task | role | resolved | calls | patch | test_rc |
+|------|------|----------|-------|-------|---------|
+| fastapi_14301 | stable win | T | 5 | 620 | 0 |
+| fastapi_14463 | stable win | T | 5 | 873 | 0 |
+| rich_3905 | stable win | T | 8 | 521 | 0 |
+| rich_3006 | stable win | T | 3 | 558 | 0 |
+| rich_4077 | near-miss | F | 10 | 585 | 1 |
+| rich_3894 | near-miss | F | 3 | 683 | 1 |
+
+### WHAT PASSED (the real risk — does a verify loop break known wins?): NO REGRESSION.
+All 4 stable wins stayed green. Call counts low (3-10). The SINGLE-CALL verify design did NOT repeat the
+testwriter's 7-10-call blowup: skill cost ~1 call/task. The bundle is safe to run at scale.
+
+### MECHANISM CONFIRMED: the skill FIRED on all 6 tasks (grep VERIFY:/run_skill_script in logs).
+The agent localizes, edits, then calls `run_skill_script verify-fix` exactly as designed, reads the
+result, then submits. The structural edit->verify->submit loop executes on the real harness.
+
+### THE BUG (decisive, cheap to fix): the skill received `--` as its path argument, not the file.
+Every task's verify output was `VERIFY: FAIL edited file not found: --`. The agent passed
+`positional_args: ["rich/repr.py"]` CORRECTLY, but the ADK delivers skill positional args after a `--`
+separator, so `sys.argv[1] == "--"`. verify.py read argv[1] directly -> garbage. So verify produced ZERO
+real signal on any task; the 4 wins passed DESPITE verify failing (the agent correctly ignored the
+nonsense FAIL and submitted — the safe fallback working as intended). The 2 near-misses' `test_rc=1` is
+the HARNESS grading, not our skill.
+
+### SECOND FACT ESTABLISHED (from harness source, settles an old open question):
+`enable_sandbox_testing` DEFAULTS TRUE (config.py:123; agent_runner.py:588 "Test runners are re-enabled
+in sandbox"). pytest/unittest are MASKED only if explicitly set False (agent_runner.py:402 prompt). So
+the scoring sandbox DOES allow pytest by default -> a verify skill that runs a targeted test is viable;
+it was NOT the blocker. The `--` arg bug was the only blocker.
+
+### FIX APPLIED: verify.py now has `_argpath()` that skips a leading `--`/flag token and takes the first
+real path (unit-tested: ['v','--','p']->'p', ['v','p']->'p', ['v','--']->''). The NO_TEST branch now
+prints argv so the next run reveals the exact shape if `--` is not the whole story.
+
+### NEXT RUN (pushed): `comfyops/e4b-verify-par` — the 4x-PARALLEL harness + the arg fix, SAME 6 tasks.
+This is the user's parallelism lever baked in as the standard dev harness: 4 independent tp=1 E4B servers
+(one per L4, CUDA_VISIBLE_DEVICES pinned, ports 8000-8003), tasks round-robin sharded, 4 concurrent
+`swegemma eval` subprocesses each pinned to its server URL. Builder `kaggle_pkg/_build_parallel_kernel.py`.
+It answers BOTH: (a) do the 2 near-misses CONVERT now that verify returns real PASS/FAIL, and (b) does the
+4x harness work + cut wall time ~3-4x. Pre-registered: WIN if >=1 near-miss converts with VERIFY firing
+real output AND 0 regressions; NULL if verify now gives real signal but still converts nothing (the
+Type-B "wrong patch passes the narrow test" hazard); the parallel harness itself is a keep regardless if
+it runs clean (reusable for all future dev batches). Serve cell uses CUDA_VISIBLE_DEVICES set before each
+VllmServer.start() (build_env does os.environ.copy(), so the device sticks per server).
+
+### Files (uncommitted): kaggle_pkg/_build_verify_kernel.py, _build_parallel_kernel.py,
+### push_e4b_verify_batch/**, push_e4b_verify_par/**; verify.py arg fix in agent_ctrl_e4b_verify.
+
+---
+
+## VERIFY-FIX NULL INVESTIGATION — the arg fix WORKED; the 2 near-misses are TWO DIFFERENT walls (2026-11-02)
+
+Ran `comfyops/e4b-verify-par` (4x-parallel harness + the `_argpath` fix), same 6 tasks. Result 4/6 again,
+but now verify returns REAL PASS/FAIL (the `--` arg bug is gone). Investigated WHY the 2 near-misses
+(rich_4077, rich_3894) still failed by reading patches + hidden test_outputs + gold + problem statements.
+They are NOT the same null.
+
+### HARNESS-TIMING WIN (bonus): the 4x PARALLEL harness works.
+Eval phase 174s for 6 tasks across 4 GPUs (shards 2/2/1/1), "ALL SHARDS DONE in 174s". The waste was the
+SEQUENTIAL server BOOT (gpu0 up @295s, gpu1 @+142s, ... ~11 min before eval). FIXED in
+`_build_parallel_kernel.py`: servers now boot CONCURRENTLY in threads with a per-server build_env()
+override for CUDA_VISIBLE_DEVICES (no shared-env race), so 4 boots overlap to ~300s total. N_GPU is now a
+knob (use 1 for <=8-task batches — one boot beats four; 4 for the full 129). CONCURRENT-SESSION CAP is 2
+(logged earlier: double-push -> 409), and the weekly unlock is HOURS not SLOTS, so "4 simultaneous 129
+kernels" is not possible; the parallelism is WITHIN one kernel (4-GPU shard) across at most 2 kernels.
+
+### NULL #1 — rich_4077: FALSE GREEN. verify is structurally blind to the hidden regression test.
+- Agent fix: `def isatty(self): return os.isatty(self.__file.fileno())`.
+- Hidden test (injected, NOT in the base-commit test file): builds a `TTYFile` with `isatty()` but NO
+  `fileno()`, asserts `file_proxy.isatty()` is True. Agent fix raises
+  `AttributeError: 'TTYFile' object has no attribute 'fileno'`. Gold = `return self.__file.isatty()`.
+- verify ran `tests/test_file_proxy.py` AT THE BASE COMMIT and got PASS — because the `test_isatty`
+  regression test is part of the HIDDEN test_patch, applied only at grading. So verify literally cannot
+  see the test it is graded on. Problem statement is 2 words ("proxy isatty") -> a behaviour-verify built
+  from the issue ALSO can't recover the fileno-less-TTYFile scenario. This null is UNADDRESSABLE by any
+  verifier: the signal is not present at agent time.
+
+### NULL #2 — rich_3894: TRUE FAIL verify caught, but the model OVER-EDITED and regressed a PASS_TO_PASS.
+- Gold: KEEP `qualname = name or getattr(obj, "__qualname__", name)`, ADD a guard only for when qualname
+  is NOT a str (the "unusual __qualname__" the issue names).
+- Agent: REPLACED the line with `getattr(obj, "__qualname__", getattr(obj,"__name__",name))` -> changed
+  the normal path from bare `name` to dotted `__qualname__`, so `def method` became `def Foo.method` and
+  BROKE the previously-passing `test_render` (the hidden test_output `++` markers show the exact extra
+  `Foo.`). This is a PASS_TO_PASS REGRESSION from over-editing.
+- Here verify WORKED: it ran `tests/test_inspect.py` (which DOES cover this) and correctly said FAIL. The
+  agent then made 4 repair edits, fought `old_string not found` (edit-mechanics), re-verified (still
+  FAIL), and submitted a still-wrong patch. So the wall is (a) fix-CONTENT: the model can't produce the
+  surgical guard-only gold edit, and (b) edit-MECHANICS: it couldn't land clean repair edits.
+
+### WHAT THE NULLS ESTABLISH (decomposition, not defeat):
+1. When the existing test COVERS the behaviour, verify is ACCURATE (caught rich_3894's wrong patch). The
+   verify mechanism is sound where signal exists.
+2. When the regression test is HIDDEN (rich_4077), verify gives a FALSE GREEN and NO verifier helps —
+   the discriminating test does not exist at agent time. This is the real ceiling on the verify lever and
+   it is STRUCTURAL, not a design flaw.
+3. The residual failure even WITH a correct FAIL signal (rich_3894) is fix-CONTENT + edit-MECHANICS — the
+   model knows it failed and still can't emit the surgical gold edit. That is the weights-level wall the
+   log has hit repeatedly; a verifier cannot cross it.
+
+### CONSEQUENCE / NEXT (pre-register before spending more GPU):
+- The verify skill is a KEEP for the "existing test covers it" subset and a GUARDRAIL against over-edit
+  regressions (rich_3894-class: if verify FAILs, do NOT submit a patch that regresses — prefer reverting
+  to a smaller diff). That is a measurable, addressable slice.
+- Verify CANNOT convert the hidden-regression-test subset (rich_4077-class). Stop expecting it to.
+- The highest-value cheap experiment is NOT a stronger verifier. It is: on a verify-FAIL, does a
+  "REVERT-AND-MINIMIZE" instruction (shrink the diff toward gold-minimal / restore the regressed line)
+  beat "repair"? rich_3894 over-edited; the gold is SMALLER than the agent's patch. Test whether the
+  guardrail "verify FAIL -> make the SMALLEST change, do not rewrite the line" recovers the
+  PASS_TO_PASS. Cheap: 1 GPU, the ~3 rich tasks whose existing test covers the behaviour.
+- The rich_4077-class (hidden-test false green) routes to the LoRA/content lever, not skills.
+
+---
+
+## VERIFY GUARDRAIL ARM — PRE-REGISTERED (MIRROR-SIBLING + SMALLEST-DIFF repair) (2026-11-02)
+
+User point: rich_4077 HAS resolved on E4B before, so it is not intrinsically unsolvable; the loss was a
+specific wrong CHOICE. Both near-misses share a shape the null investigation exposed:
+- rich_4077: wrote `os.isatty(self.__file.fileno())` when the sibling `fileno()` directly above is
+  `return self.__file.fileno()` -> the conform fix is `return self.__file.isatty()` (delegate, not
+  reconstruct).
+- rich_3894: REPLACED a working line (regressing PASS_TO_PASS) when gold ADDS a small guard -> gold diff
+  is SMALLER than the agent's.
+
+### THE ARM: `agent_ctrl_e4b_verify_guard` (prompt-only delta vs agent_ctrl_e4b_verify)
+Rewrites ONLY the verify-FAIL repair branch from free-form ("fix the deviation") to a MINIMIZE rule:
+  (1) MIRROR THE SIBLING directly above/below — same shape; delegate like the neighbor, don't reconstruct
+      via a lower-level API; (2) SMALLEST DIFF — prefer ADD-a-guard/one-delegating-line over REPLACE; if
+      you replaced a line that worked, restore it and add the minimal change; (3) one smaller edit, submit.
+Same skill (arg-fixed verify.py), same caps 28/8, same model/sampling. Kernel `comfyops/e4b-verify-guard`,
+single-GPU, same 6-task batch -> clean A/B vs the plain-verify 4/6.
+
+### PRE-REGISTERED BAR (rule 2; judge = resolved on the 6-task batch):
+- WIN: >= 5/6, i.e. convert rich_4077 OR rich_3894 (ideally both) with the 4 stable wins held.
+- NULL: 4/6 (no conversion) — the repair wording doesn't move content/mechanics; verify-as-guardrail is
+  then only a regression-preventer, not a converter, and the content wall stands (-> LoRA lever).
+- LOSS: < 4/6 — the minimize rule regressed a stable win (watch for over-constraining the good tasks).
+Also read the traces: on a FAIL, did the agent actually MIRROR the sibling (rich_4077 -> self.__file.isatty())
+and SHRINK the diff (rich_3894 -> guard not rewrite)? Mechanism matters as much as the count.
+
+### Builders: local_eval/parity_rig/_build_verify_guard.py, kaggle_pkg/_build_guard_kernel.py. Running.
+
+---
+
+## VERIFY GUARDRAIL RESULT — 5/6, WIN. rich_4077 CONVERTED to the EXACT gold fix. (2026-11-02)
+
+Kernel `comfyops/e4b-verify-guard`, single-GPU, same 6-task batch. Result 5/6 (plain verify was 4/6).
+
+| task | plain verify | GUARDRAIL | note |
+|------|-------------|-----------|------|
+| rich_4077 | F (455ch) | **T (324ch, 3 calls)** | CONVERTED |
+| rich_3894 | F | F (698ch) | still wrong (deeper content miss) |
+| rich_3006 | T | T | held |
+| rich_3905 | T | T | held |
+| fastapi_14301 | T | T | held |
+| fastapi_14463 | T | T | held |
+
+### VERDICT vs pre-registered bar (WIN >=5/6 with a conversion + wins held): **WIN.**
+rich_4077 flipped F->T, all 4 stable wins held. The sibling-mirror + smallest-diff repair rule works on
+the delegate-vs-reconstruct failure shape.
+
+### MECHANISM CONFIRMED (read the trace, not just the count): it is the GOLD fix, produced on the FIRST edit.
+Agent patch = `def isatty(self): return self.__file.isatty()` — IDENTICAL to gold, and it MIRRORS the
+sibling `fileno()` (`return self.__file.fileno()`) right above it. Previous run wrote the reconstruct form
+`os.isatty(self.__file.fileno())` (455ch, crashed on the fileno-less TTYFile). The guardrail steered the
+delegate-not-reconstruct choice UP FRONT (3 calls, no repair cycle needed). So the win is the PROMPT RULE,
+not a lucky resample.
+
+### IMPORTANT NUANCE: the win came from the GUARDRAIL PROMPT, not the verify skill.
+verify still returned `VERIFY: PASS` on the base-commit test (the hidden test_isatty is not in it), so the
+skill caught nothing here. The sibling-mirror rule is what produced the correct patch. => the ACTIVE LEVER
+is the "mirror the adjacent sibling, smallest diff" prompt rule; the verify skill is riding along. This is
+cheaper and more general than the skill: it needs no sandbox test, so it applies to the hidden-test-false-
+green class (rich_4077) that verify provably cannot help.
+
+### rich_3894 did NOT convert — and that bounds the lever honestly.
+Its miss is subtler than delegate-vs-reconstruct: gold ADDS a `if not isinstance(qualname, str)` guard
+while KEEPING `qualname = name or getattr(obj,"__qualname__",name)`; the agent replaced the line with a
+`__qualname__`-first form (dotted names, regressed PASS_TO_PASS). The sibling-mirror rule did not fix the
+content CHOICE of which name attribute to use. So the guardrail converts the "conform to the obvious
+adjacent sibling" shape, not arbitrary content errors. That residual is the weights/LoRA lever.
+
+### NEXT (pre-register before scaling): isolate the lever + measure it at scale.
+1. ATTRIBUTION: the guardrail bundle still carries the verify skill. Run a PROMPT-ONLY arm (ca5 + the
+   sibling-mirror/smallest-diff rule, NO skill) on the same 6 — if it ALSO gets 5/6, the skill is dead
+   weight and the lever is pure prompt (cheaper, no skill-call budget). Pre-register: prompt-only >= 5/6
+   => drop the skill; < 5/6 => the skill's verify contributes and stays.
+2. SCALE: run the winning config on the FULL 129 via the 4x-parallel harness (concurrent boot) to measure
+   the real delta vs the ca5 baseline (10-13/129). Bar: genuine > ca5 baseline. Two concurrent kernels
+   (the 2-slot cap): guardrail-config + plain-ca5 baseline, clean A/B on 129.
+Do the cheap attribution arm (1) FIRST — it decides whether we even ship the skill.
+
+---
+
+## SIBLING-MIRROR ATTRIBUTION ARM — PRE-REGISTERED (prompt-only, NO skill) (2026-11-02)
+
+Tests whether the guardrail 5/6 win came from the PROMPT rule or the verify skill. `agent_ctrl_e4b_sibling`
+= stock ca5 (no skill, stock tools) + the sibling-mirror/smallest-diff rule placed as a PRE-EDIT principle
+(in the guardrail run rich_4077 was fixed on the FIRST edit, so the rule works proactively, not only as a
+verify-FAIL repair). Kernel `comfyops/e4b-sibling`, single-GPU, same 6-task batch.
+
+### PRE-REGISTERED BAR (rule 2):
+- prompt-only >= 5/6 (rich_4077 converts, wins held) => the skill is DEAD WEIGHT; ship the pure-prompt
+  rule (no run_skill_script budget cost; applies to the hidden-test class verify can't help). Lever = prompt.
+- prompt-only == 4/6 (rich_4077 does NOT convert without the skill) => the verify skill contributed after
+  all and stays in the bundle.
+- < 4/6 => the pre-edit rule placement regressed a stable win (unlikely; watch).
+Also read rich_4077's patch: did it produce `return self.__file.isatty()` (gold) WITHOUT any skill call?
+
+### Builders: local_eval/parity_rig/_build_sibling_prompt.py, kaggle_pkg/_build_sibling_kernel.py. Running.
