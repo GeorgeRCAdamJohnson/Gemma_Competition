@@ -17405,3 +17405,178 @@ verify-FAIL repair). Kernel `comfyops/e4b-sibling`, single-GPU, same 6-task batc
 Also read rich_4077's patch: did it produce `return self.__file.isatty()` (gold) WITHOUT any skill call?
 
 ### Builders: local_eval/parity_rig/_build_sibling_prompt.py, kaggle_pkg/_build_sibling_kernel.py. Running.
+
+---
+
+## SIBLING-MIRROR ATTRIBUTION RESULT + the FASTAPI-vs-RICH question, grounded (2026-11-02)
+
+`comfyops/e4b-sibling` (prompt-only, NO skill, sibling-mirror rule as a PRE-EDIT principle): 4/6.
+
+| task | guardrail(+skill) | sibling(prompt-only) | note |
+|------|-------------------|----------------------|------|
+| rich_4077 | T 324ch | **T 324ch** | SAME gold fix, NO skill -> lever = PROMPT |
+| rich_3894 | F | F | still the __qualname__ content miss |
+| rich_3006 | T | T | held |
+| rich_3905 | T | T | held |
+| fastapi_14301 | T | T | held |
+| fastapi_14463 | T | **F (test_rc=2)** | regressed -> SEE CAUSE |
+
+### FINDING 1 (solid): the sibling-mirror PROMPT RULE is the rich_4077 lever; the verify SKILL is not.
+Prompt-only reproduced the exact gold fix (`return self.__file.isatty()`, 324ch, 4 calls) with no skill.
+=> ATTRIBUTION: ship the prompt rule, the skill is optional. Confirms the earlier read that verify PASS'd
+without catching anything; the win was always the prompt.
+
+### FINDING 2 (the fastapi_14463 regression) — CONFOUNDED, do NOT over-read as strategy.
+The patch contains a MALFORMED edit: `import copyfrom fastapi import routing` (the model mashed
+`import copy` into the existing import line) -> SyntaxError -> pytest collection ERROR (test_rc=2). The
+logic change (`additional_response.copy()` -> `copy.deepcopy(...)`) may be fine; the IMPORT insertion
+corrupted the file. This is the edit_file-malformation wall (documented repeatedly), NOT evidence that the
+Rich rule hurts FastAPI strategically. n=1, cause = mechanics. RETRACT any "sibling rule hurts fastapi"
+claim from this run.
+
+### THE REAL STATE OF "make the agent act differently on FastAPI vs Rich" (user's question):
+- REFUTED (prior, L10115 + A25 board 0.13): a ROUTING AGENT / classify-then-dispatch. FastAPI is NOT a
+  routing problem (7/12 fastapi already edit the exact gold file); its wall is COMMITMENT + CONTENT
+  SYNTHESIS, which the prompt channel + 8 LoRA levers have not cracked. A per-repo SUB-AGENT is dead.
+- NEWLY POSSIBLE (verified this session): the model SEES the repo name in line 1 of every task prompt
+  (`...for repository Textualize/rich` / `fastapi/fastapi`, agent_runner build_agent_prompt). So
+  REPO-CONDITIONAL TEXT inside system.md ("if rich: mirror the sibling / smallest diff; if fastapi:
+  <contract-synthesis guidance>") is a real, UNTESTED lever distinct from the refuted routing agent.
+- WHY it might matter: the sibling-mirror rule is a RICH-SHAPED lever (high-redundancy / plastic-surgery).
+  It just converted a rich task. Whether it is NEUTRAL or HARMFUL on fastapi (low-redundancy, no sibling
+  to mirror) is the open question — this run did NOT answer it (the one fastapi regression was a malformed
+  import, not a strategy mismatch).
+
+### PRE-REGISTERED NEXT (the actual FastAPI-vs-Rich experiment):
+Build a BALANCED hard cohort: ~6 hard RICH + ~6 hard FastAPI (not already-solved stable wins). Run:
+  arm A = plain ca5 (control)
+  arm B = ca5 + GLOBAL sibling-mirror rule
+  arm C = ca5 + REPO-CONDITIONAL rule (rich: sibling-mirror; fastapi: no sibling-mirror / contract-first)
+Bar: does B beat A on rich WITHOUT losing fastapi? If B loses fastapi and C recovers it, repo-conditional
+prompting is justified and becomes the shipping config. If B is neutral on fastapi, ship B globally (simpler)
+and the repo-conditional complexity is unnecessary. Use the 4x-parallel harness (concurrent boot) + 1-2
+session slots. This finally measures the user's question instead of inferring it from 2 already-solved
+fastapi tasks.
+
+### ALSO LOGGED (prompt-layer audit, user question "are we tuning the wrong prompt?"):
+The model reads TWO authored layers we DON'T fully control: our system.md (system role) AND the harness
+`build_agent_prompt` (user role: problem + budget + `## Instructions:` 0-5 + `## Code Intelligence Tools`
++ workspace tree). The harness block partly CONTRADICTS our system.md (its Instruction 2 "inspect
+conventions and test files BEFORE editing" vs our "EDIT EARLY, don't explore"; and it advertises
+search_similar_code as semantic search when the log proved it name-keyed). We author ONLY system.md; the
+agent.yaml `description:` field is unset (low impact for a flat agent). We cannot edit the harness block,
+only out-argue it -> sharp, ADDITIVE, non-conflicting system.md rules land (sibling-mirror did); vague or
+harness-contradicting ones get drowned. This is a lens for future prompt edits, not a bug we introduced.
+
+---
+
+## FASTAPI-vs-RICH 3-ARM EXPERIMENT — PRE-REGISTERED + RUNNING (2026-11-02)
+
+Kernel `comfyops/e4b-3arm-fastapi-vs-rich` (one kernel, 3 arms, 4x-parallel concurrent-boot harness).
+Tests the user's question — does the agent need DIFFERENT behaviour on FastAPI vs Rich — with a measured
+A/B/C instead of inference from 2 already-solved fastapi tasks.
+
+### ARMS (same 12-task cohort, same caps 28/8, same E4B model; only system.md differs):
+- A_control  = plain ca5 (sha 5663459cc1f4; ca5 content, line-ending-normalized from b08b32a2438d).
+- B_global   = ca5 + sibling-mirror rule applied to EVERY task (sha a21b475eedb8). This is the arm that
+  converted rich_4077 prompt-only AND showed a fastapi regression (confounded by a malformed import).
+- C_repocond = ca5 + REPO-CONDITIONAL rule (sha 2f69bd6d2e03): rich -> sibling-mirror/smallest-diff;
+  fastapi/requests/httpx -> do NOT mirror a sibling, match the EXACT contract (message/type/status/
+  variants), and put new imports on their OWN line (targets the import-splice bug that broke fastapi_14463).
+
+### COHORT (all gold-valid; balanced 6 rich + 6 fastapi; mix of near-miss / stable / budget-bound):
+rich: 4077 (sibling-converts), 3894 (content miss), 3518, 3882 (flaky), 3067 (flaky), 3944 (new-solve class)
+fastapi: 14301, 14463 (stable wins = regression guards), 14458 (budget-bound), 14873 (exact file/budget),
+         9555, 14349 (edit gold file)
+
+### PRE-REGISTERED READS (rule 2; judge = resolved per repo per arm):
+1. Does B beat A on RICH? (expect yes — sibling rule is the proven rich lever.)
+2. Does B LOSE FastAPI vs A? If B_fastapi < A_fastapi, the global rule hurts fastapi -> repo-conditional
+   is justified. If B_fastapi >= A_fastapi, the rule is fastapi-neutral -> ship B globally (simpler), and
+   the "different behaviour per repo" complexity is UNNECESSARY (answers the user's question = no).
+3. Does C recover fastapi while keeping B's rich gain? If C_rich ~= B_rich AND C_fastapi >= A_fastapi, C
+   is the shipping config and repo-conditional prompting is VALIDATED.
+HONEST CEILING (stated up front): fastapi's wall is content-synthesis (prior: 7/12 edit the exact gold
+file; failures are commitment+synthesis, not routing). So the realistic payoff of repo-conditional is
+"stop the rich rule HURTING fastapi", not "make fastapi win". n=6/repo, one E4B config -> directional,
+not a board reading.
+
+### Builders: local_eval/parity_rig/_build_repo_conditional.py, kaggle_pkg/_build_3arm_kernel.py.
+### Harness: concurrent-boot 4x tp=1 (the fixed parallel kernel). Running.
+
+---
+
+## FASTAPI-vs-RICH 3-ARM RESULT — the Rich rule HELPS rich and HURTS fastapi; repo-conditional FAILED (2026-11-02)
+
+Kernel `comfyops/e4b-3arm-fastapi-vs-rich-v2` (v1 ERROR'd on a NameError — serve cell used AGENT before
+my insert defined it; fixed by defining AGENT at cell-3 line 0; re-pushed under -v2 to clear a stuck 409).
+12-task balanced cohort, 4x-parallel.
+
+| arm | total | rich | fastapi | solved ids |
+|-----|-------|------|---------|-----------|
+| A control (ca5) | 4/12 | **0/6** | **4/6** | fa 14301,14463,14873,9555 |
+| B global sibling | **5/12** | **2/6** | **3/6** | fa 14301,14463,9555 ; rich 3518,4077 |
+| C repo-conditional | 4/12 | 1/6 | 3/6 | fa 14301,14463,9555 ; rich 3067 |
+
+### Q1 (B beats A on rich?): YES. 0/6 -> 2/6 (rich_4077 + rich_3518). Sibling-mirror is a real rich lever.
+### Q2 (B loses fastapi?): YES, and it is NOT noise. fastapi_14873: A resolved (501ch); B FAILED with a
+### 1770ch patch (3.5x larger). The sibling-mirror rule made the model OVER-CONFORM / BLOAT the fastapi
+### fix where gold wanted a surgical 501ch change. This is the measured FastAPI-vs-Rich tension: the
+### "mirror the adjacent sibling" instinct produces bloated wrong patches on low-redundancy fastapi.
+### Q3 (C recovers fastapi, keeps rich?): NO on both. C fastapi 3/6 (did NOT recover 14873: 0ch/18calls,
+### never committed — the conditional "contract-first, don't mirror" text caused analysis paralysis) AND
+### C rich dropped to 1/6 (lost B's two rich wins). C is the WORST arm, tied with control at 4/12.
+
+### VERDICT: the per-repo PROMPT-CONDITIONAL approach (C) is a NULL-to-NEGATIVE.
+The user's DIAGNOSIS is correct and now MEASURED: the same rule helps rich and hurts fastapi (14873:
+501ch win -> 1770ch loss). But the FIX attempted (repo-conditional text in system.md) FAILED: it did not
+recover fastapi AND it diluted the rich gain. This repeats the log's standing lesson — CONDITIONAL /
+longer prompt text DEGRADES; a single concrete ADDITIVE rule lands. B (one global rule) beat C (branching
+logic) decisively. The branching text made BOTH repos worse than B.
+
+### WHAT SHIPS / WHAT'S NEXT:
+- B (global sibling-mirror) is the best config measured: 5/12 total, +2 rich for -1 fastapi = net +1. But
+  the -1 fastapi is a REAL cost, so B is not a free win; it is a rich-weighted trade.
+- The honest decomposition: rich WANTS sibling-mirror, fastapi wants surgical/minimal + must NOT bloat.
+  The RIGHT expression of "different per repo" is NOT conditional prose (C proved that fails). Candidates:
+  (a) a SMALLEST-DIFF rule that is repo-AGNOSTIC (helps both: rich via sibling shape, fastapi via not
+      bloating 14873) — i.e. drop the "mirror the sibling" framing, keep ONLY "smallest diff / don't
+      enlarge / don't rewrite working lines", and test if that keeps the rich gain WITHOUT the fastapi
+      bloat. This is the real lever the 14873 forensic points to (501 vs 1770 chars).
+  (b) accept rich-weighting: ship B, eat the fastapi trade, since the board is scored on total.
+- Variance caveat (rule 9): n=6/repo, single draw. rich_4077 is trustworthy (4 consistent runs). But
+  rich_3518-vs-3067 churn and the exact fastapi count may carry 1-task noise. The 14873 501->1770 bloat is
+  a CONTENT effect (not a resolve coin-flip) so that specific finding is solid.
+
+### PRE-REGISTER NEXT: arm D = ca5 + "SMALLEST DIFF, never rewrite a working line, never enlarge a patch"
+### (repo-AGNOSTIC, drop the sibling-mirror framing). Same 12 cohort + A/B as reference. Bar: D rich >= B
+### rich (keep 4077) AND D fastapi >= A fastapi (recover 14873 by not bloating). If D gets both, it is the
+### clean lever and beats the repo-conditional complexity. Kaggle id e4b-3arm (v1, now free) or a new slug.
+
+---
+
+## E4B ca5 VARIANCE HARNESS — 3h, full-129 repeated on 8 servers (2 per L4) — RUNNING (2026-11-02)
+
+Kernel `comfyops/e4b-variance-129`. Purpose: finally MEASURE E4B run-to-run variance instead of inferring
+it (we've reasoned from n=1-2 draws all project; the 3-arm churn suggested ~1-task noise but unmeasured).
+
+### DESIGN (user direction: use all 4 L4s, more than 4 instances):
+- 8 tp=1 E4B servers = INSTANCES_PER_GPU=2 x 4 L4s. E4B QAT weights ~6.5GB (L13747), 23.7GB L4 fits 2 at
+  gpu_memory_utilization~0.42 (~7GB KV each). Concurrent boot (threads, per-server CUDA_VISIBLE_DEVICES
+  override, no shared-env race). Ports 8000-8007, 2 pinned per GPU.
+- TIME-BOXED: repeat the full 129 (8-way sharded) until 3h - 12min save-reserve. Each pass tagged run_N,
+  variance.json rewritten after every pass (kill-safe). At ~35s/task E4B and 8 servers, a full pass is
+  ~10-15 min wall -> expect ~10-16 passes in the window (vs the n=1-2 we had).
+- Config = ca5 (agent_ctrl_e4b, the banked E4B baseline), caps 28/8, NO compaction (matches prior E4B
+  Kaggle numbers for comparability). Best banked config, not a new arm — the point is variance, not a lever.
+
+### OUTPUT: variance.json -> per-pass resolved sets + summary: k_mean / k_sd / k_min / k_max, STABLE core
+### (solved every pass), FLAKY set (solved some), never-solved. This gives the real sigma to replace the
+### single-pair sigma=1 and the inferred sigma~2 the log has argued over (L16238, L16649).
+
+### WHY IT MATTERS: every arm comparison this session (verify 4/6, guard 5/6, sibling 4/6, 3-arm 4/5/4,
+### 12-task 0-2 rich) was single-draw. If sigma is ~1-2 tasks on 129, the small-batch deltas we've been
+### reading (e.g. B 5/12 vs A 4/12) may be inside noise. This run calibrates how much to trust them, and
+### gives the stable-core / flaky decomposition that tells us which tasks are real targets vs coin-flips.
+
+### Builder: kaggle_pkg/_build_variance_kernel.py. ~3h wall. Read variance.json summary when COMPLETE.
