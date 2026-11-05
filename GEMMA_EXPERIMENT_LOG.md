@@ -17580,3 +17580,283 @@ it (we've reasoned from n=1-2 draws all project; the 3-arm churn suggested ~1-ta
 ### gives the stable-core / flaky decomposition that tells us which tasks are real targets vs coin-flips.
 
 ### Builder: kaggle_pkg/_build_variance_kernel.py. ~3h wall. Read variance.json summary when COMPLETE.
+
+### VARIANCE HARNESS v1 FAILED (8-server boot) -> FIXED in v2 (2026-11-02)
+
+v1: all 8 servers exited `ServerStartupError: code 1` on boot. CAUSE: 2 vLLM instances booting
+SIMULTANEOUSLY on the same L4 each profile peak memory as if they OWN the card and each grab util*23.7GB
+-> collective over-commit -> OOM at init. util=0.45 was also too high for 2/GPU.
+
+FIX (v2): (1) UTIL lowered to ~0.42 for 2/GPU (20GB/instances / 23.7), 0.85 for 1/GPU. (2) STAGGERED
+ROUND boot: boot one instance per GPU (round 1, concurrent), wait healthy, THEN the second instance per
+GPU (round 2) — so the 2nd never races the 1st's memory profiler. (3) tolerant assert (>=NG): if round 2
+still OOMs on some GPUs, proceed with whatever booted (>=4 servers) so the 3h run still happens.
+LESSON: multiple vLLM instances per GPU must be booted SEQUENTIALLY (or with explicit memory caps), never
+concurrently — the memory profiler assumes sole ownership. Kernel v2 running.
+
+---
+
+## VARIANCE RUN (v3, 4 servers, 3h) — INTERIM READ, download incomplete (2026-11-03)
+
+Kernel `comfyops/e4b-variance-129` COMPLETE. variance.json NOT yet pulled (output has hundreds of files;
+`kaggle kernels output` crawls). Computed from the shard files that had landed: only run_1 complete,
+run_2 partial. NO sigma claim yet.
+
+run_1 (ca5 control, full 129): **11/129**. Solved: fastapi_14301, 14463, 14786, 9555, 9753, requests_6644,
+rich_2725, 3006, 3067, 3454, 3905. (requests_6644 is the known degenerate freebie -> 10 genuine.)
+Matches the corrected E4B inventory (10-13/129).
+
+### CORRECTION TO THE 3-ARM WRITE-UP (overclaimed):
+I wrote that fastapi_14873 losing under arm B (501ch win -> 1770ch loss) was "NOT noise". That was n=1 per
+arm and variance was unmeasured. In this full-129 control pass, 14873 is NOT solved by plain ca5. So the
+control itself solves 14873 inconsistently -> "sibling rule hurt fastapi" is NOT established. Same for
+rich_3067: control solved it here but 0/6 rich in the 3-arm A, so "C gained 3067" is likely noise too.
+The patch-SIZE difference (501 vs 1770ch) is real as an observation, the resolve flip is not yet evidence.
+The sibling-mirror rich_4077 conversion still stands (it recurs across guard, prompt-only, and B arms;
+ca5 control has not solved it in 3-arm A or this run_1).
+STATUS: wait for the full variance.json before reading any arm delta from today.
+
+---
+
+## PER-NODE VARIANCE KERNEL — what the user actually asked for (2026-11-03)
+
+User intent: 4 complete 129-task passes running AT THE SAME TIME, one per node (GPU), each node looping its
+own passes. The first variance kernel (`e4b-variance-129`) did NOT do that: it sharded ONE pass across the
+4 servers (4 threads, ~32 tasks each) and ran passes sequentially, so each pass waited on its slowest shard.
+I described that correctly but built it against the intent.
+
+New kernel `comfyops/e4b-variance-pernode` (builder `kaggle_pkg/_build_variance_pernode.py`): reuses the
+proven 1-server-per-GPU boot; each node loops full-129 passes against its own server (8 concurrent loops
+per node), no cross-node barrier. A node starts another pass only if remaining time > 1.15x its longest
+complete pass. After each pass the logs/traces/test_outputs dirs are deleted except for each node's first
+pass, and every task row (resolved, calls, patch size, duration, rc) is stored in variance.json, so
+variance.json alone supports the analysis (the first kernel's output was thousands of files and the CLI
+download crawled). Summary adds k_by_node to check for a node effect. 3h eval budget after boot, 10 min
+save reserve. Expect roughly 2 passes per node (~8 total) if a pass takes ~60-75 min at conc 8; that
+estimate is unmeasured. Old kernel `e4b-variance-129` untouched (its download still in progress).
+
+---
+
+## VARIANCE RESULT — ca5 E4B, 5 full-129 passes (sharded kernel e4b-variance-129 v3) (2026-11-03)
+
+k per pass: 11, 9, 12, 10, 12 (each ~2050s, i.e. ~34 min per pass with 4 servers cooperating).
+Mean 10.8, population sd 1.17 (sample sd ~1.30), range 9-12. n=5, so the sd itself is loose.
+requests_6644 is the known degenerate freebie, so genuine mean ~9.8.
+
+STABLE (5/5): fastapi_14301, 14463, 14786, requests_6644, rich_3006, 3454, 3905  (6 genuine)
+NEAR-STABLE: fastapi_9753 4/5, rich_3067 4/5
+FLAKY: fastapi_14077 2/5, 9425 2/5, 9555 2/5, 14794 1/5, 14851 1/5, 14873 1/5, rich_2725 1/5, 3882 1/5
+EVER SOLVED 17, NEVER 112. rich_4077 and rich_3518 were solved in 0 of 5 passes by plain ca5.
+
+### WHAT THIS DOES TO TODAY'S CLAIMS
+1. 3-arm "sibling rule hurts fastapi" is RETRACTED. Control's expected fastapi hits on that cohort are
+   ~2.6/6 (14301 1.0 + 14463 1.0 + 14873 0.2 + 9555 0.4 + 14458 0 + 14349 0). Arm A scored 4 (lucky),
+   B and C scored 3 (both ABOVE expectation). The 14873 flip is a 1-in-5 task flipping, not an arm effect.
+   The 501 vs 1770 char patch difference is a single-sample observation with no resolve effect behind it.
+2. Sibling-mirror on RICH looks real: rich_4077 and rich_3518 are 0/5 for plain ca5 but were solved under
+   the sibling rule (4077 in guard, prompt-only and B arms = 3 of 3 runs; 3518 in B). For 4077, 0/8 control
+   draws (5 here + 3-arm A + 2 earlier verify-plain runs) vs 3/3: Fisher exact p ~ 0.006. That is the one
+   result from today that clears the noise floor. 3518 is a single draw (suggestive only).
+3. Repo-conditional C solved rich_3067 (control 4/5): that is control-level, i.e. C gained nothing.
+4. Grader/cohort noise: a 12-task cohort with a flaky tail has sd well over 1 task. Differences of 1-2
+   tasks between arms are not readable. Only per-task shifts from ~0/5 to solved are.
+
+### RETRACTED ESTIMATE: I predicted ~8 passes for the per-node kernel (2 per node). GPU-time budget says
+otherwise: 4 nodes x 34 min = ~136 node-minutes per pass, so 3h x 4 nodes = ~720 node-min -> ~5 passes at
+equal efficiency, maybe 6-7 with conc 8. Per-node kernel (comfyops/e4b-variance-pernode) will probably
+yield 4-6 passes. It adds independence per node and a node-effect check, not more passes.
+
+---
+
+## PER-NODE VARIANCE (8 passes) + PER-NODE A/B (ca5 vs sibling-mirror, 4+4 passes) (2026-11-04)
+
+Source: logs pasted by the user. CORRECTION (2026-11-04): an earlier version of this entry said the A/B kernel
+was not built in this session. That was wrong. It is `kaggle_pkg/push_e4b_ab_pernode/` (kernel id
+comfyops/e4b-ab-pernode, written 2026-11-03 22:22, 27 min after the per-node variance kernel) and the user says
+it was created in this session. It has no builder script (the notebook was written directly), so it is untracked.
+Arms verified by decoding the embedded files: ARM_A_control = ca5 (system.md sha 5663459cc1f4); ARM_B_sibling =
+ca5 + the sibling-mirror rule (sha a21b475eedb8). A->B diff is exactly the 12-line MIRROR THE ADJACENT SIBLING
+section; sampling, caps (28/8/120), model and agent.yaml are identical. Nodes 0,1 run A, nodes 2,3 run B.
+
+### A. e4b-variance-pernode (mine): 8 complete passes, 2 per node, 52-65 min each
+k per pass [12,10,9,10,11,11,12,15], mean 11.25, sample sd ~1.8. By node: n0 [12,11], n1 [10,11],
+n2 [9,12], n3 [10,15]. No clear node effect at n=2 per node (node 3 holds the 15 outlier).
+Stable 5/5... 5 of 8: fastapi_14301, 14463, 14786, requests_6644, rich_3905. rich_3454 and rich_3006 7/8.
+My earlier estimate of "4-6 passes" in the PER-NODE VARIANCE KERNEL entry was wrong: 8 fit (the 1.15x rule
+let every node start a second pass; passes took ~52-65 min, not ~120).
+
+### B. POOLED CONTROL (plain ca5), 17 complete full-129 passes
+sharded 5 [11,9,12,10,12] + per-node 8 + A/B-control 4 [10,11,10,9]: mean 10.82, sample sd 1.51, range 9-15.
+Use sd ~1.5 for ONE pass. A mean of n passes has se ~1.5/sqrt(n).
+
+### C. A/B: sibling-mirror vs control, same kernel, 4 passes each
+control [10,11,10,9] mean 10.0 | sibling [12,13,12,11] mean 12.0 (+2.0).
+- vs the in-kernel control alone: t ~ 3.5, but sd from 4 passes is unreliable.
+- vs the POOLED 17-pass control (mean 10.82, sd 1.51): +1.18, se 0.84, z 1.40, one-sided p ~0.08. The TOTAL
+  gain is suggestive, not established.
+- rich_4077: control 0/17 (5 sharded + 8 per-node + 4 A/B), sibling 3/4 -> Fisher one-sided p = 0.003.
+  Plus 3 earlier sibling-family wins (guard, prompt-only, 3-arm B). ESTABLISHED.
+- Decomposition per pass (hit counts / 4): FASTAPI control 6.00 vs sibling 6.25 (neutral); RICH control 3.00
+  vs sibling 4.75 (+1.75; ~+0.75 of it from rich_4077, the rest from 3067 3/4 vs 1/4 and 3006/3454/3905 4/4
+  vs 3/4). requests_6644 is the 1/pass freebie in both. 6.00+3.00+1 = 10 and 6.25+4.75+1 = 12 reconcile.
+- "Sibling rule hurts fastapi" is NOT supported at full-129 scale (confirms the 3-arm retraction). Neutral.
+
+### CAVEATS
+- Control sat on nodes 0,1 and sibling on 2,3. Pernode-variance nodes 2,3 averaged 11.5 vs 11.0 on 0,1, so a
+  node effect is not visible, but n is small and node and arm are confounded in the A/B.
+- The A/B reports sd 0.71 (population sd); sample sd is 0.82.
+- Only rich_4077 and perhaps rich_3067 are per-task signals; the rest of the rich gain is within noise.
+
+### SO WHAT
+The sibling-mirror rule: fastapi-neutral, adds roughly +1.2 to +2 tasks per 129 on E4B (dominated by
+rich_4077), p~0.08 on the total. Reasonable to adopt as the E4B baseline; to read a +1 effect with confidence
+we need ~8+ passes per arm. Next: put sibling-mirror in the shipping E4B config and look for the next
+rich_4077-shaped task (flaky tasks at 1-3/8: rich_3894, 3067, 3882; fastapi_9425, 14077).
+
+---
+
+## 31B PAIRED A/B PUSHED: ca5 vs ca5 + MIRROR THE ADJACENT SIBLING, 85 live tasks, ~8h wall (2026-11-04)
+
+Kernel `comfyops/ca5-31b-sibling-ab` (builder `kaggle_pkg/_build_31b_sibling_ab.py`). User: 8 wall-clock hours
+of Kaggle GPU; do not run unsolvable tasks.
+- Forks `push_129_off31` (the kernel behind ca5-31B 35/129: one tp=4 31B server, 28/8/120, thinking 4096).
+  ARM A = canonical ca5, system.md sha b08b32a2438d (LF, 7833 B). ARM B = A + the 12-line sibling section
+  inserted before "## Strategy: conform to the pattern" (sha a21b475eedb8, +1091 B; builder asserts B minus the
+  rule == A byte for byte).
+- Both arms run CONCURRENTLY on the same server (2 loops each = 4 total, the reference run's regime), in paired
+  10-task chunks over the same ids. A stop mid-round leaves balanced pairs.
+- Task set = 85 LIVE: 48 rich + 37 fastapi. Excluded: 30 dead (tests cannot be collected in the Kaggle image:
+  inline_snapshot 21, dirty_equals 7, scripts.prepare_release 1, from the E4B run_1 test_outputs, + fastapi_14266
+  which had no log but is in the gold-test inline_snapshot scan) and all 14 requests/httpx (src-layout: the
+  subprocess sandbox skips the editable install, so src/ edits cannot register here). The excluded list is in
+  kaggle_pkg/live_dead_129.json and live_ids_31b_ab.json. fastapi_13713 had no log either and was KEPT.
+  We did NOT exclude tasks that merely have never been solved: that would remove exactly the tasks where a new
+  gain could appear.
+- Round 1 = all 85 in a fixed shuffled order (seed 7); later rounds = rich only. A chunk starts only if
+  remaining time > 1.25x the longest chunk so far; the eval budget is 7.2h after boot, 12 min save reserve.
+- Output: ab31.json (every run row; the summary has paired counts, A-only/B-only tasks, by-repo, rich_4077) and
+  results.tar.gz (forensics, so the download is two files; avoids the thousands-of-files crawl and the 429s).
+- EXPECTATIONS (stated before the result): 31B throughput was ~30 tasks/h (129 tasks, 4h18m), so one paired
+  round of 85 tasks x 2 arms ~5.7h, leaving ~1.5h for a partial rich round. 31B already solves rich_4077 under
+  earlier configs, so the E4B headline may not transfer. Two control draws on 129 (34, 35) are the only 31B noise
+  data; with ~1 paired pass this test can show harm or large per-task shifts, NOT a +1-2 task total.
+  Bar: B-only vs A-only discordant tasks; B total >= A total - 2 on the paired set = no evidence of harm.
+
+### CONFOUND FOUND IN EVERY E4B A/B TODAY (line endings), found while hashing the 31B arms
+The E4B control prompt `agent_ctrl_e4b/prompts/system.md` (sha 5663459cc1f4, 7889 B) has 56 CRLF line endings.
+Canonical ca5 (sha b08b32a2438d, 7833 B, what the board pack and the Kaggle E4B baseline kernels used) is LF.
+My builders for the sibling, guard and repo-conditional arms read the file in text mode and wrote it back, which
+normalised everything to LF (sibling a21b475eedb8: 0 CRLF; guard, repocond: 0 CRLF). Verified: sibling minus the
+rule equals the control after line-ending normalisation. So in the E4B 3-arm run, the E4B per-node A/B, and all
+17 pooled "control" passes, treatment = LF + rule while control = CRLF. The earlier statement that the A->B
+diff was "exactly the rule" was based on difflib over splitlines(), which hides line endings.
+What it does and does not undermine:
+- rich_4077 on LF canonical ca5: the two Kaggle E4B baseline runs (out_e4b, out_e4b_r2) did not solve it (0/2),
+  so LF alone is not an obvious explanation, but n=2 does not rule it out. The Fisher p=0.003 (0/17 vs 3/4)
+  compares CRLF control to LF treatment and is therefore NOT a clean estimate of the rule's effect.
+- The sd/variance numbers (17 CRLF-control passes) describe the CRLF variant of ca5, not canonical ca5.
+- The 31B kernel above is clean: both arms LF, only the rule differs.
+TODO (cheap): E4B per-node A/B with an LF control (canonical ca5) vs sibling, nodes swapped across arms.
+
+---
+
+## 31B PAIRED A/B RESULT — sibling-mirror is NEUTRAL on 31B (2026-11-04)
+
+`comfyops/ca5-31b-sibling-ab` COMPLETE, 6.34h eval, 2 rounds, 125 paired runs (85 live round 1 + 40 rich
+round 2). Both arms LF, identical except the 12-line rule (clean A/B, no line-ending confound).
+
+| | A control | B sibling |
+|---|---|---|
+| total solved | 47 | 45 |
+| rich (n=88 runs) | 28 | 28 |
+| fastapi (n=37 runs) | 19 | 17 |
+| both-solved | 42 | |
+
+Discordant (all a paired test can read): A-only 5 (fastapi_14419, 14616, 14851; rich_3105, 3506),
+B-only 3 (fastapi_14372; rich_3777, 3480). 5 vs 3 on 8 discordant pairs -> McNemar p ~ 0.7. NOISE.
+rich_4077 solved under BOTH arms (A True, B True).
+
+### VERDICT: on 31B the sibling-mirror rule is INERT. Neutral on total, neutral per repo, does not lose
+rich_4077. Do NOT ship it on the 31B track; also no harm.
+
+### WHY (and what it says about the E4B result):
+- The rule was built from rich_4077's E4B failure (reconstruct os.isatty(fileno()) instead of delegating
+  self.__file.isatty()). The 31B does the delegate fix UNAIDED (solves 4077 in both arms), so the rule has
+  nothing to add. The E4B "win" was supplying a capability the weak model lacked.
+- This is a clean 31B read (both arms LF, rule-only diff), which also means the sibling rule is a
+  WEAK-MODEL CRUTCH, not a general lever. Combined with the E4B CRLF-vs-LF confound (L-entry today), the
+  evidence that the rule helps even E4B is now weaker: the clean test on the stronger model shows zero effect.
+- 31B solve rate on the 85 live tasks: control 34/85 round 1; on the 125-run paired set 47/125 -> ~0.38 of
+  live-task runs, consistent with the 35/129 full-pool (which includes dead tasks in the denominator).
+
+### CONSEQUENCE FOR NEXT WEEK (31B focus): the prompt-rule lever is confirmed tapped out on 31B (this joins
+the long line of nulled 31B prompt arms: ddv, delit, A21/A22, repo-conditional). The 77 content failures
+remain the wall. The remaining untried 31B levers are NOT prompt text: (a) the content-correctness LoRA
+(31B QLoRA trains free on 4xL4, host-confirmed adapters load; target = the WRONG-FIX content class, q/v
+r=8-16, 1 epoch); (b) a budget/verify change that is structural not prose. Park sibling-mirror as E4B-only
+(and even there, re-test with an LF control before trusting it). Decision for next week is the user's.
+
+---
+
+## LoRA PATH CLOSED — data-ceiling probe (free, laptop, 2026-11-04)
+
+Probe `kaggle_pkg/_lora_ceiling_probe.py` on the clean 31B control arm (ab31.json) + gold patches.
+rich control (48 tasks): solved 15, content-fail (patch submitted, tests failed) 27, no-patch 6.
+Of the 27 content-fails, gold-shape classifier: 17 IDIOSYNCRATIC_LARGE (multi-hunk/file), 3 idio-other,
+6 "LEARNABLE_PATTERN" + 1 maybe. Strict ceiling 6, optimistic 7 — below the >=10 "real target" bar.
+
+### BUT the 6 "learnable" are an ILLUSION (the kill, examined not just counted):
+Read their statements + gold content: rich_3469 "fix superfluous space" -> `if new_line and node_type !=
+"inline"`; rich_3944 "fix fonts" -> `return 1`; rich_4079 "Inline table code" -> guard an append;
+rich_3063 "escaping trailing backslash"; rich_3130 inline-style table. The gold diffs are SMALL and
+pattern-ish in hindsight, but their CONTENT is per-bug SEMANTIC reasoning with NO transferable shape and
+NO sibling in-file that dictates the specific fix. Also several (3469, 4079, 4076) are documented
+LOCALIZATION TRAPS, which a content-LoRA does not address. So a content adapter faces a dead dilemma:
+train on these exact golds = memorize public answers that do not transfer to the private set (overfit
+trap, named repeatedly); train on a "general pattern" = there is none (`return 1` for fonts and
+`node_type != "inline"` for spacing share nothing learnable).
+
+### VERDICT: LoRA path CLOSED. Converges with (a) the field — a motivated field is stuck at 0.24 and the
+LoRA is the obvious move nobody has landed; (b) our 4 prior null adapters; (c) the 31B A/B showing the
+model already does PATTERN fixes and the residual is SEMANTIC content on hard unseen tasks, which a small
+q/v adapter on ~6 examples cannot manufacture. No Colab train. The "marginal 6" is a small-gold-diff
+artifact, not a learnable-content target. This is the honest close, grounded, not a doom spiral.
+
+---
+
+## THREE-OPTION PRESSURE TEST + E4B DEFINITION-FINDER lever (2026-11-04)
+
+User rejects accepting 0.20; notes E4B has room (board top 0.10 = 6/58; we are ~0.08-0.10). Pressure-tested
+the 3 candidate levers:
+
+- OPTION 1 (graph tools, "teams query them wrong"): DEAD. The ci-tools-probe (L14385) proved
+  search_similar_code/get_code_neighbors/get_code_subgraph are backed by non-existent Google-internal
+  /cns/ sstables; they raise TypeError, no graph data ships. Non-functional for everyone. BUT its real
+  residual = the definition-vs-reference localization lever (below).
+- OPTION 2 (structural verify/budget): mostly exhausted (budget raise null, verify false-PASS, gate null,
+  compaction null). The one structural idea the log named for the def-lever — wrap edit_file to refuse a
+  reference-site path — is NOT BUILDABLE: tools come from a fixed pre-approved ToolRegistry (context.py);
+  the declarative submission selects from it, cannot redefine/wrap edit_file. Harness-enforcement route closed.
+- OPTION 3 (accept 0.20 / paper): defensible but rejected by user. E4B room is real and specific.
+
+### DEFINITION-FINDER lever — rebuilt correctly, NOT the prior null:
+The prior def-arm (agent_ctrl_e4b_def) was a PROMPT rule (`grep -rn 'def <symbol>'`), ran on its 7-task
+cohort, got 2/7, zero conversions — because E4B follows the rule ~25% of the time AND fixed-localization
+tasks then failed on content. The log's stated fix was ENFORCEMENT not prose. Tool-wrap enforcement is
+impossible (fixed registry), so the viable form is a SKILL that does definition-finding DETERMINISTICALLY:
+one `run_skill_script` call greps `def/class <symbol>` across the repo and returns the defining file, so
+localization no longer depends on the model remembering-and-grepping-right.
+
+### CEILING MEASURED (kaggle_pkg, gold-shape of the 7 targets): 4 LOC-ONLY, 3 content-hard.
+LOC-ONLY (fix is small+mechanical once in the right file -> the skill can convert):
+  rich_4077 (def isatty: return self.__file.isatty()), rich_3067 (one URL-regex line),
+  rich_3480 (text._spans.copy x2), fastapi_14492 (one string "identifier": "Apache-2.0").
+CONTENT-HARD (right file won't be enough): fastapi_14372, 14458, 9555 (dataclasses.replace / isclass guard
+  / 13-line cached_property). So the lever's realistic ceiling is ~4 E4B conversions, named, not 7.
+
+### WHY THIS IS WORTH A BUILD (vs everything closed): 4 new E4B solves is large on a 6/58-top board; the
+4 tasks fail for ONE measured reason (grep hits a reference, never opens the definition); it is a SKILL
+(deterministic, removes the 25%-compliance gap), not a prompt (nulled) / LoRA (closed) / graph tool (dead)
+/ tool-wrap (impossible). Free to gate on E4B. HONEST CEILING: 4, and content-hard tasks are out of reach;
+if the deterministic finder still converts 0, localization was not the true wall and the E4B prompt path
+is done too. Building the definition-finder skill next.

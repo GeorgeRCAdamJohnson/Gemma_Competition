@@ -26,7 +26,10 @@ K = Path(__file__).resolve().parent
 SRC = K / "push_e4b_verify_par"      # concurrent-boot serve machinery + embed
 DST = K / "push_e4b_variance"
 BUNDLE = K.parent / "local_eval" / "parity_rig" / "agent_ctrl_e4b"   # ca5 control = best banked E4B
-INSTANCES_PER_GPU = 2
+INSTANCES_PER_GPU = 1              # PROVEN: 1/GPU (4 servers, util 0.85) boots clean every prior run.
+                                   # 2/GPU OOM'd twice (vLLM memory profiler assumes sole card ownership
+                                   # even staggered). Not worth more 3h-window risk; 4 servers gives
+                                   # plenty of passes. Revisit density with explicit --kv-cache caps later.
 BUDGET_SECONDS = 3 * 3600          # 3 hours total
 SAVE_RESERVE_SECONDS = 12 * 60     # stop launching new passes with 12 min left
 
@@ -85,9 +88,12 @@ adapters = discover_adapters(str(AGENT), adapter_extensions=ALLOWED_ADAPTER_EXTE
 INSTANCES_PER_GPU = __IPG__
 NG = torch.cuda.device_count() or 1
 N_SERVERS = NG * INSTANCES_PER_GPU
-# weights ~6.5GB; 2 per 23.7GB L4 -> util ~0.42 leaves ~7GB/instance for KV
-UTIL = round(min(0.45, (22.0/INSTANCES_PER_GPU)/23.7), 3)
-print(f"booting {N_SERVERS} servers ({INSTANCES_PER_GPU}/GPU x {NG} GPUs), util={UTIL}", flush=True)
+# vLLM profiles peak memory assuming it owns the card. Two instances booting SIMULTANEOUSLY on the same
+# GPU each grab util*23.7 AND profile as if alone -> collective over-commit -> OOM exit code 1 (observed).
+# FIX: (1) lower util so 2 genuinely fit with profiling headroom: 6.5GB weights + KV + profile margin;
+#      (2) boot ROUND-BY-ROUND: all GPU-0..3 first instances concurrently, wait healthy, THEN the seconds.
+UTIL = round(min(0.42, (20.0/INSTANCES_PER_GPU)/23.7), 3) if INSTANCES_PER_GPU > 1 else 0.85
+print(f"booting {N_SERVERS} servers ({INSTANCES_PER_GPU}/GPU x {NG} GPUs), util={UTIL}, staggered by round", flush=True)
 
 def _make(gpu, port):
     cfg = VllmConfig(model=str(MODEL_PATH), port=port, host='127.0.0.1',
@@ -103,7 +109,7 @@ def _make(gpu, port):
     s.build_env = _pin
     return s
 
-SERVERS = [None]*N_SERVERS; _errs=[None]*N_SERVERS
+SERVERS = {}; _errs = {}
 def _boot(idx):
     gpu = idx % NG; port = 8000+idx
     for att in range(1,4):
@@ -113,13 +119,20 @@ def _boot(idx):
             print(f"  srv{idx} up {s.base_url}", flush=True); return
         except Exception as e:
             _errs[idx]=e; print(f"  srv{idx} att{att} FAIL {type(e).__name__}: {str(e)[:200]}", flush=True)
-ths=[_thr.Thread(target=_boot,args=(i,)) for i in range(N_SERVERS)]
+
+# ROUND r = server indices [r*NG, r*NG+NG): one per GPU, booted concurrently; rounds run SEQUENTIALLY so
+# the second instance on a GPU never races the first's memory profiling.
 _bt=_time.time()
-for t in ths: t.start()
-for t in ths: t.join()
-print(f"boots joined in {_time.time()-_bt:.0f}s", flush=True)
-SERVERS=[s for s in SERVERS if s is not None]
-assert len(SERVERS)>=NG, f"too few servers up: {len(SERVERS)}/{N_SERVERS}; errs={[str(e)[:80] for e in _errs if e]}"
+for r in range(INSTANCES_PER_GPU):
+    idxs = [r*NG + g for g in range(NG)]
+    print(f"--- boot round {r+1}/{INSTANCES_PER_GPU}: servers {idxs} ---", flush=True)
+    ths=[_thr.Thread(target=_boot,args=(i,)) for i in idxs]
+    for t in ths: t.start()
+    for t in ths: t.join()
+    print(f"  round {r+1} done, {len(SERVERS)} servers up so far ({_time.time()-_bt:.0f}s)", flush=True)
+print(f"all boot rounds joined in {_time.time()-_bt:.0f}s", flush=True)
+SERVERS=[SERVERS[i] for i in sorted(SERVERS)]
+assert len(SERVERS)>=NG, f"too few servers up: {len(SERVERS)}/{N_SERVERS}; errs={[str(e)[:80] for e in _errs.values() if e]}"
 BASE_URLS=[s.base_url for s in SERVERS]
 print("live servers:", len(BASE_URLS), BASE_URLS, flush=True)
 # smoke one
