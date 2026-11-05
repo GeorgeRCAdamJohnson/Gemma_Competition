@@ -17860,3 +17860,65 @@ CONTENT-HARD (right file won't be enough): fastapi_14372, 14458, 9555 (dataclass
 / tool-wrap (impossible). Free to gate on E4B. HONEST CEILING: 4, and content-hard tasks are out of reach;
 if the deterministic finder still converts 0, localization was not the true wall and the E4B prompt path
 is done too. Building the definition-finder skill next.
+
+---
+
+## CROSS-MODEL DELTA (E4B vs 31B) + local-E4B feasibility (2026-11-04, free, no GPU)
+
+### Delta from local per-task data (E4B: 17 variance+3arm passes; 31B: the A/B, 85 live tasks, ~1.5 passes):
+- E4B ever-solved 19; 31B ever-solved 36 (on the 85 live).
+- **31B-only (18): fastapi_11194, 13537, 14372, 14419, 14458, 14492, 15589, 5077, 5624, 14616; rich_2943,
+  3043, 3105, 3480, 3506, 3718, 3777, 3894.**
+- **E4B-only: 0** (the lone exception requests_6644 = degenerate freebie). E4B's solved set is ~a SUBSET of
+  31B's. => NO small-model specialty to route to; the "route by model" idea has no E4B-win tasks to exploit.
+- CAVEAT (sampling, rule 9): unequal data (17 E4B passes vs ~1.5 31B). "E4B-only = 0" is partly artifact;
+  more 31B passes would likely keep it 0, more E4B passes might surface a few flaky E4B-only tasks. Strict
+  dominance is suggested, not proven.
+
+### ACTIONABLE INTERSECTION: 4 of the deffind targets are in the 31B-only set — fastapi_14372, 14458, 14492,
+rich_3480. 31B PROVES they are solvable; E4B fails them; 14492 + 3480 are LOC-only. So the definition-finder
+is aimed at tasks that are confirmed-solvable-by-a-bigger-model and currently E4B-missed — the strongest
+possible target class for a localization fix. Strengthens the deffind bet.
+
+### LOCAL E4B ON THIS LAPTOP: NOT VIABLE. GPU = RTX 4050 Laptop, 6 GB total / ~4.5 GB free. E4B QAT weights
+~6.5 GB -> does not fit in VRAM before KV/activations. Options: (1) CPU/partial offload = runs but
+few tok/s, useless for agent loops; (2) Q4 GGUF ~3.5-4GB might fit tiny-context BUT log L11488/L11514 already
+found GGUF E4B FAILS agent parity (does not reproduce Kaggle behavior) -> untrustworthy for ranking; (3) the
+16GB 5070 Ti box (LoRA machine) fits E4B if available. VERDICT: do not chase local E4B on the 4050; GPU-bound
+E4B work stays on Kaggle. Free local iteration = cross-model/data probes (like this one) + CPU analyses.
+NOTE (12B): no local 12B full-pool solved set on disk (pulls are notebooks only); the 12B-vs-others delta
+needs a 12B run pulled or re-run — deferred, lower value than the deffind gate.
+
+---
+
+## LOCAL E4B RIG ON THE 6GB LAPTOP (4050) — SETUP IN PROGRESS (2026-11-04)
+
+User wanted to try E4B locally despite the 6GB card. Reconciled the memory facts (user was right to doubt
+"11GB"): E4B QAT GGUF = 5.15 GB on disk (gemma-4-E4B_q4_0-it.gguf); the "11.5GB" was the w4a16-ct HF repo
+DOWNLOAD size (vLLM format, needs the bigger card); measured RESIDENT on the 16GB box was 7.1 GB (weights +
+generous KV). On this 6GB/4.6-free 4050, the w4a16+vLLM stack does NOT fit, but the Q4_0 GGUF via llama-server
+plausibly does with a small KV cache.
+
+### Source decision (user asked "why not Kaggle?"): Kaggle hosts the EXACT scorer checkpoint
+(google/gemma-4 -> gemma-4-e4b-it-qat-w4a16-ct) but it is vLLM format (won't fit here); Kaggle's GGUF
+variants are third-party re-quants (no parity advantage). The official Google QAT GGUF on HF
+(google/gemma-4-E4B-it-qat-q4_0-gguf) is the one the 10-17 parity study already validated as
+behavior-parity-OK, and the only laptop-fitting source with trustworthy provenance. So HF, for FIT, not preference.
+
+### Pieces: llama-server present (C:\Users\biges\.docker\bin\inference\llama-server.exe, build ac4cdde);
+git present; run_local.py AUTO-CLONES the task repo (REPO_URLS) and resets to base_commit, so no manual repo
+setup. Only the model was missing. Wrote local_eval/serve_e4b_laptop.ps1 (port 8081, --jinja, ctx 16384 to
+keep the 14336 compaction threshold meaningful, -ngl 28 start, --parallel 1). run_local.py reads n_ctx from
+/v1/models and applies the real compaction, so behavior parity holds; it talks to 127.0.0.1:8081.
+
+### DOWNLOAD GOTCHA (reusable): `hf download` of this repo STALLED at 0 bytes via the Xet CDN backend
+(saw `xet_get` in the traceback; HF main site returned 200, DNS fine, so it was Xet-specific, not general
+connectivity). FIX: `HF_HUB_DISABLE_XET=1` -> classic HTTP path, downloads at ~1.7 MB/s (~45 min for 5.15GB).
+Standing note: on this network, disable Xet for HF downloads.
+
+### PURPOSE (honest, from the parity study): this rig is for MECHANISM-DEBUG of the find-def skill — does the
+agent call find-def, does it return the right definition file, does the agent then edit THERE (the rich_4077
+call-site-vs-definition failure). Resolve COUNTS are score-noisy vs Kaggle (mean ~1.4-1.8 vs the single Kaggle
+draw), so BEHAVIOR is trustworthy, absolute solves are not — confirm resolves on Kaggle. NEXT once the model
+lands: launch serve_e4b_laptop.ps1, confirm it loads in 6GB, then gate_run.py the agent_ctrl_e4b_deffind
+bundle on rich_4077 and watch the find-def call fire.
