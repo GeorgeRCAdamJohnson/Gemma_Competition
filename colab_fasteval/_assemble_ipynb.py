@@ -24,7 +24,7 @@ setup = [
     "# Colab Secret (key icon, left sidebar) named 'Kaggle_token', notebook access ON. The secret may hold\n",
     "# EITHER the full kaggle.json ({\"username\":...,\"key\":...}) OR just the API key string; both handled.\n",
     "import os, subprocess, json\n",
-    "SECRET_NAMES = ['Kaggle_token', 'KAGGLE_JSON', 'kaggle_json', 'KAGGLE_TOKEN']\n",
+    "SECRET_NAMES = ['kagKaggle_token', 'Kaggle_token', 'KAGGLE_JSON', 'kaggle_json', 'KAGGLE_TOKEN']\n",
     "if not os.path.exists('/content/kaggle.json'):\n",
     "    wrote = False\n",
     "    try:\n",
