@@ -17952,3 +17952,46 @@ Our post told him the whole 129 - fastapi included - is landable at ~27-30%, whe
 Uncapped 35/129 vs board ~10.6/58: about 5 board tasks are lost to the 28-call / 8-min cap. Solves-per-call
 under the grader cap has never been targeted on the 31B. Next: measure the capped 31B 129-rate and profile
 where the 16 late (>28-call) solves spend their calls.
+
+---
+
+## CAP SIMULATION ON THE UNCAPPED v7 31B RUN: board caps explain the whole pool->board gap (2026-10-09 session)
+
+Source: `comfyops/ca5-31b-full129-eval` output, re-pulled to `Outputs/v7_31b_full129/` (129 agent logs, 112
+test_outputs). Script `Outputs/v7_31b_full129/_cap_sim.py`. Verdict rule = L13967 recovery rule
+(>=1 passed, 0 failed/error/skipped) -> **35/129, matches the logged number exactly.** Call counting
+calibrated against the harness's own `tool_calls_used` (get_status excluded from budget: 104/112 samples).
+Confirmed uncapped: get_status reports `max_time_minutes: 60.0`. Prompt text still said "~28 calls / 8 min".
+
+Each solve's commit point = call index + elapsed seconds of its final submit_patch (or last edit if never
+submitted). A solve survives a cap (C calls, M min) if commit <= both.
+
+| calls \ min | 8 | 10 | 12 | 15 | 20 |
+|---|---|---|---|---|---|
+| **28 (shipped)** | **24** | 27 | 28 | 28 | 29 |
+| 32 | 25 | 28 | 29 | 29 | 31 |
+| 36 | 26 | 29 | 30 | 30 | 32 |
+| **40** | 27 | 30 | **31** | 31 | 34 |
+| **50** | 28 | 31 | 32 | 32 | **35** |
+
+### Calibration check (the important part)
+At the shipped 28/8, **24/129 = 18.6% -> predicts 10.8/58 = 0.186. Observed board mean of the identical pack
+= 10.6/58.** The capped 129-rate maps to the board; the uncapped one (0.27) did not. The 5-task gap is the cap.
+
+### Where the lost solves are
+- 11 of 35 solves land after call 28 or after 8 min. Time binds more than calls at 8 min (28 calls/10 min
+  already gives 27).
+- Late-by-time: rich_3521 (1042s, 14 calls), rich_3480 (902s), rich_3063 (660s), fastapi_14873/14419/15589
+  (550-600s). Late-by-calls: fastapi_11194 (32), 14372 (34), 14616 (38), 14851 (40), rich_4070 (50).
+
+### Caveats
+- v7 ran CONC=4 on one tp=4 server; elapsed seconds include contention. Scorer concurrency unknown.
+- A real cap changes get_status output (remaining budget), which the model reads. Prompt text identical.
+- Scorer compute ceiling: ref 57276407 (100/60/500) threw. Sum of min(task_end, M) over 129: 12.3h at M=8
+  (ships fine today), 13.8h at M=12 (+12%), 14.5h at M=20 (+18%). Relative cost is modest; absolute ceiling
+  unknown.
+
+### Recommendation
+Same bytes as the board pack, change ONLY eval_config.yaml (keep system.md unchanged - the simulation is
+valid precisely because the prompt said 28/8 in v7). Candidates: **40/12 -> 31/129 ~ 0.24**, **50/20 -> 35/129
+~ 0.27**. 40/12 is the lower-risk first submission.
