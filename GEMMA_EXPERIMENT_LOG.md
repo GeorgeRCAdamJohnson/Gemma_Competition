@@ -17922,3 +17922,33 @@ call-site-vs-definition failure). Resolve COUNTS are score-noisy vs Kaggle (mean
 draw), so BEHAVIOR is trustworthy, absolute solves are not — confirm resolves on Kaggle. NEXT once the model
 lands: launch serve_e4b_laptop.ps1, confirm it loads in 6GB, then gate_run.py the agent_ctrl_e4b_deffind
 bundle on rich_4077 and watch the find-def call fire.
+
+---
+
+## CORRECTION: the "30% across the whole 129" quote was OURS, not Yurnero's (2026-10-09 session)
+
+User confirmed: the forum comment *"I ran all 129 tasks ... assumed I was only landing Rich tasks ... landing
+about 30%ish across the whole board"* was posted by **Adam Johnson (us)**, not by Yurnero. The 10-31 transcript
+summary had it right; the 11-02 entry (~L16716 "CALIBRATED AGAINST THE #1 COMPETITOR") misattributed it.
+
+### Retracted from the L16716 entry
+- **Leader row "39/129 = 30.2%" is fabricated.** Yurnero's 129-rate is unknown.
+- **"The 129-rate maps 1:1 to the LB" is NOT established.** The only test of it used that fabricated row.
+  Our own data says the opposite: 31B ca5 = 35/129 (27.1%, UNCAPPED, v7) predicts 15.7/58, but the board
+  draws of that pack average ~10.6/58 (12,11,10,10,10). Ratio ~0.68, consistent with L14087: 70/129 v7
+  runs exceeded 28 tool calls, including 16 of the 35 solves.
+- "Gap to #1 is 3.9x in solve rate" is retracted (it compared our E4B against the fabricated leader row).
+
+### Still valid
+- Yurnero's quote on private gold patches being host-verified, and Nir Aberman's 163-run numbers.
+- sigma~2 board-variance argument (L16670) - independent of the misattribution.
+
+### What Yurnero most plausibly got from the exchange (inference, unverified)
+Our post told him the whole 129 - fastapi included - is landable at ~27-30%, when the prevailing assumption
+(ours too) was "only Rich lands". His jump 0.24 -> 0.29 followed (10-31 -> 11-02), though with 18 entries a
+17/58 draw from a 14/58 centre is ~87% likely at sigma 2, so part of it may be variance.
+
+### Open lever this exposes for the 31B
+Uncapped 35/129 vs board ~10.6/58: about 5 board tasks are lost to the 28-call / 8-min cap. Solves-per-call
+under the grader cap has never been targeted on the 31B. Next: measure the capped 31B 129-rate and profile
+where the 16 late (>28-call) solves spend their calls.
