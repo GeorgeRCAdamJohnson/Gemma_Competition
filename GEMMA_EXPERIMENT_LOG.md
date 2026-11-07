@@ -18028,3 +18028,35 @@ model line swapped; builder asserts the E4B agent.yaml/sampling equal the 31B on
 Reference (28/8, CRLF control, 5 unique passes from e4b_variance3 - e4b_variance_only is the same 5):
 **9.8 / 85 mean, sd 1.17** (10, 8, 11, 9, 11). Prior E4B cap evidence is null (cap-15 null; local 60/16
 replay net -1, rich subset), so the prior expectation here is ~flat; the 31B is where the sim says it pays.
+
+---
+
+## RETRACTION: the cap simulation's 28/8 prediction was wrong - ENFORCED 28/8 already scores like uncapped (2026-10-09 session)
+
+Chunk 1 of `ca5-31b-cap-ab` (10 tasks): A 40/12 = 6, B 50/20 = 6. Sim predicted 5 and 7; sim at 28/8 predicted 4.
+But the data to check this was already on disk: `Outputs/ca5_31b_ab/ab31.json` = the 31B sibling A/B, which ran
+the SAME ca5 bytes with caps ENFORCED at 28/8 on the same 85 live tasks:
+| run | caps | round-1 on 85 live | chunk-1 tasks |
+|---|---|---|---|
+| v7 | none (60 min shown) | 34 | 7 |
+| sibling A/B control | **28/8 enforced** | **34** (rich 15, fastapi 19) | **6** |
+| sibling A/B sibling arm | 28/8 enforced | 33 | 6 |
+| cap-sim prediction | 28/8 | 23 | 4 |
+| cap A/B arm A / B | 40/12 / 50/20 | (running) | 6 / 6 |
+
+**The simulation assumed a run's trajectory is the same with or without a cap and just gets truncated. False.**
+Under an enforced countdown, get_status shows real remaining budget and the commit-by-remaining rules fire;
+the model compresses its work and lands the same solves inside 28/8. Truncating uncapped traces measures
+nothing about the capped regime. (This was the caveat I flagged and then did not check against ab31.json.)
+
+### Consequences
+- **Retracted:** "board caps explain the pool->board gap" and "40/12 -> ~0.24, 50/20 -> ~0.27".
+- **The cap lever is probably null on the 31B** (34 at 28/8 vs 34 uncapped; chunk 1 6=6=6). Cap A/B still running.
+- **The pool->board gap is UNEXPLAINED again:** capped 31B ~27% of the 129 predicts ~15.7/58; board mean 10.6/58.
+  Remaining candidates: board tasks harder than the public 129; scorer environment (hardware/concurrency making
+  the 8-min wall bite harder than on our 4xL4 at conc 4); or both.
+- The two cap submission packs were NOT submitted. Good.
+
+### LESSON
+**Before trusting a counterfactual simulation, check whether the counterfactual was already measured directly.**
+The enforced-28/8 run existed; one query would have refuted the sim before two kernels and two packs were built.
