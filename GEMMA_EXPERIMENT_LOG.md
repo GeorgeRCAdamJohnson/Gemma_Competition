@@ -18168,3 +18168,21 @@ Unsolved runs average 306 s (retries happen on failures), so the full-129 mean w
 ### Remaining defect in F: 10% context overflow (64/624, all lost; 43 had a patch)
 Likely the verifier (include_contents default = sees the whole history, grows across 3 iterations). Fix candidate:
 verifier `include_contents: none` (it only runs the gate + submit). Untested -> next A/B, not in the ship pack.
+
+### WHY THE OVERFLOWS HAPPEN (diagnosed from 312 pass-1/2 logs, `Outputs/_overflow_diag.py`, `_overflow_seg.py`)
+- Error is always `prompt >= 27769 + 5000 output > 32768`: vLLM reserves max_output_tokens (5000), so the usable
+  prompt is ~27.7k, not 32k. (27769 is the reported threshold, not the true prompt size.)
+- ADK `include_contents: none` (contents.py `_get_current_turn_contents`) = history from the latest message by a
+  DIFFERENT agent. `default` = whole session history.
+- **Verifier overflows (F 8, R 20):** its own segment is tiny (median 1-2 turns, ~1k chars) but it runs with
+  `include_contents: default`, so it re-reads the tester's exploration + every fixer attempt; by attempt 2-3 that
+  exceeds 27.7k. Pure configuration defect.
+- **Fixer overflows (R 27; F ~6 - F logs don't tag the fixer, inferred from untagged overflow rows):** the fixer IS
+  isolated, but its own single attempt reaches the limit: median 15 turns, 18.8k chars of text, 5 read_file (up to
+  10k chars each), 4 run_command. `include_thoughts: true` (sampling.yaml) also keeps every thought part (up to the
+  4096 thinking budget per turn) in the history (HARNESS_README L151) - likely the largest single filler.
+- Not controllable by a submission: max_model_len 32768 (scorer vLLM), EventsCompactionConfig (scorer App,
+  interval 15 / threshold 14,336).
+- Controllable: `include_contents: none` on verifier (and tester); `include_thoughts: false` (still thinks each turn,
+  drops thoughts from history); `output_key` to pass tester/verifier verdicts through state instead of history.
+**Repro gate status: NOT dead - killed by a fixable context configuration. Re-test with the fixes before closing.**
