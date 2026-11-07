@@ -18116,3 +18116,16 @@ each other, so pooled).
 - R >= control + 2 per pass (on 39) AND R > F -> the repro gate is the lever; check scorer time from `dur`.
 - F ~ R > control -> fresh retries help, the test adds nothing.
 - R < control -> false rejects / time cost dominate; inspect gate outputs in pass-1 logs.
+
+### `e4b-cap-ab` FINAL (17 complete passes; pulled via `kaggle_pkg/_pull_slow.py` - 2,317 output files)
+| arm (85 live) | passes | k per pass | mean | sd |
+|---|---|---|---|---|
+| 40/12 | 8 | 9,8,10,10,8,12,10,10 | 9.62 | 1.22 |
+| 50/20 | 9 | 10,14,12,10,11,6,12,9,9 | 10.33 | 2.16 |
+| 28/8 ref (CRLF, older) | 5 | 10,8,11,9,11 | 9.8 | 1.17 |
+**VERDICT: cap lever NULL on E4B** (+0.7, inside noise). With the 31B null, the cap axis is CLOSED on both models.
+Why it is null: **median E4B run uses 7 tool calls** of the 40-50 allowed - E4B stops on its own long before any cap.
+Control for the repro A/B (39 ever-solved ids; every solve lies inside the 39): 17 passes, **mean 9.82, sd 1.69**.
+Pass wall time drifts 37.6 -> 41.6 min mean by pass 4 on all 4 nodes (solves unaffected) - telemetry pending.
+Tooling: kaggle CLI 2.2.4 -> 2.2.5. `kernels output` recurses pages with no delay -> 429 on big outputs; use
+`_pull_slow.py <owner/slug> <dest> <regex> [name]` (page 100, 4 s pause, 429 backoff).
