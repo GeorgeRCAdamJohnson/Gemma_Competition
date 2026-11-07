@@ -22,20 +22,31 @@ import base64
 
 K = Path(__file__).resolve().parent
 SRC = K / "push_129_off31"
-DST = K / "push_31b_presubmit_ab"
-SLUG = "ca5-31b-presubmit-ab"
-EVAL_BUDGET_SECONDS = int(7.0 * 3600)
-SAVE_RESERVE_SECONDS = 12 * 60
+import os
+# TASKSET=85 (default now): all 85 live, 1 round, 6 h hard budget (user: option 2, 16 GPU-h left).
+# TASKSET=39: the original 39 ever-solved x 2 rounds (31B ~85% there -> ceiling-bound; superseded).
+TASKSET = os.environ.get("TASKSET", "85")
 PER_ARM_CONC = 2          # = ab31 / cap-ab regime (4 concurrent on one tp=4 server) -> comparable timings
 CHUNK = 10
-MAX_ROUNDS = 2            # user: "run 31b against the same tasks twice"
+SAVE_RESERVE_SECONDS = 12 * 60
 BUNDLE = K.parent / "local_eval" / "parity_rig" / "agent_31b_ca5_presubmit"
 ARMS = {"A_ca5": None, "B_presubmit": BUNDLE}   # A = AGENT unchanged (28/8/120 board caps)
-
 live = json.loads((K / "live_ids_31b_ab.json").read_text(encoding="utf-8"))
-ever = set(json.loads((K.parent / "Outputs" / "_solvable85.json").read_text(encoding="utf-8"))["ever"])
-order = [t for t in live["order"] if t in ever]
-assert len(order) == 39 and len(set(order)) == 39, len(order)
+if TASKSET == "85":
+    DST = K / "push_31b_presubmit_85"
+    SLUG = "ca5-31b-presubmit-85"
+    EVAL_BUDGET_SECONDS = int(6.0 * 3600)
+    MAX_ROUNDS = 1
+    order = list(live["order"])
+    assert len(order) == 85 and len(set(order)) == 85, len(order)
+else:
+    DST = K / "push_31b_presubmit_ab"
+    SLUG = "ca5-31b-presubmit-ab"
+    EVAL_BUDGET_SECONDS = int(7.0 * 3600)
+    MAX_ROUNDS = 2
+    ever = set(json.loads((K.parent / "Outputs" / "_solvable85.json").read_text(encoding="utf-8"))["ever"])
+    order = [t for t in live["order"] if t in ever]
+    assert len(order) == 39 and len(set(order)) == 39, len(order)
 
 nb = json.loads((SRC / "ca5-31b-full129.ipynb").read_text(encoding="utf-8"))
 cell2 = "".join(nb["cells"][2]["source"])
@@ -247,7 +258,8 @@ EVAL = (EVAL.replace("__ORDER__", json.dumps(order)).replace("__BUDGET__", str(E
 compile(EVAL, "cell4", "exec"); compile(cell2, "cell2", "exec"); compile(cell3, "cell3", "exec")
 nb["cells"][4]["source"] = EVAL.splitlines(keepends=True)
 nb["cells"][0]["source"] = [
-    "# 31B PAIRED A/B: ca5 (A) vs ca5 + presubmit-check skill (B), 28/8 board caps, 39 ever-solved tasks x 2 rounds.\n",
+    "# 31B PAIRED A/B: ca5 (A) vs ca5 + presubmit-check skill (B), 28/8 board caps, %d tasks x %d round(s), %.1f h budget.\n"
+    % (len(order), MAX_ROUNDS, EVAL_BUDGET_SECONDS / 3600),
     "ONE tp=4 server, same chunks, 2 loops/arm. Telemetry: vLLM /metrics + nvidia-smi every 60 s.\n",
     "Output: presubmit_ab.json + telemetry.jsonl + results.tar.gz.\n",
 ]

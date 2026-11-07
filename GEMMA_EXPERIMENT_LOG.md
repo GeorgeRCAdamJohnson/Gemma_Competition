@@ -18349,3 +18349,11 @@ tokens) + nvidia-smi (util, memory, temp, SM clock, power) + load/pytest procs e
 TELEMETRY summary line. vLLM's own startup log (KV capacity, max concurrency) is not in the notebook log, so this is
 the first direct measurement of server utilization.
 Reference: ab31 control (ca5 28/8) on these 39: see `ab31.json`; summary prints paired A vs B per round.
+
+### CORRECTION: the 39-task 31B run is ceiling-bound -> switched to all 85 live, 1 round (user: option 2)
+ab31 28/8 control on the 39 ever-solved = **34/39 round 1** (13/18 partial round 2): ~85% solved, <=5 flippable
+per round - an A/B there cannot see a small check effect. The 31B's mechanical failures (syntax 2, live import 7,
+voluntary empty ~3) sit in the tasks it FAILS, i.e. the other 46 of the 85. `ca5-31b-presubmit-ab` (39 x 2) to be
+stopped by user. New `comfyops/ca5-31b-presubmit-85` (`TASKSET=85` in the builder): 85 live, MAX_ROUNDS 1, 6.0 h
+hard eval budget (~6.2 h incl boot) - GPU quota left this week ~16 h. Same arms/caps/telemetry as the 39 build.
+Reference: ab31 control round 1 on the 85 = 34/85 (sibling arm 33/85).
