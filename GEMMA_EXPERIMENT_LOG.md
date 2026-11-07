@@ -18186,3 +18186,21 @@ verifier `include_contents: none` (it only runs the gate + submit). Untested -> 
 - Controllable: `include_contents: none` on verifier (and tester); `include_thoughts: false` (still thinks each turn,
   drops thoughts from history); `output_key` to pass tester/verifier verdicts through state instead of history.
 **Repro gate status: NOT dead - killed by a fixable context configuration. Re-test with the fixes before closing.**
+
+### GOLD VALIDATION BEFORE RE-TESTING THE REPRO GATE (user: "validate against gold before overcommitting")
+- **Existing-test gate (ARM F, the ship pack):** offline gold-first run `_gate_offline_17.log` - gold ACCEPTED on
+  all 17 tasks (0 false rejections) while rejecting many wrong E4B patches. Validated.
+- **Repro test vs gold** (`_score_repro.py`, L16820): E4B's test is gold-consistent (reproduces on base AND resolves
+  with gold) only **3/17 = 18%**; of tests that reproduce on base, **4/7 = 57% also reproduce on gold** -> would
+  reject a correct fix. In-situ (ARM R logs, passes 1-2): repro REJECTED something in 23/156 runs; 21 ended
+  unresolved (never converted), 2 were correct fixes rejected (saved only by earliest-attempt restore).
+  (Accept messages are truncated in logs, so true accepts are not countable.)
+- **Verdict:** the context fix cannot repair test quality, which caps the repro gate. Do NOT re-run it on E4B. The
+  repro idea is only alive with a stronger tester (31B), to be measured there with the same gold check first.
+
+### CORRECTION to "the earlier null was the gate falsely REJECTING correct fixes" (L above)
+Traced the stale-bytecode order in the existing-test comparison: patched tests run first (pyc compiled from the
+patch), then the edit is reverted and the base tests run in the same second with the same file size -> they reuse
+the PATCHED bytecode -> base failures == patched failures -> "no NEW failures" -> **ACCEPTED**. So in retry2 the bug
+caused **false ACCEPTS of wrong same-size patches (no retry triggered)**, not false rejections. (The false-REJECT
+case in `_test_repro_gate.sh` was the repro path, which runs base first.) Conclusion unchanged: the fix is why F works.
