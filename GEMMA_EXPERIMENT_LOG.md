@@ -18227,3 +18227,13 @@ Auto-submit scheduler STOPPED (nothing submitted). `_build_e4b_repro_ab.py` now 
 Reads: (1) 129-score per pass for each pack vs plain E4B ca5 (10/129 Kaggle, L14230); (2) per-task dur on the
 full 129 -> summed task-seconds = scorer-runtime proxy, compared with plain E4B ca5 (fits) and the 31B 50/20 pack
 (timed out); (3) overflow rate P2 vs P1. Submit only what passes (1)+(2).
+
+### CORRECTION: validation runs are SEPARATE kernels, one per pack (user intent: "two windows open" = 2 GPU sessions)
+I first folded both packs into one kernel (`e4b-pack-ab`, 2 GPUs each). User wanted one Kaggle run per pack.
+- `comfyops/e4b-pack1-val` = pack 1 (84f904c63afd) on all 4 GPUs, all 129, 4.5 h - RUNNING.
+- `comfyops/e4b-pack2-val` = pack 2 (a5129fc56ffb) on all 4 GPUs - built + hash-checked (`_check_pack_ab.py
+  e4b-pack2-val`); push rejected: "Maximum batch GPU session count of 2 reached". `kaggle_pkg/_push_when_free.ps1`
+  pushes it as soon as `e4b-pack-ab` leaves RUNNING. The CLI has no stop/cancel (only delete) -> user stops
+  `e4b-pack-ab` in the UI. Its partial output (if any) is still valid paired data.
+- Builder: `MODE=pack1|pack2|pack|repro python kaggle_pkg/_build_e4b_repro_ab.py`.
+- Tooling note: kaggle CLI 2.2.5 adds `kaggle kernels logs <slug>` (live logs; not yet tried).
