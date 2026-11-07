@@ -18251,3 +18251,20 @@ patches present, compiles) + `_check_pack_ab.py` (hashes = submission zips). Pus
 Runtime references (our rig, task-seconds over 129): 31B 28/8 ~12.3 h fits; 31B 50/20 ~14.5 h timed out.
 Also found: kagglesdk has `cancel_kernel_session(kernel_session_id)` (CLI does not expose it); session id lookup
 not yet solved, so cancels are still manual.
+
+---
+
+## PRE-SUBMISSION VALIDATION RESULT: BOTH E4B PACKS PASS (`e4b-pack1-val` v2, `e4b-pack2-val`; `Outputs/_analyze_pack_val.py`)
+| pack | score39 passes | mean | sd | vs ca5 9.82 | overflow (39) | runtime90 sum | full-129 task-time |
+|---|---|---|---|---|---|---|---|
+| **1 fresh retry** (84f904c63afd) | 20 | **12.00** | 1.58 | t = 3.91 | 10.9% | 7.89 h (max 1146 s) | **10.70 h** |
+| **2 + verifier include_contents none** (a5129fc56ffb) | 22 | **11.45** | 1.50 | t = 3.05 | 6.5% | 6.72 h (max 637 s) | **9.37 h** |
+- pack2 - pack1 = -0.55, t = -1.12 -> NO score difference. Pack 1 pooled with the 16 earlier F passes: 11.78 (n=36).
+- **Why the overflow fix did not raise the score:** pack 2 cut verifier overflows (10.9% -> 6.5% on the 39, 11 -> 7 on
+  the 90) but the runs it rescued were thrashing failures - they now fail cheaper (max task 637 s vs 1146 s) instead
+  of overflowing. Its value is runtime margin (+1.3 h), not solves.
+- Runtime proxy: both under the 31B 28/8 reference (~12.3 h on our rig, fits) and far under 31B 50/20 (~14.5 h,
+  timed out). Caveat: E4B at conc 8 vs 31B at conc 4 - both include contention; scorer concurrency unknown.
+- runtime90 solved 1/90 in each pack (as expected for the never-solved set).
+- Submission: today's (UTC 11-07) slot was used by the 31B cap50 pack at 02:39. Pack 1 scheduled for the 00:03 UTC
+  reset (`_submit_at_reset.py`, terminal 1). Pack 2 = next day. Board scores then decide the E4B final.
