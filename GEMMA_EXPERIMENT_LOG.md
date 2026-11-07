@@ -18323,3 +18323,29 @@ fixer had edited pyproject.toml / non-.py files.
 4. Stop after attempt 2 if both were breaks_tests on the same test (runtime).
 5. **31B: the biggest single converter is a free syntax/empty-patch check before submit** - testable on the 31B
    as a single-agent skill without any LoopAgent overhead.
+
+---
+
+## 31B PORT OF THE E4B MECHANISM: presubmit-check skill A/B - `comfyops/ca5-31b-presubmit-ab` PUSHED
+
+### Pre-count: what a pre-submit check can convert on the 31B (`Outputs/_31b_mech_fail.py`, `_31b_mech_fail2.py`)
+v7 uncapped, 129 tasks, 94 unsolved: logic failures (tests ran) 42 | import/collection errors 32 (**25 dead-task
+env, 7 live**) | empty 18 (17 never submitted at budget/time end, 1 submitted empty) | **syntax only 2** (rich_3486,
+rich_3777). ab31 enforced 28/8, 250 runs: 41 empty unsolved, but **34 are "session timeout (8.0 min)"** (5-28 calls)
+- the model never reaches submit, so no check can fire; 4 overflow, ~3 voluntary empty.
+=> catchable ceiling ~5-10/129 per pass (vs E4B: 74 syntax rejects in 546 runs). Expect a SMALL effect. The bigger
+31B loss class is the 8-min timeout (34/250 runs), which is a speed/budget problem, not a check problem.
+
+### Design (`local_eval/parity_rig/_build_presubmit.py`, offline test `_test_presubmit.sh` 7/7 in WSL)
+Arm B = 31B ca5 (b08b32a2438d, 28/8/120 board caps) + skill `presubmit-check`; ONE prompt line REPLACED (step 3
+"get_status... patch_size" -> "run presubmit-check; PROBLEM -> fix, OK -> submit"), +191 chars. check.py: edit
+landed / only-tests-changed / ast.parse of changed .py / import of changed modules flagged ONLY when the traceback
+points into a changed file (env failures ignored); read-only (no stash/revert), no pytest (31B is time-bound).
+Kernel (`kaggle_pkg/_build_31b_presubmit_ab.py`, forks the cap A/B): one tp=4 server, 2 loops/arm (= ab31 regime),
+paired chunks of 10, **39 ever-solved tasks x 2 rounds** (user said 38; every definition in the data gives 39 -
+`Outputs/_which38.py`), 7 h budget. Dry-run: A == embedded ca5, B == bundle byte-for-byte, caps identical.
+**Telemetry (answers "are we using the 4xL4 well?")**: vLLM /metrics (running/waiting requests, KV-cache use, gen
+tokens) + nvidia-smi (util, memory, temp, SM clock, power) + load/pytest procs every 60 s -> telemetry.jsonl and a
+TELEMETRY summary line. vLLM's own startup log (KV capacity, max concurrency) is not in the notebook log, so this is
+the first direct measurement of server utilization.
+Reference: ab31 control (ca5 28/8) on these 39: see `ab31.json`; summary prints paired A vs B per round.
