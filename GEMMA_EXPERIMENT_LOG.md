@@ -18007,3 +18007,15 @@ b9aeaa9a53ce) to the v7 run's `agent_ca5` files - PASSED - so the cap simulation
 Both COMPLETE, competition attached, zips pulled to `Outputs/gemma-submit-ca5-cap*/submission.zip`. Only
 eval_config differs from the 0.20 pack (eval sha1 4a6b044ec65c). max_turns kept at 120 (does not bind:
 total LLM calls ~ tool calls + 3). Known risk: scorer compute ceiling (ref 57276407 at 100/60 threw).
+
+### CAP A/B ON KAGGLE — `comfyops/ca5-31b-cap-ab` PUSHED, RUNNING
+Builder `kaggle_pkg/_build_31b_cap_ab.py` (forks push_129_off31 like the sibling A/B). Paired, one tp=4 31B
+server, 2 loops/arm (= v7 CONC=4 regime, so time caps bind as simulated). ARM A = 40/12/120, ARM B = 50/20/120;
+system.md identical (asserted byte-equal), caps passed per arm from each arm's eval_config. 85 live tasks
+(live_ids_31b_ab.json order), every round = all 85, 7.2h eval budget. Output cap_ab.json + results.tar.gz.
+Pre-registered reads (v7 cap-sim restricted to the 85 live set is the prediction; compare round-1 counts):
+- either arm >= the v7-sim value for its caps -> cap lever confirmed under enforcement.
+- A ~= B -> 40/12 is enough; submit it first (lower scorer-ceiling risk).
+- both well below sim -> enforcement changes behaviour (get_status shows real remaining budget); re-think.
+Prediction on the 85 live (v7 cap-sim, calibrated counting): uncapped 34 | 28/8 23 | **40/12 30** | **50/20 34**.
+Single-draw noise on 31B is ~+/-2-3 tasks, so read round 1 against these, not as an exact match.
