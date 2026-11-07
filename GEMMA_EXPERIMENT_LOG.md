@@ -18139,3 +18139,32 @@ tasks) scores the selected pack once; public best-of-N draws do not transfer (ca
 = 0.18). Each final MUST have scored on the board at least once (proves it fits the 12h scorer ceiling; a timeout
 = 0 private). Candidates now: 31B ca5 (0.20 best / 0.18 mean); E4B ca5 (0.03). Pending: E4B retry arms
 (`e4b-repro-ab`), then a 31B 2-attempt retry A/B at 28/8 on the 36 ever-solved + ~10 near-miss tasks.
+
+---
+
+## `e4b-repro-ab` RESULT: FRESH RETRY WINS (+1.7, t=3.2); REPRO GATE LOSES (2026-10-10)
+
+39 ever-solved live ids, E4B, per-node. Control = plain ca5 LF passes from `e4b-cap-ab` on the same ids.
+| arm | passes | k on 39 | mean | sd |
+|---|---|---|---|---|
+| control plain ca5 | 17 | 9,8,10,14,12,10,10,10,11,8,10,6,11,10,10,9,9 | 9.82 | 1.69 |
+| **F fresh retry** (LoopAgent[fixer,verifier], gate=existing tests, 80/30) | 16 | 12,12,12,11,12,9,12,14,12,12,13,10,10,12,11,10 | **11.50** | **1.22** |
+| R repro gate (+tester, repro check) | 8 | 8,10,9,8,8,11,8,9 | 8.88 | 1.05 |
+**F vs control: +1.68/pass, Welch t = 3.18** (~p 0.003) - and LOWER variance. First positive architecture result
+for E4B in the project. Since the only design change vs the L16777 null (retry2, +0.02) is the stale-bytecode gate
+fix + earliest-attempt tie-break, **the earlier null was largely the gate falsely rejecting correct same-size fixes.**
+Per task: F gains fastapi_14077 0.29->0.88, rich_3067 0.59->1.00; loses fastapi_9555 0.76->0.44.
+
+### Why R loses
+- **Context overflow in 32% of runs** (101/312; 0 of them solved, though 71 had a patch) vs 10% in F.
+- 2x the time (mean 520 s vs 259 s; 14/71 solves after 8 min) and median 23 calls vs 10.
+The tester's turns accumulate in the shared LoopAgent history -> overflow kills the session's patch. CLOSED as
+built; a repro gate would need context isolation (tester include_contents none + its output passed via state).
+
+### Timing (scorer feasibility) for F
+mean 259 s, median 209 s, p90 487 s, max 1066 s on the 39. Solves after 12 min: 1/184; after 15 min: 0/184.
+Unsolved runs average 306 s (retries happen on failures), so the full-129 mean will be higher than on the 39.
+
+### Remaining defect in F: 10% context overflow (64/624, all lost; 43 had a patch)
+Likely the verifier (include_contents default = sees the whole history, grows across 3 iterations). Fix candidate:
+verifier `include_contents: none` (it only runs the gate + submit). Untested -> next A/B, not in the ship pack.
