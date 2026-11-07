@@ -10,9 +10,12 @@ import json
 import shutil
 from pathlib import Path
 
+import sys
+
 K = Path(__file__).resolve().parent
-SRC = K.parent / "local_eval" / "parity_rig" / "agent_e4b_retry_fresh"
-SLUG = "gemma-submit-e4b-retry-fresh"
+BUNDLE = sys.argv[1] if len(sys.argv) > 1 else "agent_e4b_retry_fresh"
+SRC = K.parent / "local_eval" / "parity_rig" / BUNDLE
+SLUG = sys.argv[2] if len(sys.argv) > 2 else "gemma-submit-e4b-retry-fresh"
 DST = K / f"push_{SLUG.replace('-', '_')}"
 TEMPLATE_META = K / "_src_mobile_ca5" / "kernel-metadata.json"
 
@@ -25,8 +28,8 @@ for n, b in files.items():
 bundle_sha = hashlib.sha1(b"".join(files[n] for n in sorted(files))).hexdigest()[:12]
 emb = {n: base64.b64encode(b).decode() for n, b in files.items()}
 
-cell = f'''# E4B fresh-retry pack: LoopAgent(3)[fixer, verifier], gate = existing tests (stale-bytecode fix), 80/30/200.
-# Measured: e4b-repro-ab ARM_F 11.50/39 vs plain ca5 9.82 (16 vs 17 passes, Welch t=3.18). CPU only.
+cell = f'''# E4B fresh-retry pack ({BUNDLE}): LoopAgent(3)[fixer, verifier], gate = existing tests (stale-bytecode fix), 80/30/200.
+# Base measured: e4b-repro-ab ARM_F 11.50/39 vs plain ca5 9.82 (Welch t=3.18). CPU only.
 import base64, hashlib, json, shutil, zipfile
 from pathlib import Path
 FILES = json.loads("""{json.dumps(emb)}""")

@@ -18204,3 +18204,18 @@ patch), then the edit is reverted and the base tests run in the same second with
 the PATCHED bytecode -> base failures == patched failures -> "no NEW failures" -> **ACCEPTED**. So in retry2 the bug
 caused **false ACCEPTS of wrong same-size patches (no retry triggered)**, not false rejections. (The false-REJECT
 case in `_test_repro_gate.sh` was the repro path, which runs base first.) Conclusion unchanged: the fix is why F works.
+
+---
+
+## SUBMISSION FACTS FROM THE SERVER (2026-11-07)
+- **Daily allowance = 1 submission** (server: "Your team has used its daily Submission allowance (1) today").
+  The CLI only prints "400 Bad Request"; `kaggle_pkg/_submit_debug.py` shows the real message.
+- **58076615 = 31B ca5 cap 50/20 pack -> "Your submission notebook exceeded the allowed runtime."** First hard
+  scorer-ceiling datapoint: 31B fits at 28/8, does NOT fit at 50/20. (Cap lever was null anyway.)
+- **58040392 = the exact 0.20 ca5 pack (gemma-submit-mobile-ca5) -> 0.13.** Same-bytes draws are now
+  0.20, 0.18, 0.17, 0.17, 0.17, 0.13 -> mean ~0.17 (~10/58), wider spread than sigma~2. Finals by measured mean.
+- E4B packs queued, one per day: pack 1 `gemma-submit-e4b-retry-fresh` (bundle 84f904c63afd, measured) scheduled
+  at the 00:03 UTC reset by `kaggle_pkg/_submit_at_reset.py`; pack 2 `gemma-submit-e4b-retry-vnone`
+  (a5129fc56ffb, = pack 1 + verifier include_contents none, ONLY diff) the day after.
+- Runtime risk for the E4B retry packs: local mean task 259 s (39 easy) with failures ~306 s - same order as the 31B
+  28/8 pack that fits. Not proven; the pack 1 board run is the test.
