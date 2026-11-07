@@ -18019,3 +18019,12 @@ Pre-registered reads (v7 cap-sim restricted to the 85 live set is the prediction
 - both well below sim -> enforcement changes behaviour (get_status shows real remaining budget); re-think.
 Prediction on the 85 live (v7 cap-sim, calibrated counting): uncapped 34 | 28/8 23 | **40/12 30** | **50/20 34**.
 Single-draw noise on 31B is ~+/-2-3 tasks, so read round 1 against these, not as an exact match.
+
+### E4B COMPANION — `comfyops/e4b-cap-ab` PUSHED, RUNNING (concurrent with ca5-31b-cap-ab)
+Builder `kaggle_pkg/_build_e4b_cap_ab.py`, forks push_e4b_ab_pernode (1 tp=1 E4B server per L4, independent
+passes per node, conc 8/node). node0,1 = 40/12/120; node2,3 = 50/20/120. 85 live tasks, 3.5h budget.
+**CRLF confound removed:** both arms use the LF 31B ca5 bytes (system.md sha1 b08b32a2438d) with only the
+model line swapped; builder asserts the E4B agent.yaml/sampling equal the 31B ones after CRLF->LF.
+Reference (28/8, CRLF control, 5 unique passes from e4b_variance3 - e4b_variance_only is the same 5):
+**9.8 / 85 mean, sd 1.17** (10, 8, 11, 9, 11). Prior E4B cap evidence is null (cap-15 null; local 60/16
+replay net -1, rich subset), so the prior expectation here is ~flat; the 31B is where the sim says it pays.
