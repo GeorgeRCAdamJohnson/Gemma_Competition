@@ -24,11 +24,14 @@ SRC = K / "push_e4b_cap_ab"
 # MODE=repro (default, the original 39-task F vs R run) | MODE=pack (pre-submission validation: pack 1 vs pack 2, all 129)
 MODE = os.environ.get("MODE", "repro")
 SMOKE_ID = "fastapi_14786"
-if MODE == "pack":
-    DST = K / "push_e4b_pack_ab"
-    SLUG = "e4b-pack-ab"
+PACKS = {"ARM_P1_retry_fresh": RIG / "agent_e4b_retry_fresh", "ARM_P2_retry_vnone": RIG / "agent_e4b_retry_fresh_vnone"}
+if MODE.startswith("pack"):
+    # pack = both packs, 2 nodes each; pack1 / pack2 = ONE pack on all 4 nodes (one Kaggle session per pack)
+    sel = {"pack": list(PACKS), "pack1": ["ARM_P1_retry_fresh"], "pack2": ["ARM_P2_retry_vnone"]}[MODE]
+    ARM_DIRS = {a: PACKS[a] for a in sel}
+    SLUG = {"pack": "e4b-pack-ab", "pack1": "e4b-pack1-val", "pack2": "e4b-pack2-val"}[MODE]
+    DST = K / ("push_" + SLUG.replace("-", "_"))
     BUDGET_SECONDS = int(4.5 * 3600)
-    ARM_DIRS = {"ARM_P1_retry_fresh": RIG / "agent_e4b_retry_fresh", "ARM_P2_retry_vnone": RIG / "agent_e4b_retry_fresh_vnone"}
     order = [json.loads(l)["instance_id"] for l in (K / "taskdefs" / "tasks.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
     N_IDS = 129
 else:
@@ -77,7 +80,8 @@ nb["cells"][2]["source"] = c2.splitlines(keepends=True)
 
 c4 = "".join(nb["cells"][4]["source"])
 c4 = re.sub(r"BUDGET_SECONDS = \d+", f"BUDGET_SECONDS = {BUDGET_SECONDS}", c4, count=1)
-A1, A2 = list(ARM_DIRS)
+_names = list(ARM_DIRS)
+A1, A2 = (_names[0], _names[-1])  # single-arm modes: all 4 nodes run the same pack
 c4 = c4.replace('NODE_ARM = {0: "ARM_A_cap40_12", 1: "ARM_A_cap40_12", 2: "ARM_B_cap50_20", 3: "ARM_B_cap50_20"}',
                 'NODE_ARM = {0: "%s", 1: "%s", 2: "%s", 3: "%s"}' % (A1, A1, A2, A2))
 c4 = re.sub(r"LIVE = \[.*?\]\nassert set\(LIVE\) <= set\(ALL_IDS\) and len\(LIVE\) == 85",
