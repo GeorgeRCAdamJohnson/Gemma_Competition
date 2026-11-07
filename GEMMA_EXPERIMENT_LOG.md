@@ -18081,3 +18081,38 @@ free parameter, NOT evidence: scorer hardware/concurrency is unknown. Testable o
 - Swaps of +1/-1 per 10 tasks are inside 31B per-task flip noise.
 VERDICT (n=10, consistent with the full-85 28/8-vs-uncapped equality 34=34): **cap lever NULL on the 31B.**
 Do not submit the cap packs. E4B companion (`e4b-cap-ab`) still running.
+
+---
+
+## E4B RETRY A/B WITH A REPRO-TEST GATE — `comfyops/e4b-repro-ab` PUSHED (2026-10-09 session)
+
+Premise (user): E4B is far from the 12h scoring ceiling (129 tasks ~75 min on Kaggle), so budget-hungry
+architectures shelved at 28/8 are now affordable. This finishes the agent investigation's open items
+(L16777 fresh-retry null "needs an issue-derived repro check"; L16820 test-writer "needs samples + budget").
+
+Bundles (`local_eval/parity_rig/_build_repro_retry.py`), both from LF ca5 (fixer.md sha1 dc742f9bb676), 80/30/200:
+- **ARM F `agent_e4b_retry_fresh`** = retry2 design: LoopAgent(3)[fixer (include_contents none), verifier];
+  gate = existing tests; rejected attempts undone; out of attempts -> restore best.
+- **ARM R `agent_e4b_retry_repro`** = ARM F + a `tester` sub-agent (Konwinski repro_issue.py via the test-context
+  skill, runs once, SKIP RULE on later iterations) + a repro block in check.py: the repro script is moved OUT of the
+  workspace (never in the patch), run on the original code once (cached) and on the patch; it counts only if the
+  original prints "Issue reproduced"; then a patch that does not print "Issue resolved" -> REJECTED REPRO_FAIL.
+- Shared changes vs retry2: best-restore ties -> EARLIEST attempt (a bad repro test degrades to ungated attempt 1).
+
+### BUG FOUND AND FIXED: stale bytecode in the gate (affects the earlier retry2 / gated results)
+Offline gate test `_test_repro_gate.sh` (WSL, 15 checks) failed on "correct fix": the gate reverts the edit, runs
+tests, re-applies within the same second; Python's .pyc check is source mtime (1 s) + size, so a SAME-SIZE edit
+(`a - b` -> `a + b`) ran the ORIGINAL bytecode and a correct fix was judged as the original. The retry2/gated
+check.py has the same base-vs-patch comparison -> some of the L16777 rejections may have been false. Fixed with
+PYTHONDONTWRITEBYTECODE=1 for gate subprocesses + __pycache__ purge before every pytest/repro run. After fix: 15/15.
+
+### Kernel (`kaggle_pkg/_build_e4b_repro_ab.py`)
+Forks push_e4b_cap_ab (per-node, 1 E4B/L4, conc 8). node0,1 = F; node2,3 = R. Task set = **39 ever-solved** of the
+85 live (`Outputs/_solvable85.json`) - the never-solved 46 cannot convert by retry. 4h budget. 1-task smoke per arm
+(fastapi_14786) before the main loop. Rows now carry dur / llm calls / error (scorer-time feasibility).
+Control = `e4b-cap-ab` plain ca5 LF passes restricted to the same 39 ids (caps 40/12 & 50/20, measured null vs
+each other, so pooled).
+### Pre-registered reads
+- R >= control + 2 per pass (on 39) AND R > F -> the repro gate is the lever; check scorer time from `dur`.
+- F ~ R > control -> fresh retries help, the test adds nothing.
+- R < control -> false rejects / time cost dominate; inspect gate outputs in pass-1 logs.

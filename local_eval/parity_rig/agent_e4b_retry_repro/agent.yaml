@@ -1,0 +1,8 @@
+name: agent_e4b_retry_repro
+agent_class: LoopAgent
+max_iterations: 3
+description: tester writes a repro test, fixer attempts, gate checks existing tests + repro; on reject the attempt is undone and the fixer retries fresh (max 3); only the verifier submits
+sub_agents:
+  - config_path: sub_agents/tester.yaml
+  - config_path: sub_agents/fixer.yaml
+  - config_path: sub_agents/verifier.yaml
