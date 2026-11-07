@@ -18068,3 +18068,16 @@ Solves after 300s: 12; after 420s: 5. If the scorer ran X times slower than our 
 the 8-min wall: 1.25x -> 6/34, **1.5x -> 10/34**, 2x -> 17/34.
 A 1.5x-slower scorer turns 27% of the 129 (15.7/58) into ~11.1/58, close to the board mean 10.6. That is a fit with one
 free parameter, NOT evidence: scorer hardware/concurrency is unknown. Testable only on the board or from host docs.
+
+### `ca5-31b-cap-ab` KILLED by user after chunk 1 - data pulled (`Outputs/ca5_31b_cap_ab/`, `_compare.py`)
+10 tasks x 2 arms, chunk complete. Same 10 tasks vs enforced 28/8 (ab31 A_control r1) and uncapped v7:
+| | v7 uncapped | 28/8 enforced | 40/12 | 50/20 |
+|---|---|---|---|---|
+| solved | 7 | 6 | 6 | 6 |
+| median calls | - | 17 | 19 | 22 |
+- 50/20 converted rich_3521 (9 calls, 902s - a pure time-bound solve, as v7 had at 1042s) but LOST fastapi_15589
+  (solved in the 3 other regimes). Net 0. 40/12 = identical solve set to 28/8.
+- Max calls in any arm 32 (of 40/50 allowed): the call cap is not binding on the 31B; only time binds, on ~1 task.
+- Swaps of +1/-1 per 10 tasks are inside 31B per-task flip noise.
+VERDICT (n=10, consistent with the full-85 28/8-vs-uncapped equality 34=34): **cap lever NULL on the 31B.**
+Do not submit the cap packs. E4B companion (`e4b-cap-ab`) still running.
