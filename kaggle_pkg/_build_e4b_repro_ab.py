@@ -16,18 +16,30 @@ import re
 import shutil
 from pathlib import Path
 
+import os
+
 K = Path(__file__).resolve().parent
 RIG = K.parent / "local_eval" / "parity_rig"
 SRC = K / "push_e4b_cap_ab"
-DST = K / "push_e4b_repro_ab"
-SLUG = "e4b-repro-ab"
-BUDGET_SECONDS = int(4.0 * 3600)
-ARM_DIRS = {"ARM_F_retry_fresh": RIG / "agent_e4b_retry_fresh", "ARM_R_retry_repro": RIG / "agent_e4b_retry_repro"}
+# MODE=repro (default, the original 39-task F vs R run) | MODE=pack (pre-submission validation: pack 1 vs pack 2, all 129)
+MODE = os.environ.get("MODE", "repro")
 SMOKE_ID = "fastapi_14786"
-
-ever = json.loads((K.parent / "Outputs" / "_solvable85.json").read_text(encoding="utf-8"))["ever"]
-order = [t for t in json.loads((K / "live_ids_31b_ab.json").read_text(encoding="utf-8"))["order"] if t in set(ever)]
-assert len(order) == 39 and SMOKE_ID in order, len(order)
+if MODE == "pack":
+    DST = K / "push_e4b_pack_ab"
+    SLUG = "e4b-pack-ab"
+    BUDGET_SECONDS = int(4.5 * 3600)
+    ARM_DIRS = {"ARM_P1_retry_fresh": RIG / "agent_e4b_retry_fresh", "ARM_P2_retry_vnone": RIG / "agent_e4b_retry_fresh_vnone"}
+    order = [json.loads(l)["instance_id"] for l in (K / "taskdefs" / "tasks.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
+    N_IDS = 129
+else:
+    DST = K / "push_e4b_repro_ab"
+    SLUG = "e4b-repro-ab"
+    BUDGET_SECONDS = int(4.0 * 3600)
+    ARM_DIRS = {"ARM_F_retry_fresh": RIG / "agent_e4b_retry_fresh", "ARM_R_retry_repro": RIG / "agent_e4b_retry_repro"}
+    ever = json.loads((K.parent / "Outputs" / "_solvable85.json").read_text(encoding="utf-8"))["ever"]
+    order = [t for t in json.loads((K / "live_ids_31b_ab.json").read_text(encoding="utf-8"))["order"] if t in set(ever)]
+    N_IDS = 39
+assert len(order) == N_IDS and len(set(order)) == N_IDS and SMOKE_ID in order, len(order)
 
 nb = json.loads((SRC / "e4b-cap-ab.ipynb").read_text(encoding="utf-8"))
 c2 = "".join(nb["cells"][2]["source"])
@@ -65,10 +77,12 @@ nb["cells"][2]["source"] = c2.splitlines(keepends=True)
 
 c4 = "".join(nb["cells"][4]["source"])
 c4 = re.sub(r"BUDGET_SECONDS = \d+", f"BUDGET_SECONDS = {BUDGET_SECONDS}", c4, count=1)
+A1, A2 = list(ARM_DIRS)
 c4 = c4.replace('NODE_ARM = {0: "ARM_A_cap40_12", 1: "ARM_A_cap40_12", 2: "ARM_B_cap50_20", 3: "ARM_B_cap50_20"}',
-                'NODE_ARM = {0: "ARM_F_retry_fresh", 1: "ARM_F_retry_fresh", 2: "ARM_R_retry_repro", 3: "ARM_R_retry_repro"}')
+                'NODE_ARM = {0: "%s", 1: "%s", 2: "%s", 3: "%s"}' % (A1, A1, A2, A2))
 c4 = re.sub(r"LIVE = \[.*?\]\nassert set\(LIVE\) <= set\(ALL_IDS\) and len\(LIVE\) == 85",
-            "LIVE = %s\nassert set(LIVE) <= set(ALL_IDS) and len(LIVE) == 39" % json.dumps(order).replace("\\", "\\\\"), c4, count=1, flags=re.S)
+            "LIVE = %s\nassert set(LIVE) <= set(ALL_IDS) and len(LIVE) == %d" % (json.dumps(order).replace("\\", "\\\\"), N_IDS),
+            c4, count=1, flags=re.S)
 OLD_ROW = '''compact = [{"id": r["instance_id"], "resolved": bool(r.get("resolved")), "calls": r.get("tool_calls"),
                     "patch": r.get("agent_patch_size")} for r in rows]'''
 assert c4.count(OLD_ROW) == 1
@@ -111,15 +125,16 @@ ANCHOR = "PASSES = []\nplock = threading.Lock()"
 assert c4.count(ANCHOR) == 1 and "def _caps(agent_dir):" in c4 and c4.index("def _caps(agent_dir):") < c4.index(ANCHOR)
 c4 = c4.replace(ANCHOR, SMOKE + ANCHOR, 1)
 c4 = c4.replace("# ---------- E4B PER-NODE CAP A/B: node0/1 = 40/12, node2/3 = 50/20, 85 live tasks. No cross-node barrier. ----------",
-                "# ---------- E4B PER-NODE RETRY A/B: node0/1 = fresh-retry gate, node2/3 = repro-test gate, 39 ever-solved tasks ----------")
-for must in ("ARM_F_retry_fresh", "len(LIVE) == 39", f"BUDGET_SECONDS = {BUDGET_SECONDS}", "SMOKE OK for all arms", '"dur": r.get("duration_seconds")'):
+                "# ---------- E4B PER-NODE A/B: node0/1 = %s, node2/3 = %s, %d tasks ----------" % (A1, A2, N_IDS))
+for must in (A1, A2, "len(LIVE) == %d" % N_IDS, f"BUDGET_SECONDS = {BUDGET_SECONDS}", "SMOKE OK for all arms", '"dur": r.get("duration_seconds")'):
     assert must in c4, must
 assert "ARM_A_cap40_12" not in c4
 compile(c4, "cell4", "exec")
 nb["cells"][4]["source"] = c4.splitlines(keepends=True)
 nb["cells"][0]["source"] = [
-    "# E4B PER-NODE RETRY A/B: LoopAgent fresh-retry (node0,1) vs tester+repro-gated retry (node2,3), 39 ever-solved live tasks, 80/30\n",
-    "Control = comfyops/e4b-cap-ab (plain ca5 LF, same harness) restricted to the same 39 ids.\n",
+    "# E4B PER-NODE A/B (%s): %s (node0,1) vs %s (node2,3), %d tasks\n" % (MODE, A1, A2, N_IDS),
+    ("Pre-submission validation of the two E4B ship packs on the full 129 (score + scorer-runtime proxy).\n" if MODE == "pack"
+     else "Control = comfyops/e4b-cap-ab (plain ca5 LF, same harness) restricted to the same 39 ids.\n"),
 ]
 for c in nb["cells"]:
     if c.get("cell_type") == "code":

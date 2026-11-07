@@ -18219,3 +18219,11 @@ case in `_test_repro_gate.sh` was the repro path, which runs base first.) Conclu
   (a5129fc56ffb, = pack 1 + verifier include_contents none, ONLY diff) the day after.
 - Runtime risk for the E4B retry packs: local mean task 259 s (39 easy) with failures ~306 s - same order as the 31B
   28/8 pack that fits. Not proven; the pack 1 board run is the test.
+
+### PRE-SUBMISSION VALIDATION: `comfyops/e4b-pack-ab` PUSHED (user: validate both packs on Kaggle first)
+Auto-submit scheduler STOPPED (nothing submitted). `_build_e4b_repro_ab.py` now has MODE=pack: node0,1 = pack 1
+(84f904c63afd), node2,3 = pack 2 (a5129fc56ffb) - hashes asserted equal to the submission zips by
+`_check_pack_ab.py`. **All 129 tasks** (the set the scorer runs), 4.5 h, conc 8/node, 1-task smoke per arm.
+Reads: (1) 129-score per pass for each pack vs plain E4B ca5 (10/129 Kaggle, L14230); (2) per-task dur on the
+full 129 -> summed task-seconds = scorer-runtime proxy, compared with plain E4B ca5 (fits) and the 31B 50/20 pack
+(timed out); (3) overflow rate P2 vs P1. Submit only what passes (1)+(2).
