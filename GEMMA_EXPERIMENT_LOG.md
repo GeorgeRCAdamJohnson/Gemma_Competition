@@ -18060,3 +18060,11 @@ nothing about the capped regime. (This was the caveat I flagged and then did not
 ### LESSON
 **Before trusting a counterfactual simulation, check whether the counterfactual was already measured directly.**
 The enforced-28/8 run existed; one query would have refuted the sim before two kernels and two packs were built.
+
+### Scorer-speed hypothesis, measured on the ENFORCED 28/8 traces (ab31.json A_control round 1, 34 solves)
+Yesterday's timing analysis used the UNCAPPED v7 traces (the basis just retracted); this uses enforced 28/8.
+Solve duration median 250s, max 540s (duration_seconds includes harness overhead beyond the 480s agent cap).
+Solves after 300s: 12; after 420s: 5. If the scorer ran X times slower than our 4xL4/conc-4 rig, solves lost to
+the 8-min wall: 1.25x -> 6/34, **1.5x -> 10/34**, 2x -> 17/34.
+A 1.5x-slower scorer turns 27% of the 129 (15.7/58) into ~11.1/58, close to the board mean 10.6. That is a fit with one
+free parameter, NOT evidence: scorer hardware/concurrency is unknown. Testable only on the board or from host docs.
