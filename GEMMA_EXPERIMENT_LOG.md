@@ -18237,3 +18237,17 @@ I first folded both packs into one kernel (`e4b-pack-ab`, 2 GPUs each). User wan
   `e4b-pack-ab` in the UI. Its partial output (if any) is still valid paired data.
 - Builder: `MODE=pack1|pack2|pack|repro python kaggle_pkg/_build_e4b_repro_ab.py`.
 - Tooling note: kaggle CLI 2.2.5 adds `kaggle kernels logs <slug>` (live logs; not yet tried).
+
+### VALIDATION REDESIGN: split runtime vs score (user: "why run all 129? a good portion are unsolvable")
+Correct. Looping all 129 on every GPU spent ~70% of GPU time on tasks that never score and cut score passes ~3x.
+The two questions need different task sets:
+- runtime (does it fit the scorer?) = ONE pass of the 90 non-ever-solved tasks (failures = where retry costs time);
+- score (pack vs pack vs ca5) = MANY passes of the 39 ever-solved.
+`e4b-pack-ab` and `e4b-pack1-val` v1 cancelled by user (~20-30 min in, nothing pulled). Rebuilt (MODE=pack1/pack2):
+node0 pass 1 = RUNTIME_IDS (90) once, then all nodes loop SCORE_IDS (39); summary counts score39 passes only and
+prints `RUNTIME90 ... sum task-seconds`. Budget 3.0 h (was 4.5). Checks: `_check_split.py` (39/90, no overlap,
+patches present, compiles) + `_check_pack_ab.py` (hashes = submission zips). Pushed `e4b-pack1-val` v2 and
+`e4b-pack2-val` v1, one Kaggle session per pack. Score reference: ca5 9.82/39, pack-1 design 11.50/39 (39-task run).
+Runtime references (our rig, task-seconds over 129): 31B 28/8 ~12.3 h fits; 31B 50/20 ~14.5 h timed out.
+Also found: kagglesdk has `cancel_kernel_session(kernel_session_id)` (CLI does not expose it); session id lookup
+not yet solved, so cancels are still manual.

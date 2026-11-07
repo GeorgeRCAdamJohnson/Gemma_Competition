@@ -31,7 +31,7 @@ if MODE.startswith("pack"):
     ARM_DIRS = {a: PACKS[a] for a in sel}
     SLUG = {"pack": "e4b-pack-ab", "pack1": "e4b-pack1-val", "pack2": "e4b-pack2-val"}[MODE]
     DST = K / ("push_" + SLUG.replace("-", "_"))
-    BUDGET_SECONDS = int(4.5 * 3600)
+    BUDGET_SECONDS = int((3.0 if MODE in ("pack1", "pack2") else 4.5) * 3600)
     order = [json.loads(l)["instance_id"] for l in (K / "taskdefs" / "tasks.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
     N_IDS = 129
 else:
@@ -128,6 +128,40 @@ START = _t.time(); HARD_STOP = START + BUDGET_SECONDS; DEADLINE = HARD_STOP - SA
 ANCHOR = "PASSES = []\nplock = threading.Lock()"
 assert c4.count(ANCHOR) == 1 and "def _caps(agent_dir):" in c4 and c4.index("def _caps(agent_dir):") < c4.index(ANCHOR)
 c4 = c4.replace(ANCHOR, SMOKE + ANCHOR, 1)
+if MODE in ("pack1", "pack2"):
+    # SPLIT DESIGN (user: don't burn GPU looping unsolvable tasks): node0 pass 1 = the 90 non-ever-solved tasks ONCE
+    # (scorer-runtime proxy: failures are where retry costs time); every other pass on every node = the 39 ever-solved
+    # (score). Summary counts score passes only.
+    ever39 = json.loads((K.parent / "Outputs" / "_solvable85.json").read_text(encoding="utf-8"))["ever"]
+    score_ids = [t for t in order if t in set(ever39)]
+    runtime_ids = [t for t in order if t not in set(ever39)]
+    assert len(score_ids) == 39 and len(runtime_ids) == 90
+    SPLIT = "\nSCORE_IDS = %s\nRUNTIME_IDS = %s\nassert len(SCORE_IDS) == 39 and len(RUNTIME_IDS) == 90\n" % (
+        json.dumps(score_ids), json.dumps(runtime_ids))
+    for old, new in [
+        ("ALL_IDS = LIVE", "ALL_IDS = LIVE" + SPLIT),
+        ('        for t in ALL_IDS: cmd += ["--task-id", t]',
+         '        ids = RUNTIME_IDS if (i == 0 and k == 1) else SCORE_IDS\n'
+         '        kind = "runtime90" if ids is RUNTIME_IDS else "score39"\n'
+         '        for t in ids: cmd += ["--task-id", t]'),
+        ('print(f"[node{i}/{arm}] pass {k} start (elapsed',
+         'print(f"[node{i}/{arm}] pass {k} ({kind}, {len(ids)} tasks) start (elapsed'),
+        ('"complete": (len(compact) >= len(ALL_IDS) - 4 and not timed_out), "timed_out": timed_out,',
+         '"complete": (len(compact) >= len(ids) - 2 and not timed_out), "timed_out": timed_out, "kind": kind,'),
+        ('        if entry["complete"]: longest = max(longest, dur)',
+         '        if entry["complete"] and kind == "score39": longest = max(longest, dur)'),
+        ('print(f"[node{i}/{arm}] pass {k}: {n_res}/{len(compact)} in',
+         'print(f"[node{i}/{arm}] pass {k} ({kind}): {n_res}/{len(compact)} in'),
+        ('good = [p for p in PASSES if p["complete"]]',
+         'good = [p for p in PASSES if p["complete"] and p.get("kind") == "score39"]\n'
+         'for p in PASSES:\n'
+         '    if p.get("kind") == "runtime90":\n'
+         '        _d = [r["dur"] for r in p["rows"] if r.get("dur")]\n'
+         '        print(f"RUNTIME90 node{p[\'node\']}: {p[\'n\']} tasks, solved {p[\'k\']}, wall {p[\'seconds\']/60:.1f} min, "\n'
+         '              f"sum task-seconds {sum(_d):.0f} ({sum(_d)/3600:.2f} h), mean {sum(_d)/max(1,len(_d)):.0f}s, max {max(_d or [0]):.0f}s", flush=True)'),
+    ]:
+        assert c4.count(old) == 1, old
+        c4 = c4.replace(old, new, 1)
 c4 = c4.replace("# ---------- E4B PER-NODE CAP A/B: node0/1 = 40/12, node2/3 = 50/20, 85 live tasks. No cross-node barrier. ----------",
                 "# ---------- E4B PER-NODE A/B: node0/1 = %s, node2/3 = %s, %d tasks ----------" % (A1, A2, N_IDS))
 for must in (A1, A2, "len(LIVE) == %d" % N_IDS, f"BUDGET_SECONDS = {BUDGET_SECONDS}", "SMOKE OK for all arms", '"dur": r.get("duration_seconds")'):
