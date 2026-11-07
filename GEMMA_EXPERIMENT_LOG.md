@@ -18129,3 +18129,13 @@ Control for the repro A/B (39 ever-solved ids; every solve lies inside the 39): 
 Pass wall time drifts 37.6 -> 41.6 min mean by pass 4 on all 4 nodes (solves unaffected) - telemetry pending.
 Tooling: kaggle CLI 2.2.4 -> 2.2.5. `kernels output` recurses pages with no delay -> 429 on big outputs; use
 `_pull_slow.py <owner/slug> <dest> <regex> [name]` (page 100, 4 s pause, 429 backoff).
+
+---
+
+## FINAL-SUBMISSION SELECTION RULE (user decision, 2026-10-09 session)
+Two finals: **(1) best E4B pack** (required for the small-model prize, L13463) **(2) best 31B pack**.
+"Best" = highest MEASURED MEAN in paired local A/Bs with repeats, NOT best public draw. Reason: private set (71
+tasks) scores the selected pack once; public best-of-N draws do not transfer (ca5 31B public 0.17-0.20, mean 10.6/58
+= 0.18). Each final MUST have scored on the board at least once (proves it fits the 12h scorer ceiling; a timeout
+= 0 private). Candidates now: 31B ca5 (0.20 best / 0.18 mean); E4B ca5 (0.03). Pending: E4B retry arms
+(`e4b-repro-ab`), then a 31B 2-attempt retry A/B at 28/8 on the 36 ever-solved + ~10 near-miss tasks.
