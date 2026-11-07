@@ -17995,3 +17995,15 @@ At the shipped 28/8, **24/129 = 18.6% -> predicts 10.8/58 = 0.186. Observed boar
 Same bytes as the board pack, change ONLY eval_config.yaml (keep system.md unchanged - the simulation is
 valid precisely because the prompt said 28/8 in v7). Candidates: **40/12 -> 31/129 ~ 0.24**, **50/20 -> 35/129
 ~ 0.27**. 40/12 is the lower-risk first submission.
+
+### CAP PACKS BUILT (CPU packager kernels, no GPU quota)
+Builder `kaggle_pkg/_build_cap_packs.py` forks `comfyops/gemma-submit-mobile-ca5`; it first asserts the
+packager's agent.yaml / sampling.yaml / system.md are byte-identical (sha256 6562a591393b / a49dbd3aab94 /
+b9aeaa9a53ce) to the v7 run's `agent_ca5` files - PASSED - so the cap simulation applies to these bytes.
+| kernel | eval_config | member sha1 (agent/sampling/system) | eval sha1 | predicted |
+|---|---|---|---|---|
+| `comfyops/gemma-submit-ca5-cap40-12` | 40 calls / 12 min / 120 turns | b1663033e726 / 8f61024c4e81 / b08b32a2438d | 1657b93609c2 | 31/129 ~0.24 |
+| `comfyops/gemma-submit-ca5-cap50-20` | 50 calls / 20 min / 120 turns | same | 4a060950efe6 | 35/129 ~0.27 |
+Both COMPLETE, competition attached, zips pulled to `Outputs/gemma-submit-ca5-cap*/submission.zip`. Only
+eval_config differs from the 0.20 pack (eval sha1 4a6b044ec65c). max_turns kept at 120 (does not bind:
+total LLM calls ~ tool calls + 3). Known risk: scorer compute ceiling (ref 57276407 at 100/60 threw).
