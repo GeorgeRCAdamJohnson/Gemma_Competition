@@ -18268,3 +18268,58 @@ not yet solved, so cancels are still manual.
 - runtime90 solved 1/90 in each pack (as expected for the never-solved set).
 - Submission: today's (UTC 11-07) slot was used by the 31B cap50 pack at 02:39. Pack 1 scheduled for the 00:03 UTC
   reset (`_submit_at_reset.py`, terminal 1). Pack 2 = next day. Board scores then decide the E4B final.
+
+---
+
+## WHY FRESH RETRY BEATS PLAIN ca5 - TRACE-LEVEL MECHANISM (`Outputs/_mechanism.py`, `_mechanism2.py`, `_mechanism_drill.py`)
+Data: 546 pack runs (pack1+pack2 score39, passes 1-2/node, full logs) vs 156 plain-ca5 runs (e4b-cap-ab run_1).
+Per-run solve rate 0.291 vs 0.263 on these logs.
+
+### 1. Where the solves come from
+| submitted patch came from | runs | solved | rate |
+|---|---|---|---|
+| attempt 1 accepted | 328 | 127 | 0.39 |
+| attempt 2 accepted (after 1 reject) | 66 | 22 | 0.33 |
+| attempt 3 accepted (after 2 rejects) | 23 | 7 | 0.30 |
+| 3 rejects -> restore best | 79 | 2 | 0.03 |
+| overflow, nothing submitted | 49 | 0 | 0 |
+**80% of pack solves are attempt 1. The retry contributes 31 conversions (5.7 pp per run, ~+2.2 per 39-pass),
+concentrated in 5 tasks: fastapi_14077 (12), fastapi_14873 (4), rich_3894 (4), fastapi_14851 (3), rich_2725 (3).**
+
+### 2. Which gate check produced the conversions
+First-attempt verdict of the 31 conversions: **syntax 15, breaks_tests 9, no_change 4, non_source 3.**
+- Half the gain = the gate refusing a MECHANICALLY broken patch that plain ca5 would submit as-is (plain ca5 has
+  no syntax check; a syntax-error or empty patch is an automatic fail).
+- fastapi_14077 (0.50 -> 0.93) trace: attempt 1 sprawls over 7 edits / 5 files (pyproject.toml, a test file,
+  docs_src, openapi, exception_handlers) and leaves a syntax error -> gate rejects + undoes -> RETRY names the
+  file -> attempt 2 makes 2 focused edits to exception_handlers.py -> accepted -> resolved. Syntax-rejected
+  first attempts are the only class with multi-file sprawl (20% touch >= 3 files; every other class 0%).
+- rich_3894 (0.00 -> 0.36): breaks_tests rejects 29x; 4 conversions. The L16777 claim "retries stay in the same
+  wrong family on 3894" no longer holds once the gate stops falsely accepting (bytecode fix).
+
+### 3. What the gate does NOT do
+ACCEPT != correct: final ACC:tests_pass -> 0.38 resolved, ACC:no_tests_found -> 0.32, ACC:tests_uncollectable
+-> 0.71. The gate catches syntax / empty / regressions / wrong-file-type, not wrong logic. 'non_source_only'
+rejections are CORRECT: gold for fastapi_14492 is docs_src/...py and for rich_3043 rich/_export_format.py; the
+fixer had edited pyproject.toml / non-.py files.
+
+### 4. What the pack costs (why the net is ~+1.7, not +2.2)
+- **Overflow 9.0% vs 5.1% control, 34 of 49 inside attempt 1** (fixer's own attempt, before any verdict).
+- **The 80-call cap disables ca5's countdown commit rules** (thresholds remaining <= 14/7/3 never fire from 80).
+  rich_3063 (0.50 -> 0.00): pack fixer averages 7.1 edit_file misses per run ("old_string not found" loops) vs
+  1.2 in control on the same files; ends DONE with nothing landed -> no_change -> next attempt repeats the loop.
+- 79 runs burn 3 attempts and a restore for 2 solves (pure runtime cost on hopeless runs).
+- **Undo reverts only .py source files**: non-.py edits (pyproject.toml) and test-file edits survive into later
+  attempts and the final patch (seen in fastapi_14492, fastapi_14077).
+- Other per-task "losses" (fastapi_14463 1.00->0.50, 9425, rich_3067) edit the SAME files as control; control has
+  n=4 per task there, so those are mostly control-side noise.
+
+### 5. Levers this points to (each one-variable, testable)
+1. no_change after edit_file misses -> RETRY text names the fallback (python heredoc replace) instead of
+   "re-apply with edit_file" (attacks the rich_3063 loop).
+2. Per-attempt budget in the fixer prompt ("this attempt has used >= 20 calls -> make your best edit and reply
+   DONE") to restore the forcing function the 80-call cap removed.
+3. Undo ALL non-harness changes (incl. non-.py and test files) so every retry starts clean.
+4. Stop after attempt 2 if both were breaks_tests on the same test (runtime).
+5. **31B: the biggest single converter is a free syntax/empty-patch check before submit** - testable on the 31B
+   as a single-agent skill without any LoopAgent overhead.
