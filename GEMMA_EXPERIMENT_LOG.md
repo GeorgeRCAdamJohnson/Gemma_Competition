@@ -18357,3 +18357,34 @@ voluntary empty ~3) sit in the tasks it FAILS, i.e. the other 46 of the 85. `ca5
 stopped by user. New `comfyops/ca5-31b-presubmit-85` (`TASKSET=85` in the builder): 85 live, MAX_ROUNDS 1, 6.0 h
 hard eval budget (~6.2 h incl boot) - GPU quota left this week ~16 h. Same arms/caps/telemetry as the 39 build.
 Reference: ab31 control round 1 on the 85 = 34/85 (sibling arm 33/85).
+
+### `ca5-31b-presubmit-85` RESULT: presubmit NULL on the 31B (check never fired); telemetry answers utilization
+85 live x 1 round, paired, 4.08 h. **A ca5 32/85, B presubmit 33/85.** A-only: fastapi_14616, rich_3676;
+B-only: fastapi_14851, rich_3521, rich_3777. **The check returned PROBLEM in 0 runs** (63 OK, 23 never called), so
+the +1 is not the check - pure flip noise. Matches the pre-count (31B makes almost no syntax/empty submissions it
+reaches). CLOSED for 31B; harmless (no solves lost to it). B had more overflows (13 vs 6) and fewer timeouts (6 vs 13).
+
+### Telemetry (245 samples, `telemetry.jsonl`, `Outputs/_presubmit85.py`) - first direct look at the 4xL4 31B server
+| requests in flight | aggregate decode tok/s | per-sequence tok/s |
+|---|---|---|
+| 1 | 30.0 | 30.0 |
+| 2 | 54.7 | 27.3 |
+| 3 | 79.9 | 26.6 |
+| 4 | 93.4 | 23.3 |
+- KV cache use mean 12%, max 21%; zero waiting requests; zero preemptions -> memory is NOT the limit.
+- GPUs: util 94-95%, **power mean 69 W of the L4's 72 W TDP**, SM clock 1620-1940 MHz (boost 2040), temp max 81 C ->
+  the server is near its power/compute limit at 4 in flight; per-sequence speed already falls 30 -> 23 tok/s.
+- **Idle/under-filled time**: 14 samples at 0 in flight + 42 at ~2 (= ~23% of samples) - the paired-chunk barrier
+  (an arm waits for the other arm's slowest task) leaves the server half-empty at every chunk tail.
+- Host: load1 5.8, pytest procs max 3 - CPU side not a bottleneck.
+**Verdict on "are we using Kaggle well?"**: the GPUs are saturated per request at conc 4 (power-limited); raising
+concurrency would add throughput only sublinearly AND slow each sequence further, which makes the 8-min cap bite
+harder than on the board (timing distortion). The real waste is the chunk barrier (~20% of wall); fix = per-arm
+continuous work queues instead of paired chunks (keep pairing by task id, not by time).
+
+### The 31B's largest loss class, quantified: 8-min timeouts = SLOW TURNS, not many turns
+19 timeouts in 170 runs (A 13, B 6), 15 distinct tasks. Timed-out runs: median 13 calls in 480 s = **~37 s/call**
+vs **~14 s/call** in solved runs (solved median 14 calls, 240 s). At ~23 tok/s per sequence, a single turn that uses
+the full thinking_budget 4096 costs ~180 s. => prime suspect: thinking length on hard tasks. The thinking sweep in
+the log was E4B-only (L13596, measured rich resolve rate, blind to time). **Next 31B lever: thinking_budget
+4096 -> 2048 (and 1024) A/B, reading timeouts + solves** - the only measured mechanism with ~15% of runs at stake.
