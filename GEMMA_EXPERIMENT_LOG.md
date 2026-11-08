@@ -18438,3 +18438,24 @@ We have **31 submissions** (25 scored, best 0.20; 2026-10-02..11-08). Their rule
 32; want partners at <=14, or <=25 if stopping) -> 63 combined is far over. Their claimed mechanism (affected
 edit_file calls fail 93% vs 11%; one-line prompt fix) matches what our E4B traces show (rich_3063: 7.1
 "old_string not found" per run) - worth deriving ourselves from our own failed edit_file calls (free, logs on disk).
+
+### `ca5-31b-timeout-ab` RESULT: 10-min cap recovers time-bound tasks (p=0.03); cmd-timeout 60 s positive (p=0.14)
+6 recoverable timeout tasks x 6 rounds, 3 arms, 6 in flight (`Outputs/_timeout_ab_read.py`):
+| arm | solved | session timeouts | median dur |
+|---|---|---|---|
+| A ca5 28/8/300 | 9/36 (25%) | 20 | 481 s |
+| B timeout_seconds 60 | 16/36 (44%) - Fisher p 0.137 | 16 | 481 s |
+| **C max_time_minutes 10** | **19/36 (53%) - Fisher p 0.029** | 10 | 567 s |
+Per task (A / B / C): rich_3480 1/5/4 | fastapi_14616 2/2/3 | fastapi_14851 3/6/4 | rich_3506 0/2/1 |
+fastapi_14419 1/0/5 | rich_3521 2/1/2.
+- **C mechanism confirmed directly: 12 of C's 19 solves finished between 511 and 608 s** - after the 8-min wall.
+- B's gain sits on rich_3480 (1 -> 5) - the task whose repro script hung for 301 s in presubmit-85 - and
+  fastapi_14851 (3 -> 6). The tool-result error text is truncated in logs, so the kills are not directly visible;
+  per-task pattern is consistent with the hung-command mechanism, not proven by it.
+- B and C convert DIFFERENT tasks (3480/14851 vs 14419) -> complementary; B+C untested.
+- Caveats: control rate 25% here vs ~50% historically - 6 in flight slows every sequence, so C's margin is partly
+  "absorbing load"; board load unknown -> the board gain will be smaller than +28 pp. 6 tasks only: says nothing
+  about regressions on the other 79 (a 60 s kill could hit a legit long test run elsewhere).
+- Scorer runtime: C adds up to 2 min only to runs that hit the 8-min wall (~11-15% of runs) -> est. ~+0.5 h task-time
+  over 28/8 (~12.3 h, fits); 31B 50/20 (~14.5 h) timed out. Unverified. A board submission is the free runtime test
+  (costs a daily slot, no GPU).
