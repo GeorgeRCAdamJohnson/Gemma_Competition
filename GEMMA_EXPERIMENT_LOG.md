@@ -18459,3 +18459,12 @@ fastapi_14419 1/0/5 | rich_3521 2/1/2.
 - Scorer runtime: C adds up to 2 min only to runs that hit the 8-min wall (~11-15% of runs) -> est. ~+0.5 h task-time
   over 28/8 (~12.3 h, fits); 31B 50/20 (~14.5 h) timed out. Unverified. A board submission is the free runtime test
   (costs a daily slot, no GPU).
+
+### B+C REGRESSION CHECK - `comfyops/ca5-31b-bc-check` PUSHED (2 GPU-h left)
+One arm: ca5 + timeout_seconds 60 + max_time_minutes 10 (28 calls / 120 turns unchanged), 4 in flight (= the
+historical control load), 1 round, 1.4 h eval cap (~1.55 h with boot). Tasks: the 6 recoverable timeout tasks
+first, then the **27 tasks the 31B solved in every one of >= 3 runs** (`Outputs/_31b_always.json`). No control arm
+(no budget): references are historical - always-solved = 100%; recoverable 6 pooled ~50% at 4 in flight.
+Reads: (1) **regressions** = any of the 27 lost (0 expected; 1 is within chance; >= 2 points at the 60 s kill or
+the extra time); (2) recoverable 6 vs ~50% historical; (3) per-task dur -> runtime delta vs 28/8.
+If clean: build the 31B B+C submission pack; the board is the final runtime test (slot, not GPU).

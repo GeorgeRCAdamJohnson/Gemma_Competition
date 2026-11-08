@@ -32,7 +32,25 @@ SAVE_RESERVE_SECONDS = 12 * 60
 BUNDLE = K.parent / "local_eval" / "parity_rig" / "agent_31b_ca5_presubmit"
 ARMS = {"A_ca5": None, "B_presubmit": BUNDLE}   # A = AGENT unchanged (28/8/120 board caps)
 live = json.loads((K / "live_ids_31b_ab.json").read_text(encoding="utf-8"))
-if TASKSET == "timeout":
+if TASKSET == "bc":
+    # 2 GPU-h left: ONE arm = ca5 + timeout_seconds 60 + max_time_minutes 10 (B+C), 4 in flight (= historical control
+    # load). Tasks: the 6 recoverable timeout tasks (upside) + the 27 tasks the 31B solved in EVERY run (>=3 runs;
+    # regression check for the 60 s command kill). Control is historical (no control arm: no budget).
+    BASE_EVAL = (K.parent / "Outputs" / "v7_31b_full129" / "agentcfg" / "agent_ca5" / "eval_config.yaml").read_text(encoding="utf-8")
+    BC = BASE_EVAL.replace("timeout_seconds: 300", "timeout_seconds: 60").replace("max_time_minutes: 8", "max_time_minutes: 10")
+    assert BC.count("timeout_seconds: 60") == 1 and BC.count("max_time_minutes: 10") == 1, BC
+    ARMS = {"BC_cmd60_time10": {"eval_config.yaml": BC.encode()}}
+    DST = K / "push_31b_bc_check"
+    SLUG = "ca5-31b-bc-check"
+    EVAL_BUDGET_SECONDS = int(1.4 * 3600)
+    MAX_ROUNDS = 1
+    PER_ARM_CONC = 4
+    CHUNK = 12
+    rec6 = ["rich_3480", "fastapi_14616", "fastapi_14851", "rich_3506", "fastapi_14419", "rich_3521"]
+    alw = json.loads((K.parent / "Outputs" / "_31b_always.json").read_text(encoding="utf-8"))["always"]
+    order = rec6 + [t for t in alw if t not in rec6]
+    assert len(order) == 33 and len(set(order)) == 33, len(order)
+elif TASKSET == "timeout":
     # The 6 RECOVERABLE timeout tasks (31B solves each in other runs; the 8-min clock blocks it) x 6 reps x 3 arms.
     # ONLY eval_config differs: A = ca5 28/8/120/300 (control), B = timeout_seconds 300 -> 60 (kill hung repro
     # scripts), C = max_time_minutes 8 -> 10 (does time alone recover them? scorer-runtime risk, see 50/20).
@@ -118,10 +136,11 @@ assert (AGENT_DIRS["A_ca5"] / "configs" / "sampling.yaml").read_bytes() == (AGEN
 '''
 else:
     # every non-control arm may differ from A_ca5 ONLY in the files it overrides
+    # compare every arm against the embedded ca5 agent (AGENT) - works with or without a control arm
     ARM_CODE += '''for _arm, _dir in AGENT_DIRS.items():
     for _rel in ("agent.yaml", "prompts/system.md", "configs/sampling.yaml", "eval_config.yaml"):
-        _same = (_dir / _rel).read_bytes() == (AGENT_DIRS["A_ca5"] / _rel).read_bytes()
-        print(f"   {_arm:10s} {_rel:24s} {'same as A' if _same else 'DIFFERS'}")
+        _same = (_dir / _rel).read_bytes() == (AGENT / _rel).read_bytes()
+        print(f"   {_arm:16s} {_rel:24s} {'same as ca5' if _same else 'DIFFERS'}")
 '''
 cell2 = cell2.replace(ASSERT.group(0), ASSERT.group(0) + ARM_CODE, 1)
 nb["cells"][2]["source"] = cell2.splitlines(keepends=True)
@@ -253,7 +272,7 @@ while not stop:
         if ok: longest = max(longest, dur)
 
 good = [r for r in ROWS if r["chunk_complete"]]
-A_, B_ = ARM_NAMES[0], ARM_NAMES[1]
+A_, B_ = ARM_NAMES[0], ARM_NAMES[-1]   # single-arm runs: A_ == B_
 pa = {(r["round"], r["id"]): r["resolved"] for r in good if r["arm"] == A_}
 pb = {(r["round"], r["id"]): r["resolved"] for r in good if r["arm"] == B_}
 keys = sorted(set(pa) & set(pb))
