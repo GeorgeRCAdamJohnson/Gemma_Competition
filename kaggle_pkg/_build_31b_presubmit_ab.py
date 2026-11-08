@@ -32,7 +32,20 @@ SAVE_RESERVE_SECONDS = 12 * 60
 BUNDLE = K.parent / "local_eval" / "parity_rig" / "agent_31b_ca5_presubmit"
 ARMS = {"A_ca5": None, "B_presubmit": BUNDLE}   # A = AGENT unchanged (28/8/120 board caps)
 live = json.loads((K / "live_ids_31b_ab.json").read_text(encoding="utf-8"))
-if TASKSET == "85":
+if TASKSET == "think":
+    # 31B thinking-budget dose test. Control (ca5, thinking 4096, 28/8) is ALREADY measured 4x on these 85
+    # (ab31 A 34 / B 33, presubmit-85 A 32 / B 33), so both arms are treatments. ONLY thinking_budget changes.
+    SAMP = (K.parent / "Outputs" / "v7_31b_full129" / "agentcfg" / "agent_ca5" / "configs" / "sampling.yaml").read_text(encoding="utf-8")
+    assert SAMP.count("thinking_budget: 4096") == 1, SAMP
+    ARMS = {f"{a}_think{tb}": {"configs/sampling.yaml": SAMP.replace("thinking_budget: 4096", f"thinking_budget: {tb}").encode()}
+            for a, tb in (("A", 2048), ("B", 1024))}
+    DST = K / "push_31b_think_85"
+    SLUG = "ca5-31b-think-85"
+    EVAL_BUDGET_SECONDS = int(4.6 * 3600)     # 8 GPU-h left this week; last 85-task round took 4.08 h at 4096
+    MAX_ROUNDS = 1
+    order = list(live["order"])
+    assert len(order) == 85 and len(set(order)) == 85, len(order)
+elif TASKSET == "85":
     DST = K / "push_31b_presubmit_85"
     SLUG = "ca5-31b-presubmit-85"
     EVAL_BUDGET_SECONDS = int(6.0 * 3600)
@@ -63,9 +76,12 @@ def eval_yaml(calls, mins, turns):
 
 ARM_CODE = "import shutil as _sh, hashlib as _hl\nAGENT_DIRS = {}\n"
 for arm, bdir in ARMS.items():
-    over = {} if bdir is None else {p.relative_to(bdir).as_posix(): base64.b64encode(p.read_bytes()).decode()
-                                    for p in sorted(bdir.rglob("*")) if p.is_file()}
-    if bdir is not None:
+    if isinstance(bdir, dict):      # inline overrides: {relpath: bytes}
+        over = {rel: base64.b64encode(b).decode() for rel, b in bdir.items()}
+    else:
+        over = {} if bdir is None else {p.relative_to(bdir).as_posix(): base64.b64encode(p.read_bytes()).decode()
+                                        for p in sorted(bdir.rglob("*")) if p.is_file()}
+    if bdir is not None and not isinstance(bdir, dict):
         # the bundle must equal the embedded ca5 agent except system.md (one line), agent.yaml (+skills) and the skill
         assert set(over) == {"agent.yaml", "eval_config.yaml", "configs/sampling.yaml", "prompts/system.md",
                              "skills/presubmit-check/SKILL.md", "skills/presubmit-check/scripts/check.py"}, sorted(over)

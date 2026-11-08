@@ -18388,3 +18388,12 @@ vs **~14 s/call** in solved runs (solved median 14 calls, 240 s). At ~23 tok/s p
 the full thinking_budget 4096 costs ~180 s. => prime suspect: thinking length on hard tasks. The thinking sweep in
 the log was E4B-only (L13596, measured rich resolve rate, blind to time). **Next 31B lever: thinking_budget
 4096 -> 2048 (and 1024) A/B, reading timeouts + solves** - the only measured mechanism with ~15% of runs at stake.
+
+### SUBMITTED: E4B pack 1 = ref 58112867 (2026-11-08 03:09 UTC), PENDING
+`comfyops/gemma-submit-e4b-retry-fresh` (bundle 84f904c63afd, fresh-retry LoopAgent 80/30). Validation: 12.00/39
+(n=20) vs plain ca5 9.82; full-129 task-time ~10.7 h. The 00:03 UTC auto-submit (`_submit_at_reset.py`) never
+fired - `time.sleep` over 4.5 h stalled (PC sleep); submitted manually. LESSON: long sleeps in a scheduler must poll
+wall-clock in short steps (or use OS scheduling), never one big sleep. Prior E4B board score: 0.03 (plain ca5).
+Read: board k/58 vs the 1:1-ish mapping is unreliable; the useful signals are (a) it completes inside the scorer
+limit and (b) score vs 0.03. Pack 2 (a5129fc56ffb) is next day's candidate only if pack 1 times out (more runtime
+margin, equal score).
