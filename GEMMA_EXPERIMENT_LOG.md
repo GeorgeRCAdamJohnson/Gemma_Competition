@@ -18415,3 +18415,26 @@ User is right. Already in the log: 31B thinking ladder 4096 4/6 | 2048 3/6 | 102
   4096 family 0.17-0.20) leans against lowering.
 - Untested, cheap, mechanism-specific: `timeout_seconds 300 -> 60` (eval_config; caps a hung repro script at 1 min;
   targets 3/19 timeouts directly).
+
+---
+
+## 31B TIMEOUT RECOVERY A/B - `comfyops/ca5-31b-timeout-ab` PUSHED (user: "every task matters, keep going")
+Recoverability (`Outputs/_timeout_recoverable.py`, all 31B runs): of the 15 tasks that timed out in presubmit-85,
+**6 are solved by the 31B in other runs** (rich_3480 6/9, fastapi_14616 3/5, fastapi_14851 3/5, rich_3506 3/7,
+fastapi_14419 2/5, rich_3521 3/9 with 5 timeouts) -> pooled ~50% solve, frequent timeouts; v7 uncapped solved them
+at 408-1041 s. The other 9 were never solved by any 31B run (not a clock problem).
+Design: those 6 tasks x 6 rounds x 3 arms (CHUNK 6, 2 loops/arm = 6 in flight; same load across arms), 3.6 h cap.
+Only eval_config differs: A ca5 28/8/120/300 | **B timeout_seconds 60** (kill hung repro scripts) | **C
+max_time_minutes 10**. Read: an arm beating A by >= ~15 pp on these 6 (36 runs/arm) ~ +1 board task per pass.
+B ships directly (shortens only); C needs a full-129 runtime check first (31B 50/20 timed out on the scorer).
+**HARNESS BUG FIXED**: every earlier kernel passed only max_tool_calls / max_time_minutes / max_turns to swegemma
+eval - `timeout_seconds` was never forwarded (`--timeout-seconds`). Harmless so far (all packs used 300 = default);
+the scorer DOES apply evaluation.timeout_seconds (HARNESS_README L559), and a command timeout does not end the
+session (L389). Note: 6 in flight (vs 4 before) -> per-sequence decode slower than earlier runs; compare arms
+within this run, not against older rates.
+
+### Forum merge offer (edit_file old_string loss team) - not viable for us
+We have **31 submissions** (25 scored, best 0.20; 2026-10-02..11-08). Their rule caps the combined count (they have
+32; want partners at <=14, or <=25 if stopping) -> 63 combined is far over. Their claimed mechanism (affected
+edit_file calls fail 93% vs 11%; one-line prompt fix) matches what our E4B traces show (rich_3063: 7.1
+"old_string not found" per run) - worth deriving ourselves from our own failed edit_file calls (free, logs on disk).

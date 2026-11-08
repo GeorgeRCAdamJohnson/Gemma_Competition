@@ -32,7 +32,23 @@ SAVE_RESERVE_SECONDS = 12 * 60
 BUNDLE = K.parent / "local_eval" / "parity_rig" / "agent_31b_ca5_presubmit"
 ARMS = {"A_ca5": None, "B_presubmit": BUNDLE}   # A = AGENT unchanged (28/8/120 board caps)
 live = json.loads((K / "live_ids_31b_ab.json").read_text(encoding="utf-8"))
-if TASKSET == "think":
+if TASKSET == "timeout":
+    # The 6 RECOVERABLE timeout tasks (31B solves each in other runs; the 8-min clock blocks it) x 6 reps x 3 arms.
+    # ONLY eval_config differs: A = ca5 28/8/120/300 (control), B = timeout_seconds 300 -> 60 (kill hung repro
+    # scripts), C = max_time_minutes 8 -> 10 (does time alone recover them? scorer-runtime risk, see 50/20).
+    BASE_EVAL = (K.parent / "Outputs" / "v7_31b_full129" / "agentcfg" / "agent_ca5" / "eval_config.yaml").read_text(encoding="utf-8")
+    assert "timeout_seconds: 300" in BASE_EVAL and "max_time_minutes: 8" in BASE_EVAL, BASE_EVAL
+    ARMS = {"A_ca5": None,
+            "B_cmd60": {"eval_config.yaml": BASE_EVAL.replace("timeout_seconds: 300", "timeout_seconds: 60").encode()},
+            "C_time10": {"eval_config.yaml": BASE_EVAL.replace("max_time_minutes: 8", "max_time_minutes: 10").encode()}}
+    DST = K / "push_31b_timeout_ab"
+    SLUG = "ca5-31b-timeout-ab"
+    EVAL_BUDGET_SECONDS = int(3.6 * 3600)     # 8 GPU-h left; expected ~2.3 h of eval
+    MAX_ROUNDS = 6
+    CHUNK = 6
+    order = ["rich_3480", "fastapi_14616", "fastapi_14851", "rich_3506", "fastapi_14419", "rich_3521"]
+    assert all(t in set(live["order"]) for t in order)
+elif TASKSET == "think":
     # 31B thinking-budget dose test. Control (ca5, thinking 4096, 28/8) is ALREADY measured 4x on these 85
     # (ab31 A 34 / B 33, presubmit-85 A 32 / B 33), so both arms are treatments. ONLY thinking_budget changes.
     SAMP = (K.parent / "Outputs" / "v7_31b_full129" / "agentcfg" / "agent_ca5" / "configs" / "sampling.yaml").read_text(encoding="utf-8")
@@ -96,8 +112,16 @@ print({arm!r}, "prompt sha", _hl.sha1((_d / "prompts" / "system.md").read_bytes(
       "| eval:", (_d / "eval_config.yaml").read_text().replace(chr(10), " "),
       "| files:", sorted(p.relative_to(_d).as_posix() for p in _d.rglob("*") if p.is_file()))
 '''
-ARM_CODE += '''assert (AGENT_DIRS["A_ca5"] / "eval_config.yaml").read_bytes() == (AGENT_DIRS["B_presubmit"] / "eval_config.yaml").read_bytes()
+if set(ARMS) == {"A_ca5", "B_presubmit"}:
+    ARM_CODE += '''assert (AGENT_DIRS["A_ca5"] / "eval_config.yaml").read_bytes() == (AGENT_DIRS["B_presubmit"] / "eval_config.yaml").read_bytes()
 assert (AGENT_DIRS["A_ca5"] / "configs" / "sampling.yaml").read_bytes() == (AGENT_DIRS["B_presubmit"] / "configs" / "sampling.yaml").read_bytes()
+'''
+else:
+    # every non-control arm may differ from A_ca5 ONLY in the files it overrides
+    ARM_CODE += '''for _arm, _dir in AGENT_DIRS.items():
+    for _rel in ("agent.yaml", "prompts/system.md", "configs/sampling.yaml", "eval_config.yaml"):
+        _same = (_dir / _rel).read_bytes() == (AGENT_DIRS["A_ca5"] / _rel).read_bytes()
+        print(f"   {_arm:10s} {_rel:24s} {'same as A' if _same else 'DIFFERS'}")
 '''
 cell2 = cell2.replace(ASSERT.group(0), ASSERT.group(0) + ARM_CODE, 1)
 nb["cells"][2]["source"] = cell2.splitlines(keepends=True)
@@ -152,11 +176,15 @@ def _caps(agent_dir):
     raw = _yaml.safe_load((Path(agent_dir) / "eval_config.yaml").read_text()) or {}
     c = raw.get("evaluation", raw) or {}
     out = []
-    for k_, flag in (("max_tool_calls", "--max-tool-calls"), ("max_time_minutes", "--max-time-minutes"), ("max_turns", "--max-turns")):
+    # timeout_seconds -> --timeout-seconds: the scorer applies evaluation.timeout_seconds as the per-command timeout
+    # (HARNESS_README L559); earlier kernels did NOT forward it (harmless then: everyone used 300 = CLI default).
+    for k_, flag in (("max_tool_calls", "--max-tool-calls"), ("max_time_minutes", "--max-time-minutes"),
+                     ("max_turns", "--max-turns"), ("timeout_seconds", "--timeout-seconds")):
         if c.get(k_) is not None: out += [flag, str(c[k_])]
     return out
 CAPS = {a: _caps(d) for a, d in AGENT_DIRS.items()}
-assert CAPS[ARM_NAMES[0]] == CAPS[ARM_NAMES[1]], "arms must share the 28/8 board caps"
+if len(ARM_NAMES) == 2 and "B_presubmit" in ARM_NAMES:
+    assert CAPS[ARM_NAMES[0]] == CAPS[ARM_NAMES[1]], "arms must share the 28/8 board caps"
 _all = {json.loads(l)["instance_id"] for l in open(TASKS) if l.strip()}
 assert all(t in _all for t in LIVE_ORDER), "live list has ids not in tasks.jsonl"
 print(f"31B presubmit A/B: {len(LIVE_ORDER)} ever-solved tasks x {MAX_ROUNDS} rounds, arms {ARM_NAMES}, conc/arm {PER_ARM_CONC}, chunk {CHUNK}, "
@@ -225,7 +253,7 @@ while not stop:
         if ok: longest = max(longest, dur)
 
 good = [r for r in ROWS if r["chunk_complete"]]
-A_, B_ = ARM_NAMES
+A_, B_ = ARM_NAMES[0], ARM_NAMES[1]
 pa = {(r["round"], r["id"]): r["resolved"] for r in good if r["arm"] == A_}
 pb = {(r["round"], r["id"]): r["resolved"] for r in good if r["arm"] == B_}
 keys = sorted(set(pa) & set(pb))
@@ -241,6 +269,16 @@ summary = {
     "round1": {A_: sum(pa[k] for k in keys if k[0] == 1), B_: sum(pb[k] for k in keys if k[0] == 1)},
     "rounds_run": round_no, "elapsed_h": round((_t.time() - START) / 3600, 2),
 }
+# every arm, per task: solved / runs / timeouts (works for any number of arms)
+summary["per_arm"] = {}
+for a in ARM_NAMES:
+    ra = [r for r in good if r["arm"] == a]
+    summary["per_arm"][a] = {
+        "solved": sum(r["resolved"] for r in ra), "runs": len(ra),
+        "timeouts": sum("timeout" in (r["err"] or "") for r in ra),
+        "per_task": {t: f"{sum(r['resolved'] for r in ra if r['id'] == t)}/{sum(1 for r in ra if r['id'] == t)}"
+                     for t in LIVE_ORDER},
+        "mean_dur": round(sum((r["dur"] or 0) for r in ra) / max(1, len(ra)), 1)}
 _TELE_STOP.set()
 json.dump({"rows": ROWS, "summary": summary, "caps": CAPS}, open(AB, "w"))
 print("\n" + "=" * 64 + "\n31B PRESUBMIT A/B SUMMARY (complete chunks only)\n" + "=" * 64, flush=True)
