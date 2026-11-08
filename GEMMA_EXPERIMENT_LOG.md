@@ -18397,3 +18397,21 @@ wall-clock in short steps (or use OS scheduling), never one big sleep. Prior E4B
 Read: board k/58 vs the 1:1-ish mapping is unreliable; the useful signals are (a) it completes inside the scorer
 limit and (b) score vs 0.03. Pack 2 (a5129fc56ffb) is next day's candidate only if pack 1 times out (more runtime
 margin, equal score).
+
+### RETRACTION + DIAGNOSIS: 31B timeouts are NOT "thinking budget" (user: "we already tested those")
+User is right. Already in the log: 31B thinking ladder 4096 4/6 | 2048 3/6 | 1024 4/6 (L8793, L7522, tie);
+129-run probe of 2,917 thinking steps: median ~60 tok, p90 ~640, ONE step at the 4096 cap (L12716). The proposed
+2048/1024 A/B is withdrawn. Real decomposition of the 19 timeouts in presubmit-85 (`_timeout_split.py`,
+`_timeout_turns.py`, per-step timestamps):
+- **3/19 = a hung command**: one `cat > /tmp/repro.py <<'EOF'` + run burns the full `timeout_seconds: 300`
+  (eval_config) - >60% of the 8-min budget on a single call (rich_4006 x2, rich_3480).
+- **16/19 = model time** (28.5 s/call vs 17.2 in solved runs; tool time ~1 s). Per turn: timeout runs have 10% of
+  turns > 60 s (solved 3%); those slow turns carry a median **~10k chars** of model text (fast turns ~0.8k) and
+  are followed by run_command 24/31 - long deliberation before writing a repro/heredoc. ~10k chars ~ 2.5k tokens
+  ~ 110 s at the measured 23 tok/s per sequence.
+- Open: whether that text is the thought channel (capped by thinking_budget) or visible text (capped only by
+  max_output_tokens 5000) - the log's char field does not say. The earlier ladder measured solves on 6 tasks,
+  never timeouts on the hard tail, so it does not settle this either way; board evidence (1024 family 0.15-0.18 vs
+  4096 family 0.17-0.20) leans against lowering.
+- Untested, cheap, mechanism-specific: `timeout_seconds 300 -> 60` (eval_config; caps a hung repro script at 1 min;
+  targets 3/19 timeouts directly).
