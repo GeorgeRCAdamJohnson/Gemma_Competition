@@ -1,8 +1,8 @@
-# Visualizations - built 2026-11-08 21:36
+# Visualizations - built 2026-11-08 22:14
 
 Regenerate: `python Outputs/_viz_all.py`
 
-Four-tab HTML record: `Write-up/gemma-agent-score-record.html` (hand-maintained; this script does not rebuild it).
+Four-tab HTML record: `Write-up/gemma-agent-score-record.html` (hand-maintained; its score chart is rebuilt from the submission cache by `python Write-up/_rebuild_score_svg.py`, checks: `python Write-up/_check_score_record.py`).
 
 ## Board submissions over time
 ![Board submissions over time](01_board_timeline.png)

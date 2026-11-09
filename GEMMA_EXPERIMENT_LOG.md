@@ -18535,3 +18535,18 @@ history, findings, retractions, hardware - all line-cited), README index of the 
 Gaps the log does not support yet: a local 31B run on the 5070 Ti (none recorded; local proxies were gemma4:26b and
 12B), laptop small-model runs (only a "not viable for E4B" verdict, L17883), detail on poker / attack-agent lessons
 (pointers only, L47, L415, L631-663), a rank history (one point: 888/2800 on 10-14, L8911).
+
+### SCORE-RECORD HTML (branch cursor/score-record-html-8025, fast-forwarded into main) - review fixes
+`Write-up/gemma-agent-score-record.html` (four tabs, no JS). Fixed after review:
+1. Board histogram "0.00 = 159 teams" was mislabelled: 3,871 teams - 3,712 scored = 159 teams with NO score -> "no score".
+2. Overview score chart spaced points by submission order under a "by date" title -> rebuilt by real timestamps
+   from `Outputs/_submissions.json` (`Write-up/_rebuild_score_svg.py`, Monday ticks; 24 main-track points).
+3. "34 of the 39 ever-solved and 0 of the other 46" is true by construction -> reworded; noted that later E4B
+   runs solved 3 of the 46 (rich_3052, rich_3470, rich_3772) while no 31B run has solved any.
+4. 60 s command cap was presented as a gain -> "not significant (p 0.14), mostly rich_3480; forum 24 of 7,424
+   commands > 120 s, may be practice-specific; safe to ship with C".
+Checks: `Write-up/_check_score_record.py` (balanced tags, UTF-8, chart ordered). Earlier "mojibake" (`21ΓÇô100`) was
+a reader artifact; the bytes are a correct en dash.
+**Submission state (refreshed cache):** ref 58146866 (2026-11-09 01:22 UTC) = another upload of the E4B
+fresh-retry pack, still PENDING; it doubles as the infra-vs-real test of pack 1's 0.01. The 31B B+C pack
+(`gemma-submit-ca5-bc-time10-cmd60`) is built and still NOT submitted.
