@@ -290,3 +290,10 @@ with open(V / "index.md", "w", encoding="utf-8") as f:
     for name, title, note in made:
         f.write(f"## {title}\n![{title}]({name})\n\n{note}\n\n")
 print(f"{len(made)} charts -> {V}")
+# mirror into the repo-root Write-up/ folder (charts + README index; links are relative so they work unchanged)
+import shutil
+W = O.parent / "Write-up"; W.mkdir(exist_ok=True)
+for name, _, _ in made:
+    shutil.copy2(V / name, W / name)
+shutil.copy2(V / "index.md", W / "README.md")
+print(f"mirrored {len(made)} charts + README.md -> {W}")
