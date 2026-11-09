@@ -18496,3 +18496,42 @@ Our exposure (`Outputs/_array_arg_risk.py`, 1,365 runs): exactly ONE array-arg c
 {"nodes": ["APIRoute"]}); run_skill_script never used positional_args. Low risk; pack 1 finishing inside the limit
 also argues no early freeze. Free hardening option: drop the 3 graph tools (dead anyway - /cns/ paths) to remove
 the only array-arg tools.
+
+---
+
+## FORUM DEEP-READ, VISUALIZATIONS, PAPER OUTLINE (2026-11-09)
+
+### Forum analysis (`Outputs/FORUM_ANALYSIS_20261108.md`; all 315 topics swept, ~95 read in full; tags HOST-CONFIRMED / claimed)
+Facts that change our decisions:
+- **The scorer runs hidden tasks SEQUENTIALLY** (concurrency 1) [topic 743063, host]. Our kernels ran 4-8 in flight,
+  which slows each sequence (30 -> 23 tok/s at 4, telemetry) -> our timeout rates are pessimistic vs the board; the
+  B+C board gain should be smaller than measured.
+- **12 h covers ~120 public+private tasks in one pass, incl. vLLM start-up; overrun = whole submission unscored**
+  [topics 743063, 744258, 745805, host]. Others report scored runs of 8.9-11.9 h [topic 752017].
+- **Hidden tasks come from private repos; none of the published training repos are in the test set**
+  [topics 744951, 747248, host]. RESOLVES the open question at L12934 (the "129 = public 58 + private 71" inference)
+  in favour of DISJOINT. Explains the E4B practice->board transfer failure.
+- Known-good packs scoring 0.00-0.01 are often scorer-side events [topics 750521, 743683, 751339]; private score =
+  the better of the two selected finals [topic 752220, host-likely].
+- edit_file "old_string loss": inferred mechanism (no single post states it) = the model closes a string argument
+  with a backtick instead of <|"|>, the parser pairs every later delimiter off by one, old_string disappears and a
+  source line becomes a key; multi-string tools fail, single-string run_command never does (0/1135)
+  [topics 747519, 756051, 747923, 747168].
+- Context overflow skips the git-diff fallback -> empty patch (44/44 sessions) [topic 744692].
+- Command timeouts rarely bind elsewhere (24 of 7,424 commands > 120 s) [topic 755066] -> our 60 s gain on
+  rich_3480 may be practice-specific; still safe to ship.
+- No disclosed method for 0.25+; the top plateau (0.24, 6 teams) is single-agent.
+
+### Visualizations (`Outputs/_viz_all.py` -> `Outputs/viz/` and mirrored to `Write-up/`)
+11 charts built from the on-disk data: board timeline, phase timeline (paper Fig 1), E4B arms on the 39, 31B 85-task
+rounds, timeout A/B, telemetry, E4B retry mechanism, practice->board transfer, 31B per-task heatmap, 31B turn-time
+distribution (rebuilt after review: density on log bins hid the tail; now share-of-turns + cumulative share of model
+time - >60 s turns are ~10% of turns but ~60% of model time in timeout runs vs ~30% in solved), size ladder.
+`Outputs/_submissions.json` caches the full submission history (32).
+
+### Write-up (`Write-up/`)
+`PAPER_OUTLINE.md` (sections, figure map, [GAP]/[AUTHOR] items), `_chronology_notes.md` (dated phase table, board
+history, findings, retractions, hardware - all line-cited), README index of the figures.
+Gaps the log does not support yet: a local 31B run on the 5070 Ti (none recorded; local proxies were gemma4:26b and
+12B), laptop small-model runs (only a "not viable for E4B" verdict, L17883), detail on poker / attack-agent lessons
+(pointers only, L47, L415, L631-663), a rank history (one point: 888/2800 on 10-14, L8911).
