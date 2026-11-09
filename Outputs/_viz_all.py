@@ -335,7 +335,9 @@ save(fig, "11_size_ladder.png", "Model-size ladder",
 
 # index
 with open(V / "index.md", "w", encoding="utf-8") as f:
-    f.write(f"# Visualizations - built {datetime.now():%Y-%m-%d %H:%M}\n\nRegenerate: `python Outputs/_viz_all.py`\n\n")
+    f.write(f"# Visualizations - built {datetime.now():%Y-%m-%d %H:%M}\n\nRegenerate: `python Outputs/_viz_all.py`\n\n"
+            "Four-tab HTML record: `Write-up/gemma-agent-score-record.html` "
+            "(hand-maintained; this script does not rebuild it).\n\n")
     for name, title, note in made:
         f.write(f"## {title}\n![{title}]({name})\n\n{note}\n\n")
 print(f"{len(made)} charts -> {V}")

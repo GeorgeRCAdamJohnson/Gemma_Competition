@@ -2,6 +2,8 @@
 
 Regenerate: `python Outputs/_viz_all.py`
 
+Four-tab HTML record: `Write-up/gemma-agent-score-record.html` (hand-maintained; this script does not rebuild it).
+
 ## Board submissions over time
 ![Board submissions over time](01_board_timeline.png)
 
