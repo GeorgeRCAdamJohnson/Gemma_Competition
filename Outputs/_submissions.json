@@ -1,0 +1,290 @@
+[
+ {
+  "ref": 58146866,
+  "date": "2026-11-09 01:22:17.717000",
+  "desc": "",
+  "status": "SubmissionStatus.PENDING",
+  "score": "",
+  "err": "",
+  "url": "/code/comfyops/gemma-submit-e4b-retry-fresh?scriptVersionId=366645757"
+ },
+ {
+  "ref": 58112867,
+  "date": "2026-11-08 03:09:35.027000",
+  "desc": "E4B pack1 fresh-retry LoopAgent 80/30 | val 12.00/39 (n20) vs ca5 9.82, ~10.7h task-time",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.01",
+  "err": "",
+  "url": "/code/comfyops/gemma-submit-e4b-retry-fresh?scriptVersionId=366645757"
+ },
+ {
+  "ref": 58076615,
+  "date": "2026-11-07 02:39:07.707000",
+  "desc": "Why the frak not",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "",
+  "err": "Your submission notebook exceeded the allowed runtime. Review the competition's Code Requirements page for the time limits. Note that the hidden dataset can be larger/smaller/different than the public dataset.",
+  "url": "/code/comfyops/gemma-submit-ca5-cap50-20?scriptVersionId=366457224"
+ },
+ {
+  "ref": 58040392,
+  "date": "2026-11-06 00:52:10.237000",
+  "desc": ".17?\n",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.13",
+  "err": "",
+  "url": "/code/comfyops/gemma-submit-mobile-ca5?scriptVersionId=364752766"
+ },
+ {
+  "ref": 58000775,
+  "date": "2026-11-04 22:41:47.983000",
+  "desc": "Hit me 1 mor etime",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.17",
+  "err": "",
+  "url": "/code/comfyops/gemma-submit-mobile-ca5?scriptVersionId=364752766"
+ },
+ {
+  "ref": 57951278,
+  "date": "2026-11-03 14:43:14.250000",
+  "desc": "This is the song that neve ends",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.17",
+  "err": "",
+  "url": "/code/comfyops/gemma-submit-mobile-ca5?scriptVersionId=364752766"
+ },
+ {
+  "ref": 57894012,
+  "date": "2026-11-02 03:44:01.863000",
+  "desc": "ca5: pre-edit anchor-grep rule, no sub-agents, v10 config (identical-bytes resubmit of 0.20 pack ref 57760641, for best-of-N)",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.17",
+  "err": "",
+  "url": "/submissions/57894012/57894012.raw"
+ },
+ {
+  "ref": 57847285,
+  "date": "2026-10-31 18:24:26.797000",
+  "desc": "ca5: pre-edit anchor-grep rule, no sub-agents, v10 config (resubmit of 0.20 pack ref 57760641, identical bytes)",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.18",
+  "err": "",
+  "url": "/submissions/57847285/57847285.raw"
+ },
+ {
+  "ref": 57807043,
+  "date": "2026-10-30 13:38:29.263000",
+  "desc": "E4B ca5 anchor-grep: pre-edit rule, no sub-agents, v10 caps (small-model candidate)",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.03",
+  "err": "",
+  "url": "/submissions/57807043/57807043.raw"
+ },
+ {
+  "ref": 57760641,
+  "date": "2026-10-29 05:56:50.567000",
+  "desc": "ca5: pre-edit anchor-grep rule, no sub-agents, v10 config",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.20",
+  "err": "",
+  "url": "/submissions/57760641/57760641.raw"
+ },
+ {
+  "ref": 57720023,
+  "date": "2026-10-28 01:57:10.570000",
+  "desc": "A25 router blind: classify-dispatch, 2 sub-agents, summarized returns, v10 caps",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.13",
+  "err": "",
+  "url": "/submissions/57720023/57720023.raw"
+ },
+ {
+  "ref": 57681095,
+  "date": "2026-10-26 23:27:29.713000",
+  "desc": "",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.15",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-31b-a23-arm?scriptVersionId=362314164"
+ },
+ {
+  "ref": 57640430,
+  "date": "2026-10-25 19:04:53.587000",
+  "desc": ".26?",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.17",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-31b-a3-hard?scriptVersionId=362232731"
+ },
+ {
+  "ref": 57582998,
+  "date": "2026-10-24 04:58:00.787000",
+  "desc": "Lucy ",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.17",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-31b-a3-hard?scriptVersionId=361664583"
+ },
+ {
+  "ref": 57551592,
+  "date": "2026-10-23 06:20:51.590000",
+  "desc": "again",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.12",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-31b-a3-hard?scriptVersionId=360620107"
+ },
+ {
+  "ref": 57530249,
+  "date": "2026-10-22 15:40:08.550000",
+  "desc": "sadgdvzxgv",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.18",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-31b-a3-hard?scriptVersionId=360606731"
+ },
+ {
+  "ref": 57470483,
+  "date": "2026-10-21 06:55:00.930000",
+  "desc": "Why not",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "",
+  "err": "Your notebook hit an unhandled error while rerunning your code. Note that the hidden dataset can be larger/smaller/different than the public dataset",
+  "url": "/code/comfyops/gemma-sibling-conform-31b-a3-hard?scriptVersionId=360620107"
+ },
+ {
+  "ref": 57424022,
+  "date": "2026-10-20 05:35:08.683000",
+  "desc": "Lets go bishes",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.18",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-31b-a3-hard?scriptVersionId=359948682"
+ },
+ {
+  "ref": 57399296,
+  "date": "2026-10-19 14:22:10.367000",
+  "desc": "A17 @31B: v6c structure + time-first framing + de-hedged triggers + THE fix granularity",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.15",
+  "err": "",
+  "url": "/submissions/57399296/57399296.raw"
+ },
+ {
+  "ref": 57359160,
+  "date": "2026-10-18 15:12:43.450000",
+  "desc": "testing",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.13",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-v7-d-l4x4?scriptVersionId=358544773"
+ },
+ {
+  "ref": 57317996,
+  "date": "2026-10-17 16:23:56.247000",
+  "desc": "MODEL-SIZE LADDER, single axis vs v6w(0.15): agent.yaml model line only, gemma-4-31b-it-qat-w4a16-ct -> gemma-4-12b-it-qat-w4a16-ct. sha-verified: prompts/system.md, configs/sampling.yaml, eval_config.yaml BYTE-IDENTICAL to v6w; budget stays 28/8/80/240, thinking_budget 1024, temp 0.2, 9 tools. NO adapter. WHY THIS CELL IS EMPTY UNTIL NOW: log L8509 tested 12B only as a LOCAL gate (viability PASS, quality negative); L6349-6357 tested E2B/E4B/12B only WITH adapters attached; L8705 kjhgiughj=0.05 was a LoRA arm, which CONFOUNDS model size with the adapter. Bare smaller-model + v6w prompt + no adapter has never been scored on the board. TWO OPEN QUESTIONS THIS SETTLES: (1) L6408 flagged an unresolved viability risk that 12B is too slow for the real competition clock and we must fall back to E4B - only a board run can settle that, since local gates do not enforce the scorer clock; (2) whether the 31B advantage is capability or format adherence, which decides whether 12B becomes a cheap LoRA target with Colab credits. E4B variant is staged for the next slot.",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "",
+  "err": "Your notebook hit an unhandled error while rerunning your code. Note that the hidden dataset can be larger/smaller/different than the public dataset",
+  "url": "/submissions/57317996/57317996.raw"
+ },
+ {
+  "ref": 57276407,
+  "date": "2026-10-16 16:51:32.647000",
+  "desc": "BUDGET RAISE, single axis vs v6w(0.15): eval_config only. max_tool_calls 28->100, max_turns 80->500, max_time_minutes 8->60 (harness inference.py defaults). timeout_seconds held at 240. agent.yaml + sampling.yaml + system.md byte-identical (sha-verified). WHY: measured never_committed is 26-33pct of rich failures and means NEVER LANDED THE EDIT, not forgot-to-submit, since a landed edit always scores via automatic git add -N . and git diff. edit_file IS budget-gated while submit_patch and get_status are free, so a tight budget starves the only scoring action. v6w ran 3.6x under the harness default. Every prior lever (8 LoRA, temp, thinking, L1-L4) optimised for FEWER calls; none ever raised the budget. Chosen because only large effects are legible past measured gate noise.",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "",
+  "err": "Your notebook hit an unhandled error while rerunning your code. Note that the hidden dataset can be larger/smaller/different than the public dataset",
+  "url": "/submissions/57276407/57276407.raw"
+ },
+ {
+  "ref": 57201051,
+  "date": "2026-10-15 01:15:05.580000",
+  "desc": "v6w + temperature 1.0 / top_k 64 (only change vs the 0.15 v6w baseline)",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.13",
+  "err": "",
+  "url": "/submissions/57201051/57201051.raw"
+ },
+ {
+  "ref": 57146757,
+  "date": "2026-10-13 14:31:31.723000",
+  "desc": "PER-TASK BRANCHING: first use of ADK {problem_description} templating - system.md now interpolates the task text and branches CASE A (target named -> locate+edit fast) vs CASE B (target NOT named -> find the sibling in-repo and copy its name EXACTLY). Same 0.18 budget/tool-surface/sampling as v6w (0.15 baseline). Gate: rich_3676 resolved, first hard-task resolve in project (gate was 0/6); git grep fired 4/4 tasks vs 0/4 static; turns 30->14.",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.12",
+  "err": "",
+  "url": "/submissions/57146757/57146757.raw"
+ },
+ {
+  "ref": 57098497,
+  "date": "2026-10-12 06:44:05.790000",
+  "desc": "v6w: 0.18 budget (28/8/80/240) + 9-tool surface with edit_file primary + thinking_budget 1024. Gate 4/6 tied with v6t but ~32s/task faster (235s vs 267s mean).",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.15",
+  "err": "",
+  "url": "/submissions/57098497/57098497.raw"
+ },
+ {
+  "ref": 57054171,
+  "date": "2026-10-10 23:01:55.280000",
+  "desc": "kjhgiughj",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.05",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-v19v3?scriptVersionId=357123357"
+ },
+ {
+  "ref": 56896956,
+  "date": "2026-10-07 01:48:09.260000",
+  "desc": "v15 short-trajectory (no sub-agent, thinking 256, budget 12) via CPU packaging notebook",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.10",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-v15-cpu?scriptVersionId=355920262"
+ },
+ {
+  "ref": 56856000,
+  "date": "2026-10-05 15:43:10.847000",
+  "desc": "v15 short-trajectory: anti-word-trap localization + no sub-agent + thinking 256 + budget 12 (compaction-aware)",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.08",
+  "err": "",
+  "url": "/submissions/56856000/56856000.raw"
+ },
+ {
+  "ref": 56835719,
+  "date": "2026-10-04 23:36:10.717000",
+  "desc": "v10 budget-40 agent (300s), uploaded from V1 committed output",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.08",
+  "err": "",
+  "url": "/submissions/56835719/56835719.raw"
+ },
+ {
+  "ref": 56835583,
+  "date": "2026-10-04 23:26:08.053000",
+  "desc": "Notebook Gemma Sibling-Conform v10 | Version 2",
+  "status": "SubmissionStatus.ERROR",
+  "score": "",
+  "err": "A system error. Please try resubmitting to resolve the error and contact Kaggle Support if it persists.",
+  "url": "/code/comfyops/gemma-sibling-conform-v10?scriptVersionId=355292456"
+ },
+ {
+  "ref": 56806249,
+  "date": "2026-10-03 20:34:11.603000",
+  "desc": "beat...beat....no one else can be defeated\n",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.12",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-v6?scriptVersionId=354963241"
+ },
+ {
+  "ref": 56775978,
+  "date": "2026-10-02 14:35:58.847000",
+  "desc": "One shot",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.10",
+  "err": "",
+  "url": "/code/comfyops/gemma-sibling-conform-v1?scriptVersionId=354558366"
+ }
+]
