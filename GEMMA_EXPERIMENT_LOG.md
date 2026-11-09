@@ -18550,3 +18550,58 @@ a reader artifact; the bytes are a correct en dash.
 **Submission state (refreshed cache):** ref 58146866 (2026-11-09 01:22 UTC) = another upload of the E4B
 fresh-retry pack, still PENDING; it doubles as the infra-vs-real test of pack 1's 0.01. The 31B B+C pack
 (`gemma-submit-ca5-bc-time10-cmd60`) is built and still NOT submitted.
+
+---
+
+## FORUM ROUND 2: what transfers (agents / LoRA / skills), harness levers, 31B outcome breakdown (2026-11-09)
+Scripts: `Outputs/_forum_transfer.py` (+ .txt), `Outputs/_forum_harness.py` (+ .txt), `Outputs/_output_len.py`.
+
+### 31B outcome breakdown (420 runs on the 85 live: ab31 + presubmit-85)
+solved 37.4% | failed normally 38.3% | **8-min timeout 16.4%** | **context overflow 7.9%** (33 runs, 16 tasks; 20
+of the 33 had already edited). ~1/4 of 31B runs end mechanically, not on task difficulty -> the gap to the 0.24
+cluster (~2 tasks of mean: 10.6 vs ~12-13/58) is plausibly mechanical. 0.29 = one team, 18 draws: from a ~14/58 mean,
+P(>=17 in 18 draws) ~0.87 at sigma 2 (L16670) - no hidden method is required to explain it.
+
+### Agents / LoRA / skills on the BOARD (the only transfer evidence) - none beat a single LlmAgent
+- LoRA: same bundle +adapter 0.00 vs 0.18 [755677]; +adapter exceeded runtime vs 0.15 [749191]; zero-weight adapter
+  Kaggle Error vs 0.13 [745364]; 1,500-trajectory LoRA 0.0 [750713]; best case = baseline (0.17) only after cutting
+  caps to 6 min / 2048 [755677]. Cause: LoRA decode 15-29% slower + smaller KV cache vs a binding 12 h limit.
+  Teacher test [747168, 37 votes]: much stronger models in the same harness solve only +4-5/124 more; 48 of Gemma's 60
+  double-failures solved by nobody; teachers win mainly by SPEED (3.5-3.9 vs 5.2 min/task). Distillation ceiling low.
+- Multi-agent: SequentialAgent pipelines 0.06-0.08 vs starter 0.08 [754636] (nudge restarts stage 1, compaction drops
+  tool history, shared clock/counter); 40+-version analyzer+editor line peaked at 0.17 = single-agent level [747696].
+- Skills: best 0.15 then 0.10 byte-identical; later 0.06-0.12 [750350]; robust-edit editor cut edit failures 43% ->
+  11% but resolved unchanged 6/16 [747923]. Failure modes: list-typed file_path (33/960 empty patches) [745028], JSON
+  quotes on skill_name [746336], array-arg parser freeze [753973].
+- RULE: harness-level, repo-independent fixes can transfer (same harness on the hidden repos); practice-content gains
+  do not (our E4B fresh-retry: +1.7 practice, 0.01 board).
+
+### Harness facts and how our ca5 31B pack (b08b32a2438d, 28/8/120/300, out 5000, thinking 4096) stands
+1. **MEASUREMENT ARTIFACT IN OUR OWN KERNELS** [747168]: `run_command` is synchronous and blocks the event loop, so
+   with several tasks in ONE swegemma process a slow command freezes every task in that process while their clocks
+   run. All our A/B kernels run `--concurrency 2-8` in one process per arm. The scorer runs one task at a time
+   [743063]. => part of our measured timeouts, and part of arm B's (60 s cmd timeout) gain, may be this freeze, not
+   the task. B's board effect is probably smaller still; C (10-min cap) is less affected but also inflated.
+   Future timing A/Bs should run one task per process (or --concurrency 1 with several processes).
+2. Budget warning: harness appends "Only N tool call(s) remaining" only when 10 calls remain (caps >= 20), i.e. at
+   call 18 of 28; there is no TIME-based warning [749198, 750490]. Our losses are time-based -> our prompt's
+   get_status COMMIT-BY-REMAINING rules are the only time signal; models ignore periodic get_status [750490].
+3. Undeclared/hallucinated tool name = fatal (empty patch); the task prompt advertises all 9 tools even if not
+   declared [745028]. => KEEP the 3 dead graph tools declared (removing them is riskier). 31B never called them in
+   170 pre85 runs; the array-arg freeze risk is ~0 for 31B.
+4. Workspace Layout in the task prompt omits the source package in 115/129 tasks [745220]; our step 1 already greps.
+5. Compaction summary is sampled at temp 1.0 / top_k 64 regardless of our config [753225]; keeps text only; nudges
+   "keep reasoning under a few sentences" [756336]. Not controllable.
+6. Tool calls emitted before the thought channel closes are dropped as reasoning (~1%) [753521]. Not controllable.
+7. hints_text is empty for all 129 tasks; 18-20 statements are title + dead link [746944]. Nothing to use.
+8. Callback registry is empty; custom tools impossible; exit_loop not registered [743964, 743573, 745792].
+9. NOT USABLE / OFF-LIMITS: [747248] stronger models read a NEWER installed release of the package (site-packages)
+   and copied the fix (8 of 10 solves) - leakage specific to the public set; hidden repos are private. Not pursued.
+
+### Under-utilized lever, measured on our traces: max_output_tokens
+vLLM reserves max_output_tokens from the 32,768 window, so prompt room = 32,768 - 5,000 = ~27.7k (every overflow
+error reads prompt >= 27,769). 31B per-turn output (3,409 turns, presubmit-85, ~4 chars/token): median 209 chars,
+p90 2,221, p99 11,104; > ~3,000 tokens 0.67% of turns, > ~4,000 tokens 0.09%. => out 4000 frees ~1k tokens at a cost
+of truncating ~0.1% of turns; out 3000 frees ~2k at ~0.7%. Targets the 7.9% overflow class. Risk: a truncated turn
+can lose its tool call (nudge), and the long turns are the heredoc-repro turns. UNTESTED - a candidate one-variable A/B
+(out 5000 vs 4000) on the 16 overflow tasks, run one task per process.
