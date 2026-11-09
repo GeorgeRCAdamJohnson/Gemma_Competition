@@ -65,6 +65,7 @@
   .stat span { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
   .stat.good b { color: var(--green); }
   .stat.bad b { color: var(--red); }
+  .stat.warn b { color: var(--amber); }
   .callout { border: 1px solid var(--line); border-left-width: 3px; border-radius: 6px; padding: 10px 12px; margin: 12px 0; background: var(--paper); }
   .callout.good { border-left-color: var(--green); background: var(--green-bg); }
   .callout.warn { border-left-color: var(--amber); background: var(--amber-bg); }
@@ -121,9 +122,9 @@
     <div class="stat good"><b>12 / 58</b><span>Best public score, 0.20</span></div>
     <div class="stat good"><b>19 / 36</b><span>10-minute cap on the 6 timeout tasks</span></div>
     <div class="stat"><b>18 / 18</b><span>Always-solved tasks kept by B+C</span></div>
-    <div class="stat bad"><b>0.01</b><span>E4B fresh-retry on the board</span></div>
+    <div class="stat warn"><b>0.01 / 0.06</b><span>E4B fresh-retry, same bytes, two draws</span></div>
   </div>
-  <div class="callout good">The 10-minute cap beat the 8-minute control, 19 of 36 versus 9 of 36 (Fisher p = 0.03). Twelve of those 19 solves finished between 511 and 608 seconds. Combining it with a 60-second command timeout kept 18 of 18 always-solved tasks and cut task-time 3% on the 24 tasks that finished. That pack is built and not submitted. The slot after the 8 November reset went to another E4B upload (ref 58146866, still pending).</div>
+  <div class="callout good">The 10-minute cap beat the 8-minute control, 19 of 36 versus 9 of 36 (Fisher p = 0.03). Twelve of those 19 solves finished between 511 and 608 seconds. Combining it with a 60-second command timeout kept 18 of 18 always-solved tasks and cut task-time 3% on the 24 tasks that finished. That pack is built and not submitted; it is queued for the 10 November reset. The slot after the 8 November reset went to a second upload of the E4B pack (ref 58146866), which scored 0.06 on the same bytes that scored 0.01.</div>
 
   <h2>Public score by submission date</h2>
   <p class="note">Displayed score (truncated). Main track only. Reference lines: 0.25 = 15/58, 0.29 = 17/58.</p>
@@ -143,7 +144,7 @@
       <g class="axis"><text x="36" y="236">10-02</text><line x1="36.0" y1="216" x2="36.0" y2="220" stroke="#a8a29e"/><text x="94" y="236">10-05</text><line x1="93.7" y1="216" x2="93.7" y2="220" stroke="#a8a29e"/><text x="228" y="236">10-12</text><line x1="228.2" y1="216" x2="228.2" y2="220" stroke="#a8a29e"/><text x="363" y="236">10-19</text><line x1="362.8" y1="216" x2="362.8" y2="220" stroke="#a8a29e"/><text x="497" y="236">10-26</text><line x1="497.3" y1="216" x2="497.3" y2="220" stroke="#a8a29e"/><text x="632" y="236">11-02</text><line x1="631.9" y1="216" x2="631.9" y2="220" stroke="#a8a29e"/></g>
     </svg>
   </div>
-  <p class="note">Source: Outputs/_submissions.json through 2026-11-09. Points are placed by submission time; ticks mark Mondays. Rebuild with <code>python Write-up/_rebuild_score_svg.py</code>. Identical ca5 bytes after 29 October scored 0.18, 0.17, 0.17, 0.17, 0.13. E4B rows (0.03 and 0.01) are omitted from this line. Y axis is displayed public score. X axis is submission date.</p>
+  <p class="note">Source: Outputs/_submissions.json through 2026-11-09. Points are placed by submission time; ticks mark Mondays. Rebuild with <code>python Write-up/_rebuild_score_svg.py</code>. Identical ca5 bytes after 29 October scored 0.18, 0.17, 0.17, 0.17, 0.13. E4B rows (0.03, 0.01 and 0.06) are omitted from this line. Y axis is displayed public score. X axis is submission date.</p>
 
   <div class="split">
     <div>
@@ -239,9 +240,10 @@
       <tr><td>11-04</td><td class="num">0.17</td><td class="num">10</td><td>31B</td><td>58000775</td><td>ca5 identical resubmit</td></tr>
       <tr><td>11-06</td><td class="num">0.13</td><td class="num">8</td><td>31B</td><td>58040392</td><td>ca5 identical resubmit</td></tr>
       <tr class="warn"><td>11-08</td><td class="num">0.01</td><td class="num">1</td><td>E4B</td><td>58112867</td><td>E4B fresh-retry pack 1</td></tr>
+      <tr class="good"><td>11-09</td><td class="num">0.06</td><td class="num">4</td><td>E4B</td><td>58146866</td><td>E4B fresh-retry pack 1, same bytes</td></tr>
     </tbody>
   </table>
-  <p class="note">Source: Outputs/_submissions.json. Pending ref 58146866 (2026-11-09 01:22 UTC) is another upload of gemma-submit-e4b-retry-fresh, unscored. The 31B B+C pack gemma-submit-ca5-bc-time10-cmd60 is not in this list.</p>
+  <p class="note">Source: Outputs/_submissions.json. Refs 58112867 and 58146866 point at the same kernel version (scriptVersionId 366645757). Task counts assume the displayed score is k/58 truncated, which matches every row. The 31B B+C pack gemma-submit-ca5-bc-time10-cmd60 is not in this list.</p>
 </section>
 
 <section class="panel" id="pool">
@@ -306,7 +308,10 @@
       <tr class="info"><td>60-second command cap</td><td>16/36, p = 0.14</td><td>Not significant. Gain sits mostly on rich_3480, the task with a 301 s hung repro. Forum: only 24 of 7,424 commands ran over 120 s, so this may be practice-specific. Safe to ship with C</td></tr>
       <tr class="good"><td>B+C on always-solved</td><td>18/18 kept</td><td>No regression seen. Run stopped at 24 of 33 tasks</td></tr>
       <tr class="good"><td>B+C task-time</td><td>1.95 h vs 2.02 h, minus 3%</td><td>The 60-second kill pays for the extra 2 minutes</td></tr>
-      <tr class="bad"><td>E4B pack 1 on the board</td><td>0.01, 1 of 58</td><td>Finished inside 12 h. Local 12/39 did not transfer</td></tr>
+      <tr class="bad"><td>E4B pack 1 on the board</td><td>0.01 and 0.06 (1 and 4 of 58), same bytes</td><td>Finished inside 12 h twice. Mean 2.5/58 vs plain ca5 2/58: within noise, but the best E4B draw so far</td></tr>
+      <tr class="info"><td>Overflow / timeout census (302 31B ca5-family runs)</td><td>0 runs lost an on-disk edit</td><td>All 11 overflows with an edit reached pytest. The forum's "overflow empties the patch" does not happen in this harness. Empty patches = never edited</td></tr>
+      <tr class="info"><td>edit_file failures, same runs</td><td>53 of 540 (9.8%)</td><td>Only 2 runs never landed an edit because of an anchor miss. Not a solve lever on 31B</td></tr>
+      <tr class="info"><td>fastapi_14851 passes with an empty patch</td><td>Timeout A/B without it: A 6/30, B 10/30, C 15/30</td><td>C vs A holds (p = 0.03). B vs A drops to p = 0.38. B is a runtime saver, not a solve lever</td></tr>
       <tr class="warn"><td>Hidden set</td><td>Private repos, disjoint</td><td>Host, topics 744951 and 747248. The 58+71 story is closed</td></tr>
     </tbody>
   </table>
@@ -323,7 +328,7 @@
       <tr><td>Raise the 8-minute cap to 60</td><td>60 was the CLI default, not the grader</td><td>Withdrawn. Would blow 12 h</td></tr>
       <tr><td>LoRA on board</td><td>0.05, ref 57054171. Forum: no one reports a held-out gain</td><td>Do not spend a slot</td></tr>
       <tr><td>One-line edit_file delimiter fix</td><td>Claimed 93% to 11% failures. That team's public score fell</td><td>Saves retries. Not a solve lever</td></tr>
-      <tr><td>E4B fresh retry</td><td>Local 12.00/39. Board 0.01 vs plain ca5 0.03</td><td>Transfer ratio about 0.2 to 0.33</td></tr>
+      <tr><td>E4B fresh retry</td><td>Local 12.00/39. Board 0.01 and 0.06 vs plain ca5 0.03</td><td>Board spread swamps the local gain. Kept as the E4B final</td></tr>
     </tbody>
   </table>
 

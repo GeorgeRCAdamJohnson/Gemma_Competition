@@ -2,9 +2,9 @@
  {
   "ref": 58146866,
   "date": "2026-11-09 01:22:17.717000",
-  "desc": "",
-  "status": "SubmissionStatus.PENDING",
-  "score": "",
+  "desc": "E4B pack1 fresh-retry, 2nd draw (same scriptVersionId 366645757 as 58112867)",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.06",
   "err": "",
   "url": "/code/comfyops/gemma-submit-e4b-retry-fresh?scriptVersionId=366645757"
  },

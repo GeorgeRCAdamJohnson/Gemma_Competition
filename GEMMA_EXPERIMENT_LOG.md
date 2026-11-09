@@ -5,9 +5,39 @@
 > write the result down with its caveats, keep an honest standings table. A result = a number
 > on a judge we trust, not a chat argument. Nulls are results.
 
-## â¬› READ THIS FIRST -- standing truth (so we stop rediscovering it). Updated 2026-10-11.
-> If you are starting a session, read this block before proposing ANYTHING. Every bullet is backed by
-> entries below; the point of this block is that you do not have to re-derive it from the run history.
+## READ THIS FIRST -- standing truth. Updated 2026-11-09 (replaces the 2026-10-11 block below).
+> Read before proposing ANYTHING. Each bullet points at the entry that backs it. If a later result overturns a
+> bullet, edit it here in the same commit.
+
+1. **Board state.** 31B best 0.20 (12/58, ca5 anchor-grep, ref 57760641). Identical ca5 bytes drew 0.20, 0.18,
+   0.17, 0.17, 0.17, 0.13 -> mean ~0.17 (~10/58). E4B: plain ca5 0.03 (2/58); fresh-retry pack 1 drew 0.01 and
+   0.06 on the SAME bytes (1/58, 4/58). Displayed score = k/58 truncated. Same-bytes spread is +-2-3 tasks, so
+   single draws do not rank packs. **Finals are picked by measured mean in paired local A/Bs**, one E4B, one 31B.
+2. **Finals.** E4B = `gemma-submit-e4b-retry-fresh` (pack 1, local 12.00/39 vs ca5 9.82, scored twice, fits 12 h).
+   31B = ca5, or `gemma-submit-ca5-bc-time10-cmd60` (B+C) if it scores and fits. B+C is queued for the
+   2026-11-10 reset.
+3. **The residual wall is content, not mechanics.** Failed tasks mostly land a plausible wrong fix in the right
+   region (62 same-region in the 31B full-129 forensic, L~14018). Mechanical losses (timeouts, overflows) are
+   ~1/4 of 31B failures and are exploration deaths: in 302 31B ca5-family runs, **zero** lost an on-disk edit
+   (2026-11-09 census). The 2026-10-11 "wall is commitment" framing is SUPERSEDED by this.
+4. **Closed -- do not re-propose without a new mechanism:** LoRA (board 0.05; no forum held-out gain),
+   sub-agents / routers (A25 0.13), multi-agent / skills (forum: none beat a flat agent), prompt commitment
+   levers v1-v20, thinking budget (tie, cap binds 1/2,917 steps), call/time caps 40/12 and 50/20 (null; 50/20
+   blew the 12 h scorer), presubmit syntax check (32 vs 33/85, never fired), E4B repro gate (18% gold-good
+   tests), edit_file anchor fixes on 31B (9.8% call failure, 2/302 runs blocked), removing graph tools (an
+   undeclared tool call is fatal), site-packages leakage (off-limits, public-set only).
+5. **Open:** B+C board draw; `max_output_tokens` 5000 -> 4000 on the overflow tasks (untested, frees ~1k prompt
+   tokens, truncates ~0.1% of turns). Needs GPU; run one task per process.
+6. **Measurement rules.** The scorer runs tasks sequentially and the hidden repos are disjoint from the 129
+   practice tasks (host). Our multi-task-per-process kernels let one hung `run_command` stall its neighbours,
+   which inflates timeouts. Validate runtime on the 90 never-solved tasks once, score on the 39 ever-solved
+   many times. fastapi_14851 resolves with an EMPTY patch (passes at baseline) -- exclude it from solve counts
+   or treat it as free.
+7. **Process.** Diagnose from ALL traces of a gate plus its control, not one grep. Mark overturned verdicts
+   CORRECTED. Update this log before every push.
+
+## SUPERSEDED 2026-11-09 -- old standing truth (2026-10-11). Kept for history; bullets 1, 3, 4, 5 are out of date.
+> Do not act on this block. See the 2026-11-09 block above.
 
 1. **THE WALL IS COMMITMENT, not localization and not edit-anchors.** The model FINDS the right file
    (localization "SOLVED" at v17) and then fails to COMMIT an edit -- it explores (grep/read/pytest) until
@@ -18605,3 +18635,77 @@ p90 2,221, p99 11,104; > ~3,000 tokens 0.67% of turns, > ~4,000 tokens 0.09%. =>
 of truncating ~0.1% of turns; out 3000 frees ~2k at ~0.7%. Targets the 7.9% overflow class. Risk: a truncated turn
 can lose its tool call (nudge), and the long turns are the heredoc-repro turns. UNTESTED - a candidate one-variable A/B
 (out 5000 vs 4000) on the 16 overflow tasks, run one task per process.
+
+---
+
+## 2026-11-09 -- Overflow / edit_file census on 31B ca5 traces; E4B pack 1 second draw 0.06; B+C queued
+
+Trigger: an outside review (Grok) asked for two free CPU censuses before the next slot: (a) the forum's
+"44/44 overflowed sessions submitted empty diffs" and (b) the edit_file failure residual on 31B ca5, which was
+never counted. It also flagged that the standing-truth block was stale (2026-10-11). Both done.
+
+Script: `Outputs/_census_overflow_edit.py` (+ `.txt`). Data: every 31B ca5-family trace archive we hold:
+`ca5_31b_presubmit_85`, `ca5_31b_timeout_ab`, `ca5_31b_bc_check` = **302 runs** (solved 131, failed 82,
+timeout 67, overflow 22). Edits judged by the result line right after each `edit_file`/`write_file` call.
+Caveat: these are our validation runs. The board's own traces are not downloadable.
+
+### Q0/Q1: does overflow (or timeout) throw away work? NO.
+| bucket | runs | with >=1 successful edit | successful edit but empty patch |
+|---|---|---|---|
+| solved | 131 | 123 | 0 |
+| failed | 82 | 75 | 0 |
+| timeout | 67 | 11 | 0 |
+| overflow | 22 | 11 | 0 |
+- All 11 overflow runs with an edit on disk produced a non-empty patch and reached pytest. All 11 empty-patch
+  overflows never landed an edit. Same for timeouts: the 56 empty timeouts never edited.
+- Source agrees: `harness_src/x/swegemma/harness/agent_runner.py` ~L1040-1080. `ContextWindowExceededError`
+  falls into the generic `except Exception`, then the "unsubmitted working tree" fallback runs `git diff` for any
+  run that did not call submit_patch. The forum's 44/44 does not reproduce in this harness version (theirs may
+  be a different runner or version).
+- **Verdict:** overflow and timeout are exploration deaths (no edit by the end), not lost patches. A context or
+  time saving can only help by buying more exploration turns. It cannot rescue finished work, because none is
+  lost. This lowers the expected value of the `max_output_tokens` A/B (still open, but not as a rescue lever).
+
+### Q2: edit_file residual on 31B ca5
+- edit_file: 540 calls, **53 failed (9.8%)**: FileEditError (old_string not found) 31, BudgetExceeded 15
+  (edit attempted after the call budget was gone), missing mandatory args 7. write_file: 3 calls, 3 failed, all
+  "Path traversal detected" writing /tmp/repro.py.
+- Runs with >=1 failed edit: 37/302, solve 43%. Runs with clean edits: 196, solve 58%. Correlational (harder
+  tasks retry more), not causal.
+- Runs that tried to edit and NEVER succeeded **because of an anchor miss: 2** (rich_3934 timeout, rich_3938
+  failed). BudgetExceeded-only, unsolved: 4 (rich_3470, rich_3472, rich_3938, fastapi_14419).
+- **Verdict:** the E4B pattern (90/150 not-found) does not carry to 31B. Anchor fixes are at most ~2/302 runs.
+  CLOSED on 31B; do not bundle a delimiter prompt into B+C.
+
+### Side finding: fastapi_14851 resolves with an EMPTY patch
+8 "solved" runs have agent_patch_size 0, all fastapi_14851, test_exit 0. Its tests pass at baseline in this
+environment. A run "solves" it by NOT breaking it, and other runs fail it by landing a wrong edit (e.g. the
+838 B overflow patch). It is one of the 6 tasks in the 31B timeout A/B, so it was re-checked there:
+| arm | solved (36) | fastapi_14851 solved | without it (30) |
+|---|---|---|---|
+| A ca5 8 min | 9 | 3/6 | 6 |
+| B cmd 60 s | 16 | 6/6 | 10 |
+| C 10 min | 19 | 4/6 | 15 |
+- **C vs A survives:** 15/30 vs 6/30, Fisher two-sided p = 0.029 (original 19 vs 9: 0.029).
+- **B vs A weakens:** 10/30 vs 6/30, two-sided p = 0.38 (was 0.14). Two of B's +7 came from this baseline-pass
+  task, on top of the concurrency inflation already noted. B stays in the pack only as a runtime cost saver
+  (-3% task-time), not as a solve lever.
+- In the 39-task E4B/31B score sets it is a constant free solve in every arm. Deltas are fine; absolute rates
+  read 1 high.
+
+### Board: 58146866 = E4B pack 1 second upload -> 0.06
+Same kernel version as 58112867 (scriptVersionId 366645757), so identical bytes. Draws: 0.01 (1/58) and
+0.06 (4/58). Every recorded display matches k/58 truncated (1->0.01, 2->0.03, 4->0.06, 12->0.20). Pack 1 mean
+2.5/58 vs plain ca5 E4B 2/58: no detectable difference, but pack 1 holds the best E4B draw and fits the 12 h
+scorer twice. It stays the E4B final. The earlier "poor transfer" read of the single 0.01 was over-read.
+
+### B+C submission queued
+Today's slot (UTC 11-09) was used by 58146866 at 01:22 UTC. `kaggle_pkg/_submit_at_reset.py` was rewritten:
+it polls the wall clock every 30 s (one long time.sleep overshot after a Windows suspend), authenticates after
+the wait, and looks up the kernel version (B+C = v1, verified via get_kernel). Target:
+`comfyops/gemma-submit-ca5-bc-time10-cmd60` at 2026-11-10 00:03 UTC. Pre-registered read: the same-bytes
+ca5 spread is 0.13-0.20, so one draw cannot confirm B+C. >=0.20 = consistent with a gain; 0.13-0.18 = within
+ca5 noise; runtime-exceeded = B+C does not fit and ca5 stays the 31B final.
+
+Also updated: standing-truth block at the top (2026-10-11 block marked SUPERSEDED), `Outputs/_submissions.json`,
+`Write-up/gemma-agent-score-record.html` (0.06 row, census rows, chart rebuilt, checks pass).
