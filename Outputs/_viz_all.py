@@ -284,6 +284,55 @@ if (O / "ca5_31b_presubmit_85" / "results.tar.gz").exists() and pre:
          "Turns > 60 s are a small share of turns but a large share of the clock in timeout runs; they carry "
          "~10k chars of text before a run_command.")
 
+# 10 ---------------------------------------------------------------- phase-annotated timeline (paper Fig. 1)
+if subs:
+    D = lambda s: datetime.fromisoformat(s)
+    phases = [("P1 design +\nearly wins", "2026-10-01", "2026-10-03", "#dbeafe"),
+              ("P2 31B-only plateau\n(LoRA, prompt levers)", "2026-10-03", "2026-10-12", "#fee2e2"),
+              ("P3 small models legal\nbudget recipe", "2026-10-12", "2026-10-28", "#dcfce7"),
+              ("P4 measurement +\nsmall-model prize", "2026-10-28", "2026-11-04", "#fef9c3"),
+              ("P5 architecture +\ntimeouts", "2026-11-04", "2026-11-10", "#ede9fe")]
+    fig, ax = plt.subplots(figsize=(12, 4.6))
+    for i, (lab, a, b, c) in enumerate(phases):
+        ax.axvspan(D(a), D(b), color=c, alpha=0.8, lw=0)
+        ax.text(D(a), 0.305 if i % 2 == 0 else 0.272, " " + lab, fontsize=7, va="top")   # stagger: no overlap
+    for s in subs:
+        d = D(s["date"][:19]); txt = f"{s['desc'] or ''} {s['url'] or ''}".lower()
+        col = CE4 if "e4b" in txt else C31
+        if s["score"] not in (None, ""):
+            ax.scatter(d, float(s["score"]), color=col, s=34, zorder=3)
+        else:
+            ax.scatter(d, -0.015, marker="x", color=CRED, s=36, zorder=3)
+    events = [("2026-10-03", 0.12, "v6 0.12\n(held 10 days)"), ("2026-10-10", 0.05, "edit-discipline\nLoRA 0.05"),
+              ("2026-10-13", 0.15, "v6w budget\nrecipe 0.15"), ("2026-10-20", 0.18, "A3 delimiter\nfix 0.18"),
+              ("2026-10-30", 0.20, "ca5 0.20\n(best)"), ("2026-11-08", 0.01, "E4B fresh-retry\n0.01")]
+    scored = [(D(s["date"][:19]), float(s["score"])) for s in subs if s["score"] not in (None, "")]
+    for d, y, t in events:
+        # snap the label onto the actual submission with that score nearest the logged date
+        cand = [p for p in scored if abs(p[1] - y) < 1e-9]
+        xy = min(cand, key=lambda p: abs((p[0] - D(d)).total_seconds())) if cand else (D(d), y)
+        ax.annotate(t, xy, xytext=(0, 14), textcoords="offset points", ha="center", fontsize=7,
+                    arrowprops=dict(arrowstyle="-", color=CGR, lw=0.6))
+    ax.axhline(0.24, color=CGR, ls="--", lw=0.8); ax.axhline(0.29, color=CGR, ls=":", lw=0.8)
+    ax.set_ylim(-0.03, 0.31); ax.set_ylabel("public score (k/58)"); fig.autofmt_xdate()
+    ax.set_title("Board history by project phase (blue 31B, orange E4B, x = no score)")
+    save(fig, "10_phase_timeline.png", "Board history by phase (paper Fig. 1)",
+         "Fast start, a 10-day plateau during the 31B-only/LoRA phase, then steady gains after the small-model "
+         "release changed what we could iterate on.")
+
+# 11 ---------------------------------------------------------------- model-size ladder (log L11433-11452)
+fig, ax = plt.subplots(figsize=(5.6, 3.6))
+sizes = ["E2B", "E4B*", "12B", "31B"]; solved = [0, 3, 3, 4]
+ax.bar(sizes, solved, color=[CE4, CE4, "#059669", C31])
+for i, v in enumerate(solved):
+    ax.text(i, v + 0.1, f"{v}/6", ha="center")
+ax.set_ylim(0, 6); ax.set_ylabel("solved (same 6 rich tasks, same prompt)")
+ax.set_title("Size ladder: one variable (the model)")
+ax.text(0.02, 0.92, "* E4B needed the architecture remap", transform=ax.transAxes, fontsize=7, color=CGR)
+save(fig, "11_size_ladder.png", "Model-size ladder",
+     "Identical v6w prompt + 6 rich tasks: 31B 4, 12B 3, E4B 3, E2B 0 (log L11433-11452). Tiny n - "
+     "it showed small models were viable proxies, not that they match the 31B.")
+
 # index
 with open(V / "index.md", "w", encoding="utf-8") as f:
     f.write(f"# Visualizations - built {datetime.now():%Y-%m-%d %H:%M}\n\nRegenerate: `python Outputs/_viz_all.py`\n\n")

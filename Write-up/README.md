@@ -1,4 +1,4 @@
-# Visualizations - built 2026-11-08 21:24
+# Visualizations - built 2026-11-08 21:36
 
 Regenerate: `python Outputs/_viz_all.py`
 
@@ -46,4 +46,14 @@ Hidden repos != practice repos (host-confirmed). Weaker model + task-specific ga
 ![31B model-turn time distribution](09_31b_turn_times.png)
 
 Turns > 60 s are a small share of turns but a large share of the clock in timeout runs; they carry ~10k chars of text before a run_command.
+
+## Board history by phase (paper Fig. 1)
+![Board history by phase (paper Fig. 1)](10_phase_timeline.png)
+
+Fast start, a 10-day plateau during the 31B-only/LoRA phase, then steady gains after the small-model release changed what we could iterate on.
+
+## Model-size ladder
+![Model-size ladder](11_size_ladder.png)
+
+Identical v6w prompt + 6 rich tasks: 31B 4, 12B 3, E4B 3, E2B 0 (log L11433-11452). Tiny n - it showed small models were viable proxies, not that they match the 31B.
 
