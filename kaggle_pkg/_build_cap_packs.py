@@ -49,13 +49,17 @@ if not ok:
     sys.exit("ABORT: packager bytes differ from the v7 agent - simulation would not apply")
 
 # 2. two forks
-ARMS = {
-    "cap40-12": (40, 12, 120),
-    "cap50-20": (50, 20, 120),
+import os as _os
+# PACKS env: comma list of tags to build (default: the original two cap packs). bc = the validated 31B B+C pack.
+ALL_ARMS = {
+    "cap40-12": (40, 12, 120, 300),
+    "cap50-20": (50, 20, 120, 300),
+    "bc-time10-cmd60": (28, 10, 120, 60),   # ca5-31b-timeout-ab C+B, regression-checked in ca5-31b-bc-check
 }
-for tag, (calls, mins, turns) in ARMS.items():
+ARMS = {t: ALL_ARMS[t] for t in _os.environ.get("PACKS", "cap40-12,cap50-20").split(",")}
+for tag, (calls, mins, turns, cmd_to) in ARMS.items():
     new_eval = (f"evaluation:\n  max_time_minutes: {mins}\n  max_tool_calls: {calls}\n"
-                f"  max_turns: {turns}\n  timeout_seconds: 300\n")
+                f"  max_turns: {turns}\n  timeout_seconds: {cmd_to}\n")
     assert old_eval in cell1 or repr(old_eval)[1:-1] in cell1
     lit_old = repr(old_eval)
     assert lit_old in cell1, "eval literal not found verbatim"

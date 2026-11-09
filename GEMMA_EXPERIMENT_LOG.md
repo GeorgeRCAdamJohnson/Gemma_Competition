@@ -18468,3 +18468,31 @@ first, then the **27 tasks the 31B solved in every one of >= 3 runs** (`Outputs/
 Reads: (1) **regressions** = any of the 27 lost (0 expected; 1 is within chance; >= 2 points at the 60 s kill or
 the extra time); (2) recoverable 6 vs ~50% historical; (3) per-task dur -> runtime delta vs 28/8.
 If clean: build the 31B B+C submission pack; the board is the final runtime test (slot, not GPU).
+
+### B+C CHECK RESULT (`ca5-31b-bc-check`, `Outputs/_bc_read.py`): CLEAN - no regressions, runtime -3%
+Run stopped by the time rule after 2 of 3 chunks: 24/33 tasks complete (6 recoverable + 18 of the 27 always-solved).
+- **Always-solved: 18/18 kept** - no sign of the 60 s command kill or the extra time breaking solved tasks.
+- **Recoverable 6: 4/6** (history ~50% at 4 in flight; arm A 25% in the 6-in-flight run). 3 of the 4 solves
+  landed after 8 min (499, 503, 574 s) -> the 10-min cap is what converted them. rich_3506 / rich_3521 still timed out at 603 s.
+- **Task-seconds on the same 24 tasks: B+C 1.95 h vs 28/8 2.02 h (-3%)** - the 60 s kill offsets the extra
+  minutes, so B+C should fit the scorer at least as well as 28/8 (the 0.20 pack fits).
+### 31B B+C SUBMISSION PACK BUILT: `comfyops/gemma-submit-ca5-bc-time10-cmd60`
+`_build_cap_packs.py` (PACKS=bc-time10-cmd60): 0.20 ca5 pack bytes (agent b1663033e726 / sampling 8f61024c4e81 /
+system b08b32a2438d) + eval_config 28 calls / 10 min / 120 turns / timeout_seconds 60 (sha1 9992f8abe543).
+Not submitted: daily slot used by E4B pack 1 (11-08 03:09 UTC); next reset 00:00 UTC.
+
+### E4B PACK 1 BOARD RESULT: 0.01 (= 1 of 58 tasks; plain E4B ca5 0.03 = 2 of 58)
+Completed inside the scorer limit (runtime question settled). At ~2 expected solves one draw is +/-1-2 tasks, so
+1 vs 2 is noise. Both E4B packs land far below local prediction (4.5-5.8 of 58): transfer from the practice set
+to the hidden set is poor for E4B (ratio ~0.2-0.33 vs ~0.65 for the 31B), and pack 1's gain concentrated in 5
+practice tasks.
+
+### FORUM DUMP + vLLM PARSER FREEZE (forum 753973)
+`kaggle_pkg/_pull_discussions.py` (official API: list_competition_topics / list_topic_messages) -> 315 topics,
+998 top-level messages -> `discussions/20261108/ALL.md` (author names come back empty from the API).
+Bug: vLLM 0.19.1 gemma4 tool parser loops forever on an ARRAY tool argument with a bare element containing ']',
+freezing the server for all later tasks (fixed upstream in vLLM #41991, not confirmed for the scorer).
+Our exposure (`Outputs/_array_arg_risk.py`, 1,365 runs): exactly ONE array-arg call (E4B pack, get_code_subgraph
+{"nodes": ["APIRoute"]}); run_skill_script never used positional_args. Low risk; pack 1 finishing inside the limit
+also argues no early freeze. Free hardening option: drop the 3 graph tools (dead anyway - /cns/ paths) to remove
+the only array-arg tools.
