@@ -18806,3 +18806,34 @@ order, `_check_pack_ab.py` method).
 (each 20/20 on Kaggle), rich_3006 (19/20), rich_3067 (14/20), fastapi_9555 (13/20); expected ~5.3/6.
 PASS = the three 20/20 tasks solve AND total >= 4/6 AND per-task durations within ~2x Kaggle's means
 (51/91/115/86/127/184 s). Otherwise the Colab path is biased and must not be used for measurement.
+
+### 2026-11-10 -- COLAB E4B SMOKE: PASS (5/6, durations match Kaggle) -- the Colab path is usable for E4B measurement
+One L4 (`colab new --gpu L4`, 1.94 CU/hr), Kaggle-matched env restored from Drive, model + 6 snapshots staged from Drive
+(prep 428 s: env 411 s, model 336 s in parallel), pack 1 bundle **84f904c63afd** + tasks.jsonl **f9b38bb5075c** re-verified on
+the VM, the kernel's exact VllmConfig (1 server, util 0.85, 32k), identical `swegemma eval` command + caps (80/30/200),
+6 tasks at concurrency 6. Artifacts: `Outputs/colab_e4b_smoke/smoke_results.tar.gz`.
+
+| task | Colab | Colab dur | Kaggle pack 1 (n=20) | Kaggle mean dur |
+|---|---|---|---|---|
+| fastapi_14786 | solved | 52 s | 20/20 | 51 s |
+| fastapi_14301 | solved | 87 s | 20/20 | 91 s |
+| rich_3905 | solved | 92 s | 20/20 | 115 s |
+| rich_3006 | solved | 89 s | 19/20 | 86 s |
+| rich_3067 | solved | 101 s | 14/20 | 127 s |
+| fastapi_9555 | **overflow** (35 calls) | 556 s | 13/20 (6 failed, 1 overflow at 464 s / 15 calls) | 184 s |
+**Verdict vs the pre-registered rule: PASS.** The three 20/20 tasks solved; 5/6 >= 4 (expected ~5.3); the solved tasks ran at
+-20%..+2% of Kaggle's mean durations. The one miss is fastapi_9555's known 35% failure branch (Kaggle has the same overflow
+mode). vLLM boot: 282 s cold / 151 s warm. Eval wall 564 s for 6 tasks.
+
+**Bug found and fixed on the way (would have killed every Colab run):** Colab's /usr/bin/python3.12 has no `ensurepip`
+(package `python3.12-venv` absent). The subprocess sandbox builds every task venv `with_pip=True`; stdlib venv then raises
+**SystemExit**, which the harness's `except Exception` does not catch -> the whole eval exits in 8 s with 0 rows. Fix:
+`apt-get install python3.12-venv` (now in `_gpu_prep.py`). Also mirrored the kernels' removal of `*cutlass*.pth`.
+Verified a harness-style task venv (`venv` + `_host_env.pth`) sees Kaggle's pytest 8.4.2 / pydantic 2.12.3 / starlette 0.52.1
+/ fastapi 0.136.1 / httpx 0.28.1.
+
+**Cost:** 1.65 compute units for the whole Colab bring-up incl. all CPU debugging (94.50 -> 92.85). L4 stopped.
+**Repeatable recipe:** `colab new -s X --gpu L4` -> `wsl_drivemount.sh X` (needs a fresh Drive approval per VM; drive.mount
+gives ~120 s; re-running right after approval picks it up) -> upload `_smoke_inputs.tar` -> `_gpu_prep.py` ->
+`_unpack_inputs.py` -> `_start_smoke.py` -> `_smoke_rows.py`. Caveat: n=6 on one VM checks the setup; it does not
+establish that Colab rates equal Kaggle rates on a full 39-task pass.

@@ -19,6 +19,9 @@ mkdir -p /content/snaps
 for t in __TASKS__; do cp $C/competitions/gemma-4-developer-agent/snapshots/$t.tgz /content/snaps/; done
 echo "SNAPS $(ls /content/snaps | wc -l) $(( $(date +%s) - T0 ))s"
 wait
+# ensurepip for the image's python3.12: the subprocess sandbox creates every task venv WITH pip; without
+# python3.12-venv, venv.create raises SystemExit (uncaught by the harness) and the whole eval dies (2026-11-10)
+DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3.12-venv >/tmp/apt_venv.log 2>&1 && echo "python3.12-venv OK"
 # 3) Kaggle-like working dir: tasks.jsonl + agent; NO graphs/embeddings/wheels/secret anywhere near it
 mkdir -p /content/work && cd /content/work
 rm -rf /wheels /tmp/wheels /tmp/wheelhouse /content/work/wheels /content/work/data 2>/dev/null
