@@ -1,0 +1,9 @@
+name: verifier
+model: gemma-4-e4b-it-qat-w4a16-ct
+instruction: !include prompts/verifier.md
+tools:
+  - get_status
+  - submit_patch
+skills:
+  - skills/submit-gate
+generate_content_config: !include configs/sampling.yaml

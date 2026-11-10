@@ -27,12 +27,12 @@ except Exception:
 N_ROUNDS = int(sys.argv[1]) if len(sys.argv) > 1 else 10
 DEADLINE = time.time() + float(sys.argv[2] if len(sys.argv) > 2 else 20) * 3600
 WORK = Path("/content/work")
-ARMS_DIR = WORK / "arms"
+ARMS_DIR = WORK / os.environ.get("AB_ARMS", "arms")
 ARMS = sorted(p.name for p in ARMS_DIR.iterdir() if p.is_dir())
 TASK_IDS = json.loads((WORK / "ab_tasks.json").read_text())
 TASKS = WORK / "tasks.jsonl"
 SNAPS = Path("/content/snaps")
-OUT = Path("/content/ab")
+OUT = Path(os.environ.get("AB_OUT", "/content/ab"))
 DRIVE_OUT = Path("/content/drive/MyDrive/gemma_fasteval/ab_runs") / os.environ.get("AB_TAG", "e4b_ab")
 TARGET_MODEL_NAME = "gemma-4-e4b-it-qat-w4a16-ct"
 CONC = 8

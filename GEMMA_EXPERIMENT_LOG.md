@@ -18921,3 +18921,22 @@ language layers, ~29.3 B quantized + ~3.4 B bf16 params, vision tower included) 
 file is **9,262,907,392 B (40%)**. The Oct 20 copy to Drive stopped part-way; no config.json / tokenizer either. Unusable.
 The real 31B is ~23.3 GB. A 31B Colab run needs a fresh Kaggle -> Drive download (Colab web UI, where the stored Kaggle
 secret is readable), then a G4 (96 GB) or A100.
+
+### 2026-11-10 -- E4B A/B after round 8: H_hygiene meets the pre-registered rule (PROVISIONAL)
+Round 8: C 12, H 12, R 12. Over 8 complete rounds (paired): **H_hygiene +1.50/pass, sd 1.93, t +2.20** -> meets the rule
+(>= 8 rounds, >= +1.0, t >= 2). Caveat: three arms were tested, and t 2.2 at 7 df is p ~0.06 two-sided per arm, so a lucky
+winner is possible; rounds 9-10 plus an independent replicate (batch 2) decide. R_reads +1.13, t +1.43 (not significant on
+solves; consistently -2.1 min/pass and ~half the overflows). L_lean flat (dropped from batch 2).
+
+### PRE-REGISTRATION: E4B batch 2 (chained: starts automatically when batch 1's driver exits)
+Same 26 tasks, same driver/VM/vLLM config, up to 10 rounds, rotation. Outputs `/content/ab2`, Drive `ab_runs/e4b_ab2_20261110`.
+Arms (`colab_fasteval/_build_arms2.py`): C_pack1 84f904c63afd | H_hygiene eccf4b1af3f3 (independent replicate of the batch-1
+winner) | HR d27caa450589 (H + R_reads' read discipline) | HR4 798bee807618 (HR + 4 attempts: LoopAgent max_iterations 4
+and gate MAX_ATTEMPTS 4).
+Reads, paired by round, same thresholds (>= +1.0/pass, t >= 2 after >= 8 rounds):
+1. H vs C replicates batch 1 -> H confirmed.
+2. HR vs H: does read discipline add solves on top of H? If tied on solves, prefer HR only if it is faster with fewer overflows
+   (runtime margin).
+3. HR4 vs HR: does a 4th attempt convert? Also report HR4's min/pass, because the scorer runs all 129 tasks sequentially
+   (pack 1 ~10.7 h of 12 h) and a 4th attempt mostly lands on the 90 never-solved tasks. A winning HR4 needs a runtime90 check
+   before it can ship.
