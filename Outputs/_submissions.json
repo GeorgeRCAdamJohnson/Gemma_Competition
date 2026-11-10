@@ -1,5 +1,14 @@
 [
  {
+  "ref": 58181945,
+  "date": "2026-11-10 01:49:00.383000",
+  "desc": "31B B+C: ca5 0.20 bytes + 10-min cap + cmd timeout 60s | timeout A/B C 15/30 vs 6/30 (excl. baseline-pass task), 18/18 always-solved kept",
+  "status": "SubmissionStatus.COMPLETE",
+  "score": "0.15",
+  "err": "",
+  "url": "/code/comfyops/gemma-submit-ca5-bc-time10-cmd60?scriptVersionId=367152729"
+ },
+ {
   "ref": 58146866,
   "date": "2026-11-09 01:22:17.717000",
   "desc": "E4B pack1 fresh-retry, 2nd draw (same scriptVersionId 366645757 as 58112867)",

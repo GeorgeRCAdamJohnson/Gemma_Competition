@@ -18902,3 +18902,15 @@ be why E4B edits early; changing it is its own experiment).
   after >= 8 rounds.** Secondary (not decision-grade): minutes per pass, overflow rate, no-value calls/run. An arm that ties
   on solves but cuts time/overflow is recorded as a runtime-margin option (the full-129 scorer total is ~10.7 h of 12 h).
 - **Parity guard:** if the control's mean after 4 rounds is outside 11.8 +- 2.5, stop and diagnose before trusting any arm.
+
+### 2026-11-10 -- BOARD: 31B B+C (ref 58181945) = 0.15 (9/58) -> ca5 0.20 STAYS the 31B final
+`gemma-submit-ca5-bc-time10-cmd60` v1 (scriptVersionId 367152729). Pre-registered switch rule: fits runtime AND >= 0.18.
+It fit the scorer runtime (COMPLETE), but 0.15 < 0.18 -> no switch. 0.15 lies inside ca5's same-bytes range (0.13, 0.17 x3,
+0.18, 0.20; mean ~0.17), so this single draw shows neither a gain nor a loss. Auto-selection unchanged (ca5 0.20 +
+E4B 0.06). `_submissions.json` and the score record updated (31B chart point rebuilt).
+
+### 2026-11-10 -- E4B 4-arm A/B INTERIM (7 complete rounds of 10; not the verdict: the rule needs >= 8)
+Paired by round, arm minus control, solves out of 26: **H_hygiene +1.71 (t +2.30)**; R_reads +1.29 (t +1.44; -2.1 min/pass,
+overflow -1.14/pass of the control's 2.14); L_lean +0.57 (t +0.59). Control mean 10.14 (Kaggle-expected 11.80; inside the
++-2.5 parity guard). H's gains sit on flaky tasks pack 1 rarely solves (fastapi_14492 0->4/7, rich_3894 0->3, fastapi_14463
+2->6, fastapi_9555 2->5). Cost so far ~17 CU (balance 73.72).
