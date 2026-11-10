@@ -18837,3 +18837,27 @@ Verified a harness-style task venv (`venv` + `_host_env.pth`) sees Kaggle's pyte
 gives ~120 s; re-running right after approval picks it up) -> upload `_smoke_inputs.tar` -> `_gpu_prep.py` ->
 `_unpack_inputs.py` -> `_start_smoke.py` -> `_smoke_rows.py`. Caveat: n=6 on one VM checks the setup; it does not
 establish that Colab rates equal Kaggle rates on a full 39-task pass.
+
+### 2026-11-10 -- E4B PACK-1 "BUG LIST" (Cursor review) TESTED AGAINST 363 PACK-1 TRACES
+Script `Outputs/_census_e4b_pack1.py` (+ .txt) over `Outputs/e4b_pack1_val/results` (273 score39 runs = 7 passes x 39, + 90
+runtime90). Code claims checked against the exact pack-1 bytes (84f904c63afd, `colab_fasteval/_smoke_inputs/agent_pack1`).
+Outcomes on the 39: solved 77 (28%), **failed WITH a patch 165** (60%), overflow 29 (11%). Task bands: 5 always / 16 flaky
+(~6.0 expected solves per pass) / 18 never. Full pool: runtime90 = **1/90**, so pack 1 is ~13/129 (10%) and essentially all of
+it comes from the 21 non-never tasks of the 39.
+
+| claim | code | traces | verdict |
+|---|---|---|---|
+| fixer.md says "~28 calls / 8 min", real 80/30 | TRUE | runs use median 10 calls, max 44; `tool_calls_remaining` seen min 53, never <=14 | Text is wrong, but no run is budget-bound. Not a loss source. Changing it is a behaviour A/B (it may be WHY E4B edits early). |
+| rich_3063 ~7 edit misses/run | TRUE (7.3) | rich_3043 8.1, rich_3063 7.3, both 0/7; they still land ~1.3 edits/run | Misses waste calls; these tasks lose to wrong fixes. Only 7/273 runs never landed an edit. |
+| empty-patch RETRY says "Re-apply with edit_file" | TRUE | 31 such verdicts; the next tool was run_command 27 times, edit_file once | The text is not followed; low impact. |
+| undo is .py-only | TRUE | fixer edited non-.py files 42x (toml 17, md 13, yaml 5, cff 4, LICENSE 3); 39 "only non-source/test files" rejections | REAL mechanical leak: those edits survive the undo and the attempt is wasted. Small, generic, fixable. |
+| `git apply -R` rc ignored | TRUE | not directly observable in logs | Plausible; low prior. |
+| edit_file primary | TRUE | 34% of 802 edit calls fail (old_string not found) | Turn-waster, not a run-killer here. |
+| graph tools / write_file declared | TRUE | get_code_subgraph 0 calls; neighbors 4, similar 2, write_file 2 | No freeze exposure on E4B. Keep declared (undeclared call is fatal). |
+| 5000/4096 truncates tool calls | config TRUE | **0** truncation/max-token nudges; 10/4501 turns > ~4k tokens | NOT SUPPORTED. |
+| verifier has full contents | TRUE | pack 2 (verifier none) = 11.45 vs 12.00, overflow 10.9% -> 6.5% | Already tested: null on score. |
+**Conclusion:** the dominant E4B loss is a landed-but-wrong fix (60% of runs), not mechanics. None of the listed items addresses it.
+The mechanical items (non-.py undo, retry text, edit fallback) are worth bundling only as a hygiene arm.
+Board reminder: private score = one draw per selected submission; same-bytes public redraws do not raise the private
+expectation. Only a higher TRUE rate does. Colab cost: ~0.9 CU per 39-task pass on one L4 (Kaggle node pass ~26 min),
+so ~90 passes fit the remaining 92.85 CU: n=10 per arm is affordable.
