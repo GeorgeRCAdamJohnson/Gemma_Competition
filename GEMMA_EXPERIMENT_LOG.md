@@ -18769,3 +18769,40 @@ why Kaggle installs it --no-deps.
 vLLM boot of E4B on Colab's driver/CUDA; the subprocess sandbox running a task; throughput. Plan: ONE G4
 (96 GB) with 4 E4B vLLM instances on the card (`INSTANCES_PER_GPU` path of the Kaggle kernel) rather than 4 L4
 runtimes (one GPU each, per-VM staging). G4 compute-unit rate: read via `colab usage` after allocation.
+
+### 2026-11-10 -- TASK-ENVIRONMENT PARITY: Kaggle grades tasks against the NOTEBOOK IMAGE's packages (CPU only, no GPU)
+**Finding (code-traced, `harness_src/x/swegemma/sandbox/subprocess.py` start()/exec(), container_setup.py):** with
+`--sandbox subprocess` the harness installs NO wheels and runs NO sandbox setup.py
+(`install_editable_package` / `install_test_dependencies` return early for SubprocessManager). Each task gets a temp
+dir + `venv.create(system_site_packages=True)` from `sys.executable`, plus `_host_env.pth` listing the launcher's
+site-packages. So task code, the agent's `run_command`, and the hermetic pytest grading all run on **the Python and
+packages of the interpreter that launched `python -m swegemma`**. The competition Dockerfiles (python:3.13-slim) are for
+the Docker sandbox only and do not describe our Kaggle runs. The 124 comp wheels / sandbox/setup.py are unused here.
+=> **Every earlier Colab harness (fast_eval_reps*, fast_eval_deffind) graded tasks against Colab's own package versions.
+Their pass/fail numbers are not comparable to Kaggle's.**
+
+**Kaggle's actual task env, measured** by a CPU-only kernel `comfyops/gemma-env-freeze` (same pinned image
+`gcr.io/kaggle-private-byod/python@sha256:37c64f...`, same wheelhouse install; `Outputs/env_freeze/`): `/usr/bin/python3`
+**3.12.13**, 969 packages after the wheelhouse. Task-visible: pytest 8.4.2, pydantic 2.12.3, starlette 0.52.1,
+httpx 0.28.1, fastapi 0.136.1, rich 13.9.4, requests 2.32.4, torch 2.10.0+cu128. Packages live in dist-packages, so
+`_host_env.pth` was EMPTY on Kaggle (the venv's system-site setting exposed them instead).
+
+**Colab env rebuilt to match** (`_setup_env.py` + `_overlay_kaggle.py`): Colab's /usr/bin/python3.12 venv -> vllm 0.19.1 +
+deps -> wheelhouse 41 `--no-deps` -> overlay of Kaggle's exact pins `--no-deps --no-build`, skipping only stacks no task
+imports (tensorflow/jax/keras/nvidia/triton/jupyter...). 38 pins have no wheel and were dropped (python-apt, dbus,
+gdal, dlib, RAPIDS, pyspark, rpy2...; none a fastapi/rich/requests test dep). **Result: 34/35 key task packages ==
+Kaggle** (torch differs only by the `+cu128` local tag); swegemma / adk_submission / vllm still import. Saved to Drive:
+`gemma_fasteval/colab_env/colab_env.tar` (19.2 GB, the venv only: it links to the image's /usr/bin/python3.12).
+Bugs hit on the way (fixed): uv refuses the wheelhouse as one resolve (starlette conflict, hence --no-deps as Kaggle);
+python-apt==0.0.0 sdist; dlib source build; PEP 503 names (`lazr.restfulclient` vs `lazr-restfulclient`) broke my
+drop-and-retry parser; pkill patterns missed stale uv/tar processes (kill by PID).
+
+**Smoke-run inputs extracted from the pack-1 validation notebook itself** (`_extract_pack1_inputs.py`): tasks.jsonl
+(129, sha1 f9b38bb5075c) and the ARM_P1 bundle, **sha 84f904c63afd = the validated/submitted pack 1** (path-string
+order, `_check_pack_ab.py` method).
+
+**Smoke plan (pre-registered):** one L4 (the Kaggle GPU type), 1 vLLM server with the kernel's exact VllmConfig,
+`swegemma eval` identical command + eval_config caps, 6 tasks concurrently: fastapi_14786 / fastapi_14301 / rich_3905
+(each 20/20 on Kaggle), rich_3006 (19/20), rich_3067 (14/20), fastapi_9555 (13/20); expected ~5.3/6.
+PASS = the three 20/20 tasks solve AND total >= 4/6 AND per-task durations within ~2x Kaggle's means
+(51/91/115/86/127/184 s). Otherwise the Colab path is biased and must not be used for measurement.
