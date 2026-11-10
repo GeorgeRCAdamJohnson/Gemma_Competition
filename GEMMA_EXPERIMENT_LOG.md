@@ -18727,3 +18727,45 @@ on our side, but the server had accepted it. The retries at 03:07/03:09 were rej
 so no double submit. FIX: `_submit_at_reset.py` now checks the submissions list for this kernel before every
 attempt and stops if it has already landed (dry-tested: finds 58181945 for B+C, nothing for an unrelated slug).
 Read per the pre-registered rule above: switch the 31B final only if it fits the runtime AND scores >= 0.18.
+
+---
+
+## 2026-11-10 -- COLAB CONTROL PLANE BUILT; E4B RUN CAN COME ENTIRELY FROM DRIVE (verified on a CPU VM, no GPU spent)
+
+Why: Kaggle GPU quota is nearly spent. Goal is E4B evals on Colab Pro (94.5 compute units).
+
+### How we drive Colab now (no browser for the run itself)
+- **Hosted Colab MCP API** (`https://colaboratory.googleapis.com/mcp`) via `colab_fasteval/colab_mcp.py` (Windows).
+  Needs ADC with the colaboratory scope + a quota project + the Colab API enabled in that project. PowerShell
+  gotcha: the comma-separated `--scopes=` value must be QUOTED or PowerShell splits it into an array.
+  Tier = PRO. Eligible: A100 (std/highmem), G4, L4, T4, TPU v5e1/v6e1; H100 not eligible.
+- **Official `colab` CLI 0.7.5 in WSL Ubuntu** (`colab_fasteval/colabw.sh` -> `~/colabw`, `--auth=adc`, ADC file copied
+  from Windows). It adds what the API lacks: `drivemount` (proxies Drive consent; fed non-interactively by
+  `wsl_drivemount.sh`), `usage` (compute-unit balance/rate), `exec -f`, `upload/download`.
+- **Colab Secrets are NOT readable outside the Colab web UI**: headless API runtimes AND the IDE Colab extension
+  both time out ("Secrets can only be fetched when running from the Colab UI"; colab-vscode issue #215).
+  Runtimes created by the extension ARE visible/drivable through the API (same account).
+
+### What is on Drive (MyDrive), verified
+- `gemma-4-developer-agent-cache/competitions/gemma-4-developer-agent/`: snapshots 129 .tgz (21.5 GB), graphs 127,
+  embeddings 127, tasks.jsonl, wheels/ (124 sandbox wheels).
+- `gemma-4-developer-agent-cache/models/google/gemma-4/Other/gemma-4-e4b-it-qat-w4a16-ct/2/`: **E4B, 8 files,
+  byte-identical sizes to Kaggle's model version listing** (model.safetensors 11,513,861,828 B; config: 42 layers,
+  hidden 2560, compressed-tensors pack-quantized). Hugging Face NOT used: Kaggle's /2 is what the scorer mounts.
+- `gemma_fasteval/wheelhouse`: 41 wheels = the same set our Kaggle runs logged (`globbed=41`, adk_submission 0.2.13,
+  swegemma 0.2.11).
+- `gemma_fasteval/model` = an INCOMPLETE 31B (one 9.26 GB safetensors + README, no config/tokenizer). Not servable.
+- **No Kaggle auth needed on Colab** for E4B: model, data and wheels all come from Drive.
+
+### Environment on Colab (Python 3.13 system; wheels are cp312)
+`_setup_env.py`: uv venv Python 3.12 -> (1) vllm 0.19.1 with deps from PyPI (torch 2.10.0+cu128) -> (2) all 41
+wheelhouse wheels `--no-deps --reinstall` (Kaggle's method) -> (3) only the missing harness deps. 212 s on CPU.
+Imports OK: swegemma 0.2.11, adk_submission 0.2.13, adk_eval_core 0.1.0, vllm 0.19.1, torch 2.10.0, transformers
+5.13.1. **All 41 installed versions == wheel filenames (0 mismatches).** A plain resolve FAILS (the wheelhouse is not
+co-installable: prometheus-fastapi-instrumentator 8.1.0 wants starlette>=1, google-adk 1.36.1 wants <1), which is
+why Kaggle installs it --no-deps.
+
+### Not yet verified (needs a GPU VM)
+vLLM boot of E4B on Colab's driver/CUDA; the subprocess sandbox running a task; throughput. Plan: ONE G4
+(96 GB) with 4 E4B vLLM instances on the card (`INSTANCES_PER_GPU` path of the Kaggle kernel) rather than 4 L4
+runtimes (one GPU each, per-VM staging). G4 compute-unit rate: read via `colab usage` after allocation.
