@@ -1,0 +1,9 @@
+name: fixer
+model: gemma-4-e4b-it-qat-w4a16-ct
+include_contents: none
+instruction: !include prompts/fixer.md
+tools:
+  - run_command
+  - read_file
+  - edit_file
+generate_content_config: !include configs/sampling.yaml

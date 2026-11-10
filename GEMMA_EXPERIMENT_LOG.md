@@ -18884,3 +18884,21 @@ run_command x1; fixer -> submit_patch x3). Each returned `{"status": "error", "e
 not found"}` to the model and **the run continued** (requests_7427, rich_3064, fastapi_9753 ended with error None). The
 forum's "ValueError ends the task" [745028] predates the fix; the host said they would implement one. swegemma 0.2.11's
 ToolErrorPlugin.on_tool_error_callback handles tool lookup errors. **Removing unused tools from agent.yaml is safe.**
+
+### 2026-11-10 -- PRE-REGISTRATION: E4B 4-arm A/B on Colab (landable tasks only)
+User: ~50 GPU-hours available; iterate the candidate fixes; no 129-task runs, only tasks that can land. Tool removal is
+worth testing even at ~14 min saved. The fake "~28 calls / 8 min" budget text is KEPT in every arm (runs use ~10 calls; it may
+be why E4B edits early; changing it is its own experiment).
+- **Task set (26):** every task with >= 1 solve in pack 1's 20 Kaggle score passes, minus fastapi_14851 (empty-patch pass).
+  `colab_fasteval/ab_tasks.json`. **Expected control = 11.80/26 per pass** (Kaggle pack-1 rates), which is also a running parity check.
+- **Arms** (`colab_fasteval/_build_arms.py`, one change each vs pack 1):
+  C_pack1 84f904c63afd (control) | L_lean c0a8ad226e56 (fixer tools = run_command/read_file/edit_file; get_status oracle
+  removed; triggers on calls made) | H_hygiene eccf4b1af3f3 (undo reverts all non-test changes; checks git apply -R, falls back
+  to checkout; empty-patch msg -> python replace; ban doc/config edits) | R_reads 4089b91f730f (grep -n + sed -n spans <= 80
+  lines, no whole-file read_file, no re-reads).
+- **Design:** one L4, one vLLM server (kernel's VllmConfig), --concurrency 8 per pass (Kaggle node value); a round = every
+  arm once, order rotated per round; up to 10 rounds; results to Drive after every pass.
+- **Primary:** solves per pass, arm minus control, paired by round. **Win = mean diff >= +1.0 task/pass with paired t >= 2
+  after >= 8 rounds.** Secondary (not decision-grade): minutes per pass, overflow rate, no-value calls/run. An arm that ties
+  on solves but cuts time/overflow is recorded as a runtime-margin option (the full-129 scorer total is ~10.7 h of 12 h).
+- **Parity guard:** if the control's mean after 4 rounds is outside 11.8 +- 2.5, stop and diagnose before trusting any arm.
