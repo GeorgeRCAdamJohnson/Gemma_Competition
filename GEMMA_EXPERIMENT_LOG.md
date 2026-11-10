@@ -18709,3 +18709,21 @@ ca5 noise; runtime-exceeded = B+C does not fit and ca5 stays the 31B final.
 
 Also updated: standing-truth block at the top (2026-10-11 block marked SUPERSEDED), `Outputs/_submissions.json`,
 `Write-up/gemma-agent-score-record.html` (0.06 row, census rows, chart rebuilt, checks pass).
+
+### 2026-11-09 ~17:40 UTC -- final selection state (user-confirmed from the Submissions page)
+Auto-selection candidates 2/2 = **ca5 31B 0.20 (57760641)** + **E4B pack 1 0.06 (58146866)**. On 10-30 the
+pair was ca5 0.20 + A25 0.13, so the E4B 0.06 displaced a higher 31B score. Auto-selection appears to keep one
+pick per track (inferred from two snapshots, not documented). This already equals the planned finals; no manual
+change needed.
+Pre-registered switch rule for B+C (draw after the 11-10 reset): replace 57760641 with B+C only if it finishes
+inside the scorer runtime AND scores >= 0.18. Below that is inside ca5's same-bytes spread (0.13-0.20), so keep
+ca5. If B+C replaces it, pin both finals manually so auto-selection cannot reshuffle them.
+
+### 2026-11-10 01:49 UTC -- B+C SUBMITTED: ref 58181945 (PENDING)
+`comfyops/gemma-submit-ca5-bc-time10-cmd60` v1 (scriptVersionId 367152729). The scheduler fired at 01:48, not
+00:03. Its heartbeat jumped from 21:30 to 01:48, so the machine was asleep, and the wall-clock poll caught up on
+wake (the old single-sleep version would have overshot further). The submit call came back as a ConnectionReset
+on our side, but the server had accepted it. The retries at 03:07/03:09 were rejected ("1 pending submission"),
+so no double submit. FIX: `_submit_at_reset.py` now checks the submissions list for this kernel before every
+attempt and stops if it has already landed (dry-tested: finds 58181945 for B+C, nothing for an unrelated slug).
+Read per the pre-registered rule above: switch the 31B final only if it fits the runtime AND scores >= 0.18.

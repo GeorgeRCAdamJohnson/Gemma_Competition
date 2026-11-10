@@ -51,8 +51,23 @@ except Exception as e:  # fall back to v1 rather than not submitting
     print(f"version lookup failed ({type(e).__name__}: {e}); using v1", flush=True)
 print(f"{utc():%H:%M} UTC submitting {kernel} v{version}", flush=True)
 
+def landed():
+    """True if a submission of this kernel was created after the reset (a reset connection can still succeed)."""
+    try:
+        for s in api.competition_submissions("gemma-4-developer-agent")[:5]:
+            when = dt.datetime.fromisoformat(str(s.date)).replace(tzinfo=dt.timezone.utc)
+            if slug in str(getattr(s, "url", "")) and when >= reset - dt.timedelta(minutes=3):
+                print(f"{utc():%H:%M} UTC already landed: ref {s.ref} at {when:%H:%M} UTC ({s.status})", flush=True)
+                return True
+    except Exception as e:
+        print(f"{utc():%H:%M} UTC landed-check failed ({type(e).__name__}); retrying submit", flush=True)
+    return False
+
+
 deadline = time.time() + 2 * 3600
 while True:
+    if landed():
+        break
     try:
         r = api.competition_submit_code(file_name="submission.zip", message=msg, competition="gemma-4-developer-agent",
                                         kernel=kernel, kernel_version=version)
