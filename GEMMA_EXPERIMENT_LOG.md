@@ -24,8 +24,9 @@
    sub-agents / routers (A25 0.13), multi-agent / skills (forum: none beat a flat agent), prompt commitment
    levers v1-v20, thinking budget (tie, cap binds 1/2,917 steps), call/time caps 40/12 and 50/20 (null; 50/20
    blew the 12 h scorer), presubmit syntax check (32 vs 33/85, never fired), E4B repro gate (18% gold-good
-   tests), edit_file anchor fixes on 31B (9.8% call failure, 2/302 runs blocked), removing graph tools (an
-   undeclared tool call is fatal), site-packages leakage (off-limits, public-set only).
+   tests), edit_file anchor fixes on 31B (9.8% call failure, 2/302 runs blocked), site-packages leakage
+   (off-limits, public-set only). [CORRECTED 2026-11-10: undeclared tool calls are NOT fatal in swegemma 0.2.11;
+   they return a ValueError to the model and the run continues (6 cases in E4B traces). Removing unused tools is safe.]
 5. **Open:** B+C board draw; `max_output_tokens` 5000 -> 4000 on the overflow tasks (untested, frees ~1k prompt
    tokens, truncates ~0.1% of turns). Needs GPU; run one task per process.
 6. **Measurement rules.** The scorer runs tasks sequentially and the hidden repos are disjoint from the 129
@@ -18861,3 +18862,25 @@ The mechanical items (non-.py undo, retry text, edit fallback) are worth bundlin
 Board reminder: private score = one draw per selected submission; same-bytes public redraws do not raise the private
 expectation. Only a higher TRUE rate does. Colab cost: ~0.9 CU per 39-task pass on one L4 (Kaggle node pass ~26 min),
 so ~90 passes fit the remaining 92.85 CU: n=10 per arm is affordable.
+
+### 2026-11-10 -- E4B pack-1 TOOL-WASTE census + CORRECTION: undeclared tool calls are NOT fatal in swegemma 0.2.11
+`Outputs/_census_e4b_toolwaste.py` (+ .txt). Each call is charged the time to the next log event (tool execution + the
+model turn it triggers). Re-reads are counted only when path AND returned content match an earlier read in the same attempt.
+- score39 (273 runs, 4,757 calls): **no-value calls = 24% of calls, ~18% of run time**: get_status 410 (budget never
+  binds), re-read of identical content 273, failed edits 270, run_command errors 128, non-.py edits 42, graph 8.
+  runtime90: 26% of calls, 23% of time. **Full-129 time recoverable if all of them vanished: ~2.3 h of ~10.7 h**
+  (edit_fail 58 min, read_repeat 47, cmd_error 18, get_status 14).
+- The biggest time sink is NOT waste: `read_file` (first reads + other regions of an already-read file) = **58% of
+  charged time** (27-34 s per call: the whole file enters context and the next turn has to process it).
+- By outcome: no-value calls/run median 1 (solved), 3 (failed), **9 (overflow)**; read_file/run 2.6 / 3.9 / **8.0**.
+  Overflow is the context cost of reading.
+- Declared-but-unused fixer tool schemas (graph x3, write_file, get_status) ~1.7k chars (~436 tokens) per turn.
+- Calls cost no call budget (median 10 of 80). They cost (1) wall time against the 12 h scorer total (pack 1 ~10.7 h) and
+  (2) context -> overflow (11% of runs).
+
+**CORRECTED (supersedes standing-truth item 4 "removing graph tools (an undeclared tool call is fatal)", FORUM ROUND 2
+item 3, and today's census row):** in our traces the model called undeclared tools 6 times (verifier -> read_file x2,
+run_command x1; fixer -> submit_patch x3). Each returned `{"status": "error", "error_type": "ValueError", "error": "Tool 'X'
+not found"}` to the model and **the run continued** (requests_7427, rich_3064, fastapi_9753 ended with error None). The
+forum's "ValueError ends the task" [745028] predates the fix; the host said they would implement one. swegemma 0.2.11's
+ToolErrorPlugin.on_tool_error_callback handles tool lookup errors. **Removing unused tools from agent.yaml is safe.**
