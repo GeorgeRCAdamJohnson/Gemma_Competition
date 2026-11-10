@@ -18914,3 +18914,10 @@ Paired by round, arm minus control, solves out of 26: **H_hygiene +1.71 (t +2.30
 overflow -1.14/pass of the control's 2.14); L_lean +0.57 (t +0.59). Control mean 10.14 (Kaggle-expected 11.80; inside the
 +-2.5 parity guard). H's gains sit on flaky tasks pack 1 rarely solves (fastapi_14492 0->4/7, rich_3894 0->3, fastapi_14463
 2->6, fastapi_9555 2->5). Cost so far ~17 CU (balance 73.72).
+
+### 2026-11-10 -- Drive `gemma_fasteval/model/model.safetensors` (Oct 20) is a TRUNCATED 31B download
+Header check (`colab_fasteval/_check_31b_file.py`): the header describes the full 31B W4A16 checkpoint (2,009 tensors, 60
+language layers, ~29.3 B quantized + ~3.4 B bf16 params, vision tower included) whose data ends at **23,265,352,448 B**, but the
+file is **9,262,907,392 B (40%)**. The Oct 20 copy to Drive stopped part-way; no config.json / tokenizer either. Unusable.
+The real 31B is ~23.3 GB. A 31B Colab run needs a fresh Kaggle -> Drive download (Colab web UI, where the stored Kaggle
+secret is readable), then a G4 (96 GB) or A100.
