@@ -18972,3 +18972,16 @@ notebook (`_check_batch3.py`). A Kaggle kernel = 4 L4 servers per session-hour, 
 Read: pass-index pairing across nodes (nodes are identical L4s; no within-node pairing in this design). Same thresholds.
 **Batch 2 extension on Colab VM3** (waiting for Drive approval): arms2 rounds 9-16 into /content/ab2b (tag e4b_ab2b_20261111),
 so batch 2 reaches 16 rounds in the time of 8 (VM2 runs rounds 1-8). Rounds are disjoint; merge by round.
+
+### 2026-11-11 ~05:00 UTC -- INTERIM: H_hygiene does NOT replicate on Kaggle batch 3 (so far)
+**Kaggle `e4b-batch3`** (4x L4, one arm per node; pass index = pairing), solves/26 after 7 passes (HG4 6):
+C_pack1 9,12,12,12,12,11,11 = **11.29** | H_hygiene 10,11,10,10,9,15,11 = **10.86** | HT5 12,10,13,12,12,11,11 = **11.57** |
+HG4 9,11,13,13,11,12 = **11.50**. By pass: H - C = -0.43; HT5 - C = +0.29; HG4 - C = +0.17. Nothing near +1.0. The control
+(11.29) is right at the Kaggle pack-1 expectation (11.80), so the Kaggle run is a valid reference.
+**Colab batch 2** (VM2) after 2 rounds: H - C = +1.00 ([0, +2]); HR -0.50; HR4 -0.50. Too early.
+**H pooled so far** (Colab b1 10 rounds +1.50; Kaggle b3 7 passes -0.43; Colab b2 2 rounds +1.00): about +0.74/pass over
+19 paired passes. Batch 1's +1.50 at t 2.00 (one of three arms) is now most likely partly a lucky draw, as cautioned. H is
+NOT confirmed. Keep collecting; decide at the end of batch 3 + batch 2.
+**VM3 lost:** the CLI pruned its session as stale and the API no longer lists it. Colab reclaimed the VM shortly after
+the batch-2 extension (rounds 9-16) launched. Nothing from it finished; check Drive `ab_runs/e4b_ab2b_20261111` for partials.
+Only VM2 is billing (1.94 CU/h; balance 428.5).
