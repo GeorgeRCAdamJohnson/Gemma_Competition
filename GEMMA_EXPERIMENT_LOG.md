@@ -18962,3 +18962,13 @@ Rates measured: L4 1.94 CU/h, G4 ~10 CU/h, CPU 0.08 CU/h.
 
 **Batch 2 launched on VM2** (fixed driver): C_pack1 / H_hygiene / HR / HR4, **8 rounds** (the rule's minimum, ~9.5 h, ~18 CU),
 11 h hard deadline. Outputs /content/ab2, Drive ab_runs/e4b_ab2_20261111. Batch 3 (HT5, HG4) deferred: budget.
+
+### 2026-11-11 -- MORE COMPUTE: Colab 434 CU, +15 h Kaggle GPU. Batch 3 moved to Kaggle; batch 2 doubled on Colab.
+**Batch 3 on Kaggle** `comfyops/e4b-batch3` (RUNNING), built by `kaggle_pkg/_build_e4b_batch3_kaggle.py` from the
+push_e4b_cap_ab per-node loop: 4x L4, **one arm per node**: node0 C_pack1 84f904c63afd, node1 H_hygiene eccf4b1af3f3,
+node2 HT5 41ecd618d3a3 (temperature 0.2 -> 0.5), node3 HG4 e8ae58167994 (gate checks up to 4 test files, was 2).
+26 landable tasks, conc 8/node, 1-task smoke per arm, 4 h budget (~13 passes/arm expected). Hashes verified in the built
+notebook (`_check_batch3.py`). A Kaggle kernel = 4 L4 servers per session-hour, so it is ~4x Colab's L4 per hour.
+Read: pass-index pairing across nodes (nodes are identical L4s; no within-node pairing in this design). Same thresholds.
+**Batch 2 extension on Colab VM3** (waiting for Drive approval): arms2 rounds 9-16 into /content/ab2b (tag e4b_ab2b_20261111),
+so batch 2 reaches 16 rounds in the time of 8 (VM2 runs rounds 1-8). Rounds are disjoint; merge by round.
