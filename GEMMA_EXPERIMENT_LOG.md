@@ -18998,3 +18998,11 @@ Risk: >= 2 attempts per solved task -> more time per task; the full-129 scorer t
 Design: 2 arms (C_pack1, V_vote), 26 landable tasks, one L4, rotation, up to 10 rounds, /content/ab4.
 Win: V - C >= +1.0/pass, paired t >= 2 after >= 8 rounds. Report min/pass for both: a V win must then pass a runtime90
 (90 never-solved tasks) check before it can ship.
+
+### 2026-11-11 ~06:00 UTC -- Kaggle batch 3 through pass 10 (HG4 9); V_vote launched on Colab
+Means /26: C 11.00 (sd 1.05) | H 11.10 (sd 1.91) | **HT5 11.80** (sd 1.32, >=12 in 6/10, floor 10) | HG4 11.56 (sd 1.33).
+By pass index (cross-node, loose pairing): H +0.10 t 0.13; **HT5 +0.80 t 1.44**; HG4 +0.44 t 1.31. None meets the rule yet.
+H_hygiene effectively NOT replicated on Kaggle. Control drifted 12,12,12,12 (passes 2-5) -> 10,10 (passes 9-10).
+Kernel ends ~230 min of 240 (~12 passes/arm); per-task table + erosion analysis after the output downloads.
+**V_vote** (vote-by-agreement) vs C_pack1 launched on Colab L4 `e4bvote` (/content/ab4, 10 rounds, 11 h deadline, fixed
+driver + stall-aware keep-alive). The local PC crash did not affect any run (Kaggle server-side; Colab drivers detached).
