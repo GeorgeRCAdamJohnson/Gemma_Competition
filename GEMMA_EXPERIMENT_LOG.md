@@ -18985,3 +18985,16 @@ NOT confirmed. Keep collecting; decide at the end of batch 3 + batch 2.
 **VM3 lost:** the CLI pruned its session as stale and the API no longer lists it. Colab reclaimed the VM shortly after
 the batch-2 extension (rounds 9-16) launched. Nothing from it finished; check Drive `ab_runs/e4b_ab2b_20261111` for partials.
 Only VM2 is billing (1.94 CU/h; balance 428.5).
+
+### PRE-REGISTRATION: E4B VOTE arm (agreement before submit) vs pack 1, Colab
+Motivation: 60% of pack-1 runs land a WRONG fix that still passes the existing tests, and the gate submits the first passing
+attempt. V_vote (`colab_fasteval/_build_vote.py`, sha 5fc3d3cd409d, from pack 1 84f904c63afd) makes an ACCEPTED attempt
+re-solve independently (undo + CONFIRM retry) and submits only when two ACCEPTED attempts have the same normalized diff
+(+/- lines, whitespace removed). After 3 attempts without agreement it restores the most frequent accepted diff (tie ->
+earliest). Rejections behave as in pack 1. Fixer/verifier prompts gain a CONFIRM rule. Gate tested offline
+(`_test_vote_gate.sh`, 4 scenarios, ALL OK).
+Hypothesis: wrong fixes vary between attempts, correct ones converge, so agreement lifts flaky-task solve rates.
+Risk: >= 2 attempts per solved task -> more time per task; the full-129 scorer total (pack 1 ~10.7 of 12 h) may not fit.
+Design: 2 arms (C_pack1, V_vote), 26 landable tasks, one L4, rotation, up to 10 rounds, /content/ab4.
+Win: V - C >= +1.0/pass, paired t >= 2 after >= 8 rounds. Report min/pass for both: a V win must then pass a runtime90
+(90 never-solved tasks) check before it can ship.

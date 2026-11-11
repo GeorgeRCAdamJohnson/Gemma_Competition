@@ -1,0 +1,7 @@
+name: agent_e4b_retry_fresh
+agent_class: LoopAgent
+max_iterations: 3
+description: fixer attempts, gate checks existing tests; on reject the attempt is undone and the fixer retries fresh (max 3); only the verifier submits
+sub_agents:
+  - config_path: sub_agents/fixer.yaml
+  - config_path: sub_agents/verifier.yaml
