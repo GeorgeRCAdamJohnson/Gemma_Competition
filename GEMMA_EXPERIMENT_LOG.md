@@ -19006,3 +19006,18 @@ H_hygiene effectively NOT replicated on Kaggle. Control drifted 12,12,12,12 (pas
 Kernel ends ~230 min of 240 (~12 passes/arm); per-task table + erosion analysis after the output downloads.
 **V_vote** (vote-by-agreement) vs C_pack1 launched on Colab L4 `e4bvote` (/content/ab4, 10 rounds, 11 h deadline, fixed
 driver + stall-aware keep-alive). The local PC crash did not affect any run (Kaggle server-side; Colab drivers detached).
+
+### 2026-11-11 ~17:00 UTC -- Colab batch 2 + V_vote FINAL; POOLED E4B A/B (all batches). Nothing beats pack 1.
+`Outputs/_e4b_ab_pooled.py` (+ .txt). Progress saved: `Outputs/colab_e4b_ab2/`, `Outputs/colab_e4b_ab4/`. All Colab VMs stopped
+(VM2 exited on its own after batch 2; vote VM stopped manually after ALL_DONE). Balance 382.09 CU, rate 0.
+- **Colab batch 2 (8 rounds):** C 12.12 | HR 12.38 (+0.25, t 0.20) | HR4 12.12 (+0.00) | **H_hygiene 11.25 (-0.88, t -0.98)**.
+- **V_vote (10 rounds):** C 11.90 | V 12.40 (**+0.50, t 0.92**), floor 10 vs 8, sd 1.20 vs 1.70, **no erosions**; gains
+  fastapi_14463 40->90%, fastapi_9425 30->70%. Cost: **27.3 vs 17.4 min/pass (+57%)**, overflow 6.6 vs 2.5/pass.
+- **Kaggle batch 3** (log, 10 passes): HT5 +0.80 (t 1.44), HG4 +0.44, H +0.10. Per-task files only partly downloaded
+  (node0 12 runs, node1 7, node2/3 none); re-pull running.
+**POOLED vs same-batch control:** R_reads +1.10 (n 10, t 1.72); L_lean +0.80 (n 10); V_vote +0.50 (n 10); HR +0.25 (n 8);
+**H_hygiene +0.12 (n 25, t 0.22) -> batch 1's +1.50 was a lucky draw; H is CLOSED.** HR4 0.00.
+**Consistency/erosion:** every arm reshuffles WHICH flaky tasks land (each arm gains some and erodes others: e.g.
+fastapi_9555 62% -> 0-38% under HR/HR4/H in batch 2). The only arms with zero erosions are R_reads (b1) and V_vote.
+**Verdict:** no arm meets the rule on pooled data. Pack 1 stays the E4B final. Single-arm A/B effects at this scale are ~+-1
+task/pass and need ~20+ paired passes to resolve; the flaky band (16 tasks) is a coin-flip set.

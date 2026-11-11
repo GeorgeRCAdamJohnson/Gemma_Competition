@@ -1,8 +1,9 @@
-# Runs ON a GPU VM: print a batch's progress.json compactly (one JSON line) so it can be saved locally.
+# Runs ON a GPU VM: print progress.json files compactly (one line each) so they can be saved locally.
 import json
-import sys
 from pathlib import Path
 
-name = "ab"
-p = Path(f"/content/{name}/progress.json")
-print("PROGRESS_JSON " + json.dumps(json.loads(p.read_text())))
+for tag, p in (("ab4", Path("/content/ab4/progress.json")),
+               ("ab2", Path("/content/drive/MyDrive/gemma_fasteval/ab_runs/e4b_ab2_20261111/progress.json"))):
+    if p.exists():
+        print(f"PROGRESS_JSON {tag} " + json.dumps(json.loads(p.read_text())))
+print("ALL_DONE ab4:", Path("/content/ab4/ALL_DONE").exists())
