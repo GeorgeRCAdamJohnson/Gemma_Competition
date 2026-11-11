@@ -18940,3 +18940,25 @@ Reads, paired by round, same thresholds (>= +1.0/pass, t >= 2 after >= 8 rounds)
 3. HR4 vs HR: does a 4th attempt convert? Also report HR4's min/pass, because the scorer runs all 129 tasks sequentially
    (pack 1 ~10.7 h of 12 h) and a 4th attempt mostly lands on the 90 never-solved tasks. A winning HR4 needs a runtime90 check
    before it can ship.
+
+### 2026-11-11 -- E4B A/B BATCH 1 FINAL (10 rounds) + COMPUTE-UNIT INCIDENT (~40 CU lost)
+**Batch 1 final** (paired by round, solves/26; `Outputs/colab_e4b_ab1/progress.json`): **H_hygiene +1.50, sd 2.37, t +2.00**
+(+2.3 min/pass, overflow -0.10) -> meets the rule at the threshold. R_reads +1.10, t +1.72 (-1.6 min/pass, **overflow -1.20 of
+the control's 2.30**). L_lean +0.80, t +1.18. Control mean 10.40 (Kaggle-expected 11.80; inside the parity guard). H's gains:
+fastapi_14492 0->7/10, fastapi_14463 4->9, fastapi_9555 3->8, rich_3894 1->4. Its losses: rich_3067 9->6, fastapi_9753 5->2.
+With three arms tested and t exactly 2.0, H needs the batch-2 replicate before it ships.
+
+**Incident (my bugs, now fixed):** balance 94.50 -> 36.31.
+1. The driver logged ALL ROUNDS DONE at 692 min but never exited (the vLLM child kept the process alive). The batch-3 chain
+   waited on that exit and never fired, and the keep-alive (alive-while-pid-exists) kept VM1's L4 billing **~7 h idle (~14 CU)**.
+2. VM2 (L4) was created and prepped, but the G4 setup was interrupted before batch 2 was launched there: **idle for hours
+   (~2 CU/h)**. Its Drive -> VM copy of colab_env.tar was also very slow this time (hours vs ~6 min on VM1); cause unconfirmed.
+3. A cancelled local `colab new --gpu G4` still allocated a G4 server-side: **G4 = ~10 CU/h** (12.07 total with one L4 + CPU).
+   Stopped within minutes of detection.
+Fixes: driver writes ALL_DONE, stops vLLM and `os._exit(0)`s after the last pass or at the deadline. Keep-alive stops when
+every started batch has ALL_DONE, when no driver is alive, or after 75 min without a finished pass (a hung driver can no longer
+keep a GPU billing). After any cancelled `colab new`, list sessions and stop strays. Idle CPU runtime deleted.
+Rates measured: L4 1.94 CU/h, G4 ~10 CU/h, CPU 0.08 CU/h.
+
+**Batch 2 launched on VM2** (fixed driver): C_pack1 / H_hygiene / HR / HR4, **8 rounds** (the rule's minimum, ~9.5 h, ~18 CU),
+11 h hard deadline. Outputs /content/ab2, Drive ab_runs/e4b_ab2_20261111. Batch 3 (HT5, HG4) deferred: budget.
