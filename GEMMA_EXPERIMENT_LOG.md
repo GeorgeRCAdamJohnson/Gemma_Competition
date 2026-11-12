@@ -19066,3 +19066,24 @@ fastapi_11194 far 10/12, rich_3518 far 8/12, rich_4077 wrong_file 8/12. Logic-bo
   what H_hygiene's "edit only .py source, never docs/metadata" rule redirects, and why every H-based arm (H, HT5, HG4)
   gained on it (Kaggle 8% -> 58-67%). It is a single-task effect, not a general lever. Only pass-1 logs are kept per node,
   so per-run forensics for other swing tasks need fuller log retention in the next kernels.
+
+### 2026-11-12 -- DIVERGENCE ANALYSIS: the high passes are NOT luck -- each swing task turns on ONE early choice
+User: "what looks like luck probably isn't; luck would be measurable." Correct. `Outputs/_divergence.py` (+ `_divergence_b1.txt`)
+over all Colab A/B logs (2,487 files: b1, b2, vote; `Outputs/ab_logs/`), solved vs failed runs of the SAME task (~92 runs each):
+| task | solved / failed | what separates them |
+|---|---|---|
+| fastapi_14492 | 60 / 32 | solved open `docs_src/metadata/tutorial001_1_py39.py` first (57/60); failed open NO source .py (29/32) and edit pyproject.toml / README.md |
+| fastapi_9425 | 48 / 44 | solved edit `fastapi/dependencies/utils.py` (48/48); failed edit routing.py / utils.py. Split: reading dependencies/utils.py (50% vs 32%) |
+| rich_4077 | 13 / 79 | solved edit `rich/file_proxy.py` (13/13); failed edit console.py (75/79). Split: read file_proxy.py at step 3 (31% vs 4%) |
+| rich_3067 | 72 / 20 | solved edit `rich/highlighter.py` (72/72); failed edit style.py, read 12.5 times before editing (vs 3), overflow 35% |
+| rich_2725 | 33 / 58 | solved edit table.py; failed edit `rich/box.py` (45/58). Split: grep table.py at step 2 (55% vs 3%); failed overflow 64% |
+| fastapi_14873 | 49 / 43 | same file; failed read 12 vs 8 before editing, 3 edit failures, overflow 67%. Split: grep at step 2 (45% vs 23%) |
+| fastapi_14463 | 59 / 33 | same file; solved READ it before editing (71% vs 27% at step 3) |
+| rich_2943, rich_3894, fastapi_9753 | | same file and region in both: the logic of the fix decides |
+**7 of 10 swing tasks are decided by which file/function the edit lands in, and that is chosen in the first 2-5 actions.**
+A wrong early choice also produces a measurable spiral (more reads before the edit, edit failures, overflow). The 3 logic-bound
+tasks are the ones voting/diversity can help. R_reads' low variance (sd 0.81 vs coin-flip 1.63) fits: it forces grep-first
+localization, the split action on rich_2725 / fastapi_14873.
+**Next arm (proposal): localize-by-definition rule** on R_reads -- before the first edit, grep the identifiers / error text
+named in the problem, open the file that DEFINES the behaviour, and edit there (not its caller, sibling, docs or packaging).
+Generic (no task names), targets the dominant swing mechanism. Test on Kaggle after batch 5.
