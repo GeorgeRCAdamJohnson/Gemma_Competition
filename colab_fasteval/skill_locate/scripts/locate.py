@@ -41,6 +41,16 @@ def query_text():
     return " ".join(x for x in a if not x.startswith("--"))
 
 
+def clean(q):
+    """v3: drop PR-template boilerplate that pulls the ranking toward unrelated files."""
+    q = re.sub(r"<!--.*?-->", " ", q, flags=re.S)                         # HTML comment templates
+    q = re.sub(r"(?m)^\s*[-*]\s*\[[ xX]\].*$", " ", q)                     # checklist lines
+    q = re.sub(r"(?mi)^\s*#+\s*(type of changes|checklist|description)\s*$", " ", q)
+    q = re.sub(r"(?i)please describe your changes here.*?possible\.", " ", q, flags=re.S)
+    q = re.sub(r"https?://\S+", " ", q)                                    # bare issue / PR links
+    return q
+
+
 def tokens(q):
     toks = set()
     for m in re.finditer(r"`([^`]{2,80})`", q):                      # backticked spans
@@ -73,7 +83,10 @@ def main():
     if not q.strip():
         print("locate: pass the problem's identifiers / error text, e.g. args {\"q\": \"FileProxy write flush\"}")
         return
+    q = clean(q)
+    title = next((ln for ln in q.splitlines() if ln.strip()), "")
     toks = tokens(q)
+    title_toks = tokens(title)
     strong = {t for t in toks if ("_" in t or re.search(r"[a-z][A-Z]", t) or re.search(rf"`[^`]*\b{re.escape(t)}\b", q))}
     pyfiles = files_by_ext(root)
     texts = {}
@@ -94,11 +107,16 @@ def main():
     for f, text in texts.items():
         low = 0.25 if LOW.search(f) else 1.0
         stem = key(os.path.splitext(os.path.basename(f))[0])
+        parts = set(re.split(r"[_\-]+", os.path.splitext(os.path.basename(f))[0].lower())) - {""}
         for t in toks:
             stem_hit = key(t) == stem and len(stem) > 3
-            if t not in text and not stem_hit:
+            part_hit = (not stem_hit) and len(t) > 3 and t.lower() in parts          # "proxy" -> file_proxy.py
+            tw = 3.0 if t in title_toks else 1.0                                     # v3: the title carries the signal
+            if stem_hit or part_hit:                                                 # file named after the concept:
+                score[f] += (10 if stem_hit else 5) * tw * low                       # strong evidence, NOT idf-scaled
+            if t not in text:
                 continue
-            w = (3.0 if t in strong else 1.0) * idf[t]
+            w = (3.0 if t in strong else 1.0) * idf[t] * tw
             n_use = text.count(t)
             hits = [i + 1 for i, ln in enumerate(text.splitlines()) if def_re[t].search(ln)]
             if hits:
@@ -107,8 +125,6 @@ def main():
             if n_use:
                 score[f] += min(n_use, 3) * 0.2 * w * low
                 uses[f] += n_use
-            if stem_hit:
-                score[f] += 8 * w * low
     ranked = sorted(score, key=lambda f: -score[f])[:5]
     if not ranked:
         print("locate: no Python file mentions any of", sorted(toks)[:12])
