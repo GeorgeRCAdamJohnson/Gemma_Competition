@@ -19051,3 +19051,18 @@ fastapi_11194 far 10/12, rich_3518 far 8/12, rich_4077 wrong_file 8/12. Logic-bo
 
 **Submission candidate built (not submitted):** `comfyops/gemma-submit-e4b-r-reads` v1, CPU packager COMPLETE, submission.zip
 12.0 KiB, bundle sha **4089b91f730f** = R_reads (pooled +1.10, no erosions, -1.6 min/pass, half the overflows).
+
+### 2026-11-12 -- What makes a 14-15/26 pass different? (`Outputs/_high_passes.py` + .txt, 140 passes)
+- **Spread = coin flips.** Per arm, observed pass sd ~= the sd expected if every task were an independent coin with its own
+  rate (e.g. C_pack1 1.43 vs 1.44, 1.70 vs 1.74). High passes are the upper tail, not a different mode.
+  Exceptions BELOW coin-flip sd (more consistent than chance): **R_reads 0.81 vs 1.63, V_vote 1.20 vs 1.64**.
+- **22 high passes (>=14) come from every arm**, the control included (4 of them). No batch/arm/position signature.
+- **The excess (+3.5 solves per high pass) is spread over ~10 flaky tasks**: fastapi_14492 (+55 pts), rich_2943 (+43),
+  fastapi_9425, fastapi_14463, fastapi_14873 (+34-36), rich_3894 (+29), fastapi_9753, rich_4077, rich_3067, rich_2725.
+- Run-level features nearly identical (median calls 12 vs 11, task time 263 vs 252 s); the only difference: **fewer
+  overflows on flaky tasks (8.3% vs 13.1%)**, ~0.5 task/pass.
+- **Swing task fastapi_14492** (gold edits `docs_src/metadata/tutorial001_1_py39.py`, "fix the Apache-2.0 license identifier
+  in the docs example"): failing runs edit `docs/fr/docs/index.md` / LICENSE / pyproject.toml / CITATION.cff. That is exactly
+  what H_hygiene's "edit only .py source, never docs/metadata" rule redirects, and why every H-based arm (H, HT5, HG4)
+  gained on it (Kaggle 8% -> 58-67%). It is a single-task effect, not a general lever. Only pass-1 logs are kept per node,
+  so per-run forensics for other swing tasks need fuller log retention in the next kernels.
