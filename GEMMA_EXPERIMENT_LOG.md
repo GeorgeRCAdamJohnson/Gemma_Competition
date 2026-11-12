@@ -19027,3 +19027,27 @@ B+C draws: 0.15, 0.17 -> mean 0.16 (9.5/58). ca5 same-bytes draws: 0.20, 0.18, 0
 Below the 0.18 switch bar on both draws, so **ca5 0.20 (57760641) stays the 31B final.** B+C is indistinguishable from
 ca5 on the board, as the timeout A/B predicted (its gain targets a handful of timeout tasks). Auto-selection still
 ca5 0.20 + E4B 0.06.
+
+### 2026-11-12 ~02:30 UTC -- Kaggle batch 3 FINAL, batch 5 launched (8 GPUs), gold-patch analysis, R_reads pack built
+**Batch 3 final (12 passes/arm, full per-task files):** C 11.42 | **HT5 12.25 (+0.83, t 1.60)**, erodes fastapi_14873 67->33% |
+**HG4 12.00 (+0.58, t 1.40), no erosions** | H 11.08 (-0.33). Gains concentrate on fastapi_14492 (8% -> 58-67% in every arm).
+**Pooled (vs same-batch control):** R_reads +1.10 (n 10) | HT5 +0.83 (n 12) | L_lean +0.80 (n 10) | HG4 +0.58 (n 12) |
+V_vote +0.50 | HR +0.25 | H_hygiene +0.13 (n 30, CLOSED) | HR4 0.00.
+
+**Batch 5 RUNNING on both Kaggle slots (8 L4s):** `e4b-batch5a` nodes C_pack1/R_reads/T5/RT5, `e4b-batch5b` the same 4 arms in
+REVERSED node order (node effects cancel). arms5 (`colab_fasteval/_build_arms5.py`): C 84f904c63afd | R_reads 4089b91f730f |
+T5 228cec045334 (pack 1 + temperature 0.5; HT5 minus the null H) | RT5 4ab7dcf320d9 (R_reads + temperature 0.5).
+4 h each -> ~24 passes per arm. Pre-registered: same rule (>= +1.0/pass, t >= 2), pooled over 5a+5b by pass index.
+
+**Gold-patch analysis** (`Outputs/_gold_vs_agent_e4b.py` + .txt; C_pack1 Kaggle node0, 312 runs):
+solved 43.9% | **right region, wrong logic 27.2%** | right file, wrong function 13.5% | wrong file 11.5% | no patch 3.8%.
+Of failures: right_region 49%, right_file_far 24%, wrong_file 21%. **Failing patches are almost all DISTINCT** (e.g. 10-11
+different patches in 10-11 failing runs): failures are random, not a systematic misreading. So diversity + a good selector
+can help (consistent with V_vote's zero erosions), while "retry the same way" cannot.
+**Localization-bound tasks** (a hint-free lever): fastapi_14492 wrong_file 10/12, fastapi_13537 right_file_far 12/12,
+fastapi_11194 far 10/12, rich_3518 far 8/12, rich_4077 wrong_file 8/12. Logic-bound: rich_3521, rich_3882, rich_3506
+(right region 10-11/12).
+(Parser note: gold patches have no `diff --git` lines; files are keyed on `+++ b/`. First run misread 93% as wrong_file.)
+
+**Submission candidate built (not submitted):** `comfyops/gemma-submit-e4b-r-reads` v1, CPU packager COMPLETE, submission.zip
+12.0 KiB, bundle sha **4089b91f730f** = R_reads (pooled +1.10, no erosions, -1.6 min/pass, half the overflows).

@@ -23,11 +23,15 @@ SLUG = f"e4b-{BATCH}"
 DST = K / f"push_e4b_{BATCH}"
 BUDGET_SECONDS = int(float(sys.argv[1] if len(sys.argv) > 1 else 4.0) * 3600)
 SMOKE_ID = "fastapi_14786"
+W5 = {"C_pack1": "84f904c63afd", "R_reads": "4089b91f730f", "T5": "228cec045334", "RT5": "4ab7dcf320d9"}
 CFG = {
     "batch3": ("arms3", ["C_pack1", "H_hygiene", "HT5", "HG4"],
                {"C_pack1": "84f904c63afd", "H_hygiene": "eccf4b1af3f3", "HT5": "41ecd618d3a3", "HG4": "e8ae58167994"}),
     "batch2": ("arms2", ["C_pack1", "H_hygiene", "HR", "HR4"],
                {"C_pack1": "84f904c63afd", "H_hygiene": "eccf4b1af3f3", "HR": "d27caa450589", "HR4": "798bee807618"}),
+    # batch 5: two identical kernels (5a, 5b) = replicate, ~24 passes per arm in 4 h
+    "batch5a": ("arms5", ["C_pack1", "R_reads", "T5", "RT5"], W5),
+    "batch5b": ("arms5", ["RT5", "T5", "R_reads", "C_pack1"], W5),   # node order reversed: node effects cancel
 }
 _arms_dir, NODES, WANT = CFG[BATCH]
 A3 = ROOT / "colab_fasteval" / _arms_dir
