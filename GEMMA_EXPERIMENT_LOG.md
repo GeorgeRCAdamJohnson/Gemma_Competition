@@ -19087,3 +19087,19 @@ localization, the split action on rich_2725 / fastapi_14873.
 **Next arm (proposal): localize-by-definition rule** on R_reads -- before the first edit, grep the identifiers / error text
 named in the problem, open the file that DEFINES the behaviour, and edit there (not its caller, sibling, docs or packaging).
 Generic (no task names), targets the dominant swing mechanism. Test on Kaggle after batch 5.
+
+### 2026-11-12 -- Batch 5 interim (pass 3-4) + `locate` skill offline test v1 FAILS the bar; v2 running
+**Batch 5** (Kaggle 5a + 5b, pairing by pass index within a kernel): C 12.38 | R_reads -0.71 (n 7) | RT5 -1.50 (n 6) |
+**T5 -3.00 (n 6)**. R does NOT replicate (its batch-1 +1.10 was an upper-tail draw, like H's +1.50); temperature 0.5 on pack 1
+hurts clearly in both kernels. The R_reads submission recommendation is WITHDRAWN (no measured advantage over pack 1).
+Oddity: C's passes are near-identical ACROSS the two kernels (12/13, 13/12, 15/14, 10/10) on different VMs and GPU positions;
+hypothesis = vLLM sampling seed shared -> partly replayed trajectories -> passes less independent than assumed. Check
+per-task overlap of the C passes once outputs download.
+**Skill `locate` v1 offline** (`kaggle_pkg/_build_locate_offline.py`, CPU kernel `comfyops/locate-offline`, all 129 snapshots,
+gold source files as truth): full-problem query top1 **38%**, top3 57%, top5 68% (landable 26: 38 / 50 / 69%). The bar is the
+model's own localization (pack 1 touches a gold file in ~85% of runs), so v1 would HURT. Failure mode = the agent's own trap:
+hub files (fastapi/applications.py, routing.py, rich/console.py) rank first by mentioning everything; rich_4077 -> console.py
+(as in 75 failed runs) instead of file_proxy.py; FileProxy did not match file_proxy.py.
+**v2** (pushed, kernel v2): IDF rarity weighting on definitions and mentions, name normalization (FileProxy == file_proxy ==
+_file_proxy) with a strong stem-match bonus, mention weight cut. Pre-registered bar to go to a GPU A/B: top1 >= 70% on all 129
+AND correct top1 on >= 5 of the 7 localization-bound swing tasks (14492, 9425, 4077, 3067, 2725, 14873, 14463).
