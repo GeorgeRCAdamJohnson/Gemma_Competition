@@ -19021,3 +19021,9 @@ driver + stall-aware keep-alive). The local PC crash did not affect any run (Kag
 fastapi_9555 62% -> 0-38% under HR/HR4/H in batch 2). The only arms with zero erosions are R_reads (b1) and V_vote.
 **Verdict:** no arm meets the rule on pooled data. Pack 1 stays the E4B final. Single-arm A/B effects at this scale are ~+-1
 task/pass and need ~20+ paired passes to resolve; the flaky band (16 tasks) is a coin-flip set.
+
+### 2026-11-11 -- BOARD: 31B B+C second draw (ref 58221428, same kernel v1) = 0.17 (10/58)
+B+C draws: 0.15, 0.17 -> mean 0.16 (9.5/58). ca5 same-bytes draws: 0.20, 0.18, 0.17 x4, 0.13 -> mean ~0.17 (10/58).
+Below the 0.18 switch bar on both draws, so **ca5 0.20 (57760641) stays the 31B final.** B+C is indistinguishable from
+ca5 on the board, as the timeout A/B predicted (its gain targets a handful of timeout tasks). Auto-selection still
+ca5 0.20 + E4B 0.06.
