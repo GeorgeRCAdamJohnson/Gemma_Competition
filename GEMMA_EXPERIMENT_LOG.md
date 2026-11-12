@@ -19139,3 +19139,10 @@ Reads: (1) **swing solves per pass, L - C, paired by round** (primary; the 7 swi
 (2) regression: L may not lose more than 1 solve per pass on the 5 guards; (3) mechanism from logs: % of L runs that call
 locate, and on swing tasks whether the edited file moved to the gold file after a "not in list" reconsideration.
 Win = swing L - C >= +1.0/pass with t >= 2 after >= 8 rounds AND guards hold. Otherwise `locate` is closed.
+
+### 2026-11-12 -- SUBMITTED 31B B+C 3rd draw (ref 58263186); batch-6 locate VM reclaimed before launch
+User call: the E4B locate test is not ready, so use today's slot on a 31B redraw. `gemma-submit-ca5-bc-time10-cmd60` v1.
+Expectation: B+C draws 0.15 / 0.17, ca5 mean ~0.17 -> the public best (0.20) rises only on a >= 0.21 draw; private expectation
+unchanged. Batch 6 (`locate` second opinion) did NOT start: the L4 was reclaimed by Colab during prep (env restore), before the
+driver launched (no keep-alive ran during prep). Fix: `_keepalive.py` now covers VM creation -> prep -> run (prep window up to
+40 min). Balance 379.73 CU, nothing billing. Batch 6 is ready to relaunch as pre-registered.
