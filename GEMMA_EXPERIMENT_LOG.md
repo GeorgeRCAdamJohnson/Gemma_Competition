@@ -19105,8 +19105,9 @@ _file_proxy) with a strong stem-match bonus, mention weight cut. Pre-registered 
 AND correct top1 on >= 5 of the 7 localization-bound swing tasks (14492, 9425, 4077, 3067, 2725, 14873, 14463).
 
 ### 2026-11-12 -- Batch 5 STOPPED by the user (Kaggle GPU quota < 2 h). Final from the logged pass totals
-Both kernels cancelled at ~94 min of 240 (CANCEL_ACKNOWLEDGED); per-task output files are likely lost; pass totals are from
-the kernel logs the user pasted.
+Both kernels cancelled at ~94 min of 240 (CANCEL_ACKNOWLEDGED). Pass totals below are from the kernel logs the user pasted.
+[CORRECTED: a cancelled kernel DOES keep its /kaggle/working output; per-task files are being pulled into
+Outputs/kaggle_batch5{a,b}. My earlier "likely lost" was a guess, now disproven.]
 | arm | 5a | 5b | mean |
 |---|---|---|---|
 | **C_pack1** | 12, 13, 15, 10, 11 | 13, 12, 14, 10, 15 | **12.5** (n 10) |
@@ -19117,3 +19118,12 @@ the kernel logs the user pasted.
 Temperature 0.5 ~-2 (CLOSED). Pooled over all batches, every prompt/config arm (H, L, R, HR, HR4, V_vote, HT5, HG4, T5,
 RT5) lies within about +-1 task/pass of pack 1. **Pack 1 remains the E4B final.** Remaining E4B work moves to the `locate`
 skill (it changes the information the model gets, not the instructions), tested on Colab with full logs.
+
+### 2026-11-12 -- `locate` v3 offline: ranking CEILING reached; fails the pointer bar, passes as a shortlist
+v3 (boilerplate stripping, title weight 3x, partial file-name match): all 129 top1 **41%**, top3 64%, top5 **74%**;
+landable 26 top1 50%, top5 77%; swing tasks at #1 4/7 (14463, 14492 ids query; 14873; 2725), in top5 **6/7** (all but rich_3067).
+Trajectory v1 38% -> v2 42% -> v3 41% top1: keyword ranking has plateaued. Cause: terse problem texts ("proxy isatty",
+"Allow tilde in URL") and fixes that ADD code that does not exist yet. As a "go edit #1" pointer it FAILS the pre-registered
+bar (>= 70% top1; the model alone lands in a gold file ~85%). Remaining design worth one cheap GPU test: SECOND OPINION
+(the fixer runs locate before editing; reconsiders only if its chosen file is NOT in the top 5). Proposed Colab run: 7 swing
++ 5 always-solved tasks, pack 1 vs pack 1 + second-opinion locate, 8 rounds, one L4, ~6 CU, full logs.
