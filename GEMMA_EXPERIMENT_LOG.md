@@ -19103,3 +19103,17 @@ hub files (fastapi/applications.py, routing.py, rich/console.py) rank first by m
 **v2** (pushed, kernel v2): IDF rarity weighting on definitions and mentions, name normalization (FileProxy == file_proxy ==
 _file_proxy) with a strong stem-match bonus, mention weight cut. Pre-registered bar to go to a GPU A/B: top1 >= 70% on all 129
 AND correct top1 on >= 5 of the 7 localization-bound swing tasks (14492, 9425, 4077, 3067, 2725, 14873, 14463).
+
+### 2026-11-12 -- Batch 5 STOPPED by the user (Kaggle GPU quota < 2 h). Final from the logged pass totals
+Both kernels cancelled at ~94 min of 240 (CANCEL_ACKNOWLEDGED); per-task output files are likely lost; pass totals are from
+the kernel logs the user pasted.
+| arm | 5a | 5b | mean |
+|---|---|---|---|
+| **C_pack1** | 12, 13, 15, 10, 11 | 13, 12, 14, 10, 15 | **12.5** (n 10) |
+| R_reads | 14, 11, 15, 12, 9 | 11, 9, 12, 10 | 11.4 (n 9) |
+| RT5 | 13, 11, 13, 11, 13 | 10, 11, 12, 10 | 11.6 (n 9) |
+| T5 | 12, 11, 9, 12 | 9, 11, 9, 11 | 10.5 (n 8) |
+**Verdict: nothing beats pack 1.** R_reads ~-1 (its batch-1 +1.10 was an upper-tail draw; CLOSED as a solve lever).
+Temperature 0.5 ~-2 (CLOSED). Pooled over all batches, every prompt/config arm (H, L, R, HR, HR4, V_vote, HT5, HG4, T5,
+RT5) lies within about +-1 task/pass of pack 1. **Pack 1 remains the E4B final.** Remaining E4B work moves to the `locate`
+skill (it changes the information the model gets, not the instructions), tested on Colab with full logs.
