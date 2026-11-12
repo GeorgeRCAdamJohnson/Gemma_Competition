@@ -19127,3 +19127,15 @@ Trajectory v1 38% -> v2 42% -> v3 41% top1: keyword ranking has plateaued. Cause
 bar (>= 70% top1; the model alone lands in a gold file ~85%). Remaining design worth one cheap GPU test: SECOND OPINION
 (the fixer runs locate before editing; reconsiders only if its chosen file is NOT in the top 5). Proposed Colab run: 7 swing
 + 5 always-solved tasks, pack 1 vs pack 1 + second-opinion locate, 8 rounds, one L4, ~6 CU, full logs.
+
+### PRE-REGISTRATION: batch 6 (Colab L4) -- `locate` as a second opinion, swing tasks
+Arms (`colab_fasteval/_build_arms6.py`): C_pack1 84f904c63afd vs **L_loc 55c5d0e8005a** (pack 1 + skills/locate v3 declared on
+the fixer + a step-2 rule: run locate once before the first edit; proceed if the intended file is listed, else re-read the
+problem and the #1 candidate's definition).
+Tasks (12): the 7 localization-bound swing tasks fastapi_14492, fastapi_9425, rich_4077, rich_3067, rich_2725, fastapi_14873,
+fastapi_14463 + 5 always-solved regression guards fastapi_14786, fastapi_14301, rich_3454, rich_3905, rich_3006.
+Up to 10 rounds, rotation, 6 h deadline, full logs to Drive `ab_runs/e4b_ab6_locate_20261112`.
+Reads: (1) **swing solves per pass, L - C, paired by round** (primary; the 7 swing tasks are where the effect should be);
+(2) regression: L may not lose more than 1 solve per pass on the 5 guards; (3) mechanism from logs: % of L runs that call
+locate, and on swing tasks whether the edited file moved to the gold file after a "not in list" reconsideration.
+Win = swing L - C >= +1.0/pass with t >= 2 after >= 8 rounds AND guards hold. Otherwise `locate` is closed.
