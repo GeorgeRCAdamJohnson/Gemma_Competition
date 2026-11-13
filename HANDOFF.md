@@ -23,6 +23,12 @@ block at the top). Repo `c:\Users\biges\Gemma\Gemma_Competition`, Windows + Powe
 **Closed this session:** 31B B+C (`gemma-submit-ca5-bc-time10-cmd60`): draws 0.15 / 0.17 / 0.13 (ref 58263186), mean 0.15,
 below the 0.18 switch rule.
 
+**Repro-first / repro-gate E4B (`comfyops/e4b-repro-ab`) is CLOSED, not pending.** `colab_fasteval/Chat_History` (file saved
+11-12) records the build session BEFORE results. Result (log ~L18176-18237): F fresh retry 11.50 vs control 9.82 (t 3.18) ->
+F became pack 1; R repro gate 8.88 (32% context overflow, 2x time). Gold check: only 18% of E4B repro tests are
+gold-consistent and 57% of base-reproducing tests also fail on gold -> "Do NOT re-run it on E4B" (31B tester only, gold
+check first). Treat chat logs as history; the experiment log is the source of truth.
+
 **E4B levers already closed (pooled A/Bs, all within ±1 task/pass of pack 1):** H_hygiene, R_reads, T5 (temp 0.5, worse),
 L_lean, HG4, HT5, HR, HR4, V_vote (+0.5 but +57% time). LoRA is "closed unless new mechanism" in the standing truth.
 
