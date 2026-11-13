@@ -19146,3 +19146,168 @@ Expectation: B+C draws 0.15 / 0.17, ca5 mean ~0.17 -> the public best (0.20) ris
 unchanged. Batch 6 (`locate` second opinion) did NOT start: the L4 was reclaimed by Colab during prep (env restore), before the
 driver launched (no keep-alive ran during prep). Fix: `_keepalive.py` now covers VM creation -> prep -> run (prep window up to
 40 min). Balance 379.73 CU, nothing billing. Batch 6 is ready to relaunch as pre-registered.
+
+### 2026-11-12 -- batch 6 VM (e4bloc2) lost ~15 min after launch; root cause = no held client connection; LoRA pool census
+Batch 6 launched as pre-registered (arm hashes verified on the VM: C_pack1 84f904c63afd, L_loc 55c5d0e8005a; 12 tasks) and
+the VM was reclaimed during vLLM boot / pass 1 -- nothing finished (~1 h L4 billed, ~2 CU). Timeline: the API-exec keep-alive
+stream is CUT server-side after ~4-5 min (ChunkedEncodingError at 07:48, same as the previous attempt); the VM then lived only
+while I kept issuing calls, and died in a ~10 min gap with no client calls. So Colab counts the CLIENT connection, not kernel
+activity -- every lost VM (2 in prep, VM3, e4bloc2) had no long-lived CLI connection; the batches that finished did.
+FIX (`colab_fasteval/_ab_chain.sh`, one WSL background process): new -> uploads -> Drive mount (<=3 links, verified with
+_probe_mount) -> `_prep_guarded.py` (refuses without Drive) -> `_keepalive_auto.py` via `colab exec --timeout 0` (holds the
+connection; launches the driver itself once prep.log has PREP DONE + IMPORTS; stops the VM only when it ends by rule).
+LoRA prerequisites (CPU, no GPU spend):
+- Traces are full ATIF-v1.7 (system prompt, task, agent text, tool calls + args, full observations): SFT/DPO-ready.
+- Drive `ab_runs` holds 2,389 traces: 1,076 SOLVED (e4b_ab 450, ab2 383, vote 243) over ~25 distinct tasks, plus 1,313 failed
+  on the SAME tasks -> preference pairs on the early file choice (the divergence finding) are possible. Local variance3: 54
+  solved / 17 tasks (ca5 prompt).
+- Base weights on Kaggle (no HF): `google/gemma-4/transformers/gemma-4-e4b-it-qat-q4_0-unquantized` v2, 15.91 GB.
+- Caveat (standing truth #4): LoRA is closed unless a NEW mechanism; hidden tasks are private repos, so any adapter must be
+  judged on a held-out REPO split, not on the ~25 tasks it trained on.
+
+### 2026-11-12 -- batch 6 attempt 2 (e4bloc3): L_loc arm was BROKEN (skill YAML); VM was NOT killed by the drop -- CORRECTION
+CORRECTION of the entry above: Drive `ab_runs/e4b_ab6_locate_20261112/progress.json` (read by the user) shows e4bloc3 ran
+2 full rounds AFTER my CLI connection dropped at 22:05 UTC. The drop was client-side only; the VM was reclaimed later
+because nothing re-attached. So "Colab kills VMs within minutes of losing the connection" is WRONG as stated -- a VM
+outlives a drop by >= ~20 min; it still dies eventually if no client stays attached.
+DATA: C_pack1 r1 8/12, r2 10/12 (normal). L_loc r1 0/12, r2 0/12 in ~30 s each: EVERY task failed at load with
+"Failed to load skill 'skills/locate': Invalid YAML in frontmatter: mapping values are not allowed here (line 3)".
+Cause: the SKILL.md description held inline JSON `{"q": "..."}`; `": "` inside a plain YAML scalar = mapping. The offline
+test ran locate.py directly and never loaded the skill through ADK, so it could not catch this. Reproduced locally with
+PyYAML (same message). These 2 L passes are INVALID (not a skill result); the 2 C passes are extra C data only.
+FIX: description rewritten without JSON (body + fixer.md unchanged; they already give the exact args). New guard
+`colab_fasteval/_skill_yaml_check.py` (all arms6 SKILL.md parse). PRE-REG AMENDMENT: L_loc sha 55c5d0e8005a -> a60585682580
+(only that description line differs); C_pack1 84f904c63afd unchanged; same 12 tasks, win rule, 10 rounds. New tag
+`e4b_ab6b_locate_20261113` so invalid passes never mix. Chain now re-attaches the keep-alive after a dropped connection
+(up to 50 times) and the keep-alive never relaunches a driver that already ran.
+
+### 2026-11-13 -- attempt 3 (e4bloc4) + CLI regression; rolled the Colab CLI back to 0.7.5
+e4bloc4 (`e4b_ab6b_locate_20261113`): prep + auto-launch worked even after my CLI connection dropped (~23:54 UTC);
+C_pack1 r1 = 8/12 (valid extra C data); the VM was reclaimed during L_loc r1 (~00:13), so the fixed skill is still
+unverified on the model. Pattern across e4bloc3/4: connection drop at 6-8 min -> VM reclaimed ~20 min later; my chain's
+`colab sessions` check wrongly said "gone" right after each drop and stopped re-attaching.
+Why it worked on 11-10/11: all successful batches ran on CLI 0.7.5; every attempt since the 0.8.0 update dropped its
+connection, and the user saw DOUBLE Drive consent prompts on 0.8.0. Working hypothesis: 0.8.0 regression (correlation, not
+proven). Actions: `colab_fasteval/wsl_pin_cli.sh` pinned 0.7.5; chain no longer trusts `sessions`, re-attaches until 6
+consecutive attaches die within 60 s; keep-alive exec uses --timeout 43200 (0.7.5 semantics = hard cap). New tag
+`e4b_ab6c_locate_20261113` (ab6b's C pass kept separately).
+
+### 2026-11-13 -- 31B B+C 3rd draw (ref 58263186) = 0.13 -> B+C CLOSED; finals unchanged
+B+C draws: 0.15 / 0.17 / 0.13 (mean 0.15) -- below the 0.18 switch rule and below ca5's 0.20. FINALS: 31B = ca5 0.20
+(ref 57760641), E4B = pack 1 `gemma-submit-e4b-retry-fresh` 0.06. Kaggle auto-select could take the two best overall
+(0.20 + 0.17, both 31B) and drop the E4B pick -> select both finals EXPLICITLY on the Submissions page.
+Record: `kaggle_pkg/_refresh_submissions.py` merges new Kaggle submissions into Outputs/_submissions.json. Chart fix:
+`_rebuild_score_svg.py` dropped any row with "e4b" anywhere in desc+url, so this 31B draw ("...; E4B locate test not
+ready") was excluded; E4B is now = url contains e4b OR desc starts with E4B (keeps raw-url E4B 57807043 excluded).
+Chart 27 points through 11-12; `_check_score_record.py` all checks pass.
+
+### 2026-11-13 -- what triggers a 14-15/26 E4B pass? Run conditions tested -> none explain it (`Outputs/_pass_conditions.py`)
+175 passes (Colab b1/b2/vote + Kaggle b3/b5a/b5b), outcome = solves minus that arm's batch mean. Speed proxy = median
+duration of 5 anchor tasks solved in >= 90% of passes (outcome-independent). |t| >= 2 = real.
+- GPU speed: r -0.06, t -0.75. Kaggle generates 18% faster (anchor 89 s vs 107 s) with the SAME mean (11.63 vs 11.68).
+- Cold start (first pass after vLLM boot): t -0.48. Passes since boot: t +0.90. Position in round (Colab): t -1.07.
+- Round index (warm-up / cache build-up): t +2.10 pooled, but ONLY Kaggle b3 (t +3.11, rounds 11-12, n 8); rounds 1-10
+  t +0.95; b2 and b5a go the other way. Not a general effect; nothing persists between tasks (fresh sandbox, frozen
+  weights; prefix cache only changes speed).
+- Context overflows: t -1.82 (fewer overflows, slightly more solves; -0.13 solves per overflow): mechanical, small.
+- High passes (27 of 175 >= 14) have the same speed (99 vs 98 s), cold share (7% vs 9%) and minutes as the rest; the
+  count matches independent per-task sampling (mean 11.66, sd ~1.7 -> ~25 expected >= 14).
+VERDICT: a 15 is several flaky tasks' sampled early decisions landing together, not hardware/warm-up/cache. The divergence
+finding (early file choice decides 7/10 swing tasks) is where the variance lives -> making that choice reliable is the lever
+(batch 6 `locate` tests exactly that). Open: whether passes sharing a vLLM seed are correlated (5a vs 5b check, not done).
+
+### 2026-11-13 -- shared vLLM seed does NOT correlate passes (`Outputs/_seed_check.py`) -> passes are independent
+Batch 5a vs 5b (same arms, two Kaggle kernels, default vLLM seed). Per-task comparison, same arm:
+- same run index across kernels: outcome agreement 75.6% (n 17 pass pairs), identical trajectory (calls, llm calls,
+  patch size) 2.0%;
+- different run index (baseline): 74.6%, 3.4%; within one kernel: 75.5%, 3.2%;
+- independent-sampling expectation from per-task rates: 77-78.5%.
+Same-seed pairs are no more alike than any other pair; the ~2-3% identical trajectories are trivial short tasks. With
+concurrency 8, batching order makes sampling non-reproducible, so the seed is irrelevant. CONSEQUENCE: every E4B A/B
+treated passes as independent -- that assumption holds; the pooled verdicts (nothing beats pack 1) stand.
+
+### 2026-11-13 -- offline: how much can a FILE locator help E4B? (`_locate_ceiling.py`, `_locate_rules_sim.py`)
+2,389 logged Colab runs, 26 tasks. First edited source file = gold in 98.8% of SOLVED runs, 73.2% of FAILED runs.
+-> 73% of failures happen INSIDE the right file (hunk/logic); a file locator can address at most the other 27%.
+Wrong-file failures (338) concentrate in 6 tasks: rich_4077 74, rich_3063 56, fastapi_11194 50, fastapi_9555 48,
+rich_2725 42, fastapi_9425 21. 33% had ALREADY opened/grepped the gold file before editing the wrong one (choice problem;
+rich_2725 42/42, fastapi_11194 39/50); 67% never saw it (search problem; rich_3063 0/56, rich_4077 7/74).
+locate v3 offline on those: #1 for rich_3063 / rich_2725 / rich_2943, but #5 rich_4077 (console.py #1 = the WRONG file
+the model already picks), #4 fastapi_9555, absent fastapi_11194 and rich_3067.
+Counterfactual rules on every run's first-edit file (net file-level changes; + = more gold files):
+  R_now (batch 6, "not in list -> switch")  +65 / -558 = -5.5 files per 26-task pass
+  always #1                                  +120 / -920 = -8.9
+  #1 if already opened and differs           +48 / -120 = -0.8 (only rich_2725 +47 gains; fastapi_9425 -71)
+  not in top 2 -> #1                         +118 / -849 = -8.1
+The losses are on ANCHOR tasks (fastapi_14786, rich_3006, rich_3894, fastapi_14077 ~-90 each): the identifier search misses
+gold files the model gets right ~100% of the time. PREDICTION for batch 6: null at best; the guards are at risk if the
+model obeys the reconsider rule (its live query differs from this offline one, so this is an approximation).
+CONCLUSION: identifier-search file localization is worse than E4B's own file choice; the open ground is in-file
+(73% of failures).
+
+### 2026-11-13 -- how informative are the 129 problem statements? (`_statement_accuracy.py`, `_statement_contract.py`)
+Measured against the gold patch / hidden test_patch (heuristic text matching), joined with E4B solve rate (variance3,
+5 x 129, ca5 prompt):
+- Names a gold source file 11%; names >= 1 gold-changed function/class 25%; names NEITHER 71%. Other (non-gold) files
+  named: 3%. Most-repeated identifier = a gold file stem: 6%.
+- PR-description style 40% (template/checklist/"this PR"; boilerplate ~8% of text on average, 24% on rich_2725).
+- Hidden-test string literals (expected messages/outputs) present verbatim: >= 1 in 39%, none in 61%, mean share 12%.
+- Multi-file gold fix: 29% of tasks.
+E4B solve rate by statement type: names gold file 30.0% (n 14) vs symbol only 6.1% vs neither 5.7%; PR-style 17.3% (13
+of 17 ever-solved tasks) vs issue-style 2.3%; multi-file 1.1% (n 38); >= 25% of test literals 15.5% vs none 7.7%.
+The 6 wrong-file tasks: none names its gold file; 0-1 gold symbols each. CAVEAT: correlations, not causes -- PR-style
+statements describe the change and may simply be easier tasks. Implication: the model mostly gets a symptom description
+with no location and no exact contract, so the file must be inferred and the contract guessed; E4B lands what it is told
+(PR-style, file named) and rarely what it must infer. Hidden tasks are private repos; assume a similar mix.
+
+### 2026-11-13 -- CORRECTION: multi-file tasks (`Outputs/_multifile_solves.py`)
+The "multi-file 1.1%" above was variance3 only. Across ALL local E4B results (260 result files): 1 of 38 multi-file-gold
+tasks was ever solved -- fastapi_14077, and RELIABLY: 183/211 runs (87%). Its solving patches mostly touch ONE file
+(fastapi/exception_handlers.py: 10 of 17 saved solving patches; 4 touch 2 files; 3 touch all 3). So the hidden test needs
+only part of the gold change; "gold touches N files" overstates what a task requires. The other 37 multi-file tasks: 0
+solves in 431 runs. 31B: no local per-task data covers these (v7_31b_full129 holds 9 tasks, none multi-file).
+
+### 2026-11-13 -- unexplored solvable ground: near misses + "multi-file" tasks (`_near_miss.py`, `_near_miss_detail.py`)
+1,000 local E4B runs with saved hidden-test output. Loose "1 failure away" (58 tasks) is mostly collection errors (the test
+imports what the fix should add) -> discarded. STRICT near miss = unsolved run, no collection error, and some of the task's
+NEW tests (added by test_patch ~ fail-to-pass) passed: 21 tasks with E4B solve rate < 10%, e.g. rich_3782 (1 of 25 new
+tests failing), fastapi_14794 (1 of 7), fastapi_15763 (1 of 4), rich_4075 / rich_3052 / rich_3063 / fastapi_15588 (1 of 2).
+Best failing runs miss ONE edge-case test (e.g. rich_3782 test_padding_plus_wrap, rich_4075 test_print_empty_with_end).
+KEY GAP: almost all of these have 7-11 E4B runs, mostly ca5, and ONE pack-1 run each (e4b_pack1_val). Every pack-1 A/B used
+the 26-task landable set built from ca5 solves, so pack 1's rate on the other 103 tasks is essentially unmeasured.
+Multi-file gold tasks (38) by gold files the hidden test imports: 0 -> 15 tasks, 1 -> 13, 2 -> 6, 3+ -> 4. The 13
+"effectively single-file" tasks: E4B edits the needed file in 88% of runs and solves 0 -> the barrier is the logic, not
+the file count.
+
+### 2026-11-13 -- attempt 4 (e4bloc5, CLI 0.7.5) also reclaimed; CLI-version hypothesis WRONG
+Prep + auto-launch OK (driver 01:18 UTC); C_pack1 r1 finished ~01:31 (progress.json written, Drive tag
+e4b_ab6c_locate_20261113); keep-alive output FROZE at 01:37 with no error (stalled stream, so the re-attach loop never
+fired); billing implies the VM was reclaimed ~02:00. So 0.7.5 also loses the connection (silently) -> not a 0.8.0 bug.
+CLI history comparison: the VMs that SURVIVED for hours (e4bab 11-10, e4bvote 11-11) had NO long CLI exec at all -- they
+were driven via the API, with me polling regularly. The reclaimed ones died ~20-40 min after my last client request
+(e4bloc3, e4bloc4, e4bloc5) regardless of a running kernel cell or an open (stalled) CLI stream.
+Working hypothesis: Colab reclaims after ~20-40 min with no client REQUESTS. Next fix: a local poller that makes a short
+API exec every ~4 min (each call short, so a cut stream cannot stall it), and the driver launched VM-side by prep.
+
+### 2026-11-13 -- SESSION SUMMARY (handoff: HANDOFF.md)
+STATE: finals unchanged -- 31B ca5 0.20 (ref 57760641) + E4B pack 1 0.06 (`gemma-submit-e4b-retry-fresh`); SELECT BOTH
+explicitly on Kaggle (auto-select may take two 31B entries). B+C closed (0.15/0.17/0.13). Colab 362.69 CU, nothing billing.
+Kaggle GPU quota < 2 h. 1 submission/day (00:00 UTC). Deadline Dec 2 (merge 11/25).
+BATCH 6 (locate) NOT RESULTED after 4 VMs: attempt 1 L_loc broken (YAML), attempts 2-4 VMs reclaimed. Valid extra C_pack1
+passes: ab6 r1 8/12, r2 10/12; ab6b r1 8/12; ab6c r1 (on Drive, unread). Unknown: whether ab6c has an L_loc entry
+(Drive progress.json) -- the only check of whether the fixed skill loads.
+OFFLINE VERDICTS THIS SESSION (all free, CPU):
+- 15/26 passes are not hardware/warm-up/cache/cold-start; consistent with independent per-task sampling.
+- Shared vLLM seed does NOT correlate passes; all A/B independence assumptions hold.
+- File locators can address <= 27% of failures (73% fail inside the right file); every simulated locate rule loses files
+  on anchor tasks -> predict batch 6 null/negative.
+- Statements: 71% name neither gold file nor gold symbol; 61% contain none of the hidden test's strings; E4B solves 30%
+  where the gold file is named vs ~6% otherwise; PR-style 17% vs issue-style 2%.
+- Multi-file: only fastapi_14077 ever solved (87%, usually by editing ONE file); 13 multi-file tasks need only 1 file and
+  E4B edits it 88% of runs yet solves 0 -> logic, not file count.
+- 21 never/rarely-solved tasks are STRICT near misses (some new tests pass), each with ~1 pack-1 run -> pack 1 is
+  unmeasured on 103 of 129 tasks. Highest-value next experiment: near-miss sweep (pack 1 x ~34 tasks x 5 passes, ~2-3 CU).
+- fixer.md says "~28 tool calls and 8 minutes" while pack 1 runs 80/30 (inherited ca5 text) -- untested single-change arm.
+COLAB RELIABILITY: CLI-version hypothesis wrong (0.7.5 also stalls silently). Best current hypothesis: VMs are reclaimed
+~20-40 min after the last client REQUEST; survivors were API-driven + polled. Next fix = local 4-min API poller +
+VM-side auto-launch. CLI currently pinned to 0.7.5 (`colab_fasteval/wsl_pin_cli.sh`).

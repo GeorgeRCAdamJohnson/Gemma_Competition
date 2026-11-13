@@ -11,8 +11,10 @@ HTML = ROOT / "Write-up" / "gemma-agent-score-record.html"
 subs = json.load(open(ROOT / "Outputs" / "_submissions.json", encoding="utf-8"))
 pts = []
 for s in subs:
-    txt = f"{s.get('desc') or ''} {s.get('url') or ''}".lower()
-    if s.get("score") in (None, "") or "e4b" in txt:
+    # E4B rows: kernel url names e4b, or the description STARTS with E4B (raw-file urls). A 31B description may merely
+    # mention E4B (58263186 "...; E4B locate test not ready"), so "e4b anywhere in desc" wrongly dropped it.
+    desc, url = (s.get("desc") or "").lower(), (s.get("url") or "").lower()
+    if s.get("score") in (None, "") or "e4b" in url or desc.startswith("e4b"):
         continue
     pts.append((datetime.fromisoformat(s["date"][:19]), float(s["score"])))
 pts.sort()
