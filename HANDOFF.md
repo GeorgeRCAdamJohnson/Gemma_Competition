@@ -45,23 +45,30 @@ Offline prediction (`Outputs/_locate_rules_sim.py`): batch 6 null or negative; e
 **Offline findings this session (all CPU, scripts in `Outputs/`):**
 - `_pass_conditions.py`: 14-15/26 passes are NOT GPU speed, warm-up, cache or cold start; consistent with independent sampling.
 - `_seed_check.py`: a shared vLLM seed does not correlate passes (concurrency 8 breaks reproducibility).
-- `_locate_ceiling.py`: 73% of failures edit the RIGHT file first -> the wall is in-file logic/contract.
+- `_locate_ceiling.py`: 73.2% of failures WITH a parsed first edit, on mixed-outcome tasks, first edit the gold file.
+  Failures without a parsed edit and all-or-nothing task groups are excluded; do not generalize this to all failures.
 - `_statement_accuracy.py` / `_statement_contract.py`: 71% of statements name neither gold file nor symbol; 61% contain none
   of the hidden test's strings; E4B solves 30% when the gold file is named vs ~6% otherwise; PR-style 17% vs issue 2%.
 - `_multifile_solves.py`: only fastapi_14077 of 38 multi-file tasks ever solved (87%, usually 1-file patches).
-- `_near_miss.py` / `_near_miss_detail.py`: 21 rarely-solved tasks are strict near misses (best failing run misses one
-  edge-case test, e.g. rich_3782, fastapi_14794, fastapi_15763, rich_4075, rich_3052). Pack 1 has ~1 run on each:
-  **pack 1 is unmeasured on 103 of 129 tasks.**
-- Inconsistency found, untested: pack 1's `fixer.md` says "~28 tool calls and 8 minutes" but runs at 80 calls / 30 min.
+- Pack 1 has **one run on each of 90 runtime tasks** and **20 runs on each of 39 score tasks**. The runtime set is
+  under-tested, not unmeasured.
+- `_near_miss.py` / `_near_miss_detail.py` nominate candidates but their inference must be checked against raw test output.
+  A raw-output audit narrowed the runtime pilot to rich_3052, rich_3675, and rich_4075; see the pre-registration at the
+  bottom of `GEMMA_EXPERIMENT_LOG.md`. Do not reuse the original 21-task set without rechecking.
+- Pack 1's `fixer.md` says "~28 tool calls and 8 minutes" while the actual limits are 80 calls / 30 min, but no runs were
+  budget-bound; treat a text change as a behavior experiment, not an assumed fix.
+
+**Pre-registered E4B experiment:** pack 1 on the three raw-output-validated runtime tasks, five fresh passes each.
+Waiting for the user's "ready" before requesting Drive consent.
 
 **Recommended next experiments (in order):**
-1. Fix Colab reliability (section 2) — nothing else runs without it.
-2. Near-miss sweep: pack 1 on the 21 near-miss + 13 "effectively single-file" multi-file tasks, 5 passes each
-   (~1-1.5 h L4, ~2-3 CU). Goal: measure pack 1 where it was never measured; grow the A/B set; read contract misses.
-3. Batch 6 rerun only if still wanted (prediction is null). Single-change arm: fix the 28/8 budget text to 80/30.
+1. Complete the pre-registered three-task pack-1 replication after the consent gate.
+2. Resolve Colab reliability with short periodic API requests; do not use a long stalled CLI exec as keep-alive.
+3. Consider further task cohorts only after reporting this pilot's actual local results and failures.
 
 ## 2. Colab: how it works here
-**Accounts/balance:** Colab Pro+, 362.69 CU, nothing billing. L4 ≈ 1.94 CU/h (G4 ≈ 10, CPU 0.08). Never use G4.
+**Accounts/balance:** Colab Pro+, 362.69 CU, verified 2026-11-13; usage 0.00 CU/h, no active assignments or runtimes.
+L4 ≈ 1.94 CU/h (G4 ≈ 10, CPU 0.08). Never use G4.
 
 **Two control paths:**
 - API wrapper (Windows): `python colab_fasteval/colab_mcp.py exec "runtimes/<id>" <file.py>` runs a file in a FRESH kernel.
