@@ -69,8 +69,11 @@ if APPROVAL != "{APPROVAL_TEXT}":
 for stale in ('/content/venv', '/content/prep.done', '/content/ab', '/content/model'):
     if Path(stale).exists():
         raise FileExistsError(f"{{stale}} exists from an earlier run; use a fresh runtime")
-out = subprocess.check_output(['nvidia-smi', '--query-gpu=index,name,memory.total', '--format=csv,noheader,nounits'],
-                              text=True, timeout=15)
+try:
+    out = subprocess.check_output(['nvidia-smi', '--query-gpu=index,name,memory.total', '--format=csv,noheader,nounits'],
+                                  text=True, timeout=15)
+except FileNotFoundError:
+    raise RuntimeError("No GPU attached (CPU runtime). Runtime > Change runtime type > G4 GPU, High-RAM, then rerun.")
 devices = [l.split(',', 2) for l in out.splitlines() if l.strip()]
 if len(devices) != 1 or int(devices[0][2]) < 75000:
     raise RuntimeError(f"One GPU with >= 80 GB required (G4 96 GB); saw {{out.strip()}}")
