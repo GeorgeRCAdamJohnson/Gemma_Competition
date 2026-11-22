@@ -22890,3 +22890,12 @@ a few scalars. denpugovkin's own variants exp023/exp024 scored 0.12 and ayush st
 are top draws of families that span ~0.12-0.22, like ours (0.13-0.20, mean ~0.17). We already tested cmd 60 s
 (B+C: 0.15/0.17/0.13). Untested by us on 31B: mandatory verify-with-reserve, max_output_tokens 8192 (31B traces: 11
 steps in 10/370 traces reach >= 4900 tokens, so at most ~3% exposure), 40 calls, pinned task statement.
+
+### 2026-11-22 -- CORRECTION to the 0.22-comparison entry (user)
+"Untested by us" was wrong for two items. max_output_tokens: heavily tested (8192 -> 16384 Kaggle v12 null, 0/4 with
+no truncation messages, ~L8703; 8192 -> 4096 serA arm ~L8071; 6144 -> 8192 board convergence ~L6669). 40 tool
+calls: tested (v10 22 -> 40, ~L4389-4565; calls are partly phantom under the time wall and extra calls went to
+repetition and wandering, not resolves). The pinned task statement ({problem_description} at prompt end) adds
+little here: it guards against history compaction, which our 28-call / 8-minute runs rarely reach, and our one
+board use of {problem_description} (57146757, per-task branching) scored 0.12. Only the mandatory verify-with-reserve
+remains untested on 31B, with low expected value.
