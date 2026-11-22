@@ -138,8 +138,10 @@ for name, target in DEST.items():
 LAUNCH = {json.dumps(LAUNCH, indent=1)}
 (BASE / 'launch.json').write_text(json.dumps(LAUNCH, indent=2) + '\\n')
 RUN = D / 'gemma_fasteval/ab_runs' / LAUNCH['tag']
-if RUN.exists() and any(RUN.iterdir()):
-    raise FileExistsError(f'{{RUN}} is not empty; use a new tag')
+# a rerun after a failed cell leaves only runtime.json (rewritten below); anything else means real results exist
+other = sorted(p.name for p in RUN.iterdir() if p.name != 'runtime.json') if RUN.exists() else []
+if other:
+    raise FileExistsError(f'{{RUN}} already holds results {{other[:5]}}; use a new tag')
 if not DRY:
     RUN.mkdir(parents=True, exist_ok=True)
     (RUN / 'runtime.json').write_text(json.dumps({{
@@ -217,7 +219,12 @@ if DRY:
         raise SystemExit(f'DRY_RUN_FAILED: {{len(problems)}} problem(s): {{problems}}')
     print('DRY_RUN_OK: inputs, arms, tasks, snapshots, runner, prep script, environment and model are ready for GPU mode')
 else:
-    runpy.run_path('/content/gpu_prep_ab.py')
+    if Path('/content/prep.done').exists():
+        print('prep already finished on this runtime; reusing it')
+    elif Path('/content/prep.log').exists():
+        print('prep already running on this runtime; waiting for it instead of starting a second one')
+    else:
+        runpy.run_path('/content/gpu_prep_ab.py')
     while not Path('/content/prep.done').exists():
         time.sleep(60)
         log = Path('/content/prep.log').read_text(errors='replace').splitlines() if Path('/content/prep.log').exists() else []
