@@ -22985,3 +22985,19 @@ User uploaded `gemma_fasteval/model/gemma-4-other-gemma-4-31b-it-qat-w4a16-ct-v2
 archive to VM disk, extract, verify sizes + safetensors header end (`_verify_model_dir.py`), copy into
 `gemma-4-developer-agent-cache/models/google/gemma-4/Other/gemma-4-31b-it-qat-w4a16-ct/2`, re-verify, write
 `_stage_receipt.json`. Runs on a Colab CPU VM (0.08 CU/h); needs Drive mounted, no Kaggle auth.
+
+### 2026-11-22 -- Colab template extended for 31B (model, archive, concurrency); launch settings for the five/six-arm A/B
+User: Drive consent runs through the existing WSL template (`colab_fasteval/colab_startup_template.sh` -> `_ab_chain.sh`).
+Changes, defaults unchanged for E4B runs:
+- template: every run setting overridable from the environment (INPUT_BUNDLE, GPU, ARMS_DIR, ROUNDS, ROUND_FROM,
+  DEADLINE_H, GPU_UTILIZATION) plus MODEL_NAME, MODEL_ARCHIVE (path under MyDrive) and AB_CONC, written to launch.json.
+- `_launch_if_ready.py` passes MODEL_NAME and AB_CONC to the driver.
+- `_gpu_prep_ab.py`: model from launch.json; cache folder if present, else copy + extract MODEL_ARCHIVE on VM disk,
+  flatten a subfolder layout, verify with `_verify_model_dir.py` (sizes + safetensors header end) before vLLM; prep fails
+  closed on a bad archive; prep.log copied to ab_runs/<tag>/ (GPU and versions on record).
+- `_ab_chain.sh` uploads `_verify_model_dir.py`. Syntax checked: template, chain, embedded prep (`_check_prep_syntax.py`).
+Launch settings: SESSION_NAME 31b-lb022-20261122, RUN_TAG 31b_lb022_20261122, GPU G4, bundle `_lb022_inputs.tar`,
+ROUNDS 1, AB_CONC 6, DEADLINE_H 12, MODEL_NAME gemma-4-31b-it-qat-w4a16-ct, MODEL_ARCHIVE
+gemma_fasteval/model/gemma-4-other-gemma-4-31b-it-qat-w4a16-ct-v2.tar.gz. Estimate 510 attempts x ~350 s / 6 = ~8.5 h
+(~85 CU at ~10 CU/h; cap 12 h = ~120 CU of 261). Arms run sequentially, so the deadline must cover all six.
+Parity check after the first pass: per-sequence decode speed from the vLLM log vs the scorer's 23-30 tok/s.

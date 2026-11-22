@@ -16,7 +16,9 @@ pidf = Path(f"/content/{name}.pid")
 if pidf.exists() and os.path.exists(f"/proc/{pidf.read_text().strip()}"):
     print("already running, pid", pidf.read_text().strip())
 else:
-    env = dict(os.environ, AB_ARMS=c["arms"], AB_OUT=c["out"], AB_TAG=c["tag"], AB_ROUND_FROM=str(c.get("round_from", 1)))
+    env = dict(os.environ, AB_ARMS=c["arms"], AB_OUT=c["out"], AB_TAG=c["tag"],
+               AB_ROUND_FROM=str(c.get("round_from", 1)), AB_UTIL=str(c.get("gpu_utilization", 0.85)),
+               MODEL_NAME=c.get("model_name", "gemma-4-e4b-it-qat-w4a16-ct"), AB_CONC=str(c.get("conc", 8)))
     p = subprocess.Popen(["/content/venv/bin/python", "/content/work/gpu_ab_run.py", str(c["rounds"]), str(c["deadline_h"])],
                          cwd="/content/work", stdout=open(f"/content/{name}.log", "a"), stderr=subprocess.STDOUT,
                          env=env, start_new_session=True)

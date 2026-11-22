@@ -11,10 +11,25 @@ C=$D/gemma-4-developer-agent-cache
 mkdir -p /content/work && tar -xf /content/ab_inputs.tar -C /content/work && echo "inputs: $(ls /content/work | tr '\n' ' ')"
 ( cp $D/gemma_fasteval/colab_env/colab_env.tar /content/ && tar -xf /content/colab_env.tar -C / && rm -f /content/colab_env.tar \
   && echo "ENV restored $(( $(date +%s) - T0 ))s" ) &
-M=${MODEL_NAME:-gemma-4-e4b-it-qat-w4a16-ct}   # e.g. MODEL_NAME=gemma-4-31b-it-qat-w4a16-ct (stage it first)
-[ -f $C/models/google/gemma-4/Other/$M/2/config.json ] || { echo "MODEL MISSING on Drive: $M (run _stage_model_to_drive.py)"; exit 4; }
-( mkdir -p /content/model && cp -r $C/models/google/gemma-4/Other/$M/2/. /content/model/ && rm -f /content/model/_stage_receipt.json \
-  && echo "MODEL staged $M $(( $(date +%s) - T0 ))s" ) &
+# model and optional archive come from /content/launch.json (model_name, model_archive = path under MyDrive)
+M=$(python3 -c "import json; print(json.load(open('/content/launch.json')).get('model_name', 'gemma-4-e4b-it-qat-w4a16-ct'))")
+A=$(python3 -c "import json; print(json.load(open('/content/launch.json')).get('model_archive', ''))")
+TAG=$(python3 -c "import json; print(json.load(open('/content/launch.json'))['tag'])")
+MC=$C/models/google/gemma-4/Other/$M/2
+if [ -f $MC/config.json ]; then
+  ( mkdir -p /content/model && cp -r $MC/. /content/model/ && rm -f /content/model/_stage_receipt.json \
+    && echo "MODEL staged $M from cache $(( $(date +%s) - T0 ))s" ) &
+elif [ -n "$A" ] && [ -f "$D/$A" ]; then
+  # unpack a Kaggle model archive on VM disk (tar over the Drive mount is slow), then verify before vLLM sees it
+  ( mkdir -p /content/model /content/dl && cp "$D/$A" /content/dl/model.tar.gz && echo "ARCHIVE copied $(( $(date +%s) - T0 ))s" \
+    && tar -xzf /content/dl/model.tar.gz -C /content/model && rm -f /content/dl/model.tar.gz \
+    && { [ -f /content/model/config.json ] || { sub=$(dirname "$(find /content/model -name config.json | head -1)"); \
+         [ -n "$sub" ] && mv "$sub"/* /content/model/; }; } \
+    && python3 /content/_verify_model_dir.py /content/model "$M" && echo "MODEL staged $M from archive $(( $(date +%s) - T0 ))s" \
+    || { echo "MODEL ARCHIVE FAILED $M"; touch /content/model.failed; } ) &
+else
+  echo "MODEL MISSING on Drive: $M (no cache folder, no model_archive)"; exit 4
+fi
 mkdir -p /content/snaps
 for t in $(python3 -c "import json; print(' '.join(json.load(open('/content/work/ab_tasks.json'))))"); do
   cp $C/competitions/gemma-4-developer-agent/snapshots/$t.tgz /content/snaps/
@@ -22,6 +37,7 @@ done
 echo "SNAPS $(ls /content/snaps | wc -l) $(( $(date +%s) - T0 ))s"
 DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3.12-venv >/tmp/apt_venv.log 2>&1 && echo "python3.12-venv OK"
 wait
+if [ -f /content/model.failed ]; then echo "PREP FAILED: model"; exit 5; fi
 for pth in /content/venv/lib/python*/site-packages/*cutlass*.pth; do [ -e "$pth" ] && rm -f "$pth" && echo "removed $pth"; done
 rm -rf /wheels /tmp/wheels /tmp/wheelhouse /content/work/wheels /content/work/data 2>/dev/null
 /content/venv/bin/python - <<'EOF'
@@ -35,6 +51,7 @@ print("IMPORTS", vllm.__version__, pydantic.VERSION, starlette.__version__, pyte
 EOF
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
 echo "PREP DONE $(( $(date +%s) - T0 ))s"
+mkdir -p "$D/gemma_fasteval/ab_runs/$TAG" && cp /content/prep.log "$D/gemma_fasteval/ab_runs/$TAG/prep.log"  # GPU + versions on record
 echo 0 > /content/prep.done
 '''
 Path("/content/prep.sh").write_text(SCRIPT)
