@@ -22843,3 +22843,33 @@ is by time). Score bands (truncated k/58): 0.24 (14 tasks) 16 teams, ranks 1-16;
 moves a team across hundreds of places, and our 0.20 is the best of a family whose mean is ~10.6/58 (0.18 band).
 Top is 2 tasks above our best draw, ~3.4 above our mean. Private (71 tasks) will reshuffle these tie bands.
 The E4B small-model board is not in this file; its current top is still unknown.
+
+### 2026-11-22 -- 31B repair-decisions LoRA: feasibility check before building (user proposal)
+- KEY FACT: the shipped E4B repair-decisions adapter is the disposable PILOT (`train/data/repair-decisions-v1/
+  registration.json`: purpose "disposable development training pilot", promotion_allowed false; 24 train families,
+  3 optimizer updates, lr 1e-5, rank 8, alpha 4, token cap 4096; Kaggle dataset `comfyops/e4b-repair-decisions-v1-
+  pilot`). Three updates at lr 1e-5 barely move the weights, which matches the arm scan: no task-adjusted mechanism
+  of the adapter arm passes |z| >= 3. Its 0.05/0.06/0.08 board draws are best read as base E4B + the G_startup gate,
+  not as a LoRA effect. Porting "the same recipe" to 31B would port a near no-op.
+- 31B LoRA history: the 2026-10-14 ledger closed eight 31B adapter levers as negative (edit-anchor q/v r32 worse;
+  all-linear r32 "overbaked" 0/5; serve-scale 0.25 0/3; our one LoRA board entry 0.05). Causes diagnosed as
+  capacity/alpha and fake trajectories, and a wrong-content recipe (q/v r8-16, alpha/r <= 1, 1 epoch) was
+  pre-registered but never trained.
+- Validation cost: a solve-rate A/B for +1 task/round needs ~9 rounds per arm; 31B runs one TP4 lane per 4xL4 kernel,
+  so ~18 Seed39 rounds is far beyond the ~10 days left. Board draws cannot resolve < 2 tasks.
+Decision pending with the user.
+
+### 2026-11-22 -- DIRECTIONAL-EFFECTS REGISTER for stacking (`Outputs/_direction_register.py`, `DIRECTION_REGISTER.md`)
+User strategy: stop discarding small single-run shifts; stack directionally positive patterns in a multi-pattern
+LoRA. Register = every arm vs its OWN control in the same experiment, task-paired, six mechanism metrics.
+- Candidates that point the good way: R_reads (read-discipline fixer prompt) 5/6 metrics good (convert +6.5 z +2.3,
+  no-edit -3.8 z +2.3, overflow -4.6, solve +4.2 z +1.3); its descendants HR (4/6) and HR4 (3/6) keep the overflow
+  and no-edit direction (replicated across two experiments). G_startup (shipped) 4/6: first edit gold +4.8, no-edit
+  -3.4. L_lean 4/6 (small).
+- A replication FLIP: H_hygiene was 5/6 good in ab_20261110 and 0/6 (all bad, z sum -8.9) in ab2_20261111. A single
+  run's direction is not reliable; require the same sign in two experiments before a pattern goes into the stack.
+- Exclude (consistently bad): p5 tool-state LoRA adapter 0/6 (wrong file +3.0 z -2.3, first gold -3.0 z -1.9);
+  M_memory 0/6 and 1/6 in two runs; V_vote overflow +15.8 (z -4.0); L_loc (broken).
+Stacking caveats: effects must be real, roughly additive and not interfere (V_vote shows extra effort buying
+overflow). Evaluate the stacked LoRA per pattern on mechanism metrics so each component is visible, against the
+100-attempt-per-task swing baseline that is running now.
