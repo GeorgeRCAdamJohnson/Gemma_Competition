@@ -1,0 +1,189 @@
+# ===== cell 0 [markdown] =====
+# Step 2: build the submission with your trained adapter
+
+Your **exact earlier files** (system prompt, sampling, limits) **plus one line** in `agent.yaml`: `adapter: main_lora`. The adapter is your edit-only LoRA from the notebook `ayush04barai/lora-step-2` (the 4.5-hour training run). Nothing else changes, so the score can be compared with your earlier runs.
+
+**Run:** Add Input → **Notebooks** → your `lora-step-2` notebook (its saved version with the finished adapter). Accelerator **None**, Internet **Off**, **Save & Run All**, then submit `submission.zip` from the Output tab. It uses no GPU quota, but it uses one daily submission.
+
+The notebook checks the adapter before it writes the zip: no NaN values, the `lora_B` weights are not all zero (which would mean it was never trained), and the base model name is right. It also prints the training result from `result.json`.
+
+**Reading the score** (your usual range is 0.12 to 0.22):
+- **Normal score:** the scorer loaded the adapter and ran. Compare it with your earlier runs.
+- **Error or "exceeded the allowed runtime":** submit once more, because errors can be random. A second failure means the adapter is the problem.
+- **0.00 to 0.05:** the adapter may be causing hangs or loops. Submit once more to check, then go back to your earlier files.
+
+One score is noisy, so do not judge a LoRA from a single run.
+
+
+# ===== cell 1 [code] =====
+PROMPT = r'''You are an expert autonomous software engineer assigned to resolve an issue in a repository efficiently and decisively.
+
+## Core Objective: Fast, Minimal, and Precise Fixes
+Aim to understand, resolve, and submit the fix in the minimum number of tool calls (under 8–10 turns). Move directly from the problem statement to the relevant files, apply the solution, verify with a targeted test, and submit.
+
+## Workflow
+
+### 1. Identify Target Files Immediately
+- Extract filenames, functions, classes, CLI subcommands, or error messages directly from the problem statement.
+- Read only the specific target files and lines using `read_file` or search tools. Do not wander across unrelated files.
+- If the problem statement does not provide explicit file paths, search for its most specific identifier or error string by calling run_command with a git grep that shows line numbers, is limited to Python files, and keeps only the first 20 matches.
+- Do not use `search_similar_code`, `get_code_neighbors` or `get_code_subgraph`: they only accept exact fully-qualified ids and usually return nothing.
+
+### 2. Implement the Solution Directly
+- Apply the minimal necessary fix or feature directly to the source files using `edit_file` or `write_file`.
+- Strictly adhere to specified error strings, exception types, HTTP status codes, and API signatures.
+- For documentation code tasks (e.g. FastAPI), edit executable code under `docs_src/`.
+
+### 3. Run Targeted Tests Only (Existing Tests May Be Broken)
+- **Run ONLY Targeted Tests**: Run only the specific test file or test method directly verifying the bug or feature you modified (for example, call run_command to run pytest on that one test file and pick the test by name with the -k option, or run the unittest module of that one test).
+- **Be Aware That Existing Tests May Be Broken**: Many repositories contain pre-existing test breakages, missing test data fixtures (e.g. `/test_data`), or environment import errors unrelated to your task.
+- **Do NOT Attempt to Fix Existing Tests**: If an existing test fails due to pre-existing repository issues or missing fixtures, IGNORE IT. Never spend turns attempting to repair pre-existing test failures, create test stubs, or alter test code.
+- **STRICT RULE: NEVER Run Bare Pytest or Full-Repo Sweeps**: NEVER run pytest without naming a target test file, never run pytest on the whole repository (the current directory), and never run unittest discovery or any full-repo test suite. Full test suites take several minutes, cause catastrophic timeouts, and exhaust your turn and time budgets.
+- If you need to locate the test file, find it by calling run_command with a find over the tests folder that matches the test file name, instead of running the test runner across the repo.
+
+### 4. Immediate Patch Submission
+- Once your targeted test passes:
+  1. Call `submit_patch` immediately.
+  2. Verify `patch_size > 0` and `files_changed > 0`.
+  3. Output a short summary of the fix to end the session.
+
+## Budget: 28 tool calls, 8 minutes
+- You have at most 28 tool calls and 8 minutes for this task. When either runs out, the working tree is graded as it is, so an edit made in time counts even if you never reach `submit_patch`.
+- Use at most about 10 tool calls to find and read the code.
+- By your 12th tool call you must have edited a source file. If you have not, stop exploring and make your best-guess edit in the most likely place now. Runs that are still only reading after 12 calls almost never succeed; more reading does not help.
+- After your edit: one compile check or one targeted test, a correction if needed, then `submit_patch`. Do not start new exploration after your 20th tool call.
+
+## Anti-Patterns to Avoid
+- **NEVER modify, create, or delete test files** (`*_test.py`, `test_*.py`, or anything under `tests/`). All changes must be to source implementation files. Modifying tests results in an automatic evaluation failure.
+- **NEVER run full repository test suites** (for example pytest with no file, or pytest on the current directory) — always name the exact test file path.
+- **NEVER attempt to fix or repair existing tests or pre-existing repository breakages** — your task is strictly to implement the fix for the reported issue in source code.
+- **NEVER search outside `/workspace`** for source files or packages (e.g., `/usr/local/lib/`, `/wheels/`, `/opt/`). All repository code and test dependencies are pre-installed. If `ModuleNotFoundError` occurs during test runs, focus on fixing code under `/workspace`, not looking for missing system packages.
+- Do NOT spend turns running broad exploratory searches if the file path or symbol is obvious.
+- Do NOT refactor or reformat unrelated functions or files.
+- Do NOT conclude without submitting a non-empty patch (`patch_size > 0`). Every task requires concrete source modifications. Concluding that the codebase is already clean without making changes is an anti-pattern.
+'''
+
+
+# ===== cell 2 [code] =====
+AGENT_YAML = '''name: swe_agent
+model: gemma-4-31b-it-qat-w4a16-ct
+adapter: main_lora
+instruction: !include prompts/system.md
+tools:
+  - run_command
+  - read_file
+  - edit_file
+  - write_file
+  - get_status
+  - submit_patch
+  - get_code_neighbors
+  - search_similar_code
+  - get_code_subgraph
+generate_content_config: !include configs/sampling.yaml
+'''
+
+SAMPLING_YAML = '''temperature: 0.2
+top_p: 0.95
+max_output_tokens: 6144
+thinking_config:
+  thinking_budget: 4096
+  include_thoughts: true
+'''
+
+EVAL_YAML = '''evaluation:
+  timeout_seconds: 240
+  max_tool_calls: 28
+  max_time_minutes: 8
+  max_turns: 80
+'''
+
+
+# ===== cell 3 [code] =====
+import json
+import struct
+import zipfile
+from pathlib import Path
+
+import numpy as np
+
+# ── Find your trained adapter (the output of the lora-step-2 notebook, added with Add Input → Notebooks) ──
+ADAPTER_DIR = Path("/kaggle/input/notebooks/ayush04barai/lora-step-2/trained_adapter/main_lora")
+WEIGHTS = ADAPTER_DIR / "adapter_model.safetensors"
+CONFIG = ADAPTER_DIR / "adapter_config.json"
+if not (WEIGHTS.is_file() and CONFIG.is_file()):
+    # the output may be mounted somewhere else: search for the pair by name
+    pairs = [(w, w.with_name("adapter_config.json")) for w in Path("/kaggle/input").rglob("main_lora/adapter_model.safetensors")]
+    pairs = [(w, c) for w, c in pairs if c.is_file()]
+    pairs = [(w, c) for w, c in pairs if "lora-step-2" in str(w)] or pairs
+    assert len(pairs) == 1, ("Add Input → Notebooks → lora-step-2. Adapters found: " + str([str(w) for w, _ in pairs]))
+    WEIGHTS, CONFIG = pairs[0]
+print("adapter weights:", WEIGHTS)
+print("adapter config :", CONFIG)
+
+# ── What the training run reported (printed for you; it does not stop the build) ──
+RESULT = WEIGHTS.parent.parent / "result.json"
+if RESULT.is_file():
+    result = json.loads(RESULT.read_text())
+    print("training result:", result)
+    before, after = result.get("held_out_loss_before"), result.get("held_out_loss_after")
+    if before is not None and after is not None and after >= before:
+        print("WARNING: the held-out loss did not go down during training, so this adapter may not help.")
+
+
+def check_adapter(raw):
+    """Read the safetensors header and the numbers inside, so a broken file is caught before you spend a submission."""
+    header_size = struct.unpack("<Q", raw[:8])[0]
+    header = json.loads(raw[8:8 + header_size])
+    header.pop("__metadata__", None)
+    body = memoryview(raw)[8 + header_size:]
+    names_a = [n for n in header if n.endswith(".lora_A.weight")]
+    names_b = [n for n in header if n.endswith(".lora_B.weight")]
+    assert names_a and len(names_a) == len(names_b) and len(names_a) + len(names_b) == len(header), "unexpected tensor names in the adapter"
+    assert all(h["dtype"] == "BF16" for h in header.values()), "the adapter is expected to be bf16"
+    finite = True
+    b_max = 0.0
+    for name, info in header.items():
+        start, end = info["data_offsets"]
+        values = (np.frombuffer(body[start:end], dtype=np.uint16).astype(np.uint32) << 16).view(np.float32)
+        finite &= bool(np.isfinite(values).all())
+        if name in names_b:
+            b_max = max(b_max, float(np.abs(values).max()))
+    return len(names_a), b_max > 0, finite, b_max, sorted(header)[0]
+
+
+raw_weights = WEIGHTS.read_bytes()
+n_modules, b_nonzero, finite, b_max, first_name = check_adapter(raw_weights)
+config = json.loads(CONFIG.read_text())
+print(f"modules: {n_modules} | largest |lora_B| value: {b_max:.4g} | first tensor: {first_name}")
+print("adapter config:", {k: config.get(k) for k in ("base_model_name_or_path", "r", "lora_alpha", "target_modules")})
+assert finite, "the adapter contains NaN or infinite values: do not submit it"
+assert b_nonzero, "every lora_B value is zero: this adapter was not trained"
+assert config.get("base_model_name_or_path") == "google/gemma-4-31b-it-qat-w4a16-ct", "the adapter names a different base model"
+
+FILES = {
+    "agent.yaml": AGENT_YAML,
+    "configs/sampling.yaml": SAMPLING_YAML,
+    "eval_config.yaml": EVAL_YAML,
+    "prompts/system.md": PROMPT,
+    "adapters/main_lora/adapter_config.json": CONFIG.read_bytes(),
+    "adapters/main_lora/adapter_model.safetensors": raw_weights,
+}
+
+# ── Write submission.zip (exactly these 6 files: extra files such as .pyc make the scorer fail) ──
+out = Path("/kaggle/working/submission.zip")
+with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+    for name, content in FILES.items():
+        z.writestr(name, content)
+
+# ── Check the finished zip ──
+with zipfile.ZipFile(out) as z:
+    assert z.testzip() is None and sorted(z.namelist()) == sorted(FILES)
+    assert "adapter: main_lora" in z.read("agent.yaml").decode()
+    json.loads(z.read("adapters/main_lora/adapter_config.json"))
+    assert z.read("adapters/main_lora/adapter_model.safetensors") == raw_weights
+    for info in z.infolist():
+        print(f"  {info.filename}  {info.file_size:,} bytes")
+
+print()
+print(f"OK: submission.zip is ready ({out.stat().st_size / 2 ** 20:.1f} MB, limit 3 GiB), {n_modules} trained LoRA modules inside")
+

@@ -1,0 +1,23 @@
+{
+  "id": "denpugovkin/gemma-4-repair-lab-compare-before-you-submit",
+  "id_no": 143304317,
+  "title": "Gemma 4 Repair Lab: Compare Before You Submit",
+  "code_file": "gemma-4-repair-lab-compare-before-you-submit.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [],
+  "dataset_sources": [
+    "metric/gemma-4-developer-agent-wheelhouse"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [
+    "gemma-4-developer-agent"
+  ],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-images/python@sha256:0717e81990be591f8c5f98f033d29ab23e9ffde057e5b3a6bd4371f93969e962",
+  "machine_shape": "None"
+}

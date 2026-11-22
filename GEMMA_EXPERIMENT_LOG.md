@@ -22873,3 +22873,20 @@ LoRA. Register = every arm vs its OWN control in the same experiment, task-paire
 Stacking caveats: effects must be real, roughly additive and not interfere (V_vote shows extra effort buying
 overflow). Evaluate the stacked LoRA per pattern on mechanism metrics so each component is visible, against the
 100-attempt-per-task swing baseline that is running now.
+
+### 2026-11-22 -- 31B ca5 vs four public 0.22-lineage notebooks (`competitor_probe/lb022/`)
+Pulled: flexonafft/gemma-4-budget-aware-coding-agent-v2, ayush04barai/version-1-added-adaptor,
+denpugovkin/gemma-4-repair-lab-compare-before-you-submit (scored incumbent = its CONTROL_FILES, "exp021 public 0.22"),
+bliverrigpdoge/lb-0-22-3-tweaks-40-tool-calls-no-training. Our ca5 = `agent_ca5/` prompt (LF sha1 b08b32a2438d
+verified) with the 31B model line, eval 28/8/120/300, out 5000, thinking 4096, temp 0.2.
+| | ca5 (ours) | denpugovkin 0.22 | bliverrigpdoge | flexonafft | ayush (LoRA) |
+| calls / min / turns / cmd s | 28/8/120/300 | 28/8/80/60 | 40/8/80/240 | 28/8/80/240 | 28/8/80/240 |
+| max_output_tokens | 5000 | 8192 | 8192 | 8192 | 6144 |
+| tools | 9 | 6 (no graph tools) | 9 (graph banned in prompt) | 9 (banned) | 9 (banned) |
+| verification | optional ("if you test, 1 target test"; submit on any applying patch) | mandatory: reserve 4 calls + 75 s; compile all changed files && focused check; diff review | targeted test then submit | <= 2 verify calls + git diff | targeted test then submit |
+| other | get_status oracle, commit-by-remaining triggers, raw <|"|> edit syntax | edit by call 6-8 | task statement pinned at prompt end ({problem_description}); "Done" fast exit | spec extraction, batched searches, edit-failure recovery | adapter (4.5 h trained) |
+Same model, sampling, thinking and 8-minute cap everywhere; all single-agent. Differences are verification wording and
+a few scalars. denpugovkin's own variants exp023/exp024 scored 0.12 and ayush states a 0.12-0.22 range, so the 0.22s
+are top draws of families that span ~0.12-0.22, like ours (0.13-0.20, mean ~0.17). We already tested cmd 60 s
+(B+C: 0.15/0.17/0.13). Untested by us on 31B: mandatory verify-with-reserve, max_output_tokens 8192 (31B traces: 11
+steps in 10/370 traces reach >= 4900 tokens, so at most ~3% exposure), 40 calls, pinned task statement.
