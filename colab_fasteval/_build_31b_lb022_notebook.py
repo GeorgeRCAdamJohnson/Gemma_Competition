@@ -268,9 +268,15 @@ else:
     print('Results are on Drive. Now disconnect and DELETE this runtime.')
 """),
 ]
-nb = {"cells": cells, "metadata": {"kernelspec": {"display_name": "Python 3 (ipykernel)", "language": "python",
-                                                  "name": "python3"},
-                                   "accelerator": "GPU", "colab": {"machine_shape": "hm"}},
+# nbformat 4.5 requires a unique id per cell (VS Code will not run cells of an invalid notebook); metadata matches
+# train/colab_repair_decisions_v1_visible.ipynb, which runs through the connector
+for i, c in enumerate(cells):
+    c["id"] = f"lb022-{i:02d}"
+nb = {"cells": cells,
+      "metadata": {"kernelspec": {"display_name": "Python 3 (ipykernel)", "language": "python", "name": "python3"},
+                   "language_info": {"codemirror_mode": {"name": "ipython", "version": 3}, "file_extension": ".py",
+                                     "mimetype": "text/x-python", "name": "python", "nbconvert_exporter": "python",
+                                     "pygments_lexer": "ipython3", "version": "3.12"}},
       "nbformat": 4, "nbformat_minor": 5}
 target = ROOT / "colab_fasteval" / "run_31b_lb022_ide.ipynb"
 target.write_text(json.dumps(nb, indent=1) + "\n", encoding="utf-8", newline="\n")
