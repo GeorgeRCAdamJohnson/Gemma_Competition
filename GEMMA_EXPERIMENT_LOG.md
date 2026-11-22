@@ -22936,3 +22936,25 @@ User: run the four public 0.22 configs on Colab against our tasks; the E4B Drive
   in one round (+-3 noise); mechanisms decide (8-min timeout 16.4% and overflow 7.9% of 31B runs today, no-edit,
   first edit on gold, right-file conversion, calls, seconds). 31B needs a G4 (96 GB) or A100-80GB.
 Next: user "ready" for the Drive/Kaggle-auth staging run on a Colab CPU VM.
+
+### 2026-11-22 -- PRE-REGISTERED (built, not launched): 31B five-arm Colab A/B, ca5 vs four public 0.22 configs
+Builder `colab_fasteval/_build_arms_31b_lb022.py`; arms `colab_fasteval/arms_31b_lb022/`; inputs
+`colab_fasteval/_lb022_inputs.tar` (ab_tasks.json = the 85 live tasks of `kaggle_pkg/live_ids_31b_ab.json`, tasks.jsonl,
+gpu_ab_run.py, arms/). Arm files are extracted from the pulled notebooks, LF-normalised, fingerprinted:
+| arm | sha | out | limits |
+| A_ca5 (our 0.20, prompt b08b32a2438d) | 135bacd909cd | 5000 | 28 calls / 8 min / 120 turns / 300 s |
+| B_denpug (their scored exp021 0.22) | 0a4c009b17ec | 8192 | 28 / 8 / 80 / 60 |
+| C_flex (budget-aware v2) | 328f689eca0f | 8192 | 28 / 8 / 80 / 240 |
+| D_bliver (40 calls, pinned statement) | abc861feada8 | 8192 | 40 / 8 / 80 / 240 |
+| E_ayush_noad (prompt only, adapter not attached) | 151b922c5d75 | 6144 | 28 / 8 / 80 / 240 |
+Run: one vLLM server (31B, MODEL_NAME=gemma-4-31b-it-qat-w4a16-ct, G4 96 GB or A100-80GB), every arm one pass per
+round over the same 85 tasks, arm order rotating; 1 round = 425 attempts (~5 h at ~330 s mean and 8 concurrent).
+Runner fixes in this bundle: per-arm timeout_seconds passed; model declared by every arm asserted; AB_CONC setting.
+Parity: per-sequence decode on one GPU differs from the scorer's 4xL4 TP4 (23-30 tok/s, L18392). Measure it in the
+first minutes and set AB_CONC to keep it near that range; timeouts are compared between arms, not to the board.
+Reads: solves reported, not decided on in one round (+-3 tasks noise). Decided on mechanisms, each arm vs A_ca5,
+paired by task: 8-minute timeout rate, context overflow, no-edit, first edit on gold, right-file conversion, calls and
+seconds per attempt. A config is "worth borrowing from" only if it cuts timeouts + overflow (the ~24% mechanical
+share) by >= 5 points vs A_ca5 without lowering first-edit-gold or conversion; then look at which of its differences
+causes it before changing ca5. Blocked on: the user's local 31B download + Drive upload, verified by
+`colab_fasteval/_verify_model_dir.py` on the Drive folder.
