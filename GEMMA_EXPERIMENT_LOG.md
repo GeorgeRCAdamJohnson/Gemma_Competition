@@ -22907,3 +22907,12 @@ missed in the 0.22 comparison: "max_output_tokens 16384" -> L8703 (Kaggle v12 nu
 L4389 (v10 22->40) plus kb/audits/2026-10-14-max-tool-calls-28-to-50-refute.md. Steering rule: run the lookup
 before calling any lever untested or recommending it, cite line/path, and write "not found in the DB" (with the
 searches run) instead of "untested".
+
+### 2026-11-22 -- SECOND CORRECTION (found with `q.py --prior`): verify-with-reserve is not untested either
+`--prior "verify AND reserve"` -> L17185: `agent_ctrl_e4b_verify` = ca5 + verify-fix skill + reserve split
+(locate+edit in ~13 calls, verify in the rest), Kaggle batch `comfyops/e4b-verify-batch` 4/6 with no regression
+(L17222-17250); L17397: the one conversion came from the sibling-mirror guardrail prompt, not the verify step, because
+verify ran the existing tests and returned PASS while the hidden test failed (the "self-test passes, hidden test
+fails" class). Earlier, L4566: a fix/verify loop adds wall-clock to tasks already dying at the time limit (v12).
+Tested on E4B, not on 31B, but the mechanism (existing tests do not contain the hidden contract) is model-independent.
+All four differences in the 0.22 comparison therefore have prior work; none is a new lever.
