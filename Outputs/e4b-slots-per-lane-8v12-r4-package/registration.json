@@ -1,0 +1,158 @@
+{
+  "slug": "comfyops/e4b-slots-per-lane-8v12-r4",
+  "notebook_sha256": "6b850c88e0e7617b8a358c230ce9953c7f444081fb276b7bd0080892018d19ea",
+  "bundle_sha256": "e92009c1ac43252b020ea7e9a82876d7f8d04ea2e768d5843a0865e65b9d353a",
+  "tasks_sha256": "b86f9beb9f924043362ea12c6398a8a961525dc10876bf6494d07f0591267ff9",
+  "task_ids": [
+    "fastapi_15589",
+    "rich_4070",
+    "rich_4077",
+    "fastapi_14851",
+    "fastapi_14873",
+    "fastapi_14794",
+    "fastapi_14786",
+    "fastapi_14492",
+    "fastapi_14463",
+    "fastapi_14372",
+    "fastapi_14458",
+    "fastapi_9753",
+    "fastapi_5077",
+    "fastapi_9555",
+    "fastapi_5624",
+    "fastapi_14419",
+    "fastapi_14301",
+    "fastapi_9425",
+    "fastapi_14077",
+    "rich_3718",
+    "rich_3882",
+    "rich_3894",
+    "rich_3905",
+    "fastapi_13537",
+    "fastapi_14616",
+    "fastapi_11194",
+    "rich_3777",
+    "rich_3518",
+    "rich_3521",
+    "rich_3506",
+    "rich_3480",
+    "rich_3454",
+    "rich_2943",
+    "rich_2725",
+    "rich_3105",
+    "rich_3043",
+    "rich_3067",
+    "rich_3006",
+    "rich_3063"
+  ],
+  "arm_hashes": {
+    "G_startup_lora": "00181863905d94a7bf6b89c751e567a11c49d3a9a951bfce83f1f464a1aae14f"
+  },
+  "baseline_file_hashes": {
+    "agent.yaml": "a10e6e0641ca2a03c2fe504146849479ad06e20714e7657fd0daa6e45378d08d",
+    "eval_config.yaml": "dcbe03b51fa5315b03657f94fc7dffcc2496f728a505dd794c567918e2cc94e7",
+    "skills/submit-gate/SKILL.md": "34dfd6e20040997ae33cc079ac2785ece29a27aeb9553c7ccfb9e23a66f70da6",
+    "skills/submit-gate/scripts/check.py": "fe272eab6e6ffaf5de97045882374f0a9e18a26640a0e634f3cfca4b9cbe4441",
+    "sub_agents/configs/sampling.yaml": "a49dbd3aab942f75530114279a0094584e78ef0cb1d5a907cde17a4c858cfd3d",
+    "sub_agents/fixer.yaml": "811f81aa9cffe718da812fa8646b3924c0cfa09f916b7b530f2bb4a766d14082",
+    "sub_agents/prompts/fixer.md": "d40f144525bf377be5d889ed6ff0448174e3a73fd515db3936d1082a3395fe65",
+    "sub_agents/prompts/verifier.md": "0d7c72abae493b033683ab6fcb08a0d93a570cf1cc9f3a9d2e23aeadf1a447a2",
+    "sub_agents/verifier.yaml": "e6f21e3236ece4993407b538442d4eaf982d96c7fcc5c5e4e805bb4ad2d4a859"
+  },
+  "treatment_file_hashes": {
+    "agent.yaml": "a10e6e0641ca2a03c2fe504146849479ad06e20714e7657fd0daa6e45378d08d",
+    "eval_config.yaml": "dcbe03b51fa5315b03657f94fc7dffcc2496f728a505dd794c567918e2cc94e7",
+    "skills/submit-gate/SKILL.md": "34dfd6e20040997ae33cc079ac2785ece29a27aeb9553c7ccfb9e23a66f70da6",
+    "skills/submit-gate/scripts/check.py": "fe272eab6e6ffaf5de97045882374f0a9e18a26640a0e634f3cfca4b9cbe4441",
+    "sub_agents/configs/sampling.yaml": "a49dbd3aab942f75530114279a0094584e78ef0cb1d5a907cde17a4c858cfd3d",
+    "sub_agents/fixer.yaml": "811f81aa9cffe718da812fa8646b3924c0cfa09f916b7b530f2bb4a766d14082",
+    "sub_agents/prompts/fixer.md": "d40f144525bf377be5d889ed6ff0448174e3a73fd515db3936d1082a3395fe65",
+    "sub_agents/prompts/verifier.md": "0d7c72abae493b033683ab6fcb08a0d93a570cf1cc9f3a9d2e23aeadf1a447a2",
+    "sub_agents/verifier.yaml": "e6f21e3236ece4993407b538442d4eaf982d96c7fcc5c5e4e805bb4ad2d4a859"
+  },
+  "adapter_sha256": "9f6b42913234eb5b9ff27a9c686bb68348c29403ca0ba9c761c8d6538827cc85",
+  "adapter_config_sha256": "a0d3ea9560655956305345562eeb7985a49f3622eff8e3539bf665343baa53cf",
+  "adapter_dataset": "comfyops/e4b-repair-decisions-v1-pilot",
+  "notebook_seconds": 6000,
+  "eval_seconds": 4800,
+  "task_wall_timeout_seconds": 2000,
+  "concurrency_per_gpu": {
+    "gpu0": 8,
+    "gpu1": 8,
+    "gpu2": 12,
+    "gpu3": 12
+  },
+  "task_limits": {
+    "max_tool_calls": 80,
+    "max_time_minutes": 30,
+    "max_turns": 200,
+    "timeout_seconds": 300
+  },
+  "comparison": "Contemporaneous paired test of slots per lane (8 on gpu0-1 vs 12 on gpu2-3) with an identical policy: repair-decisions v1 adapter on the fixer, base verifier, 32K, task caps unchanged. Each task/round runs once per arm. Tests GPU-usage rule 3 (projected x1.33 throughput at 12 slots).",
+  "criteria": {
+    "expected_tasks": 39,
+    "serving_lanes_required": 4,
+    "native_parser_each_lane": true,
+    "repeatable_nonzero_logprob_effect_each_lane": true,
+    "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route",
+    "report": "Per-arm attempts, lane-hours, throughput, mean/max seconds, verified solves, overflows; paired pairs and discordances. Abort on serving gates; no automatic retry or leaderboard claim.",
+    "expected_executions": 312,
+    "round_labels": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "expected_pairs": 156,
+    "pass_rule": "Adopt 12 slots only if ALL hold on complete data: (a) attempts per lane-hour slots12/slots8 >= 1.2; (b) mean attempt duration ratio <= 1.25 and no slots12 attempt over 30 min; (c) paired verified-solve rate (slots12 - slots8) >= -2.0 points; (d) no vLLM error type other than context overflow. Any failure or incomplete data -> keep 8 slots."
+  },
+  "resources": "Private internet-off, four L4s, 32K context, 8 slots (gpu0-1) and 12 slots (gpu2-3); 6000s notebook cap (6.66667 device-hours maximum), 4800s evaluation, 2,000s task wall; no Drive, training or submission.",
+  "max_model_len": 32768,
+  "rounds": 4,
+  "task_content": "mounted",
+  "historical_cohort": {
+    "manifest_sha256": "44a6470560095a28b30084f8a90b16d20ce47d6c533fb2354c9f71934c1d8039",
+    "historical_progress_sha256": "4c50affba521225a8e4fb498613015397ef6eaaa019580e8b9230bddad4da855",
+    "historical_fresh_retry_resolves_by_pass": [
+      12,
+      12,
+      12,
+      11,
+      12,
+      9,
+      12,
+      14,
+      12,
+      12,
+      13,
+      10,
+      10,
+      12,
+      11,
+      10
+    ],
+    "historical_comparison": "Fresh retry is historical context, not the live G_startup base arm"
+  },
+  "parent_slug": "comfyops/e4b-repair-decisions-seed39-rounds-1-to-5",
+  "parent_version": 2,
+  "parent_notebook_sha256": "15c3d07e0d18e6d3369cac70680cf113c79397e1a872187104d609763c30843d",
+  "round_labels": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "slots_per_lane": {
+    "slots8": 8,
+    "slots12": 12
+  },
+  "lanes": {
+    "slots8": [
+      0,
+      1
+    ],
+    "slots12": [
+      2,
+      3
+    ]
+  }
+}

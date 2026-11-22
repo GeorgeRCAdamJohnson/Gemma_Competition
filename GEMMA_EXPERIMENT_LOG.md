@@ -19311,3 +19311,3293 @@ OFFLINE VERDICTS THIS SESSION (all free, CPU):
 COLAB RELIABILITY: CLI-version hypothesis wrong (0.7.5 also stalls silently). Best current hypothesis: VMs are reclaimed
 ~20-40 min after the last client REQUEST; survivors were API-driven + polled. Next fix = local 4-min API poller +
 VM-side auto-launch. CLI currently pinned to 0.7.5 (`colab_fasteval/wsl_pin_cli.sh`).
+
+### 2026-11-13 -- CORRECTIONS + PRE-REGISTRATION: E4B raw-near-miss replication
+
+Corrections to the previous summary:
+- Pack 1 has **one run on each of 90 runtime tasks** and **20 runs on each of 39 score tasks**. The 90 are under-tested,
+  not unmeasured. The current pack-1 run on each selected runtime task below is unresolved.
+- `_locate_ceiling.py`'s 73.2% is only among failures with a parsed first-edit file, within mixed-outcome tasks. Failures
+  without a parsed edit and all-or-nothing task groups are excluded.
+- The 21-task near-miss heuristic is not used wholesale. Raw-output review found collection/setup errors, unrelated
+  regressions, multiple failing new tests, or no usable failure evidence in several candidates. The chosen tasks each
+  have repeated ordinary pytest summaries with exactly one failing newly-added test, passing tests, and no pytest errors,
+  skips, collection/setup failures, or unrelated failed tests. Pytest's default output does not enumerate pass IDs; this
+  is summary-supported evidence, not an assertion that each pass ID was individually printed.
+
+| task | prior pack-1 runtime sample | raw near-miss evidence in `e4b_variance3` |
+|---|---|---|
+| rich_3052 | 0/1, 163.95s | 3/5 runs: 1 new failure (`test_prompt_str_case_insensitive`), 6 passed |
+| rich_3675 | 0/1, 176.56s | 4/5 runs: 1 new failure (`test_tty_compatible`), 98 passed |
+| rich_4075 | 0/1, 165.98s | 5/5 runs: 1 new failure (`test_print_empty_with_end`), 99 passed |
+
+`rich_3782` was not selected: only 1/5 variance3 outputs met the one-failure screen; other runs had multiple new-test
+failures (including 14 in one run). `fastapi_14794` was not selected: an inspected raw output showed 7 passed while the
+task result remained unresolved, so it did not demonstrate the claimed one-failing-test pattern. These are local task
+diagnostics only and are not leaderboard predictions.
+
+**Pre-registration (before runtime creation, Drive consent, or launch):**
+- Objective: measure repeatability of unchanged E4B pack 1 on the three raw-output-supported runtime tasks above.
+- Arm: one arm only, `C_pack1`, exact tree SHA-1 `84f904c63afd` (`colab_fasteval/arms/C_pack1`); no prompt/config changes.
+- Task manifest: `colab_fasteval/ab_tasks_rawnear.json`, SHA-1 `0745a260e951`, exactly
+  `rich_3052, rich_3675, rich_4075`.
+- Design: 5 fresh rounds x 3 tasks = 15 task executions, L4, concurrency 8; compare descriptively with the one existing
+  pack-1 runtime sample per task. No full 129-task sweep and no treatment/control claim.
+- Win rule: positive local diagnostic only if at least 2 of the 3 tasks resolve in at least one of their 5 fresh runs.
+  Otherwise report the cohort as a miss/inconclusive with every resolved count, error, timeout, overflow, and duration.
+- Runtime/cost: checked via Colab CLI/API on 2026-11-13: 362.69 CU balance, 0.00 CU/h, no active assignments or
+  runtimes. Use a fresh L4 only (about 1.94 CU/h); expected total is under 1 hour / 2 CU including prep, with a 1-hour
+  driver deadline. No G4. Use the existing Kaggle-matched model cache; never fetch from Hugging Face.
+- Gate: wait for the user to say **"ready"** before creating/showing the Drive consent URL.
+
+**Setup update:** The user said "ready" and a Drive consent flow was attempted, but the mount was not verified. A CLI
+L4 session was created and is no longer active. CLI authorization subsequently succeeded; the latest verified balance is
+361.35 CU, with no active assignments and 0.00 CU/h. No model preparation or experiment has run, and no results exist.
+The launch configuration was corrected from 0.75 to the pre-registered 1-hour driver deadline before launch.
+
+### 2026-11-13 -- RESULT: E4B raw-near-miss replication (miss)
+
+All 15 planned executions completed on L4 using unchanged `C_pack1` and the registered manifest. Five rounds each
+resolved **0/3**; each of `rich_3052`, `rich_3675`, and `rich_4075` was **0/5**, in addition to its prior 0/1 pack-1
+runtime sample. The pre-registered positive rule (at least two tasks resolved at least once) was not met. This is a
+small selected local cohort, not a leaderboard prediction or an arm comparison.
+
+| round | duration (s) | rich_3052 (s) | rich_3675 (s) | rich_4075 (s) |
+|---|---:|---:|---:|---:|
+| 1 | 191 | 149.12 | 150.44 | 182.59 |
+| 2 | 504 | 252.46 | 126.97 | 495.93 |
+| 3 | 226 | 211.99 | 188.96 | 218.15 |
+| 4 | 191 | 183.16 | 90.75 | 130.99 |
+| 5 | 301 | 171.25 | 104.80 | 292.54 |
+
+Every round returned rc 0 with three result rows; all 15 were unresolved. Round 2 `rich_4075` reported a
+`ContextWindowExceededError` after 52 tool calls and 74 LLM calls; no other task errors or timeouts were reported in
+the progress records. Prep took 463s; driver startup and all rounds took 28.4 minutes. The driver deadline is checked
+between passes, not a hard interruption of an ongoing pass.
+
+Drive progress was verified at `gemma_fasteval/ab_runs/e4b_pack1_rawnear_20261113`; the driver reported no per-round
+artifact-copy errors. The user subsequently supplied `results/e4b_pack1_rawnear_20261113-20261113T063641Z-1-001.zip`;
+the saved patches, test outputs and logs in that archive were inspected below.
+The successful Drive mount used the interactive VS Code terminal and Enter after the user's approval; earlier automatic
+attempts did not produce a verified mount. The final L4 was stopped: 359.41 CU, 0.00 CU/h, zero active assignments.
+Its balance fell from 361.35 to 359.41 CU (1.94 CU, including its consent/setup idle time); from the initial 362.69 CU
+before all setup attempts the total decrease was 3.28 CU.
+
+### Post-run diagnosis: all 15 patches and evaluation outputs
+
+These are observations about this selected three-task pilot, not an estimate of general failure rates or leaderboard score.
+The evaluation tests include the task test patches; the submit gate uses existing tests, not those evaluation tests.
+
+- **rich_3052 (0/5):** All five patches edited `rich/prompt.py`, but none met the tested contract. The evaluation feeds
+  invalid `egg` then `FoO` with choices `foo`/`bar` and `case_sensitive=False`, expecting `foo`. Round 1 accepts `FoO`
+  but returns it unchanged; rounds 2, 4 and 5 return the default `baz`; round 3 raises `TypeError` because `ask`
+  does not accept the flag. Each run reports 1 failed, 6 passed. The round 4 trace shows a gate retry after an
+  `AttributeError`; the gate undoes the failed source edit, and the final patch adds the flag but no choice-checking
+  change. Passing the existing tests did not validate the requested new behavior.
+- **rich_3675 (0/5):** All five patches edited `rich/console.py`. The added test requires `TTY_COMPATIBLE=1` to force
+  terminal behavior, `0` to disable it, and other values including empty to use `isatty()`. Rounds 1 and 2 fail because
+  empty and `whatever` respectively skip autodetection; round 3 fails to force terminal behavior for `1`; round 4 treats
+  an empty value as false rather than autodetecting. These four each report 1 failed, 98 passed. Round 5 instead breaks
+  import during pytest startup: its defaulted `ConsoleOptions` field precedes the non-default `encoding` field, causing
+  `TypeError: non-default argument 'encoding' follows default argument`. Thus the lack of a task-level error in progress
+  records did not mean all tests ran successfully.
+- **rich_4075 (0/5):** Every evaluation reports 1 failed, 99 passed: `console.print(end="!")` with no objects prints
+  `'\n'` rather than `'!'`. None of the five final patches edits `rich/console.py`; three edit the highlighter, one
+  traceback and one Unicode data. The terse task statement says "empty with end", links an issue, and also says to drop
+  Python 3.8. All five traces first attempt the Python-version change in `pyproject.toml`; the gate rejects a
+  configuration-only change, after which the agents edit source elsewhere. In rounds 1, 4 and 5 the gate accepts
+  unrelated highlighter tests. Round 2 also read `rich/console.py` during its extended loop, then exceeded the context
+  window; mislocalization cannot be attributed to the overflow alone.
+
+**Gate limitation:** Round 5 `rich_3675` was accepted by the submit gate as having no new existing-test failures despite
+the evaluation's startup `TypeError`. The gate's parser recognizes `FAILED`/`ERROR` test IDs and a limited set of
+collection-error strings; applied to the saved evaluation output it finds no failure IDs and no recognized collection
+error. This demonstrates a failure mode in that parser, though the gate's full pytest output is not saved, so the exact
+gate-side traceback is not independently confirmed. Also, passing unrelated existing tests is not proof of issue resolution.
+Candidate follow-up: test the gate locally against startup/import failures and separately test an issue-specific
+reproduction strategy before spending more compute; these were not part of this unchanged-arm pilot.
+
+### Local submit-gate startup-failure fix (no Colab run)
+
+Created `colab_fasteval/arms_gate_fix/G_startup`, a separate copy of `C_pack1` with only the gate script and its skill
+description changed. The original control remains at SHA-1 prefix `84f904c63afd`; the new arm is `05af53c15525`, using
+the existing sorted-file-content fingerprint convention. Do not treat it as the unchanged control or as a measured gain.
+The gate now rejects a pytest run that exits without comparable test results, including startup errors and no tests
+collected. If the original run is also incomplete, it reports an inconclusive comparison rather than attributing the
+failure to the patch. It also reports failure to save, reverse, or restore the diff during comparison.
+
+`colab_fasteval/tests/test_submit_gate.py` runs actual pytest and git in disposable local workspaces. The startup
+regression reproduced the false `ACCEPTED` against the original control; all five tests passed against the fixed variant
+in WSL using the existing pytest installation. They cover the startup `TypeError`, an incomplete baseline, no tests
+collected, a new existing-test failure, and a pre-existing failure. This does not establish that other tasks will resolve.
+The inherited three-attempt policy still submits the best attempt after the last rejection; this change does not
+guarantee that a broken patch can never be submitted. No paid runtime or new consent was used.
+
+### 2026-11-13 -- PRE-REGISTRATION: E4B startup-gate A/B
+
+- **Question:** Does the local pytest-startup gate fix improve resolved tasks relative to unchanged pack 1? The fix targets
+  a demonstrated false acceptance, not the separate task-understanding or issue-specific-validation failures.
+- **Arms:** `C_pack1` SHA-1 `84f904c63afd` and `G_startup` SHA-1 `05af53c15525`, sorted-file-content fingerprints.
+  The only differences are the submit-gate script and its skill description. The inherited three-attempt submission
+  policy remains unchanged. Model, sampling, resources and other arm files remain the same.
+- **Task set:** the existing `colab_fasteval/ab_tasks.json`, 26 tasks with at least one pack-1 solve in the 20 score
+  passes, excluding the empty-patch task `fastapi_14851`; manifest SHA-1 `1352a2a109c3`. This is a selected landable set,
+  not a full 129-task sweep.
+- **Design:** one L4, one vLLM server, concurrency 8; eight rounds, each arm once per round with rotating arm order:
+  26 x 2 x 8 = 416 task executions. Save task outputs and progress after every pass. The model uses the existing
+  Kaggle-matched Drive cache; no Hugging Face model download. `colab_fasteval/launch_gate_startup.json` fixes the design.
+- **Decision rule:** only after eight complete paired rounds, positive local signal requires mean paired gain of at
+  least 1 resolved task per 26-task pass and paired t >= 2. Report all paired scores and per-task outcomes, cost,
+  errors, overflow, and runtime; an incomplete run is descriptive only. Parity check: control mean must lie within
+  11.8 +/- 2.5 resolved per pass; outside that range, report as parity failure and do not claim a positive result.
+  This is a local selected-cohort test, not a leaderboard prediction or proof of a breakthrough.
+- **Cost/stop:** user authorized up to 200 CU. Balance before creation was 359.41 CU, usage 0.00 CU/h, no active
+  assignments; L4 previously measured 1.94 CU/h. The driver deadline is 8 hours, checked between passes, not a hard cap;
+  a pass itself has a 4-hour timeout. Prep and consent time are additional. Stop and verify the runtime after completion
+  or failure; track actual balance rather than assuming this timing is a billing cap. No G4. Wait for Drive readiness
+  before triggering any consent prompt.
+
+**Launch attempt:** Created L4 session `e4b_gate_ab_20261113` and uploaded the inputs and helpers. Two interactive
+Drive-mount attempts returned `RuntimeError: Connection was lost` before a consent link appeared. A separate API probe
+reached the VM but reported Drive unmounted. No prep or experiment launch was confirmed, and there are no A/B results.
+Stopped the session; the CLI then reported 359.29 CU, 0.00 CU/h, zero active assignments and no active sessions.
+The balance decrease from 359.41 CU was 0.12 CU. The CLI raises that error when its kernel connection is no longer
+ready; the underlying cause of the disconnection is not established.
+
+Before any retry, note that the staged archive contains `arms_gate_compare`, while `_gpu_prep_ab.py` fingerprints
+`arms` and can write `prep.done` even after failed commands. Do not treat its marker as proof of successful preparation.
+Verify the correct arm fingerprints, manifest, imports, GPU, snapshots and Drive persistence independently, and establish
+reliable monitoring and termination before starting the driver.
+
+**Retry and live check:** Drive was mounted with the user's approval, inputs were uploaded, and preparation completed.
+The driver launched at approximately 2026-11-13 16:23 UTC after verifying the registered manifest, arm fingerprints,
+26 snapshots and NVIDIA L4. At 16:43 UTC vLLM was up and the first `C_pack1` pass was running; no pass had completed.
+The original watchdog stopped reporting after its first preparation check, so its automatic-stop protection was not
+reliable. It was stopped and replaced with a bounded-command monitor; the replacement reported `running` at 16:45 UTC
+and is configured to recover results and stop the runtime on completion or repeated status failures.
+The CLI reported 340.72 CU at 1.94 CU/h; relative to the 359.41 CU balance before the first A/B setup attempt, the
+observed balance decrease was 18.69 CU, including the long idle interval. No A/B conclusion is available yet.
+
+### Startup-gate A/B: completed results
+
+The Drive `progress.json` contains all 16 registered passes and 416 task-result rows, each pass rc 0 with 26 rows.
+Eight paired scores (resolved/26):
+
+| round | C_pack1 | G_startup | difference |
+|---|---:|---:|---:|
+| 1 | 11 | 9 | -2 |
+| 2 | 13 | 11 | -2 |
+| 3 | 11 | 11 | 0 |
+| 4 | 10 | 16 | +6 |
+| 5 | 10 | 8 | -2 |
+| 6 | 12 | 10 | -2 |
+| 7 | 11 | 10 | -1 |
+| 8 | 12 | 11 | -1 |
+
+Control mean 11.25, treatment mean 10.75, paired mean difference -0.50 and paired t -0.52. The control was within
+the registered 11.8 +/- 2.5 parity range; the positive rule (gain >=1 and t >=2) was not met. The progress rows
+reported 22 context-window errors for control and 20 for treatment. Each pass returned rc 0 despite these task errors.
+These are local selected-cohort results, not a leaderboard prediction.
+
+Drive progress was retrieved from `gemma_fasteval/ab_runs/e4b_gate_startup_ab_20261113`. The replacement local monitor
+last logged at 16:57 UTC, before the treatment pass finished, and did not record its recovery/stop sequence; the cause
+of its disappearance and of runtime termination is not established. All planned passes nevertheless appear in the
+Drive progress file. Colab now reports no active sessions or assignments, 0.00 CU/h and a balance of 329.72 CU.
+The balance decrease from 359.41 CU before initial setup was 29.69 CU, including failed setup and long idle time.
+
+### Round-four forensic follow-up: treatment-side traces
+
+Reviewed the `G_startup/round_4` archive: 26 task rows, 16 resolved, all six G-only resolves, their patches, traces, and
+task test outputs. The six task-specific outputs all exited 0:
+
+| task | C resolves / 8 | G resolves / 8 | round 4 C -> G | treatment trace evidence |
+|---|---:|---:|---:|---|
+| `fastapi_14458` | 1 | 1 | 0 -> 1 | Correct `fastapi/dependencies/models.py` class check; 12 passed. Gate accepted because no existing test file covered the module. |
+| `fastapi_14463` | 3 | 3 | 0 -> 1 | Correct `copy.deepcopy` change in `fastapi/openapi/utils.py`; 1 passed. Gate accepted because no existing test file covered the module. |
+| `fastapi_14492` | 0 | 3 | 0 -> 1 | Gate rejected an initial `pyproject.toml`-only edit, prompting a retry that changed the expected `docs_src/metadata/tutorial001_1_py39.py` identifier (and also README); the existing test kept failing because it expects `MIT`, but task tests passed (2). After attempt 3 the gate restored its best attempt and allowed submission. |
+| `fastapi_9753` | 1 | 2 | 0 -> 1 | Correct `functools.partial` handling in `fastapi/dependencies/models.py`; 12 passed. Gate accepted because no existing test file covered the module. |
+| `rich_3454` | 7 | 8 | 0 -> 1 | Correct URL-regex `@` addition in `rich/highlighter.py`; 83 passed and existing tests passed. C overflowed here (35 tool calls, 45 LLM calls, 721 s); G finished in 186 s (6 tool calls, 10 LLM calls). |
+| `rich_4077` | 0 | 4 | 0 -> 1 | Correct `FileProxy.isatty()` forwarding in `rich/file_proxy.py`; 4 passed and existing tests passed. The previously inspected C trace instead broadened an exception handler in `rich/console.py`, was accepted by existing tests, and missed the requested file. |
+
+This explains the arithmetic of the 16/26 spike, not a general six-task improvement. The matched progress rows show four
+round-4 context errors in C and two in G; only `rich_3454` among the six G-only resolves had a control context overflow.
+Across all eight rounds the counts were 22/208 versus 20/208, so this startup-gate treatment did not reproduce pack 2's
+separate verifier-history overflow reduction. The gate change is specifically about rejecting incomplete pytest
+comparisons; it does not change model context capacity.
+
+Only `fastapi_14492` among the six G traces shows an observed gate rejection followed by a retry that changed the target
+edit. The other five G patches were already correctly targeted when checked and were accepted on the first gate run.
+This is evidence that the gate plausibly steered one task, but not proof that its changed behavior caused the paired
+win: only `rich_4077` has a reviewed matched C trace; C traces for the other five G-only tasks, including
+`fastapi_14492`, are still missing. Cross-round outcomes also show substantial task variability (`fastapi_14463` 3/8
+in each arm, `rich_3454` 7/8 versus 8/8, `rich_4077` 0/8 versus 4/8). Keep the aggregate negative result and treat
+round 4 as a high-variance draw, with one observed gate-steered retry and unresolved causal attribution for the
+remaining wins.
+
+## PRE-REGISTERED E4B context-history A/B (2026-11-14; RESUMED, OUTCOME PENDING)
+
+**Question.** Does passing the fixer its conversation history (including prior attempts/tool results on retries), rather than no conversation history, improve task resolution after a verifier rejection? The harness documents `include_contents` as controlling whether conversation history is passed to an agent (`comp_official/HARNESS_README.md:117`). Pack 1's fixer uses `include_contents: none`; this A/B changes only that setting in the treatment. The serialized ATIF trace alone does not prove which messages reached the model, so conclusions apply to this documented configuration intervention, not an assumed token-level payload.
+
+**Arms and hashes.** Both arms are copies of E4B pack 1 (`C_pack1`, 9 files). `N_none` keeps `include_contents: none`, bundle SHA-1 `84f904c63afd`; `H_default` sets `include_contents: default`, bundle SHA-1 `b2ee20700b80`. Verified that `sub_agents/fixer.yaml` is the only byte-different file. The task prompt, fixer/verifier instructions, submit-gate code, rollback policy, tool set, sampling config, model, and evaluation limits are identical.
+
+**Tasks and execution.** Use the exact 26-task landable set, task-ID manifest SHA-256 `67bc97efcfd5a987a34e0c7379e76dd6f9a0fbd2c0f270e4e10d321c32339ace`; filtered 26-row `tasks.jsonl` SHA-256 `553ff06b23d2c38522727fd40a73f31e1037acbb209b3b35d8c093f4981bda94`. IDs: `fastapi_14077`, `fastapi_14301`, `fastapi_14786`, `rich_3454`, `rich_3905`, `rich_3006`, `rich_3067`, `fastapi_9555`, `fastapi_9425`, `fastapi_9753`, `fastapi_14463`, `rich_3894`, `fastapi_14873`, `fastapi_13537`, `rich_3882`, `rich_2725`, `rich_3518`, `fastapi_14492`, `rich_2943`, `rich_4077`, `fastapi_14458`, `fastapi_14616`, `fastapi_11194`, `rich_3063`, `rich_3506`, `rich_3521`. Run 5 paired rounds: 26 tasks per arm per round, 130 task-runs per arm / 260 total, 10 passes. The runner rotates arm order by round, uses concurrency 8, and persists each completed pass to Drive. Use only the cached Kaggle Gemma E4B model on an eligible L4; no Hugging Face model downloads.
+
+**Measures and read rule.** Primary: resolved tasks out of 26 by arm and round. A positive pilot signal requires `H_default` to win at least 4/5 paired rounds and have at least 5 more total resolves across its 130 runs; a symmetric loss is a negative signal. Anything else is inconclusive, not proof of equivalence. Secondary: among task-runs whose trace contains a verifier `RETRY`, report final resolves / retry-triggered runs for each arm, along with retry counts, context-window errors, durations, and task-test outputs. Treat this secondary as descriptive if either arm has fewer than 10 retry-triggered runs. Report actual round-level results and failures; this selected-cohort experiment is not a leaderboard prediction.
+
+**Budget and stop.** Live check on 2026-11-14 before setup: Pro Plus, balance 329.72 CU, usage 0.00 CU/h, no active assignments/runtimes; L4 is eligible. The historical measured L4 rate is about 1.94 CU/h, not a live price quote. The 20-CU cap is cumulative from that original 329.72-CU balance (stop at or below 309.72 CU); the failed consent setup used 0.18 CU, leaving 19.82 CU at the latest idle check (329.54 CU). Do not reset the cap on retry. Stop at the cap, after 5 rounds, or at the 8-hour driver deadline, whichever comes first; do not extend without a new registration. Unique input bundle SHA-256: `11ec9f239673891871afff1a98f0a62a7f3a3038e70e31dad21a8945e2202f25`; Drive output tag `e4b_context_history_20261114`.
+
+**Gate / setup attempt.** Pre-registration preceded launch. On 2026-11-14, created runtime `e4b-ctx-history-20261114` on L4, but the Drive consent prompt was opened inside the non-interactive internal shell. The user could not press Enter there; the Drive probe remained false. No input upload, environment/model prep, or experiment task occurred. Stopped the runtime to prevent further charges. After stop: balance 329.54 CU (0.18 CU below the pre-launch 329.72), usage 0.00 CU/h, no active assignments. For any retry, use a user-visible terminal and ask for a fresh "ready" before generating a new consent link.
+
+**Retry preflight.** After the user authorized a retry, created `e4b-ctx-history-r1-20261114` but did not invoke Drive mount because the user-visible terminal was not ready. Stopped it while idle; balance remained 329.54 CU, usage 0.00 CU/h, no active assignments. No second consent prompt, upload, prep, or task was run. Resume only through a user-visible terminal.
+
+**Authorized retry and launch (2026-11-14).** The previous `e4b-ctx-history-r2-20261114` session had been stopped and was no longer found. After fresh user confirmation, created `e4b-ctx-history-r3-20261114` (L4). Drive consent was completed in the VS Code integrated terminal. `_probe_mount.py` reported `drive mounted: True`, `MyDrive: True`; `kaggle_pins.txt` was absent before prep.
+
+**Inputs and prep.** Uploaded the preregistered input bundle (SHA-256 `11ec9f239673891871afff1a98f0a62a7f3a3038e70e31dad21a8945e2202f25`), `launch_context_history.json`, and the guarded prep/launch scripts. Prep completed in 472 seconds. Remote arm fingerprints matched registration (`H_default` `b2ee20700b80`, `N_none` `84f904c63afd`); remote `tasks.jsonl` SHA-1 `6e15a87452b2` matched the local bundle. Imports passed: vLLM 0.19.1, pydantic 2.12.3, starlette 0.52.1, pytest 8.4.2. The VM reported NVIDIA L4, 23034 MiB.
+
+**Execution status.** The five-round driver launched with concurrency 8, tag `e4b_context_history_20261114`, and the registered 8-hour deadline. vLLM came up and round 1 `H_default` started. No pass had been confirmed at the last progress check. The runtime later disappeared: the API runtime list was empty, CLI status returned "session not found," and usage showed 0 active assignments. The cause is unknown. The keepalive stream was stopped after confirming the runtime was gone.
+
+At the last check before the runtime disappeared, the balance was 327.69 CU at 0.00 CU/h (17.97 CU remained before the 309.72-CU stop balance), and no task result had yet been confirmed. The follow-up inspection and recovery below supersede that unverified status.
+
+**Recovered persisted pass (2026-11-14).** After the user reported running the terminal commands and granting Drive access, an active L4 assignment was found under `e4b-ctx-history-r3-20261114` (host `gpu-l4-s-ass1a1-1e2h1fcw9ld0z`). Drive was mounted. The existing output tag contained `progress.json` and `H_default/round_1`; `/content/ab` and the old driver were absent on this runtime. The saved pass record is round 1 `H_default`, `rc=0`, 1,022 seconds, 26 task rows, 10 resolved. `fastapi_14873` and `fastapi_11194` reported `ContextWindowExceededError`; 16 tasks were unresolved overall. No `N_none` pass was saved. This is one treatment-arm observation, not an A/B conclusion.
+
+**Safe resume (2026-11-14).** Re-uploaded the registered 204,800-byte input bundle; its SHA-256 remained `11ec9f239673891871afff1a98f0a62a7f3a3038e70e31dad21a8945e2202f25`. Verified the Drive-cached model and 129 snapshots, then prep completed in 470 seconds. Arm fingerprints matched (`H_default` `b2ee20700b80`, `N_none` `84f904c63afd`); remote `tasks.jsonl` SHA-1 matched (`6e15a87452b2`); imports passed (vLLM 0.19.1, pydantic 2.12.3, starlette 0.52.1, pytest 8.4.2), and the GPU was NVIDIA L4, 23034 MiB. Copied the saved `progress.json` into `/content/ab/progress.json` only after verifying that it contained exactly `(round 1, H_default)` and that no different local progress existed. The Drive copy and `H_default/round_1` artifacts were left untouched.
+
+The registered launch guard then started PID 8118 with the original five rounds, concurrency 8, Drive tag, and eight-hour deadline. vLLM became ready after 4.8 minutes, the endpoint returned HTTP 200, and round 1 `N_none` started after the saved `H_default` pass was skipped. At the last live progress check it was still running, and the runtime then disappeared. A later read-only Drive inspection from the user's r3 runtime recovered the persisted `progress.json`: both round-one arms completed with `rc=0`. `H_default` resolved 10/26 in 1,022 seconds; `N_none` resolved 10/26 in 1,024 seconds.
+
+**Paired round-one results.** Seven tasks resolved in both arms; H_default-only resolves were `fastapi_14077`, `fastapi_14616`, `rich_2725`; N_none-only resolves were `fastapi_14463`, `fastapi_9753`, `rich_3882`; the other 13 resolved in neither. Both arms recorded context-window errors on `fastapi_14873` and `fastapi_11194`; N_none also recorded one on `rich_2725`. Thus round 1 is tied on total resolves (10 each), with three discordant wins per arm. This is actual local-evaluation output, not a leaderboard prediction.
+
+Only round 1 of the registered five rounds is present in Drive. The preregistered positive rule (H_default wins at least four of five rounds and gains at least five total resolves) cannot be met from this partial run; no final A/B conclusion is supported. The inspection runtime has also disappeared: latest CLI check reports 0 active assignments and 0.00 CU/h, balance 325.11 CU, or 15.39 CU above the 309.72-CU stop threshold. Do not resume or create another runtime without fresh user authorization; ask again before any Drive consent.
+
+## PRE-REGISTERED parallel E4B context-history replication (2026-11-14; NOT LAUNCHED)
+
+**Authorization and isolation.** The user selected "Try one additional L4: independent five-round replication." Attempt only one additional L4, not a larger GPU or a third runtime if allocation is refused. Leave the existing `e4b-ctx-history-r4-20261114-1429` run untouched. That run uses Drive tag `e4b_context_history_20261114_r4_1429`; its locally synced progress records round 1 H_default at 11/26, 1,172 seconds, exit code 0, with one recorded context-window error on `fastapi_14873`. This partial observation was known before registering the new replication; the new study is not blinded to earlier results.
+
+**Replication fixed before launch.** Session `e4b-ctx-history-parallel-20261114`, separate Drive tag `e4b_context_history_20261114_parallel`. Reuse the exact input tar, locally rechecked SHA-256 `11ec9f239673891871afff1a98f0a62a7f3a3038e70e31dad21a8945e2202f25`. Same 26 tasks and arms as the original registration: H_default fingerprint `b2ee20700b80`, N_none `84f904c63afd`; only the fixer's `include_contents` differs. Use cached Kaggle E4B on one L4, one vLLM server, GPU utilization 0.85, task concurrency 8. Run fresh rounds 1 through 5, each containing both arms (10 passes / 260 task-runs), rotating arm order as before, with an eight-hour driver deadline. No shared output folder, no overwriting or seeding from either previous cohort, no modifications to the active runtime. Each completed pass checkpoints separately to Drive.
+
+**Measures and interpretation.** Primary: per-arm resolves out of 26 by paired round. Positive signal requires H_default to win at least 4/5 rounds and gain at least 5 total resolves over its 130 task-runs; use the symmetric negative rule, otherwise inconclusive. Apply the original retry-triggered secondary measure (descriptive below 10 retry-triggered runs per arm), and report errors, task-test outputs, durations, failed/incomplete passes, and missing rounds. Evaluate this replication separately from the active run and the original partial cohort; do not silently pool them or choose a favorable cohort. Any across-cohort aggregate is descriptive and must include all cohorts and their missingness. No leaderboard extrapolation.
+
+**Shared budget, not a reset.** Live CLI preflight immediately before staging: 324.00 CU, usage 1.94 CU/hour, one active assignment. The original cumulative stop balance of 309.72 CU applies across BOTH runtimes, leaving 14.28 CU at that observation. At the observed L4 rate, two simultaneous L4s would use approximately 3.88 CU/hour; this is an estimate, not guaranteed pricing or confirmed allocation. At 19.5 minutes per pass, the additional ten passes alone would cost about 6.3 CU plus prep/model startup, and the active run continues to spend from the same balance. Stop both at/before the shared floor, or each at its completion/deadline, whichever applies first; do not extend without authorization. The current launcher does NOT automatically poll/enforce CU balance, and the driver checks its deadline between passes, not as an interrupt inside a pass. Budget monitoring remains manual.
+
+**Launch gate.** Configuration/registration only; no second runtime or Drive consent has been triggered. Ask the user "ready" before starting the visible-terminal workflow. Run the existing WSL launcher in a SECOND VS Code terminal with `SESSION_NAME=e4b-ctx-history-parallel-20261114` and `RUN_TAG=e4b_context_history_20261114_parallel` environment overrides, leaving the first terminal open. Verify allocation, Drive mount, prep, driver startup, and persisted pass results rather than assuming success from consent or a process heartbeat.
+
+**Allocation / connection failure (2026-11-14, approximately 15:21 Pacific).** After the user's fresh "ready", they ran the template in their visible terminal. The first pasted confirmation included a trailing `]` and was cancelled before allocation. On retry, the parallel session was allocated on L4 and inputs/helpers were uploaded; user-visible Drive consent succeeded, with `drive mounted: True` and `MyDrive: True`. The next CLI exec lost its connection during its initial working-directory setup, before the output-tag preflight executed; no replication prep or driver launch is confirmed. A subsequent read-only exec succeeded on the same host and confirmed Drive remains mounted; no fresh authorization was triggered.
+
+**Parallelism NOT achieved / recovery decision pending.** Live usage after that failure: 323.65 CU, 1.94 CU/hour, ONE active assignment. The new session reports IDLE; the original r4 session returns "not found" after CLI stale-session pruning. Only H_default round 1 (11/26, 1,172 seconds) is locally synced for r4; no replication progress is synced. This does not identify why/when r4 disappeared or prove that allocating the second session caused its loss. Do not claim two active GPUs, completed paired rounds, or a successful replication launch. Preserve both output tags and decide whether to recover the existing cohort or continue the separate replication on the remaining runtime; no additional runtime should be created as a recovery shortcut. Shared stop balance remains 309.72 CU.
+
+**User-selected recovery, not replication launch.** The user selected "Recover original r4 experiment from its checkpoint (recommended)." Subsequent CLI exec failed again with `WebSocketConnectionClosedException`; the existing Windows Colab API wrapper succeeded. API runtime enumeration confirmed only the surviving L4, `runtimes/6dbe41e7_4f0f_487a_b706_1de6a3d2aa38........`, on the same host as the parallel-named session. A read-only probe confirmed Drive mounted, the registered input-tar SHA-256, no prep/driver/output state, and the original r4 saved H_default pass with its raw task results.
+
+**Recovery validation and launch.** Validated the saved pass's 26 unique task IDs and resolved flags against raw `task_results.jsonl`, preserved Drive artifacts, copied only the checkpoint into `/content/ab/progress.json`, and backed up the unused replication launch configuration. Changed the surviving runtime's launch tag to `e4b_context_history_20261114_r4_1429`, not the parallel tag. Prep then completed with matching arm fingerprints, exact registered task-file SHA-256, and the standard prep/import success checks. Launched PID 21883 for the five-round r4 cohort, skipping the saved `(1, H_default)` pass. Its remaining driver deadline was approximately 7.139 hours at launch, retaining the original cutoff `2026-11-15T06:43:35Z` rather than resetting eight hours. Driver log currently confirms only vLLM booting, not a model-ready endpoint or another started/completed pass.
+
+**Latest cost / monitoring limitation.** Live CLI and user terminal both report 323.17 CU, 1.94 CU/hour, one active assignment. Recovery prep was polled with short API requests until launch; that bounded polling command has ended. A visible VS Code monitor-task launch was cancelled, so no continuing API watchdog, budget guard, or keepalive was established by that attempt. Do not claim continuous monitoring or automatic CU enforcement. The 309.72-CU floor remains manual, and a disconnected/unmonitored runtime may be reclaimed. No independent replication task results were produced.
+
+**Resumed pass verified (~15:40 Pacific).** Although CLI status says IDLE and lists the older mount-probe execution, a fresh API check confirms driver PID 21883 exists and its log reports `vLLM up http://127.0.0.1:8000/v1` followed by `round 1 arm N_none: start`, both at driver elapsed 4.9 minutes. Thus the saved H_default pass was skipped and the missing paired control pass has started. This is verified startup, not pass completion or continuous monitoring.
+
+## Crash recovery and PRE-REGISTERED Kaggle context-history replication (2026-11-14)
+
+**Observed before registration.** After a user computer crash, local Drive sync and a live Colab API call confirm three saved r4 passes: round 1 H_default 11/26 in 1,172 seconds; round 1 N_none 9/26 in 1,177 seconds; round 2 N_none 12/26 in 951 seconds; all rc=0 with 26 rows. The live log confirms round 2 H_default started, driver PID 21883 remains present, and the same L4 runtime still exists. Five paired rounds have NOT finished. Round 1 favors H_default by two resolves, but neither a final result nor leaderboard inference is supported. Preserve the running Colab cohort and its artifacts.
+
+**User authorization.** User requested saving the commands to a file, checking completion, and, if incomplete, running on Kaggle across four GPUs. Commands are saved in `colab_fasteval/RUN_COMMANDS.md`. This is a new Kaggle replication, not a resumption or replacement of missing Colab results. Earlier observations above were known before launch. The previously staged parallel-Colab replication produced no passes and is not being launched.
+
+**Fixed Kaggle design.** Private notebook `comfyops/e4b-context-history-20261114`, one requested `NvidiaL4` machine using the existing competition Docker image, wheelhouse, snapshots and cached Kaggle E4B model. Require exactly FOUR L4 GPUs in the first execution cell; abort instead of silently running on fewer/different cards. One tp=1 vLLM server per GPU, utilization 0.85, model length 32768, concurrency 8 per GPU. Same registered input tar SHA-256 `11ec9f239673891871afff1a98f0a62a7f3a3038e70e31dad21a8945e2202f25`, task-file SHA-256 `553ff06b23d2c38522727fd40a73f31e1037acbb209b3b35d8c093f4981bda94`, exact 26 tasks, H_default fingerprint `b2ee20700b80`, N_none `84f904c63afd`. Check hashes at build and execution.
+
+Run five NEW paired rounds (260 task-runs): GPU0 rounds 1 and 5, GPU1 round 2, GPU2 round 3, GPU3 round 4. Each round runs BOTH arms sequentially on its assigned GPU, H then N for odd rounds, N then H for even rounds. GPUs execute their assigned rounds concurrently, avoiding a fixed arm/GPU confound. GPU0 has twice the work; do not claim perfect fourfold speedup. Same exact per-task arm evaluation caps. Preserve all raw task results, stdout/stderr, logs, traces and test outputs, with atomic progress checkpoints after every pass. A complete pass requires rc=0 and exactly the 26 unique expected task IDs; incomplete/error/timeout passes are recorded and must not be scored as complete.
+
+**Measures.** Analyze this Kaggle cohort separately from all Colab cohorts. Primary positive signal: H_default wins at least 4/5 paired rounds and gains at least 5 total resolves over its 130 runs; symmetric negative rule, otherwise inconclusive. Apply the original retry-triggered secondary analysis and its minimum 10 retry-triggered runs per arm for non-descriptive interpretation; report context errors, test failures and missingness. No selective pooling or leaderboard prediction. This is an evaluation notebook, NOT a competition submission.
+
+**Limits and availability.** Request one notebook only, hard notebook timeout 7,200 seconds; evaluation deadline 90 minutes from the evaluation cell, enforced on subprocess passes. At 19-minute passes, the longest GPU path is about 76 minutes plus server/environment setup; this is an estimate. GPU quota is separate from Colab CU. Installed authenticated Kaggle CLI works, but no live remaining-quota figure was obtainable: the browser settings page requires login; the old handoff's under-two-hour quota is historical, not a current check. Attempt allocation once through CLI; report quota/permission/allocation failures rather than silently changing hardware or launching alternatives. The existing Colab cumulative 309.72-CU stop floor remains unchanged and manually enforced.
+
+**Build validation / launch outcome.** Built `kaggle_pkg/push_context_history` using `_build_context_history_kaggle.py` and compiled every generated code cell. Focused mocked execution verified exactly ten complete 26-task passes, five paired rounds, both arms on the same assigned GPU, alternating arm order, atomic checkpoints, server cleanup, and explicit failure/checkpointing of a 25-row incomplete pass. No hardware was allocated by those checks. `kaggle kernels push -p kaggle_pkg\push_context_history --accelerator NvidiaL4 -t 7200` succeeded once, creating notebook version 1 at `https://www.kaggle.com/code/comfyops/e4b-context-history-20261114`. Immediate status is QUEUED and logs are empty: four physical L4s and execution have NOT yet been verified. Do not equate push acceptance with available quota or completed setup. Latest Colab usage check during staging: 321.71 CU, 1.94 CU/hour, one assignment; Colab was not stopped, relaunched or modified.
+
+**Kaggle completed checkpoint and memory investigation (2026-11-14, approximately 18:20 Pacific).** User-provided execution logs confirmed four physical L4s, four ready model servers, registered inputs, and concurrent passes. Downloaded `context_progress.json` now contains all ten complete passes (rc=0, n=26). H_default resolves by round: 11, 11, 9, 11, 8 (50/130); N_none: 10, 12, 10, 11, 15 (58/130). H_default wins one round, loses three, ties one. Neither direction meets the preregistered four-winning-round rule; formally inconclusive, with no observed benefit from retaining full history. Context-window errors: H_default 11/130, N_none 13/130. Round 5 has three context-window errors in EACH arm despite its 8-versus-15 resolves; overflow counts alone cannot explain the difference.
+
+**Raw evidence coverage / download failure.** Source/metadata pull succeeded. Bulk output download and its resume attempt each ended with ConnectionResetError(10054). At this inspection 182 traces are local: all 130 H_default traces and only the first two N_none rounds (52 traces). Do not call the full artifact download complete. In the matched first two rounds, traces with a verifier final message beginning `RETRY:` number 17 for H_default (3 eventually resolved) and 18 for N_none (4 eventually resolved). These are descriptive treatment-dependent subsets, not a causal retry-success comparison. No explicit compaction/summarization metadata events were found in the 182 available ATIF traces; this does not prove compaction never occurred or establish the exact model-input payload.
+
+**Potential scorer/CLI context-management mismatch, not a measured compaction treatment.** `comp_official/HARNESS_README.md:568` documents scorer-side EventsCompactionConfig (interval 15, overlap 2, threshold 14336, retention 5). Extracted local swegemma 0.2.11 source, matching the Kaggle logged version, instead defaults `EvalConfig.events_compaction_config` to None (`harness_src/x/swegemma/config.py:118`); the CLI constructor does not supply it (`cli.py:245`), and the runner attaches it to App only when non-None (`harness/agent_runner.py:694`). The runner creates a new InMemorySessionService/session per task (`agent_runner.py:675`). Thus these CLI experiments did not explicitly enable the documented scorer compaction or persistent cross-task memory; do not describe them as validating compaction behavior. Runtime configuration and pre/post-compaction inference payload capture are still needed to verify parity and information loss. No memory treatment or new experiment was implemented/launched during this analysis.
+
+### Historical memory evidence recovered; round-four paired traces now available (2026-11-14)
+
+The user correctly pointed out that analysis must use the existing E4B/31B corpus, not only the latest partial download. A fresh read-only file census found 3,432 `trace_*.json` files under synced Drive `ab_runs`, including all 416 startup-gate traces; 964 matching local files under Outputs (overlapping copies, not additional unique runs); and 2,392 local ab_logs `.log` files. Three named 31B result archives contain 170, 24 and 108 trace members respectively. These are file/member counts, not a deduplicated model-labelled census. Historical compaction analysis already exists at approximately lines 8964-9005, including the explicit retraction of the earlier claim that compaction "explains it all": text/thought parts enter the summarizer, whereas raw tool output/exact wording can be lost; repeated reads rose from 4% to 13% after compaction, but no detectable within-task solve effect was found (reported Mantel-Haenszel z=+0.11 in 106 runs). Do not present compaction analysis as wholly new or reinstate the retracted causal claim.
+
+**New matched evidence supersedes the earlier missing-control limitation.** Read all twelve round-4 ATIF traces and task-result rows for the six G-only resolves directly from Drive:
+- `fastapi_14458`: C explored/edited `fastapi/dependencies/utils.py`; G explored/edited `fastapi/dependencies/models.py`. Both gates accepted without a verifier RETRY. This is target-location divergence.
+- `fastapi_14463`: BOTH arms edited `fastapi/openapi/utils.py`, and BOTH were accepted without RETRY. Correct file choice is not sufficient; the patch/contract differs.
+- `fastapi_14492`: BOTH arms received an initial rejection of a pyproject-only change and BOTH emitted two verifier RETRY messages. C subsequently edited documentation JS and LICENSE, never the required tutorial source, and restored its first rejected attempt. G reached the requested tutorial source; existing tests rejected the requested identifier change, and the gate finally restored G's second attempt, which passed task tests. Thus rejection/retry is not unique to G, and the startup-gate fix cannot be credited merely because G retried. The distinguishing evidence is target recovery and best-attempt selection.
+- `fastapi_9753`: BOTH arms edited `fastapi/dependencies/models.py`, both gates accepted, no RETRY. Again patch semantics, not just file selection.
+- `rich_3454`: C had a verifier RETRY, repeated source/test edits, an eventual gate acceptance and then a context-window failure. G finished without RETRY and passed task tests. Only this one of the six control outcomes was an overflow.
+- `rich_4077`: C repeatedly read and edited `rich/console.py`, accepted by console tests; G read/edited `rich/file_proxy.py`, accepted by its tests, and resolved. No RETRY in either arm. A concise correctly localized trajectory beat an accepted wrong-target trajectory.
+
+These observations support studying preservation of verified target/contract/failed-attempt state, but do not establish that compaction caused any paired divergence. Five G wins did not require a verifier RETRY; two controls were already in the correct file. The broader eight-round gate comparison remains negative overall (C 90/208, G 86/208), despite G's one 16/26 pass. A future analysis should align same-task, same-arm success/failure trajectories, separate model/config/harness cohorts, and identify the first observed information/decision divergence before proposing a memory intervention. No new GPU experiment launched.
+
+### Pressure-testing memory versus harness-induced variance (2026-11-14)
+
+The user correctly challenged dismissing pattern memory before testing it, particularly with an unreliable evaluation path. Performed a CPU-only observational audit; no model behavior was changed and no new GPU experiment was launched. Reproducible analysis and structured results are in the current session's `files/pressure_test_memory.py` and `.json`.
+
+**Coverage and scoring consistency.** Read all 416 startup-gate task-result rows, checked 26 unique IDs per pass, checked all 416 trace paths, and hashed 401 available patch files by task. There are 274 distinct nonempty task/patch groups. The 36 repeated groups cover 163 rows and 22 tasks; none has conflicting resolved outcomes. This is evidence against random final scoring of byte-identical saved patches in this cohort, not proof of harness reliability: unique patches, missing patches, workspace differences, and feedback/rollback behavior remain outside that check. All recorded nonempty task-level errors were context-window errors; absence of such an error does not establish a healthy trajectory.
+
+**Overflow counts do not explain the largest Kaggle split.** In paired round 5, H_default solved 8 and N_none 15, with three context errors in EACH arm. N had eight exclusive wins, of which only two had a recorded H error; H had one exclusive win with no N error. Thus six N-exclusive wins and the H-exclusive win remain discordant without a recorded error in either counterpart. This does not isolate a memory effect or rule out unlogged harness problems.
+
+**Concrete saved-state rescue: `G_startup/round_8/fastapi_14492`.** Directly inspected the complete ATIF trajectory, final patch and task-result row:
+
+1. The fixer read `docs_src/metadata/tutorial001_1_py39.py` and correctly changed identifier `MIT` to `Apache-2.0`.
+2. The gate rejected and undid that change because the existing schema test expects `MIT`, contradicting the requested behavior.
+3. On retry the fixer explicitly recognized the task/test contradiction, but restarted a broad `grep -r "MIT" .`, read LICENSE and CITATION.cff, changed those unrelated files and declared those the requested fix.
+4. After the final rejection, the gate restored saved attempt 2 (score 1). The final patch contains the correct tutorial edit AND the unrelated LICENSE/CITATION edits. The task scorer resolved it with test exit 0.
+
+This is an observed external patch-memory rescue despite a later wrong-target fixer trajectory. It supports investigating preservation of useful task state; it does NOT establish compaction-induced forgetting. The retry configuration explicitly starts fresh, model-visible payloads were not captured, and feedback can redirect a model even when it retains the earlier facts.
+
+The analogous round-4 solve also survived rejection by best-attempt restoration. Round 1 followed a different route: the fixer edited the existing expectation as well as the tutorial and the gate accepted; task tests subsequently passed. Thus gate acceptance, task correctness and preservation of a previously correct attempt are distinct mechanisms, not interchangeable success labels.
+
+**Rollback is partial, not a clean reset of all edits.** `_finalize` saves/reverts/restores only `_src_files(base)` (Python non-test source). The round-8 final patch verifies that unrelated non-source edits survive alongside the restored tutorial change. Feedback saying the source files were reset must not be interpreted as the entire workspace returning to baseline. This is an analysis finding, not a newly applied gate fix.
+
+**Pattern-example hypothesis remains open.** Historical log section "THE WINNING TRAJECTORY IN VIVO" documents a 31B sibling-template trajectory; that original raw 31B trace was not reverified in this audit. Across the 16 startup-gate `fastapi_14492` traces, no observation contains the exact sibling path `docs_src/metadata/tutorial001_py39.py`. Therefore those runs cannot directly establish or refute the documented sibling-example mechanism. Do not equate this narrow path check with a general classifier of correct-example exposure.
+
+**Next discriminating tests, not a new registration/launch.** Separate (a) identical-patch task-test replay under a fixed clean snapshot, (b) task-contract-conflicting gate feedback and exact rollback/restoration state, (c) usable example acquisition and use before edits, and (d) model-visible retention across retries/actual compaction. A memory intervention should be tested separately from a gate repair, with a combined arm if interaction is the question. Capture actual inference payloads and baseline/attempt/final patch hashes; keep task cohorts, budgets and serving configuration matched. The latest H/N toggle is not a test of structured saved-solution memory.
+
+### Online research: solution memory, compaction, feedback and variance (2026-11-14)
+
+Read primary paper/author pages, including methods, negative results and limitations rather than relying on abstracts. No repository code or private trace contents were sent to online research services. These are external findings and design implications, not Gemma measurements, a new experiment registration, or authorization to launch compute.
+
+**1. SWE-Exp: structured repair experience rather than raw demonstrations.** Source: [SWE-Exp, v2](https://arxiv.org/html/2507.23361v2), especially sections 4.4, 5.2 and 5.3. Extracts diagnostic perspectives and modification strategies from successful and failed trajectories. In the reported DeepSeek-V3-0324 experience-count experiment, zero retrieved experiences gives 37.8% and one gives 42.0%; additional experiences reduce performance from that peak. Replacing abstraction with raw problem/gold-patch demonstrations yields 36.0% versus the full system's 42.0%. The widely advertised 73.0% Claude result is a whole-system result, not a memory-only gain. Authors describe repository/time exclusions for retrieval; these controls and their implementation were not independently audited here. Most useful lesson: select a small applicable repair pattern, including diagnostic reasoning and modification constraints, not just a patch or entire transcript. Single reported settings and different architecture/model prevent transferring their gains to E4B.
+
+**2. REM: useful memory depends on representation and recipient, with inconclusive solve-rate significance.** Source: [REM, v1](https://arxiv.org/html/2610.27377v1), sections 3-6. On 99 SWE-ContextBench Lite tasks, stores a roughly 270-token document organized as localize/understand/fix/verify; optional implementation detail is shown after validation trouble and removed after one exposure. Three Sonnet 4.5 replicates report 27.6% versus 24.9% without memory and 17% lower cost-weighted tokens. Importantly, pooled paired resolution is NOT significant (exact McNemar p=0.22). Oracle summaries/raw trajectories did not improve resolution in their agent; an earlier benchmark's oracle-summary gain did not replicate. Document-only resolution is 26.9%, close to the full 27.6%, so elaborate recall machinery is not justified by this study alone. Stronger models in a one-replicate sweep sometimes regress with memory. Conversation history was not truncated, making this an experience-reuse study, NOT evidence that repairing compaction caused the gains. Same-repository reference trajectories, unmeasured patch similarity, cross-condition retrieval configuration differences, and mostly single-run secondary conditions limit generalization. Identifier mentions are an uptake proxy, not causal proof.
+
+**3. The Complexity Trap: more history or more summarization is not automatically better.** Source: [JetBrains/TUM paper](https://arxiv.org/html/2508.21433), sections 3-5. Compares raw context, masking older tool observations while retaining reasoning/actions, and LLM summarization on SWE-bench Verified across five model configurations. Masking generally matches summarization at lower cost; summarization does not consistently/significantly outperform it. Some configurations lose performance versus raw context, so context management is not universally harmless. Longer trajectories under summarization are observed in several settings; the authors interpret summaries as potentially obscuring failure/stopping signals, not as direct proof of erased correct patches. Window settings needed retuning for OpenHands. Lesson: include a simple context-management baseline and measure actual state retention, termination behavior, errors and cost rather than assuming a sophisticated compactor wins. Do not copy their numeric window settings into ADK untested.
+
+**4. Reflexion directly discusses incorrect feedback on correct code.** Source: [Reflexion, v4](https://arxiv.org/html/2303.11366v4), section 4.3. Reflection plus episodic notes improves HumanEval Python from about 80% to 91%, but MBPP Python falls from about 80% to 77%. Authors explicitly analyze generated tests that fail correct solutions (false negatives) and tests that pass incorrect solutions (false positives). These are small function-generation tasks using self-generated tests, not repository repair with our gate. Nevertheless the mechanism is closely relevant: turning an unreliable test verdict into authoritative remembered advice can reinforce an error. Store test provenance, expected behavior and conflicts separately from verdicts; do not promote every rejected attempt into a proven negative lesson.
+
+**5. Compaction guidance supports structured durable task notes, but is engineering evidence.** Source: [Anthropic context-engineering article](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents), compaction and structured-note-taking sections. Recommends preserving decisions, unresolved bugs and implementation details while removing redundant tool outputs; warns that aggressive compaction can discard subtle information. Persistent notes can survive context resets. This is first-party engineering guidance, not a controlled E4B experiment or proof our current CLI actually compacts.
+
+**6. Serving can add a separate source of trajectory divergence.** Source: [Thinking Machines: Defeating Nondeterminism in LLM Inference](https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/). Demonstrates that changing batch size can alter floating-point reduction behavior and outputs even with greedy decoding; batch-invariant kernels address this in their setup. This does not establish an effect in our quantized Gemma/vLLM configuration. Our temperature 0.2 already introduces intentional sampling; a fixed seed alone is not proof of serving invariance. A diagnostic should compare identical serialized requests at greedy decoding under serial versus concurrent load, before treating all trajectory differences as memory effects. Do not change serving settings inside a memory treatment without separately accounting for them.
+
+**7. Evaluation-label weakness is different from random execution flakiness.** Source: [Are "Solved Issues" in SWE-bench Really Solved Correctly?](https://arxiv.org/html/2503.15223v2), ICSE 2026. Studies plausible patches from three tools and finds incomplete validation can mark semantically incorrect patches as resolved; differential tests expose additional discrepancies. Its reported roughly 6.4-point inflation estimate is specific to those tools/data and must not be applied to this competition. The lesson is to distinguish passing selected task tests from complete correctness; this study does not demonstrate our gate's particular stale-test false rejection or stochastic label changes.
+
+Related but less direct: [LLMs Get Lost In Multi-Turn Conversation](https://arxiv.org/html/2505.06120v1) reports early wrong assumptions and difficulty recovering in simulated underspecified conversations. This supports studying trajectory reliability separately from best-case capability, but those conversations are not our fully specified tool-agent repair tasks.
+
+**Synthesis and bounded next test proposal (NOT registered/launched).**
+- Separate two stores: within-task checkpoint memory (contract, target evidence, candidate patch references/hashes, actual workspace state, test provenance/conflicts, unresolved uncertainties) and cross-task pattern memory (applicability conditions, diagnostic route, minimal worked transformation, verification, counterexamples).
+- For within-task memory, preserve candidate patches outside lossy summaries and expose their status explicitly after rollback. A rejected candidate is not automatically wrong, nor is the gate's best score automatically a trustworthy correctness ranking.
+- For cross-task transfer, freeze a deduplicated memory bank built from disjoint issues before evaluation; exclude ALL traces of held-out tasks, including 31B versions and overlapping downloads. Leave-one-issue-out within the familiar cohort is a diagnostic only; use a separate untouched cohort to assess generalization. Check competition rules before packaging trace-derived memory for submission.
+- Begin with a short structured state/pattern baseline, not a vector-database project or raw-history dump. Test task-state retention and cross-task patterns separately before combining. Include an equal-budget generic-guidance or irrelevant-pattern control where feasible to isolate useful content from extra tokens/attention.
+- Keep gate semantics fixed during a memory-only comparison. A separate gate-repair comparison, and then a factorial combination if justified, can test interaction without attributing every gain to memory.
+- Instrument exact model-visible payloads at retries/compaction, prompt tokens, serving config/seeds/load, snapshot/workspace hashes, patch hashes before/after gate actions, test commands and results. Log actual compaction events instead of inferring them from ATIF or token changes alone.
+- Primary outcomes must include repeated per-task resolution and between-round variability, not just the highest pass. Mechanistic outcomes: correct candidate survival after rejection, wrong-target restarts, repeated dead ends, pattern use, overflow, premature stopping, time/tokens and regressions on formerly solved tasks. Same-prefix branchpoint replays can narrow attribution but still require repeated generation under matched serving conditions.
+
+Bottom line: the external evidence justifies seriously testing selective reusable patterns plus protected task state. It does not show that "remember everything" works, that memory explains our 16/26 spike, or that compaction is the cause of the current variance.
+
+### Task-memory skill and bounded LoRA smoke scaffold (2026-11-14; NOT a GPU registration)
+
+User: "Start building boss. we have Colab for the LoRA", followed by
+"Remember we have to be mindful on Time". Built the smallest isolated within-task
+memory arm first. No new GPU runtime, model download, Drive consent, evaluation
+or training was triggered. Existing Colab runtime/cost status was NOT rechecked;
+the previous experiment's final runtime termination remains unverified.
+
+**Implementation.** `colab_fasteval/skill_task_memory/scripts/memory.py` saves
+candidate patches outside the submitted diff, in task-specific Git metadata.
+The generated gate checkpoints before its original finalize routine, records
+the actual post-gate workspace, then emits the original gate output. Scoring,
+source-only rollback/restoration, tie-breaks and three-attempt policy are
+unchanged. Memory failures propagate explicitly instead of entering the old
+gate's success-shaped exception fallback. Gate observations are NOT correctness
+labels. Notes are marked unverified; recall includes candidate hashes,
+applied-state fingerprints and bounded previews, not full raw histories.
+Both sides of renames are retained. This is observation/recall, not automatic
+restoration or a new candidate-selection algorithm.
+
+`_build_memory_arm.py` copies the existing N_none baseline to a control and an
+M_memory treatment, refusing existing output directories. It changes only the
+fixer skill/prompt and observational gate wrapper/helper. A manifest records
+per-file SHA-256 values. The control and source baseline are byte-identical.
+The treatment explicitly requires recall before every fixer invocation, even
+on the first attempt. ADK wheel source confirms current-turn tool responses
+remain visible with `include_contents: none`; first-tool compliance and exact
+served payloads are NOT yet empirically verified.
+
+**LoRA preparation and time bound.** `train/memory_lora_smoke.py` defaults to
+configuration/weight-presence preflight only. GPU work requires explicit
+`--train-smoke`, a fresh output directory and local checkpoint paths.
+It limits the child to 600 seconds by default (900 maximum), with one to three
+optimizer steps, rank 8, one synthetic native recall-tool-call example, finite
+loss/gradient checks, prefix-validated assistant masking and no truncation.
+No automated retries or model downloads. This is a compatibility scaffold, NOT
+real policy training; its adapter must not be submitted. New dependencies are
+listed separately, not installed into the existing environment during this build.
+
+**Verified blocker.** The inspected authorized Drive cache has only
+`gemma-4-e4b-it-qat-w4a16-ct/2`, with a compressed-tensors quantization config.
+The real CPU preflight explicitly refused this artifact as a training base.
+An unquantized E4B QAT twin is not verified available. Structural compatibility
+alone will not prove correct QAT weight lineage or served-adapter compatibility.
+
+**Validation and limits.** Focused stdlib tests pass on Windows and WSL,
+including the real POSIX gate's three rejections and best-attempt restoration.
+Final counts: Windows 7 passed / 1 POSIX-only skip; WSL 8 passed / 0 skipped.
+Persisted control/source equality and canonical/generated skill hashes were
+verified after the final build. SHA-256 of sorted JSON per-file hash maps:
+control `769f2b22970aa449e1e8fd54c85fbcefb47c53d76ba2d3994f9d8330070d22e7`;
+memory `dc5c392c0f727a15c62800b3ea6a5ab5890cf1b9d7dfc95868540e485f13804f`.
+These use the new builder's manifest convention, not the historical arm
+fingerprint convention, and do not register a GPU experiment.
+Pylance syntax checks passed for the canonical memory script, builder and
+smoke entry point. The original gate emits pre-existing unclosed-file
+ResourceWarnings. Official compiler validation is pending: the inspected local
+CLI Python lacks ADK/harness packages. No performance, reliability gain,
+compaction event, trained policy, frozen pattern bank or leaderboard result
+is claimed. Commands and smoke prerequisites are in `colab_fasteval/RUN_COMMANDS.md`.
+
+Before any GPU experiment: verify compiler and real model-visible recall,
+freeze issue-disjoint train/eval data (including all 31B copies in exclusions),
+register hashes/tasks/outcomes and a small explicit time/CU cap, verify current
+runtime/cost and old-run status, and ask "ready" before visible Drive consent.
+The smoke timeout stops its worker, not Colab allocation/billing.
+
+### PRE-REGISTRATION: Kaggle task-memory vs unchanged control (2026-11-14; before push)
+
+**Authorization:** user requested "Run memory Arm on Kaggle since it's easier".
+The old `comfyops/e4b-context-history-20261114` reports COMPLETE. Do not edit or
+restart it. New private notebook: `comfyops/e4b-task-memory-20261114`. No Colab
+runtime or Drive consent is needed. Kaggle's remaining GPU quota/cost balance
+was not exposed by the checked CLI; requested hardware is not proof of allocation.
+
+**Frozen inputs and narrow launch fix.** The harness advertises a 5,000-character
+tool-output limit. The earlier CPU arm allowed 16,000-character recall, so the
+Kaggle revision caps recall at 4,000 and patch reads at 3,000, with explicit
+offset paging. No gate decision, scoring, rollback, sampling or retry policy was
+changed. New generated arms: `colab_fasteval/arms_memory_kaggle_v1`; the prior
+`arms_memory_v1` stays intact. The launch builder refuses overwrites.
+
+- Control sorted-per-file-map SHA-256:
+  `769f2b22970aa449e1e8fd54c85fbcefb47c53d76ba2d3994f9d8330070d22e7`.
+- Memory sorted-per-file-map SHA-256:
+  `ca07342286527159636d3aef8d75d2b334361a4f23ee47a23c97c54a973abb39`.
+- Embedded bundle SHA-256:
+  `4d721b96080db310fbb2678d54227246f649858b95c5223c7dafb1f175b57721`.
+- Notebook SHA-256:
+  `a3447f3c5bca1799edeffaf8c0fa614b4c194527d161613f2f310241c40e878f`.
+- Task JSONL SHA-256:
+  `553ff06b23d2c38522727fd40a73f31e1037acbb209b3b35d8c093f4981bda94`.
+  Exact 26 IDs are frozen in `kaggle_pkg/push_memory_v1/registration.json`;
+  this is the SAME familiar development cohort used by the history experiment,
+  not an unseen generalization test. No cross-task pattern bank or LoRA.
+
+**Design:** four paired rounds, one pair per GPU on four L4s; rounds 1/3 run
+memory then control, 2/4 control then memory. Each main pass covers all 26
+tasks: 104 outcomes per arm, 208 total. Each pair shares its server/GPU.
+One server/GPU, utilization 0.85, model/context/parser/sampling unchanged,
+concurrency 8/GPU, 80 tool calls, 30 task minutes, 200 turns, three gate attempts.
+Do not pool this cohort with Colab, history A/B or older gate runs.
+
+**Safety/uptake gate:** before model boot, assert actual four-L4 allocation,
+verify the embedded bundle and compile both submissions with the official
+compiler using compile-only registry placeholders. Actual sandbox/tool bindings
+are then checked with one separate M_memory smoke on `fastapi_14492`.
+Smoke has 12 calls, 2 task minutes, 30 turns and a 240-second subprocess cap;
+it tests recall wiring, NOT solution quality, and is excluded from all 104-task
+denominators. A completed smoke trace must show first-tool recall at every
+observed fixer invocation AND a structured recall response. Failure aborts
+before the four-pair evaluation. Budget exhaustion/solve failure on this
+diagnostic is not itself proof the skill is broken; errors remain recorded.
+Trace observation proves tool-response delivery, not exact serialized model
+request contents, actual use of evidence, or a compaction event.
+
+**Outcome rule (exploratory, not significance):** potential score signal requires
+memory winning at least 3/4 paired rounds and at least +4 total resolves.
+Separately, treatment delivery requires valid first-tool recall/response on at
+least 99/104 memory task traces (95%). Check context errors, missing traces,
+latency and total task errors before any promotion; increased context errors
+or missing treatment delivery prevents promoting a score-only signal.
+Report per-round totals, ties, paired task transitions, retry evidence and
+failures, not just the best round. Incomplete passes are incomplete, not
+silently treated as comparable zero scores or successful runs.
+
+**Time/quota cap:** CLI notebook limit 3,600 seconds; main evaluation has one
+shared 2,700-second deadline, with each pass capped at min(1,800, remaining).
+Single server boot attempt, 480-second startup timeout. No automatic push
+retry, allocation retry, training, or leaderboard submission. Four physical
+GPUs for at most one notebook wall-hour; Kaggle quota accounting may differ.
+All task results, stdout/stderr, traces and patches are retained under
+`/kaggle/working/memory_results`, with atomic `memory_progress.json` after each
+pass and a final summary only after all eight main passes complete.
+Do not overwrite or repush a queued/running version.
+
+**Pre-launch checks:** focused memory/gate/audit tests passed in WSL and
+Windows (POSIX gate skipped on Windows); all generated notebook cells were
+AST-parsed. The Pylance file tool could not access the new Kaggle files, so
+no Pylance success is claimed for them. Remote official compile and actual
+allocation/recall remain pending until execution logs confirm them.
+
+**Launch receipt:** after the registration above and schedule/uptake unit tests,
+one `kaggle kernels push -p kaggle_pkg\push_memory_v1 --accelerator NvidiaL4 -t 3600`
+succeeded: version 1 at https://www.kaggle.com/code/comfyops/e4b-task-memory-20261114.
+Immediate API status was `KernelWorkerStatus.QUEUED`; logs were empty. This is
+an accepted queued run, NOT verified GPU allocation, compiler success, recall
+uptake or measured performance. Do not repush while queued/running. An additional
+mock runner test verifies the exact four-pair order, separate smoke denominator,
+tie handling, result checkpoint/summary shape and server cleanup.
+
+### Kaggle memory v1 stopped at smoke: invocation compliance, not missing skills (2026-11-14)
+
+**Actual run:** version 1 failed after 615 seconds wall time on four confirmed
+L4s. Both arms compiled, registered input hash matched, and all four model
+servers became healthy. The one-task smoke completed in 160 seconds, rc=0,
+n=1, resolved=false. Task error: tool-call budget exhausted (12). The uptake
+guard then raised, so ZERO of the eight main passes ran. This is not a
+memory-versus-control performance result. Actual Kaggle quota debit is unknown.
+
+**Artifacts recovered:** notebook source/metadata via `kaggle kernels pull`
+into `Outputs/e4b_task_memory_kaggle_20261114_v1_source`; full output via
+`kaggle kernels output` into `Outputs/e4b_task_memory_kaggle_20261114_v1`.
+Downloaded extracted control/treatment files match the frozen v1 per-file
+SHA-256 maps exactly, including both skill manifests and Python resources.
+Packaging was correct. API status confirms ERROR; no replacement was launched.
+
+**Exact trace evidence:**
+- Fixer invocation 1 called `run_command` with
+  `python3 scripts/memory.py --action recall`. The command failed with exit 2:
+  no such file under the task repository. Skill resources are materialized by
+  `run_skill_script`, not installed in the task's own scripts directory.
+- Invocation 2 began with `get_status` and never recalled memory.
+- Invocation 3 correctly called `run_skill_script` for `task-memory` and
+  received a successful structured payload with TWO saved candidates,
+  gate observations, hashes and current-applied flags. Both candidates had
+  post-gate records; the second matched the actual workspace, including the
+  non-source/test changes left behind by the existing source-only rollback.
+- The task edited LICENSE and a test, not the requested tutorial source,
+  and exhausted the reduced smoke budget. Do not treat this deliberately
+  small-budget wiring check as a task-performance comparison.
+- Replaying the REAL downloaded trace through the audit yields:
+  invocations=3, first_recalls=1, recall_calls=1, recall_payloads=1, valid=false.
+  The audit was correct; do NOT weaken it to accept one late successful recall.
+
+ADK 1.36.1 wheel source confirms RunSkillScriptTool is in the initial core
+SkillToolset, without requiring prior activation. This does not substitute for
+capturing the actual first serialized model request, but there is no evidence
+that a missing skill file or failed memory ledger caused this smoke failure.
+
+**CPU-only correction staged, NOT relaunched:** builder revision 2 puts the
+recall API/argument example at the START of the fixer instruction, explicitly
+prohibits using run_command to execute the skill, removes the conflicting
+budget-oracle "READ THIS FIRST" priority, and changes the retry rule to require
+recall before get_status or searching. The canonical skill repeats the route.
+Gate semantics, memory ledger, sampling and control stay unchanged.
+`colab_fasteval/arms_memory_kaggle_v2` is built; v1 artifacts remain intact.
+This prompt change is a hypothesis for improving compliance, not proof it will.
+
+Runner diagnostics now expose invocation/recall counts and distinguish an
+incomplete smoke from a completed-but-noncompliant one. The strict acceptance
+criterion remains unchanged. Added a regression case matching the observed
+wrong-shell / skipped-recall / late-working-recall sequence.
+CPU validation: Windows 9 pass, 1 POSIX skip; WSL 10 pass. Builder Pylance syntax
+check passed. Real-trace replay and downloaded-arm hash verification passed.
+Another GPU run requires fresh frozen notebook/registration and explicit
+approval rather than automatically consuming another allocation.
+
+### PRE-REGISTRATION: corrected Kaggle memory protocol, version 2 (2026-11-14; before push)
+
+User explicitly approved "Launch corrected Kaggle run" after being informed
+that it allocates four L4s again with the same smoke-first, 60-minute cap.
+Immediately before preparation, the v1 notebook API status remained ERROR.
+The failed v1 source, output files, notebook and registration are preserved.
+
+**Freeze:** `colab_fasteval/arms_memory_kaggle_v2` and
+`kaggle_pkg/push_memory_v2/registration.json`. Same Kaggle slug, next version.
+- Unchanged control sorted-file-map SHA-256:
+  `769f2b22970aa449e1e8fd54c85fbcefb47c53d76ba2d3994f9d8330070d22e7`.
+- Revised memory sorted-file-map SHA-256:
+  `1acbee143a67be2d0b3428890dae44f273bd6f18963159564b0e4035ae8d6144`.
+- Bundle SHA-256:
+  `b51ab39769eaab52da83a3d23ab1b6e2269b6123ec4db8e0abb2e55c034f7486`.
+- Notebook SHA-256:
+  `334c4a0769ddd017e8a710d2a0e7ce96ace352b64af7ea319946c5e40d9e0d68`.
+- Same 26 task IDs and task SHA-256:
+  `553ff06b23d2c38522727fd40a73f31e1037acbb209b3b35d8c093f4981bda94`.
+
+**Change vs v1:** explicit API route at prompt start and retry rule, removal
+of conflicting budget-first wording, and stronger skill instructions.
+Memory Python ledger, gate decisions, model, sampling, main budgets and
+control are unchanged. Runner only adds diagnostic counts and a precise
+compliance-failure error. This tests instruction delivery/compliance, not a
+new memory-storage algorithm. Model compliance remains a hypothesis.
+
+**Unchanged registered design/criteria:** four pairs on four L4s, one pair/GPU,
+odd rounds memory-first, even rounds control-first; 26 tasks/pass,
+104 main outcomes/arm; concurrency 8/GPU; main task limits 80 calls / 30 minutes /
+200 turns; 3 gate attempts; utilization 0.85 and context 32,768.
+Separate memory smoke on fastapi_14492 retains 12 calls / 2 task minutes /
+30 turns / 240-second process cap. It is not a solve-rate result and is excluded
+from the main denominators. Every observed smoke fixer invocation must start
+with correct recall and have a structured recall response; do NOT weaken the
+criterion to accept a late recall. Abort main evaluation if this fails.
+
+Score signal remains exploratory: >=3/4 round wins and >=4 total extra solves.
+Delivery requires >=99/104 valid memory traces; error/overflow regressions must
+be considered before promotion. Zero main passes from v1 must not be pooled
+with v2 or interpreted as control results.
+
+**Caps:** 3,600s notebook, shared 2,700s main evaluation, min(1,800s, remaining)
+per pass, single 480s boot attempt. One explicitly approved push; no automatic
+retry or training. Kaggle remaining quota/accounting is still unverified;
+confirm actual allocation from v2 logs. No Colab runtime/Drive consent.
+
+**Validation:** Windows 9 pass + 1 POSIX skip; WSL 10 pass; Pylance builder
+syntax check passed; real v1 trace audit reproduced; downloaded arm hashes
+verified; all generated v2 code cells AST-parsed; v2 control manifest unchanged.
+Official compile and real model compliance will be checked afresh in v2.
+
+**V2 launch receipt:** one user-approved push succeeded as Kaggle version 2.
+Before push, the actual embedded tar, prompt prefix and notebook SHA were
+verified against the registration above. Immediate status: QUEUED; logs empty.
+Actual v2 allocation, compiler success, recall compliance and main-pass results
+remain unverified. No further push/retry is authorized by this receipt.
+
+### 2026-11-14 - Public 31B LoRA intel and an alternate E4B training path
+
+**Scope:** read-only investigation of public sources, not a new experiment or
+training authorization. Existing memory A/B arms/registrations are unchanged.
+
+**Sources:** Ayush Barai's [submission v9](https://www.kaggle.com/code/ayush04barai/version-1-added-adaptor?scriptVersionId=366835192),
+[trainer](https://www.kaggle.com/code/ayush04barai/lora-step-2?scriptVersionId=366776559),
+and Dmitrii Gluzdov's [serving/LoRA verification kit](https://www.kaggle.com/datasets/dmitriigluzdov/gemma-4-serving-and-lora-verification-kit).
+Downloaded source, metadata, small corpus and E4B recipe/trainer/receipts are
+preserved under `Outputs/intel_ayush_*` and `Outputs/intel_gemma_lora_kit`.
+Pinned/latest submission source SHA256 both:
+`cdb45a73a3fc6c747bec400289a2347e81e002109c826f1dfd8ed00edcd20746`.
+
+**Actual 31B recipe, supported by source and public execution logs:**
+- The 32-second submission run only packages the adapter. Training optimizes
+  for about four hours, in addition to setup/model load, on four L4s.
+- Logs resolve the load-branch uncertainty: 4-bit loading OFF; BF16 base,
+  approximately 62 GB across GPUs. Context-prefix cap consequently 8,192,
+  not the source's initial 12,288; edit-target cap 1,536.
+- 52 examples: 49 Gemma / 3 Qwen. Only 6,790 unique supervised tokens, all
+  edit-call targets. Repeated 217 example presentations; 54 optimizer updates.
+  The reported 1,383,643 processed tokens include context, not just supervision.
+- Native completion token IDs; mask prefix and pre-tool-call reasoning.
+  Source-file single-edit selection, repository-held-out validation (8 examples).
+  Rank 16, alpha 16, dropout 0; q/o/down projections on layers 30-59:
+  90 modules / 27,238,400 trainable values, BF16 adapter export.
+- Memory-saving engineering: chunked attention and logits only at supervised
+  positions. This trains edit execution, not task memory or full agent reasoning.
+- Held-out loss reported 0.0150 -> 0.0035. Neither that nor finite/nonzero
+  adapter weights proves a solve-rate improvement. The author's reported prior
+  public range was already 0.12-0.22; observed 0.22 is not a controlled LoRA
+  effect. Its relevant model baseline here is 31B 0.20, not E4B 0.06.
+
+**Data checks and limits:** kit advertises resolved native and converted
+external trajectories, with competition-public issue exclusions that we have
+not independently audited. External successes were not independently regraded.
+All 382 external-A SFT steps inspected DO contain `completion_token_ids`;
+the hypothesis that missing IDs exclude all external data was disproved.
+Kit documents 26/1,766 native targets that do not round-trip tokenization:
+preserve verified target IDs, but never assume 31B IDs suit E4B without checking
+tokenizer identity. Dataset CC BY 4.0; utilities Apache 2.0; upstream repository
+licenses remain applicable.
+
+**New E4B route, not yet reproduced here:** the kit's trainer reconstructs a
+BF16 text-only model from the exact packed serving checkpoint, rather than
+backpropagating through inference-only packed kernels. It preserves tied
+embeddings and loads all 42 persistent layer-scalar buffers; checks parameter
+coverage/shapes; compares base probes against packed vLLM; numerically checks
+chunked attention/gradients; and remaps exported text-stack adapter names to
+serving names. This is a concrete alternative to a separately supplied
+unquantized twin. The current `train/memory_lora_smoke.py` only implements the
+unquantized-base/NF4 route: its rejection is not proof no E4B route exists.
+
+Author receipts identify checkpoint revision
+`6cd26aaa2357fb2bad8c51699a7558a4d1a965bb`, 11,513,861,828 bytes,
+SHA256 `19d89d2a4b3e401a3eae75ec08ab112810421a036c91d8c8226b686be7fe0c5d`.
+Our cached small E4B config matches the structural assumptions of 42 layers,
+tied embeddings and one quantization group; checkpoint identity, complete
+loader compatibility and numerical equivalence have NOT been established.
+No large cached weight file was read/hashed or model downloaded for this check.
+
+E4B author-reported pilot: one L4, rank 16 / alpha 8, 294 training turns /
+60,254 target tokens, 37 updates, 35.59 minutes, 19.02 GiB peak allocated /
+21.76 GiB reserved. These are external receipts, not our measured time/cost.
+Exact tokenized training rows and captured histories are missing from release.
+On the exposed 40-task panel: base 5, higher LR 7, lower LR 4; higher LR has
+3 paired wins / 1 loss, nominal two-sided p=0.625. Serving flags differ, so
+runtime comparisons are uncontrolled. This supports an implementation lead,
+not established hidden-task improvement.
+
+**Application:** keep mutable task state external. A small native-format LoRA
+could teach correct `run_skill_script` recall and evidence-grounded retry
+behavior, using issue-disjoint examples and explicit serving-effect checks.
+Do not blindly transfer the 31B layer range, mix new prompt changes into the
+current memory A/B, or jump straight to four-hour training. First gate exact
+base fidelity, gradients, serialization and nontrivial served adapter effect.
+
+**Failures/operations:** selective trainer artifact download failed DNS at the
+artifact host; weights/result JSON were not independently downloaded. Source
+and public logs were readable; E4B receipts downloaded successfully. No
+third-party training code executed, no dependencies installed, no model/GPU
+launch or Drive authorization. Memory v2's last verified state remains QUEUED;
+this research did not refresh that run's status.
+
+### 2026-11-14 - Memory v2 ERROR diagnosed; budget-corrected v3 candidate frozen
+
+**Recovery:** user reported failure and requested
+`kaggle kernels pull comfyops/e4b-task-memory-20261114`.
+Status API returned ERROR. Pull and full output download both succeeded to
+separate `Outputs/e4b_task_memory_kaggle_20261114_v2_source` and
+`Outputs/e4b_task_memory_kaggle_20261114_v2` directories. All downloaded arm
+file bytes match frozen v2; v1 artifacts remain unchanged.
+
+**Observed execution:** four L4s, both structural compiles, matching registered
+bundle and four healthy model servers. Memory smoke rc=0, complete=true,
+165 seconds, one task, one resolved. Notebook then raised the strict memory
+delivery error at about 662 seconds wall time. No main paired rounds ran;
+no comparative memory score exists. Actual quota/billing accounting unavailable.
+
+**Root cause:** v2 prompt compliance improved: all THREE fixer invocations
+called the correct recall tool FIRST. First two received structured payloads;
+the third returned `BudgetExceeded` because the smoke's 12-call task budget
+was already exhausted. Replayed audit: invocations=3, first_recalls=3,
+recall_calls=3, recall_payloads=2, valid=false. The audit correctly refused
+to call a blocked response successful delivery. Model invocation compliance
+and executable treatment delivery are distinct here.
+
+**Task-level evidence:** first fixer correctly changed
+`docs_src/metadata/tutorial001_1_py39.py` from MIT to Apache-2.0. Existing-test
+gate rejected and UNDID it because the old expected schema still said MIT.
+Second fixer received candidate metadata with currently_applied=false and
+reapplied the correct edit. Later gate/recall calls were budget-blocked;
+the final one-line patch survived and official test output shows 2 passed,
+resolved=true. This is a useful recovery trace, not proof memory caused the
+solve or that a main A/B passed.
+
+**Surgical correction:** `memory_runner.py` shares task limits between smoke
+and main: 80 tool calls, 30 task minutes, 200 turns. Smoke remains one task,
+concurrency 1 and HARD 240-second subprocess timeout; increasing the task's
+nominal time allowance does not grant 30 minutes of smoke runtime. Missing
+responses/timeouts still fail. Main task budgets, sampling, three-attempt
+gate, prompts, arms, task cohort and strict audit are unchanged.
+
+**Regression:** extended the mocked paired-run test with the observed
+retry/recall call sequence. Under old 12-call limits it reproduces the exact
+3-first-recalls / 2-payload failure. Under corrected limits all three focused
+runner tests pass and complete the exact smoke-plus-eight-pass schedule.
+This validates runner behavior, not a new remote model run.
+
+**Pre-registration for an UNLAUNCHED v3 candidate:** existing v2 arms reused;
+new non-overwriting `kaggle_pkg/push_memory_v3` folder. Notebook SHA256
+`73e3824674195286ed5c353833027c5d0c010936d2732041e45cd406c2ec6b07`.
+Bundle remains
+`b51ab39769eaab52da83a3d23ab1b6e2269b6123ec4db8e0abb2e55c034f7486`;
+tasks SHA remains
+`553ff06b23d2c38522727fd40a73f31e1037acbb209b3b35d8c093f4981bda94`.
+Control/memory map hashes remain
+`769f2b22970aa449e1e8fd54c85fbcefb47c53d76ba2d3994f9d8330070d22e7` /
+`1acbee143a67be2d0b3428890dae44f273bd6f18963159564b0e4035ae8d6144`.
+Registration explicitly records smoke process cap and shared task limits.
+Still four alternating-order pairs on familiar 26 tasks, 104 outcomes/arm,
+concurrency 8/GPU, exploratory rule >=3 round wins and >=4 extra solves,
+delivery >=99/104, 45-minute main deadline, 60-minute notebook cap, single
+480-second server startup attempt. No promotion or leaderboard inference
+from this smoke. **No v3 push, allocation or training: fresh approval required.**
+
+**V3 launch approval, recorded before push:** user explicitly instructed
+"rUN IT" on 2026-11-14 at 21:33 PST. Reverified frozen notebook SHA
+`73e3824674195286ed5c353833027c5d0c010936d2732041e45cd406c2ec6b07`,
+embedded bundle and registered smoke/task limits. Existing remote run is
+ERROR, not active. Authorizes ONE push of this candidate requesting four L4s;
+all pre-registered caps/criteria above remain in force. No automatic retry.
+
+**V3 launch receipt:** exactly one push succeeded as Kaggle version 3.
+Immediate status QUEUED; logs empty. GPU allocation, remote compilation,
+smoke delivery and main results are not yet verified. Preserve v1/v2 outputs;
+download v3 outputs into a separate `_v3` directory. No further push/retry.
+
+**Parallel CPU recall-information audit (while v3 runs):** inspected frozen
+v2 arms reused by v3 and replayed the actual v2 FastAPI artifact. The saved
+393-character patch serializes to 420 JSON characters. `excerpt(patch, 350)`
+returns only 67 characters: the start of the `diff --git` header followed by
+`...[truncated]`. Neither MIT, Apache-2.0 nor a hunk header survives. The actual
+second recall response confirms that exact preview, and gate feedback is only
+`REJECTED: your edit makes 1 ...[truncated]`, without the failing test name.
+Root mechanism: once over budget, excerpt conservatively divides its prefix
+allowance by six even for ASCII; diff headers also precede the useful edit.
+The full patch remains available via `show`, requiring another model action.
+
+Suggested next CPU-only refinement: compare existing cards with a bounded,
+change-first representation retaining file/changed lines, named test evidence
+and actual applied state. Test semantic retention as well as the existing
+4,000-character payload limit. Keep gate feedback labeled as observation, not
+correctness. No renderer/code change, GPU launch or modification to frozen v3
+was made. This does not invalidate its A/B or establish a memory benefit; a
+flat/negative result still describes the implementation actually tested.
+
+**CPU refinement implemented and frozen (no GPU launch):**
+`colab_fasteval/arms_memory_cpu_cards_v1` uses change-first recall previews:
+file/hunk headers and changed lines, with unchanged context/index headers
+omitted. Long gate observations retain a verdict, reported test node and
+assertion/error when available. Previews explicitly mark omissions/truncation
+and are NOT apply-ready; `show` still returns the immutable original patch.
+Clipping now measures actual JSON-escaped length rather than assuming six
+characters per code point. Notes receive less space; total recall stays <=4,000.
+Ledger identities, SHA checks, applied-state fingerprints and gate policy remain.
+
+**Measured real-artifact replay:** verified the 393-byte final FastAPI patch
+matches recalled candidate SHA
+`97e174f938f4178b87c7f6abbe159161da62fec66b8faa6354bd4ac274b358b8`.
+Legacy preview retained neither changed identifier nor hunk, and no test node.
+New preview retains MIT, Apache-2.0 and the hunk; gate summary retains
+`tests/test_tutorial/test_metadata/test_tutorial001_1.py::test_openapi_schema`
+and the assertion. Reconstructed full recall JSON is 1,049 characters.
+This tests information retention only, NOT model uptake or solve-rate gain.
+
+**Validation:** new retention regression failed on the original renderer, then
+passed after the fix. Targeted ledger/builder/runner suite: Windows 10 pass +
+1 POSIX skip; WSL 11 pass, including actual gate rollback/best restoration.
+Three-candidate non-BMP Unicode/long-note payload stays bounded. Pylance syntax
+checks passed for renderer/tests. Existing gate unclosed-file ResourceWarnings
+remain unchanged.
+
+**Prompt/work preservation audit:** v3 registered arm hashes still match
+frozen v2 arm files; control source matches its saved baseline. The new CPU
+variant differs from v3's memory arm in ONLY the skill manifest and two copies
+of `memory.py`. Fixer prompt, sampling, agent graph, gate script/policy and
+control files are byte-identical. Full-history and LoRA were intentionally
+not combined into the current memory-only A/B; no prior arm was overwritten.
+Latest requested Kaggle source pull succeeded to `_v3_source`; status API now
+reports COMPLETE. Final output download is in progress; no result totals
+inferred from partial logs.
+
+### 2026-11-14 - Memory v3 completed: no promotion
+
+Status COMPLETE; source pull successful. ALL downloaded notebook cell sources
+match the registered v3 notebook exactly. Final summary/progress receipts
+were retrieved separately while the full trace download continues, then totals
+were independently recomputed from all eight complete 26-row main passes.
+
+| Round | Control solved | Memory solved | Memory minus control |
+|---|---:|---:|---:|
+| 1 | 13 | 10 | -3 |
+| 2 | 11 | 9 | -2 |
+| 3 | 10 | 10 | 0 |
+| 4 | 13 | 11 | -2 |
+| Total / 104 | 47 | 40 | -7 |
+
+Control 45.2%, memory 38.5%: -6.7 percentage points descriptively.
+Memory round wins 0/4 (three losses, one tie); pre-registered exploratory
+criterion NOT met. On matched task-runs: memory-only solves 8, control-only 15,
+both 32, neither 49. These are four repetitions of the same familiar 26 tasks,
+not 104 independent held-out problems or a leaderboard prediction.
+
+Delivery audit reports 104/104 valid memory task-runs and 158/158 first recalls
+with 158 structured responses. Wiring success is NOT score improvement.
+Recorded main harness errors: control 8, memory 11, all context-window
+overflows; no other error types in the progress error maps. Error text requests
+27,769 input + 5,000 output = 32,769 against a 32,768 limit, with five LiteLLM
+retries. Do not silently drop these rows, blame every loss on this imbalance,
+or call complete passes error-free. Detailed trace-level error/use analysis
+awaits the full download.
+
+**Decision:** do not promote the current memory arm. The CPU change-first-card
+variant is separately staged and unlaunched; its retention result is not a
+retroactive rescue of this negative experiment. No new GPU experiment or LoRA
+training authorized by downloading the completed run.
+
+**Full artifact download verified:** all 208 main traces and corresponding
+task-result rows are present and match progress receipts. Re-ran the unchanged
+audit over all 104 memory traces: 158 invocations, first recalls and structured
+responses, all matching recorded audits. Totals remain control 47 / memory 40.
+There were 54 nonempty recalls out of 158 (104 initial recalls were empty),
+ZERO `show` calls and ZERO `note` calls. Thus no observed agent requested the
+full saved patch through the memory API; the bounded default previews were
+the delivered patch representation. This strengthens the motivation to test
+change-first cards, but does not demonstrate that they improve solving.
+
+### 2026-11-14 - Deep mechanism audit: why the memory arm did not transfer
+
+**Scope/evidence:** CPU reconstruction of all 208 v3 main traces, paired
+outcomes, final patches, model token metrics, gate outputs and tool errors.
+Detailed paired cases checked against actual grading outputs, not just
+resolved flags. Scratch analysis/derived data are in session files
+`analyze_memory_v3.py`, `memory_v3_mechanism_data.json` and `case_*` excerpts.
+No new GPU allocation, prompt change or training during this investigation.
+
+**1. This was not cross-task transfer, and patch protection already existed.**
+The ledger is bound to the task workspace/base; all 104 initial memory recalls
+were empty. No reusable repository patterns, localization breadcrumbs or
+validated reasoning were written; zero note calls and no LoRA updates.
+Only 35/104 memory task-runs reached a retry with a stored candidate.
+Moreover, the CONTROL gate already saves attempt diffs and restores its chosen
+best nonempty attempt after three rejections. The new arm adds a model-visible
+ledger, not the first implementation of protected patch storage. Final
+rejected-candidate restoration occurred on 14 memory runs (1 solved) and 15
+control runs (1 solved). Merely saving a patch cannot distinguish good from bad.
+
+**2. The full skill workflow was not delivered to the model.**
+Verified published official wheelhouse sources: google_adk 1.36.1 and
+adk_submission 0.2.13 (the latter matches runtime imports). Inspection only,
+no package installation or third-party code execution. ADK skill prompting
+formats name/description, NOT the skill body; `load_skill` returns that body.
+The compiler passes the configured fixer instruction unchanged and attaches
+the SkillToolset. Runtime traces contain ZERO load_skill calls. Our fixer
+prefix teaches recall but not show/note; the detailed show/note instructions
+live in the unloaded skill body. run_skill_script executes without implicitly
+loading those instructions. Thus zero show calls cannot establish that the
+agent knew how to fetch a full patch and deliberately declined.
+
+**3. The default cards usually did not contain the experience.**
+54 unique recalled candidates, 47 nonempty. Across 73 candidate appearances,
+64 were nonempty, and only ONE of those 64 previews exposed an actual edited
+line/hunk; zero gate excerpts retained a test node. Hashes/fingerprints survive,
+but do not encode the operation, rationale or regression. No full patch was
+requested. The CPU card fix addresses this channel loss, not the other failures
+below. A fresh-workspace CPU replay confirms the new and legacy EMPTY recall
+responses are identical: card-only changes have no direct evidence to add on
+the first attempt.
+
+**4. Most observed differences are not evidence of using stored experience.**
+Of eight memory-only solves, SIX finished on their first fixer invocation,
+before any nonempty memory. Of fifteen control-only solves, TEN had only one
+memory fixer invocation. Descriptively, the 69 no-retry memory task-runs scored
+33 vs their paired control's 37; the remaining 35 scored 7 vs 10. These strata
+are selected after treatment and are NOT causal subgroup estimates.
+The two memory wins with actual retry exposure are both fastapi_14492:
+- Round 1: a correct first tutorial patch is rejected by an old MIT expectation;
+  the eventual final patch is the gate's automatic best-attempt restoration.
+  Correct candidate persistence is real, but is already present in control.
+- Round 4: second fixer changes a FORBIDDEN test file after source rollback.
+  Gate only undoes source, so that modified expectation persists. Third fixer
+  reapplies source and local gate passes against the altered test. Official
+  final patch is source-only and genuinely solves the task, but this is not a
+  clean demonstration of evidence-guided memory recovery.
+
+**5. The gate often terminates the search before memory can help.**
+Among memory runs whose FINAL gate said ACCEPTED, only 39/79 solved; 40 failed
+grading. Control: 46/81 solved, 35 failed. In particular, 29 memory runs ended
+after a single fixer invocation with gate acceptance but failed grading.
+This is not a harmless reporting label: ACCEPTED instructs immediate submission
+and removes the retry opportunity.
+
+Concrete paired example, fastapi_9425 round 2: both arms locate the same
+get_typed_return_annotation code. Control adds a string-"None" case returning
+None; memory returns type(None). Both gates pass tests/test_multipart_installation,
+which does not establish this issue's contract. The actual grading output for
+memory fails test_return_none_stringified_annotations::test_no_content with
+"Status code 204 must not have a response body". There was no prior candidate
+to recall and no gate-triggered second chance. The same wrong return appears
+in the memory loss on round 3. Better patch previews cannot teach this
+first-pass distinction by themselves.
+
+Another first-pass contrast, fastapi_14463 round 2: memory correctly uses
+copy.deepcopy; control uses jsonable_encoder. Both gates say no test file
+covers the source. Memory solves, control fails, but memory was still empty:
+this is different generated reasoning, not demonstrated experiential transfer.
+
+**6. Error observations can be bound to the wrong workspace version.**
+rich_2943 round 1: first memory edit inserts literal escaped newlines into the
+constructor and gets a syntax rejection. Gate rolls source back; recall
+correctly says currently_applied=false and shows the clean fingerprint.
+The next fixer nevertheless tries to fix a supposed syntax error in the
+CURRENT baseline's unrelated attribute-bitmask calculation, producing further
+bad edits. The memory contains an observation about a DISCARDED candidate,
+but the model treats it as a defect in the current source. A fingerprint is
+not an operational instruction about which code version the failure describes.
+
+rich_3882 round 1: both arms initially misunderstand "ask for markup".
+Memory invents Console.supports_markup, then tries capability fallbacks;
+all three candidates fail six existing tests. The fixed final tie-break
+restores the earliest candidate, whose actual grading raises AttributeError:
+Console has no supports_markup. Control eventually changes print(error) to
+print(error, markup=True) on its third attempt and solves. This demonstrates
+missing API/contract grounding and unhelpful selection, not just forgetting.
+rich_3894 round 2 likewise diverges on retaining explicit name precedence in
+qualname handling: control's third candidate passes, memory's does not.
+Successful forbidden test edits also occur in BOTH arms: 6 memory / 7 control
+edit calls, so guardrail prose is not enforcement.
+
+**7. Token/protocol costs are real; causality is not isolated.**
+Paired first-request prompt delta median: +1,081 tokens for memory.
+Recorded prompt tokens: 18,752,170 vs 17,207,322 (+9.0%); recorded completions
+666,015 vs 666,260 (essentially unchanged). These are trace metrics, NOT billed
+cost or proof of slower wall time. The added prompt/tools and different retry
+instructions alter the policy even when memory is empty. The experiment
+compares whole interventions, not identical policies with evidence toggled.
+A sham-memory arm with identical prompt/tool protocol is needed to isolate
+the marginal information effect.
+
+**8. Pressure-testing harness/scoring explanations.**
+Removing EVERY pair with an error on EITHER arm leaves 86 matched task-runs:
+memory 38, control 45. The full seven-solve deficit remains; error-associated
+pairs contribute two solves to each arm. The 11-vs-8 overflow imbalance alone
+does not explain the observed gap. Overflows remain real operational failures.
+Nineteen repeated nonempty task/patch-hash groups (69 runs, 15 tasks) have ZERO
+conflicting final resolved labels. This sample supports variable generated
+patches/selection rather than random grading of identical final patches; it
+does not prove universal determinism.
+Also verified two control traces with harness "continue" nudges after a
+verifier printed submit_patch as text instead of calling the tool. They produce
+4/6 fixer segments despite a three-iteration agent graph. One task is solved
+in both arms, the other loses to memory; this anomaly is not the observed
+control advantage, but the graph's cap is not the whole executed protocol.
+
+**Conclusion / next discriminating work (not launched):**
+The negative result stands. It does NOT establish that useful memory cannot
+help: this arm mostly exposes identities of discarded patches, behind an
+undisclosed retrieval workflow, on top of existing deterministic protection,
+while a weak gate often ends trials before any experience can be used.
+The card refinement is necessary channel repair, not a sufficient explanation
+or a validated next winner. Before another GPU comparison: make critical
+retrieval actions visible in the actual prompt/response, bind feedback
+explicitly to discarded vs applied code, and test issue-specific checks that
+distinguish stale expectations from genuine regressions. Any gate/context
+fix must apply symmetrically and be re-baselined. Then compare identical
+protocols with evidence present vs withheld; judge changed decisions and
+paired solve outcomes, not JSON delivery. Do not spend LoRA training solely
+on recall invocation (already 158/158) or train from these unvalidated failures.
+
+### 2026-11-14 - PRE-REGISTERED corrected memory v4, before resubmission
+
+**Authorization:** user: "But you found a ton of bugs and issues go fix and
+resubmit?" This authorizes one corrected private Kaggle notebook run using the
+same four-L4 allocation class. No Drive/Colab authorization or leaderboard
+submission. Previous Kaggle version verified COMPLETE before staging.
+
+**Hypothesis:** with actual edit evidence, discoverable retrieval, explicit
+code-version binding, and repaired shared guardrails, within-task saved evidence
+improves paired solving relative to evidence withheld under the SAME protocol.
+This is not cross-task learned memory or LoRA. Shared workflow repairs are NOT
+isolated by comparison with the historical v3 scores.
+
+**Concrete changes, shared by BOTH arms unless noted:**
+- Change-first bounded cards include actual diff lines and named failure
+  evidence; inline fixer protocol and self-describing recall expose show/note.
+  Candidate failures explicitly say whether their code is currently applied.
+  Notes carry the fingerprint they describe, not an implicit current-state claim.
+- Fixer performs one focused issue-contract check before DONE, or explicitly
+  reports NOT RUN; records a short unverified contract/change/check note.
+  This repairs the immediate-edit-then-stop instruction, not a correctness oracle.
+  The CLOSED repro-gate experiment is not reopened: no magic-print repro gate.
+- Gate captures original protected tests/harness config BEFORE edits via a
+  private Git index. Forbidden changes are rejected/restored before test
+  execution; pytest settings inside pyproject are protected, while legitimate
+  production dependency metadata can change.
+- Rollback and candidate restoration now cover all production paths, including
+  added/deleted files and non-Python metadata, not just Python source.
+  Python syntax and existing-test regressions are checked; test selection
+  handles direct and parent-module imports. Passing is explicitly NOT proof
+  that the issue is solved. Existing failure-count/earliest-tie selection remains
+  an imperfect proxy, not learned semantic ranking.
+- No GATE_ERROR -> ACCEPTED fallback. Pytest timeout, unusable output, failed
+  Git/patch operations and corrupt state fail explicitly. Baseline comparison
+  restores the candidate in finally; a private empty bytecode prefix prevents
+  stale .pyc reuse across comparisons. Collection errors retain worse ranking
+  than ordinary failing tests.
+- Three candidates is a task-global cap, not merely a LoopAgent invocation cap.
+  A finalized patch is restored exactly if a harness re-entry changes it.
+  Verifier explicitly calls the actual submit_patch TOOL after the gate:
+  removed the contradictory "one tool call" instruction.
+- Context mitigation: include_thoughts=false in BOTH sampling configs, retaining
+  thinking_budget=4096, max_output_tokens=5000, temperature=0.2 and top_p=0.95.
+  Pinned compiler supports stripping accumulated reasoning while preserving
+  visible actions/tool results; isolated exact-source helpers executed and
+  verified this. Bounded reads are requested. This does not guarantee no context
+  overflow: any remaining error counts as a failure, without retries of the run.
+- CONTROL uses identical prompts, tools, skill metadata, gate and sampling.
+  Only EVIDENCE_ENABLED=False in its two memory.py copies differs. Its recall
+  withholds saved candidates/notes, and show is explicitly unavailable. Both
+  arms retain identical internal deterministic candidate protection. Audits now
+  cover BOTH arms and report nonempty recalls, patch reads and note calls.
+
+**Validation before launch:** 17 targeted tests pass on Windows and the same 17
+pass on Ubuntu WSL, with no platform skips. Actual Linux pytest integration
+verifies patched failure -> baseline comparison -> complete rollback -> harmless
+edit acceptance/finalization. WSL initially lacked pytest; restored pure-Python
+test dependencies to a session-only directory, not the repository/runtime.
+Pylance syntax checks passed for core scripts/builders/runner. Frozen v1-v3 and
+the earlier CPU card variant remain untouched. Unlaunched initial v4 preflight
+snapshots are preserved with _preflight suffixes; final v4 below includes the
+collection-error ranking regression.
+
+**Frozen inputs:**
+- Arms: colab_fasteval/arms_memory_kaggle_v4; notebook: kaggle_pkg/push_memory_v4.
+- Notebook SHA256: 457d8b3d42af68d22d84771b727ec2015e0a2e14db18604c2c35948ad014150a
+- Bundle SHA256: b5733cafde088a88876bff6ac675db60b8abe5760c15fbeb2768ac7585c66200
+- Tasks SHA256: 553ff06b23d2c38522727fd40a73f31e1037acbb209b3b35d8c093f4981bda94
+- Control map SHA256: e02306f97d75bbeb050e8f0e49e29cc6062e5a6e405b8e1c45195a0b43057adf
+- Memory map SHA256: 5bc073c6ac700a22da049248ae2e801915367215cbe9179ee5dcba8347da5a62
+
+**Design/caps/decision rule, fixed before push:** same 26 FAMILIAR development
+tasks, four paired rounds, alternating order, one model server/GPU and concurrency
+8 per GPU. E4B packed model v2, no adapter. Separate one-task memory smoke,
+240-second process cap, main-equivalent 80 calls / 30 minutes / 200 turns.
+Strict first-recall response smoke must pass before main. Main deadline 2,700
+seconds; actual Kaggle push --timeout 3600 hard platform cap, four L4s requested
+and checked by the first notebook cell. At most four L4 device-hours requested;
+Kaggle quota weighting/dollar costs are not independently verified.
+No automatic re-push or expanded budget if anything fails.
+
+Exploratory score signal: memory wins >=3/4 rounds AND >=4 extra solves out of
+104. Delivery requires >=99/104 valid task-runs in EACH arm, control nonempty
+recalls exactly zero. Report all errors and trace-level use, not just compliance.
+Keep old v3 47/104 vs40/104 as historical receipts, NOT an unchanged-control
+causal comparison. No promotion or leaderboard claim before actual outcomes.
+Preserve new outputs separately under the v4 and v4_source directories.
+
+### 2026-11-14 - Corrected v4 submitted; remote source verified
+
+- Final preflight independently verified registered notebook/maps, all embedded
+  Python syntax, identical prompts/tools/gate across arms, equal empty initial
+  recall payloads and preserved v1-v3 hashes. Final 17/17 Windows and 17/17 WSL
+  tests passed after the collection-error ranking fix.
+- Rechecked old remote COMPLETE, then executed exactly ONE
+  `kaggle kernels push -p kaggle_pkg\push_memory_v4 --timeout 3600 --accelerator NvidiaL4`.
+  CLI confirmed **Kernel version 4 successfully pushed**.
+- At 2026-11-14 23:57 PST, remote status **RUNNING**. Downloaded source/metadata
+  to the separate v4_source directory and verified ALL cell source strings
+  exactly match the pre-registered notebook. Do not repush.
+- Read-only quota check: GPU used 5.18h / remaining 54.82h / total 60h, next
+  refresh 2026-11-21 UTC. This is account quota, not v4 billed usage or a dollar
+  estimate. Four L4s requested with the 3,600-second platform cap.
+- Version-specific log retrieval returned no .log files yet. Actual GPU names,
+  structural compiler checks, live server readiness, strict smoke and main
+  outcomes are therefore NOT yet verified. No performance claim.
+- Temporary session-only pytest dependency files were removed after validation;
+  no repository/runtime dependency manifests or shared Python environments changed.
+
+### 2026-11-15 - V4 ERROR: smoke timed out during localization, no main outcomes
+
+Recovered full available v4 output and notebook metadata/source. Downloaded
+N_none and M_memory arm hashes both exactly match their frozen v4 directories.
+This is not evidence that an old prompt/sampling package was accidentally run.
+
+Actual notebook log sequence:
+- 12.8 seconds: four NVIDIA L4s observed.
+- 142.2 seconds: both arms structurally compile and registered bundle SHA matches.
+- 492.4 seconds: all four model servers healthy; separate agent smoke starts.
+- 732.5 seconds: smoke subprocess hits its registered 240-second cap (rc124).
+  No task_result or structured trace was written. No main paired rounds start.
+- 741.2 seconds: notebook raises "Memory smoke incomplete"; servers stopped.
+  Notebook postprocessing ends around 749 seconds (~12.5 minutes wall time).
+  Nominal four-device occupancy over that wall time is ~0.83 L4 device-hours,
+  NOT independently measured quota billing or a dollar cost.
+
+The preserved task log is more informative than the empty final audit:
+- 7.6/7.9 task-log seconds: correct first recall call and returned memory output.
+- Agent then searches generic MIT text, reads README, attempts missing
+  docs/index.md, reads LICENSE and CITATION.cff, and edits CITATION.cff at70.6s.
+- It edits README at131.9s and reads translated documentation index files at
+  146/160/178s. No logged get_status, note, focused issue check, gate invocation
+  or submission before termination.
+- Actual task asks to fix the Apache-2.0 identifier in a DOCUMENTATION EXAMPLE,
+  not to relicense the project. Observed file choices indicate scope/localization
+  drift. Full intermediate edit bytes were not exported, so do not invent a
+  final candidate patch or official grade.
+
+Classification: operational smoke timeout plus observed model scope drift,
+NOT a compiler/GPU startup failure and NOT demonstrated recall noncompliance.
+The progress JSON's zero recall counts aggregate an EMPTY structured-trace set;
+they do not contradict the successful recall visible in the partial task log.
+Likewise solved=0/n=0 is missing completion, not a scored 0/1 task.
+The new gate was never reached in this GPU run; its actual in-harness execution
+remains unverified despite the passing local integration tests.
+
+One stochastic trajectory cannot isolate which changed prompt/sampling element
+contributed to drift. Focused checking had not even been reached, so there is no
+evidence that running the new checks consumed the timeout. The smoke cap also
+covers evaluator startup, not only agent work. Do not blindly raise the cap,
+loosen the audit, flip sampling back, or interpret this as a negative main A/B.
+Next staging should distinguish bounded tool-wiring conformance from open-ended
+task solving and explicitly distinguish unavailable trace audits from invalid
+ones. A real-task smoke still needs its own declared completion criterion.
+No new GPU launch, re-push or budget expansion after this failure.
+
+### 2026-11-15 - V5 PRE-REGISTRATION: isolated bounded wiring smoke
+
+User approval: "Fix and submit". Written before the single authorized v5 push.
+V4 is ERROR, not running; current account quota is 5.54h used / 54.46h remaining
+of60h. This is account-wide quota, not an independently measured v4 cost.
+
+Repair scope:
+- Keep both frozen v4 MAIN arms byte-identical, including prompts, tools,
+  gate, sampling and the same 26 familiar development tasks. Only the smoke
+  receives a separate short fixer prompt and synthetic task/test oracle.
+- The fixture borrows fastapi_14492's repository/base snapshot identity, NOT
+  its benchmark question or grading patch. Change only LICENSE's first line
+  by appending [memory-wiring-probe]; an independent test checks the complete
+  file against baseline plus exactly that marker.
+- Require observed native recall, edit, successful exact assertion check,
+  successful note, ACCEPTED gate and native submit in order, exactly one
+  submission, a completed structured trace and successful synthetic grading.
+  The unchanged verifier and real shared gate run; this is not a stubbed gate.
+- Smoke workspace, agent and task input are separate from main evaluation.
+  Round0 is excluded from ALL main totals. Fixture success proves wiring
+  conformance only, not main-policy localization/compliance or benchmark gain.
+  Main arms still require their own strict delivery audit.
+- Missing traces/scores are now explicitly unavailable (None counters),
+  with missing-task and timeout diagnostics, rather than success-shaped zeros.
+  Strict audit is not relaxed.
+
+Registered limits/criteria unchanged: four L4s, one server/device, four paired
+rounds x26 tasks (104 outcomes/arm), concurrency8/device; smoke240s,
+main2700s, platform3600s. Main task limits80 calls/30min/200 turns.
+Score signal requires >=3/4 round wins AND >=4 extra solves; delivery requires
+>=99/104 task-runs EACH arm and zero nonempty control recalls. Familiar repeated
+development tasks are not held-out leaderboard evidence. No LoRA/leaderboard
+submission, Drive consent, increased cap or automatic re-push.
+
+Frozen package: kaggle_pkg/push_memory_v5; main arms:
+colab_fasteval/arms_memory_kaggle_v4.
+- Notebook SHA256: 8dc7f05a2e12ce8092efae4870d76a52d5c07c056c0524dd8e9394f67aa2d90a
+- Bundle SHA256: a25a93f2d60b094669ae7d41114438b0bee6d7d175d4296295fa1681ad5cf26b
+- Main tasks SHA256: 553ff06b23d2c38522727fd40a73f31e1037acbb209b3b35d8c093f4981bda94
+- Control map: e02306f97d75bbeb050e8f0e49e29cc6062e5a6e405b8e1c45195a0b43057adf
+- Memory map: 5bc073c6ac700a22da049248ae2e801915367215cbe9179ee5dcba8347da5a62
+- Synthetic task SHA256: 97c1e50a44fcfed48a8041dbf89519c8eab3e0d20c255aba0cee5c2de60f4992
+- Synthetic agent map: 6fbe05ea21538431a0a7191e559843bc8c4190ebb1b5ff9fadb07104f2ab5776
+
+Validation before launch: 21/21 tests Windows and21/21 WSL, including actual
+recall/check/note/gate scripts, baseline-oracle failure and exact-patch success,
+missing/failing/out-of-order stage rejection and unavailable timeout reporting.
+Pylance syntax checks pass. Embedded Python/notebook cells parse; actual embedded
+bundle/tasks/agent match registration, runner matches source, main files match
+frozen v4 and wiring arm differs ONLY in fixer prompt. V1-v4 notebook hashes
+still match their registrations. These are CPU/source checks, not GPU success.
+
+Grader limitation correction from pinned swegemma verification source: official
+patch filtering protects WHOLE pyproject.toml, tox.ini, setup.cfg and pytest.ini,
+not only test settings. Local gate allowance of production metadata edits does
+not establish that grading retains them. LICENSE is not protected. This v5
+smoke repair does not change the main gate or resolve that separate limitation.
+
+Next action: ONE push with --timeout3600 --accelerator NvidiaL4, followed by
+remote source equality and actual status checks. GPU allocation, live gate,
+WIRING_SMOKE_OK and all main outcomes remain unverified until remote receipts.
+
+### 2026-11-15 - V7 ran: smoke fixed, main TIMED OUT; V8 goes lean (user chose B)
+
+V7 cleared the wiring smoke on GPU (WIRING_SMOKE_OK; fixture valid=true, solved=1)
+and, for the first time, the memory NOTE write-channel was active in the main
+rounds (18-33 note saves per pass vs ZERO in every prior run). The audit fix held.
+
+But all four first-wave main passes hit the 1800s cap with only 15-21 of 26 tasks
+done (rc124), so the run aborted on the first incomplete pass. This is a capacity
+problem, not a bug: the v4 protocol (per-task focused pytest check + heavier gate)
+runs each task ~2-2.8x slower than the v3 protocol the schedule was budgeted from.
+Measured throughput: memory ~106-120s/task, control ~86-112s/task (memory is
+slower because it issues more recalls/notes). 104 outcomes/arm = 8 passes x 26
+tasks needs ~5,200s of GPU-wall; the notebook hard-caps at 3,600s. Infeasible.
+
+Partial, truncated, round-confounded signal (NOT a verdict): on the 19 tasks both
+arms completed, memory solved 6/19 vs control 9/19; raw partial memory 8/32 vs
+control 16/37 attempted; shows=0 everywhere (model never pulled full patches);
+control nonempty recalls=0 (isolation held). This is the third look (v3 full 40 vs
+47; v7 partial 6 vs 9) where memory trends behind and is slower.
+
+User decision at this fork: option B - keep the full 104/arm design but DROP the
+per-task pytest check to restore speed. Implemented in v8:
+- The fixer's "run ONE focused existing test" step is removed from BOTH arms
+  (equal change, comparison validity preserved). The agent still saves a
+  task-memory note (cheap; keeps the memory write-channel exercised). The verifier
+  gate still runs the regression check - verification is not removed, only the
+  redundant per-task pytest.
+- Everything else retained: memory recall/note/show dispatch fix, saved-note audit
+  fix, shared gate, sampling, 26-task cohort, synthetic wiring fixture (byte
+  identical, agent_hash ef4b0866...). protocol_revision6, experiment_revision8.
+- Eval deadline raised 2700->2850s for second-pass margin (512s boot + 2850 =
+  3362 < 3600 cap); per-pass cap stays 1800s. v3 proved 104/arm completes at this
+  speed, so the lean v8 should fit.
+
+New frozen arms `colab_fasteval/arms_memory_kaggle_v8` differ from v6 ONLY in the
+fixer prompt; N_none vs M_memory differ only by EVIDENCE_ENABLED. Package
+`kaggle_pkg/push_memory_v8`.
+- Notebook SHA256: b0a0fc3cb869eae17271c1000d1daa597c07dcffce64dd0ed6e54e61cb28457d
+- Bundle SHA256: 376f84322f5ac284600d0763ea65302ad8196daf3e0e80360eebb3f355e943d1
+- Memory map: 1923cd081bd4f3717097acc29276d5177cb0838497e3331c68a2a8ce0399ca6a
+- Control map: e577088a1c12570cf97e3aa5d5971087ff7dbc10195e51fda56fc306916a26db
+
+Validation: 23/23 Windows and23/23 WSL; embedded bundle/tasks/wiring/runner match
+registration; embedded lean prompt confirmed (no pytest check, note retained);
+dispatch+audit fixes embedded; deadline2850 embedded; v1-v7 notebook hashes still
+match. One v8 push authorized after confirming v7 ERROR. Same240s smoke/3600s
+platform caps and the same score/delivery criteria. No LoRA, no leaderboard, no
+Drive consent, no automatic re-push. GPU allocation, smoke, and main A/B outcomes
+remain unverified until remote receipts.
+
+### 2026-11-15 - V6 ERROR: dispatch fixed but the audit missed the saved note; V7 fixes the audit
+
+V6 proved the dispatch fix worked. The actual v6 smoke trace shows all six stages:
+recall, edit, check (WIRING_ASSERT_OK), note (stdout `TASK_MEMORY: saved
+unverified agent note`), gate (ACCEPTED), submit - and the fixture graded
+solved=1 in83s. The note call again omitted `"action":"note"`, but this time
+`memory.py` SAVED it (dispatch fix), confirmed by the saved-note marker in stdout.
+
+The remaining failure was in `audit_wiring`, not the agent or the script: its note
+detection still required `options.get("action") == "note"` in the call ARGS, so it
+ignored a note that genuinely saved when the model omitted `action`. It reported
+observed=[edit,check,gate,submit], missing=[note], and the notebook ERRORED.
+
+Fix (runner only): `audit_wiring` now detects the note stage by the authoritative
+saved-note marker in stdout (`TASK_MEMORY: saved unverified agent note`), which
+only the note branch ever prints - independent of whether `action` was explicit
+or inferred. A guard test confirms a task-memory call that returns recall JSON
+(no save) still counts as missing note, so detection cannot be faked. The main
+`audit_trace` note/show counters now also recognize inferred calls (`"note"`/
+`"candidate"` present), so main-arm memory usage is reported accurately.
+
+Verified against the real v6 trace: `audit_wiring` now returns valid=true,
+observed=[edit,check,note,gate,submit], ordered=true, submit_calls=1. This is the
+actual on-GPU trajectory, not a synthetic one.
+
+This changes ONLY the runner/notebook. Main arms are unchanged: the v7 embedded
+bundle SHA is byte-identical to v6 (9fd2f74d318f39f535c34d901536163d5453f17fc8d0b596123f103233bba345)
+and arm maps equal v6. protocol_revision stays5; experiment_revision7. Reuses
+frozen arms `colab_fasteval/arms_memory_kaggle_v6`; package `kaggle_pkg/push_memory_v7`.
+
+Validation: 23/23 Windows and23/23 WSL incl. the new action-omitted note audit
+test; embedded payload/hashes verified; embedded runner carries the audit fix;
+wiring agent/tasks unchanged; v1-v6 notebook hashes still match registrations.
+
+- Notebook SHA256: 5e92a83c3f7f3088bb05e7aa3dd772722cb3a1db8c0cc0723cb6295a69bf6fe7
+- Bundle SHA256: 9fd2f74d318f39f535c34d901536163d5453f17fc8d0b596123f103233bba345
+- Memory map: adee79dc72f7cdfb15e72ea20ef1e490a5e1b45d01329587bca8b167cccedc13
+- Control map: 7b6667fbca3634b39394f8e08a2355e35bc20c6afe009cdfbf06026eb6eadee9
+
+Approval "Fix and submit"; one v7 push authorized with --timeout3600
+--accelerator NvidiaL4 after confirming v6 ERROR. Same240s/2700s/3600s caps and
+criteria. No LoRA, no leaderboard, no Drive consent, no automatic re-push. GPU
+allocation, live gate, WIRING_SMOKE_OK and all main A/B outcomes remain
+unverified until remote receipts.
+
+### Round-four memory motivation: recovered candidate and submission failure (2026-11-15)
+
+The user confirmed that `G_startup/round_4` is the 16/26 pass motivating the
+memory investigation. The original conversation followed that pass from a
+question about retry context to controlling retained foreknowledge, then to
+preserving task state and reusing successful repair patterns across tasks.
+The prior answer dismissing the hypothesis as luck and claiming the 16/26
+disproved memory is retracted. Neither the startup-gate A/B nor the later
+conversation-history toggle tests a curated cross-task pattern library.
+Also retract the earlier assertion that the full preceding retry conversation
+was definitely visible: the fixer configuration is `include_contents: none`,
+and the exact inference payload was not captured.
+
+Re-read the six round-four paired ATIF traces and patches. In
+`C_pack1/round_4/rich_3454`, four attempted edits initially failed with
+`old_string not found`. After rejection and retry, step 24 successfully
+changed the URL character class by adding `@`; the removed and added source
+lines match the `G_startup` winning final patch exactly. Step 33's gate
+accepted the candidate and instructed `Call submit_patch now`, but the
+verifier's next message was text containing `submit_patch`, with no native
+tool call. The fixer's subsequent `get_status` reported
+`patch_submitted: false`. After a system prompt to continue, it edited again;
+the final saved source patch adds both a space and `@`. C ultimately overflowed
+and task grading failed; G's `@`-only patch passed. C had also modified test
+files, so matching source lines do not prove an independent replay of its
+intermediate workspace would pass. This case motivates protecting candidates
+and verifying native submission, rather than describing the failure solely
+as an overflow or lack of a correct idea.
+
+On `fastapi_14492`, both arms received a rejection after editing pyproject.
+The control's broad grep returned 5,000 characters without the target path;
+the treatment's focused Python/Markdown grep included the target source path.
+The treatment then made the requested source edit, which was rejected by an
+existing expectation and later restored by the gate. This is observed
+different information acquisition and patch restoration, not proof that
+prior task solutions were supplied to the model. The earlier 31B
+`template-as-oracle` case is a separate, logged repository-example finding;
+its original raw trace has not been reverified in this review.
+
+The corrected memory report preserves these distinct mechanisms and retires
+its earlier unvalidated census and categorical claims. No new GPU experiment
+was registered or launched.
+
+### 2026-11-15 - V5 ERROR exposed a real note-dispatch bug; V6 fixes it
+
+V5 reached the GPU and the synthetic fixture GRADED successfully (solved=1 in79s)
+with four healthy L4s, but the notebook raised "Synthetic end-to-end wiring
+failed" and ended ERROR before any main round. This was NOT another timeout and
+NOT a stochastic drift: the strong smoke audit correctly rejected the run.
+
+Root cause, confirmed from the actual trace and reproduced at runtime:
+- The fixer's note call was `{"skill_name":"task-memory","file_path":
+  "scripts/memory.py","args":{"note":"..."}}`. It OMITTED `"action":"note"`.
+- `memory.py` declared `--action` with `default="recall"`, so the skill toolset's
+  dict->flags conversion ran `memory.py --note "..."` which SILENTLY recalled and
+  saved nothing. The note stage never executed; `audit_wiring` reported
+  observed=[edit,check,gate,submit], missing=[note].
+- Reproduced locally: `memory.py --note X` (no `--action`) prints the recall JSON
+  and does not save the note.
+
+Correction: V5 demonstrates an omitted-action dispatch defect, but the
+audited V3 traces contained no note/show calls. Its role in V3's zero-note and
+zero-show observations is unproven. The smoke surfaced a genuine dispatch bug;
+it does not establish a causal explanation for the V3 result.
+
+Fix (producer, minimal): `memory.py` now defaults `--action` to None and infers
+the action when it is omitted - note when `--note` is present, show when
+`--candidate` is present, otherwise recall. Explicit `--action` still wins, so
+all existing recall/show/note calls are unchanged; the only behavior change is
+that a `--note`/`--candidate` call can no longer silently fall back to recall.
+Verified at runtime: note-without-action now saves and is visible on the next
+recall; no-arg and explicit recall unchanged; `--candidate` routes to show.
+
+Because this changes both main arms' memory channel, it is a protocol change:
+protocol_revision5, experiment_revision6. New frozen arms
+`colab_fasteval/arms_memory_kaggle_v6` differ from frozen v4 ONLY in the two
+`memory.py` copies (dispatch fix); N_none vs M_memory still differ only by
+`EVIDENCE_ENABLED`. The separate synthetic wiring fixture, prompts, gate,
+sampling, task cohort, caps and criteria are otherwise unchanged from v5. The
+fixture still borrows only fastapi_14492's snapshot identity and is excluded
+from all main scores.
+
+Validation: 22/22 tests Windows and22/22 WSL, including a new regression that
+runs the real `memory.py` with `--note` and no `--action` and asserts the note
+is saved and recalled, plus `--candidate` routing to show. Embedded bundle,
+tasks, wiring agent and runner match registration; embedded memory.py carries
+the fixed dispatch; main files match frozen v6; wiring arm differs only in the
+fixer prompt; and v1-v5 notebook hashes still match their registrations.
+
+Frozen package `kaggle_pkg/push_memory_v6`; main arms
+`colab_fasteval/arms_memory_kaggle_v6`:
+- Notebook SHA256: b44c371374bafd83da483c60b1aba8d2ac7e20200b51dbaa1805bb472287b38f
+- Bundle SHA256: 9fd2f74d318f39f535c34d901536163d5453f17fc8d0b596123f103233bba345
+- Main tasks SHA256: 553ff06b23d2c38522727fd40a73f31e1037acbb209b3b35d8c093f4981bda94
+- Control map: 7b6667fbca3634b39394f8e08a2355e35bc20c6afe009cdfbf06026eb6eadee9
+- Memory map: adee79dc72f7cdfb15e72ea20ef1e490a5e1b45d01329587bca8b167cccedc13
+- Synthetic task SHA256: 97c1e50a44fcfed48a8041dbf89519c8eab3e0d20c255aba0cee5c2de60f4992
+- Synthetic agent map: ef4b0866859985c540b59de7e14d52c456d811530219b321c5579c04f8f3124e
+
+User approval for this repair-and-resubmit: "Fix and submit". V5 is ERROR, not
+running; quota5.54h used/54.46h remaining of60h (account-wide, not v5 billing).
+One v6 push authorized with --timeout3600 --accelerator NvidiaL4. Same240s
+smoke/2700s main/3600s platform caps and the same score/delivery criteria. No
+LoRA, no leaderboard prediction, no Drive consent, no automatic re-push. GPU
+allocation, live gate, WIRING_SMOKE_OK and all main A/B outcomes remain
+unverified until remote receipts.
+
+### 2026-11-15 - V9 task-isolated timeout: staged, not launched
+
+The user selected a **2000-second wall limit per task**, rather than a single
+1800-second kill of the whole 26-task evaluator. V9 retains the V8 evidence
+and withheld arms and their prompts/gate, the 26 familiar tasks, four paired
+rounds, the synthetic wiring smoke, the 30-minute agent budget, and the
+pre-existing score/delivery criteria. It launches up to eight independent
+single-task evaluator processes per GPU. On an individual timeout, the runner
+stops that evaluator's process tree, including descendants in separate
+sessions, and leaves other tasks running. The timer includes evaluator startup
+and grading; equivalence to the competition timeout is not established.
+
+Each task persists separately. A grade written before termination is retained;
+a task without one is explicitly ungraded, never converted to an automatic
+failure. The 2850-second evaluation-wide deadline is separate and may stop
+in-flight tasks or leave tasks unstarted. Thus 2000s/task does not guarantee
+full 104/arm coverage. Existing paired score criteria are calculated only if
+all tasks have grades; partial totals are not paired comparisons. The intended
+3600s notebook cap requires the platform launch limit; it is not enforced by
+the notebook itself. At four L4s, one hour would correspond to four L4
+device-hours, not a verified billing amount or available quota.
+
+Staged package `kaggle_pkg/push_memory_v9`: notebook SHA
+`5d7901137beb40e10c61900a780b4788b194be400948b0dcea064ea45863e54b`;
+bundle SHA `376f84322f5ac284600d0763ea65302ad8196daf3e0e80360eebb3f355e943d1`.
+Arm hashes match V8. The frozen registration contains exact task IDs, limits
+and criteria. Tests in WSL exercised a real detached child and an independent
+concurrent task; focused Windows regression tests passed as well. This does
+not validate actual Kaggle resource usage, throughput or GPU results.
+Read-only remote status was ERROR for the previous notebook run. V9 has not
+been launched; no new GPU allocation, cost or result is claimed.
+
+### 2026-11-15 20:12 PST - V9 single launch authorized
+
+User: "launch it". Preflight verified the frozen V9 notebook SHA above, Python
+syntax, the 2000s task limit and 2850s evaluation deadline. Latest previous
+remote notebook status is ERROR, not running. Authorizing exactly one push of
+`kaggle_pkg/push_memory_v9` with `--timeout 3600 --accelerator NvidiaL4`;
+no automatic re-push, leaderboard submission or Drive consent. The integrated
+browser could not access the private notebook, so current account GPU quota
+has not been independently refreshed. Actual allocation, consumption and
+smoke/main results require remote receipts; launch acceptance alone is not
+proof that four L4s are running.
+
+Launch receipt: Kaggle accepted exactly one push as **version 9** with the
+requested 3600s timeout and NvidiaL4 accelerator. Status after push: **QUEUED**.
+Version-specific remote source and metadata were pulled into
+`Outputs/e4b_task_memory_kaggle_20261115_v9_source`; all six notebook cell
+source texts exactly match the preregistered package (Kaggle normalizes the
+source representation). No actual GPU allocation, smoke result, main result,
+or cost is yet observed. Do not push again while this version is queued/running.
+
+### 2026-11-15 - Parallel Colab synthetic memory-controller LoRA pilot, preregistered
+
+The user requested parallel work while Kaggle runs and answered "ready" for
+one L4, a two-hour limit and a 271.09-CU stop balance. Read-only Colab receipt:
+277.09 CU, 0.00 CU/hour, zero assignments before allocation. No G4, Hugging
+Face download, leaderboard submission or automatic repeat is authorized.
+The user-visible terminal handles Drive consent; internal shells do not.
+Latest independent Kaggle V9 state: RUNNING; it is not changed by this pilot.
+
+This is a new bounded engineering pilot, NOT a solve-rate experiment.
+It reconstructs the BF16 text stack from the exact cached packed E4B source,
+including tied embeddings and persistent layer-scalar buffers. The staged
+weight file must hash to the public packed-checkpoint receipt
+`19d89d2a4b3e401a3eae75ec08ab112810421a036c91d8c8226b686be7fe0c5d`.
+The approach is informed by Dmitrii Gluzdov's public E4B training recipe;
+the new implementation is in `train/packed_memory_lora.py`.
+
+Data: 24 original synthetic memory-tool scenarios, 20 training and four
+held-out wording-index examples. Two behaviors only: recall first, and inspect
+a rolled-back candidate's truncated saved patch without assuming it is
+applied. There are no competition issues or mined repair answers in this
+curriculum. The validation split is NOT held-out repair mechanisms. Actual
+cached-tokenizer testing verified stable assistant-mask boundaries for all
+24 rows, maximum 191 tokens, 1080 supervised tokens in total. Local
+Transformers needed an extra-special-token metadata compatibility override;
+the restored Colab environment must independently pass the native template
+check without modifying the cached checkpoint.
+
+Recipe: one pass, 20 optimizer updates, batch one, seed 42, rank 8, alpha 4,
+dropout zero, q/v text projections only, AdamW LR 1e-5, maximum 768 tokens,
+gradient checkpointing and loss only on native assistant target positions.
+Gate: finite loss and finite, nonzero LoRA gradients; export BF16 adapter
+tensors with serving text-stack names. Log validation NLL and memory usage.
+No solve improvement is claimed from a lower NLL. Packed-base numerical
+fidelity, adapter reload equivalence and actual served-adapter effect are
+still unverified; do NOT submit or promote the adapter before those checks
+and a separately preregistered matched solve-rate comparison.
+
+Operational limits: visible launcher monitors balance and stops its specific
+session at or below 271.09 CU, on failure/completion, or at its two-hour
+monitor deadline. A separate 6600s worker budget covers preparation/training,
+but remote preparation phase timeouts and the local monitor are not a
+platform-enforced runtime cap. If the launcher/terminal is lost, inspect and
+stop the session manually; never assume client disconnection stops billing.
+Drive output: `gemma_fasteval/lora_runs/e4b_memory_lora_20261115_p1`.
+Session: `e4b-memory-lora-20261115-p1`. No second idle GPU will be allocated
+without a concrete independent runnable job.
+
+Preregistered source SHA256:
+- packed_memory_lora.py (initial staging): `4d77133a7aa810b4b227a31f332ddf343ab9d4a52389af9eee0369fc3fcf0657`
+- colab_packed_memory_job.py: `78370b4224569a6708184136d9422e50eb13975212229cfbf79b94c3d98ebdc8`
+- colab_packed_memory_status.py: `3d6b604166980c81abeb6909bdcb29f96cda8e3d91c1825f89aaed7fb4e574c6`
+- colab_packed_memory_stage.py: `6e1a3f89a3b52772a4d27293f3a364c8c884df724ffb3e56beb3d0c768e67017`
+- requirements_packed_memory.txt: `43d8ef399cbe6d92acc8c815ff1e24f1186559fcbbcffb353a7856682ff50371`
+- colab_memory_lora.sh: `07a986cf220b6a3e669c7d057b0ea619796a880902a585fde71c916988283232`
+- Canonical synthetic-data SHA256: `387d0ecfbb89a7ac2f5c07ebe56a9fb37d97ba85b32a4e0b51a5a0ee1ed3bfcb`
+
+Three focused CPU tests, Python compilation and launcher shell syntax pass.
+Model loading, GPU gradients and export remain unverified until remote receipts.
+
+Pre-training refinement while the worker was still restoring the environment:
+annotate the mixed string/integer argument dictionary and retain a direct
+reference to the text base after PEFT wrapping, rather than traversing PEFT's
+dynamic attribute forwarding. No recipe, data, target, LR or budget change.
+Updated trainer SHA256:
+`7dfa477e02a1ad1756eb4cf16841f85892768a7011297d01da95b628d73234ea`.
+Focused data/masking tests still pass. Remaining editor diagnostics concern
+the local older Transformers and absent compressed-tensors package; remote
+restored-environment compatibility is not inferred from that local interpreter.
+
+### 2026-11-15 - Parallel pilot interrupted before training; resources released
+
+The user completed Drive consent in the visible terminal. The worker started
+as PID 1779 in session `e4b-memory-lora-20261115-p1`; actual usage was one L4
+at 1.94 CU/hour. The validated trainer refinement above was uploaded to the
+staged worker directory; the uploader reported success. A later independent
+remote hash query did not succeed because the runtime had been terminated.
+
+The last substantive preparation receipt showed the restored environment
+present and the cached weight copy at 5,866,905,600 of 11,513,861,828 bytes.
+No checkpoint hash receipt, model-load success, gradients, optimizer updates
+or adapter export was observed. This is NOT a failed solve-rate experiment
+or evidence against memory, LoRA, or packed-base compatibility.
+
+The original visible launcher's usage request encountered a transient WSL
+DNS failure resolving `colab.research.google.com`. Its fail-closed trap
+terminated the session successfully, rather than continuing to spend without
+a balance check. Terminal exit code: 1. Subsequent independent usage receipt:
+**276.82 CU, 0.00 CU/hour, zero active assignments**. Starting display was
+277.09 CU, a displayed decrease of 0.27 CU, not an itemized billing receipt.
+The old runtime API returns entity-not-found. No automatic restart occurred.
+
+Producer fix for future runs: `colab_fasteval/colab_memory_lora.sh` retries
+read-only usage/status commands at most three times with five-second waits,
+checking the existing overall monitor deadline before each attempt. Failed
+partial stdout is surfaced on stderr, never admitted as valid status.
+Persistent failure still stops the specific runtime. Allocations, Drive
+consent, uploads and training are NOT retried. Balance parse failures still
+stop safely; there is no stale-balance or guessed-success fallback.
+Revised launcher SHA256:
+`0ced0a707f1c96650997c3f964ff8bf80bfe0596090c54ea3339635a2b04f494`.
+Five focused Linux/WSL tests pass: transient usage failure, transient status
+with a misleading partial terminal marker, persistent failure cleanup, and
+the two existing trainer data/masking cases. Bash syntax passes. This
+validation uses a mock CLI and does not establish a successful remote pilot.
+A new allocation requires a new authorized run/tag, not overwriting p1.
+
+### 2026-11-15 - Paper Track evidence review and implications
+
+Added a six-source review above the archived/retracted material in
+`MEMORY_RESEARCH_PRESSURE_TEST.md`, with primary links and limits:
+
+- Found Is Not Fit: target recall and actual budget admission differ.
+  CPU/byte-budget study, not Gemma repair evidence; connects directly to our
+  focused-versus-truncated grep case.
+- CodeGraph-Loc: concise symbols help conditional file reranking; naive
+  import PageRank hurts. No measured repair gain or proven exact-checkpoint
+  transfer. Avoid a graph rebuild as the default next bottleneck.
+- Missing edges: audit the actual tool version. Its 0.2.7 exact-name and
+  case claims must not be blindly applied to our newer extracted helpers,
+  which already have fallback resolution and relation case normalization.
+- Tests as Search Signals: proposed protocol only, useful as a hypothesis.
+- Local SWE-Agent graph/LoRA: its attached `apply_unified_diff` returns
+  constant patch/test success without applying or testing a patch. The
+  supplied attachment does not substantiate the claimed 14.2% to 46.0%
+  improvement. This is not a finding about intent or a rejection of LoRA.
+- Verifiable traceback compression: independent diagnostic guards catch
+  evidence loss; five authentic repair issues yield the same one solve
+  under all compared trace variants. Marker retention is not semantic
+  equivalence or an E4B solve-rate gain.
+
+Concrete next target remains relevant evidence being selected, used and
+preserved through retries/native submission, rather than repeating generic
+recall. The synthetic LoRA pilot is explicitly engineering-only.
+External-corpus preflight found 14 trajectories from 14 non-benchmark repos,
+but no native `call:edit_file{` steps fit 4096 cached context tokens and only
+two fit 8192. This was a cached-metadata filter, not E4B retokenization or
+independent regrading; do not silently truncate or train from source labels
+as though verified. No second GPU or new cross-task transfer run was launched.
+Read-only Kaggle status remains **RUNNING** for V9; no push or source change.
+
+### 2026-11-15 20:56 PST - V9 user-supplied live-log receipt
+
+The user supplied a read-only log snapshot headed "Running for 2401.5s".
+It confirms four NVIDIA L4s, adk_submission0.2.13/swegemma0.2.11,
+registered bundle hash match, four healthy servers, and synthetic wiring
+success at notebook elapsed528.3s (fixture80.65s). Main work began then.
+An independent read-only Kaggle status request still reports RUNNING.
+
+Parsed main TASK_END records in this snapshot (smoke excluded):
+
+| GPU / round / first arm | Completed and graded | Started | Not yet started in first arm |
+|---|---:|---:|---:|
+| 0 / 1 / M_memory | 14 | 22 | 4 |
+| 1 / 2 / N_none | 18 | 26 | 0 |
+| 2 / 3 / M_memory | 17 | 24 | 2 |
+| 3 / 4 / N_none | 15 | 23 | 3 |
+
+Total:64 completed/graded,31 still without an end record among95 starts,
+plus9 first-arm tasks not yet scheduled. All64 end records report
+status completed,rc0,graded true and no result/trace error. These are
+evaluation completions, NOT64 solves. TASK_END deliberately omits the
+result/recall payloads, so this paste establishes neither solve counts
+nor main-task memory-use compliance. No second arm has started in the paste.
+
+The oldest tasks were scheduled at528.3s: at the2401.5s header their
+age is about1873.2s, below2000s. Earliest task-wall expiration is around
+notebook2528.3s (42m08s), approximately127s after the pasted header.
+No observed timeout is therefore expected yet; these logs do not prove
+timeout cleanup has run successfully or that the remaining tasks are idle.
+
+Remaining design constraint, not changed in the active experiment:
+the runner waits for all26 first-arm tasks on a GPU before starting its
+second arm. It is task-isolated within an arm, not task-paired/interleaved
+across arms. The2850s evaluation deadline starts after smoke, around
+notebook3378.3s (56m18s); later-started tasks can be stopped by that
+global deadline before receiving2000s. Full208-task paired coverage
+remains at risk. Preserve the running preregistered source, await saved
+results/audits, and separate missing grades from scored failures.
+
+### 2026-11-15 21:30 PST - V9 finished: actual resolves; Colab remains idle
+
+Read-only Kaggle status is COMPLETE. Downloaded version9 artifacts into
+`Outputs/e4b_task_memory_kaggle_20261115_v9_review`: `memory_summary.json`,
+`memory_progress.json` and kernel log. Initial artifact retrieval hit a
+transient DNS failure; subsequent summary/progress downloads succeeded.
+These are saved grades, not TASK_END completion counts.
+
+| Arm | Resolved / graded | Descriptive rate | Expected task-runs |
+|---|---:|---:|---:|
+| M_memory | 17/45 | 37.8% | 104 |
+| N_none | 19/48 | 39.6% | 104 |
+
+Memory's observed rate is not better, but unequal incomplete cohorts are
+not the registered paired comparison and do not estimate a causal effect.
+Per-round actual graded resolves: M round1=8/23; N round2=12/24;
+M round3=9/22; N round4=7/24. Every opposite arm has0 graded and26
+not-started-deadline records. There are **zero same-round task pairs with
+both arms graded**. No registered round-win or complete-cohort decision
+can be computed. These familiar-task local rates are not leaderboard
+forecasts and are not directly comparable with the submitted0.06 score.
+
+The global2850s evaluation deadline fired around notebook3378.5s, leaving
+7 memory and4 control tasks ungraded. All104 second-arm task-runs never
+started. There were0 per-task2000s timeouts and0 reported process errors;
+this run does not demonstrate individual task-timeout cleanup. The11
+global-deadline records report rc-9 and missing traces. The platform's
+COMPLETE status is not a complete experiment: summary `complete=false`.
+The arm barrier caused the predicted coverage failure; preserve results
+and do not silently relabel ungraded/not-started tasks as scored failures.
+
+Saved recall audits are present for all93 graded task-runs:45/45 memory
+valid and47/48 control valid. This is not a full trace or memory-content
+forensic; retain the invalid control audit for later investigation rather
+than treating delivery as universally verified.
+
+Independent Colab receipt at21:30PST remains276.82 CU,0.00/hr,zero active
+assignments; runtime listing empty. The p1 run remains interrupted during
+staging, with no verified load, gradient, training update or adapter.
+The tested monitor retry fix has not been run on a newly allocated VM.
+No new Colab allocation, Drive prompt, Kaggle push or training restart.
+
+### 2026-11-15 - V9 full graded-trace forensic, not a score-only verdict
+
+User challenged the small difference as noise and asked for deeper traces.
+Initial numerical framing was insufficient:17/45 versus19/48 is descriptive,
+not evidence of degradation. There is no established equivalence/noise band
+either. On22 issues with all four first-arm grades, counts are17/44 versus
+19/44; no registered same-round crossover pair is available.
+
+Downloaded raw structured traces, task_results rows, final patches and
+selected actual test logs into the v9_review output directory. All93 raw
+grades match progress; re-running audit_trace reproduces all93 saved audits.
+Persistent evidence:
+- `Outputs/e4b_task_memory_kaggle_20261115_v9_review/trace_census.json`
+- `Outputs/e4b_task_memory_kaggle_20261115_v9_review/intermediate_span_check.json`
+- New corrected-report section beginning "V9 raw-trace forensic" in
+  `MEMORY_RESEARCH_PRESSURE_TEST.md`, above Paper Track/archived material.
+
+Reproduction helper:
+`C:\Users\biges\.copilot\session-state\b7d91ba8-5635-49cf-8008-7c44a69a2525\files\analyze_memory_v9.py`.
+Run from repository root with `python <helper-path>` to rebuild the census
+and changed-span check. Use `--case ARM ROUND TASK --start N --end N`
+for bounded raw timelines. SHA256:
+`40fe533a640e10e0a516b10c0664f1d48d04f4cc2165af9083ef0b3488afb3f3`.
+This is local analysis tooling, not a changed agent/runner or experiment.
+
+Actual graded-run memory behavior:
+- M:56 fixer invocations,56 recall-first;57 recall calls/payloads;11
+  nonempty candidate recalls across9 runs;61 successful note writes across
+  39 runs;0show. Seven nonempty recalls across6 runs truncate a patch
+  preview. All13 candidate entries returned are explicitly rolled back,
+  not currently applied.
+- N:62 invocations/recall-first;62calls/61payloads;0nonempty;75 successful
+  note writes across42runs. Two show calls in fastapi9753round4 are
+  explicitly rejected because control evidence is withheld.
+- The sole invalid audit is N4fastapi14077: its final recall response is
+  BudgetExceeded at80/80calls, not a parser/dispatch failure.
+- Notes now genuinely work, unlike V3's zero-note observation. However,
+  only9/45memory runs receive any saved candidate, and only one of those
+  resolves. This is post-rejection selection, NOT a harmful-recall estimate.
+
+Strong new preservation case: M3fastapi14463 reaches the same net changed
+spans as passing N4 at successful edits5,8,11 (copy import plus deep response
+copy, other imports intact). Changed-span replay verified this equality;
+task prompts hash identically. This is NOT an independent intermediate
+workspace regrade. It then repeats already successful edit arguments,
+even after reading the applied new line, and later damages imports.
+27 failed calls reuse an earlier successful exact argument object.
+Final test output fails with IndentationError; the earlier M1 repeat
+instead deletes typing imports and fails NameError:Any. Both controls
+preserve imports and resolve. M3 never reaches the gate, so our gate-only
+candidate recorder never saves its promising intermediate state. This
+directly motivates working-state protection, not rejection of memory.
+
+Other inspected contrasts:
+- M1rich3454: first correct regex edit plus forbidden test edit is rolled
+  back; recall14 exposes that candidate; source-only edit16 succeeds.
+ 35failed edits follow. The source survives,83task tests pass, and no
+ native submit/second gate call appears. Do not equate absent native
+ submission with scored failure universally. M3never successfully edits,
+ repeatedly inventing an anchor suffix, then overflows with no patch.
+- rich3882M3: true AttributeError/candidate rollback delivered on recall,
+  but retry inserts a wrong-signature method before the existing one.
+  Gate accepts; actual task fails literal markup output. N2edits the
+  existing print to Text.from_markup(str(error)) and resolves.
+- rich3518: recalled equality failure does not lead memory repeats beyond
+  changing Column.highlight default. N2changes construction/inheritance
+  behavior without that default change and resolves.
+- rich4077 repeats the historical distinction: file_proxy.py forwarding
+  solves, console.py exception handling fails. Both arms1/2; no nonempty
+  recall in the memory winner. Its passing patch removes __getattr__;
+  the control donor preserves generic forwarding. Grade success alone
+  does not certify a clean reusable repair example.
+- All3 memory-only solve issues inspected:14458(class detection guards),
+  9425(bothNoneannotation representations),2725(rendering tuple order).
+  Their successes received0nonempty recall; these are substantive choices,
+  not demonstrated gains caused by retrieved candidates.
+
+Across all roles: M414edit calls/313failed/228repeats of failed args;
+N388/275/189. Reissues of earlier successful args fail127M/116N times.
+These are per-run event counts, not independent defects or an arm
+efficiency estimate. Actual grade errors:8context failures each arm;
+4M/8N30minute agent timeouts. Gate-accepted runs that still fail actual
+task grading:14/29M and13/31N. All proxy/selection/confounding limits
+are explicit in the report.
+
+Next mechanism supported by the evidence: fingerprint/protect successful
+working states before the gate; verify an already-present replacement
+instead of blindly re-editing an absent old anchor; deliver/use decisive
+source spans and exact contracts. A future policy must preserve explicit
+errors, clean donor provenance and symmetric execution, and be registered
+with actual task pairing. No GPU launch, adapter gain or code-policy
+change is claimed from this forensic.
+
+### 2026-11-17 - Effective-tool-use LoRA specified; private Kaggle workflow consolidated
+
+User requested a concrete LoRA spec and one script instead of many separate
+approval prompts. Clarification: **private notebook experiments only**; no
+leaderboard submission automation. Native permission prompts remain intact.
+
+Created `LORA_TOOL_USE_SPEC.md`. Target is observed tool state -> appropriate
+action, motivated by the completed V9 forensic rather than its small aggregate
+score difference: already-applied edits, missing anchors, historical rolled-back
+errors, truncated candidate inspection, verified APIs, fixer DONE handoff and
+verifier-only submit. Specifies 60 original scenario families x 8 counterfactual
+states, family-disjoint 320/80/80 train/validation/test, native E4B tools/template
+and assistant-only masks. Proposed initial q/v rank8/alpha4 BF16 recipe:
+LR1e-5, batch1/accumulation4, one epoch/80 updates. No data or training is claimed.
+
+The spec includes explicit packed-base fidelity, nonzero-gradient, export/reload
+and actual serving-effect gates before substantive training; sealed behavioral
+thresholds and a separate, complete-pair, task-interleaved G_startup adapter-off/
+on repair pilot. Numerical thresholds are proposed gates, not already measured
+tolerances or leaderboard forecasts. Edit-time candidate preservation is a
+separate mechanism, not bundled into the adapter A/B. Proposed Colab budget
+requires fresh user authorization and "ready" before visible Drive consent.
+
+Created `kaggle_pkg/run_experiment.py` with offline `check`, one-time `launch`,
+and read-only `resume`. Launch requires a frozen notebook/registration package,
+an unused receipt folder, an explicit next version and NvidiaL4 request. It
+checks privacy, notebook/embedded bundle/task/arm hashes and Python cell syntax,
+freezes upload files, checks the previous remote version is terminal, and writes
+the log registration before exactly one push attempt. No push retry, automatic
+rerun, leaderboard submission or Colab allocation. SDK timeout is the registered
+notebook_seconds platform request; local monitoring has a separate deadline.
+
+Remote source/privacy verification, status and paginated output downloads are
+version-pinned. JSON/JSONL/traces/logs/patches are retained; weights are excluded.
+Read-only transient requests retry at most three times; authentication errors
+fail immediately. Saved result summary and hash are appended to this log.
+COMPLETE with a missing/incomplete experiment summary is a nonzero outcome,
+not success. Missing/unstarted grades are not silently counted as failed.
+Resume cannot push; ambiguous push recovery requires the explicit preregistered
+version and matching remote source. Other failures remain explicit with receipts.
+
+Validation:
+- Focused launcher tests in
+  `colab_fasteval/tests/test_kaggle_experiment_launcher.py`: **16 passed**.
+- Offline preflight against frozen V9 passed, including original notebook
+  SHA256 `5d7901137beb40e10c61900a780b4788b194be400948b0dcea064ea45863e54b`
+  and embedded arm/task bundle verification.
+- Live **read-only** SDK smoke pinned to V9: exact cell-source/privacy match,
+  platform COMPLETE, first page 100 files with another page available.
+- Pylance launcher diagnostics clear and syntax validation passed. Local Kaggle
+  import emits an existing requests dependency-version warning; no package
+  installation/change was made.
+
+Delivered source SHA256s:
+- Spec: `6adc9576659412265c9dff8036d03e5da3be9dff358bed89946d2fae66e3d975`
+- Launcher: `9bdccc8575bc271d5e378b72c7bf5db72473cc87c3789de539d029fcadaf8659`
+- Tests: `c9adff374840f63a38a3c7c0ee7ba97039a7f60ef86f3de8e54b4f68fd085e42`
+
+No new Kaggle push, Colab allocation/consent, training update, adapter or Git
+commit/push. Prior work and frozen V1-V9 packages preserved. The next steps
+remain CPU dataset/trainer implementation, then a newly authorized compatibility
+pilot, not an automatic restart of interrupted p1.
+
+### V10 raw behavior and final CPU curriculum receipt
+
+Read-only remote log confirms four NVIDIA L4s and exact eight-task bundle.
+Synthetic wiring completed (excluded from main scores). Main evaluation began
+at notebook573.8s and ended2431.4s; platform status COMPLETE. Exactly16/16
+same-task/same-round pairs graded:
+
+| Arm / round | Round1 | Round2 | Total |
+|---|---:|---:|---:|
+| memory | 2/8 | 4/8 | 6/16 |
+| control | 4/8 | 2/8 | 6/16 |
+
+Memory round wins1/2, net solves0; registered exploratory threshold missed.
+No outer2000s task timeout, 2850s evaluation deadline, unstarted run, process
+error or invalid trace. Native grade errors still include7M/6N context overflows
+and1M/2N 30-minute agent timeouts. Main timing and native completion are not
+proof that all agent behavior was efficient.
+
+Reproduced `audit_trace` and exact `task_results.jsonl` for all32 from
+`memory_progress.json`; saved `trace_census.json` and
+`verification_receipt.json`. V9's special intermediate-span control-patch check
+does not apply to this new task slice. Raw repeated edit-event counts:
+
+| Arm | edit calls | failed edits | repeat of failed arguments | failed reissue of prior success |
+|---|---:|---:|---:|---:|
+| memory | 140 | 110 | 81 | 10 |
+| control | 236 | 200 | 151 | 6 |
+
+The denominator and exposure differ, so these totals alone do not measure an
+adapter/memory efficiency effect. Memory makes21 recalls;5 are nonempty across
+4 runs, and no `show` occurs. Control makes22 recalls with no nonempty evidence
+or `show`. One memory fixer (`rich_4077`, round1) tries unavailable
+`submit_patch`, receives the native ValueError, and does not resolve. Candidate
+evidence is only exposed on a subset of runs, so this is not yet a broad test
+of corrective action on evidence.
+
+CPU LoRA dataset final receipt: `Outputs/e4b_tool_state_cpu_20261117_p4`.
+96 original engineering examples/12 families, split64/16/16; family-disjoint,
+unique native call IDs/responses, native tool schema hash and per-observation
+hashes. The actual cached E4B tokenizer prefix/mask audit accepts96/96 under
+2048 tokens; maximum length1851. SHA256 dataset
+`e7cdf73a3a2d05ebc14c3a8fdc66a651ceba52ee8cead54da2a23f309e4db223`,
+schema `33c2f5ea377992d7f01740c7d7684461dc341d45071afc64947a94855bdf9d5f`.
+The explicit local legacy-tokenizer metadata override and tokenizer/template
+hashes are in the tokenization receipt.
+
+The 96 examples are only an engineering seed, not the planned480-family
+capability dataset. Twelve source-oracle fixtures execute; actual pinned edit
+engine, Git and task-memory ledger are used. Workspace/gate envelopes are
+constructed and labeled as such. Tool names/argument types come from pinned
+SWE-gemma function signatures and literal ADK skill declarations, but exact
+serving metadata/schema-description equivalence is unverified.
+
+Trainer now supports manifest-verified external data, per-row tool schemas,
+2048 default custom-data cap, accumulation, and token-normalized accumulated
+loss; original p1 defaults remain. Test split is not used for validation loss.
+`--engineering-pilot` explicitly caps non-training-ready fixtures at3 updates.
+Ten trainer tests pass, including CPU autograd/gradient normalization; combined
+28 focused LoRA/launcher/scheduler tests and8 Linux process/schedule tests pass.
+Pylance source diagnostics for the new generator are clear. P4 remains
+`training_ready=false`: no native production server metadata/serialization
+receipt, full tool-call runtime fixture, or serving-template equivalence.
+
+No Colab allocation, Drive consent, packed-base model load, LoRA training update,
+adapter, further Kaggle push or leaderboard submission by the assistant. User
+said they will submit today's scoring run. Next gated LoRA step is CPU family
+expansion plus exact serving-schema/native-template equivalence; any GPU
+compatibility pilot still requires fresh user authorization and "ready" before
+visible Drive consent.
+
+The final P4 dataset plus manifest, real-oracle execution receipts and native
+tokenization receipt are allowlisted at
+`train/data/e4b_tool_state_pilot` so the corpus is visible in Git and can be
+consumed by the trainer. The broad `train/` ignore remains for bulk caches/
+outputs; only the four named data/receipt files, trainer, generator, requirements
+and focused test are unignored. Dataset bytes/hash match P4 in Outputs exactly.
+
+### 2026-11-17 - PRE-REGISTER V10 paired E4B diagnostic; CPU-only LoRA authorized
+
+User will perform today's leaderboard submission personally. Authorized
+continued private E4B tests and LoRA implementation, but explicitly left Colab
+pilot pending/CPU-only. No Colab allocation or Drive prompt is authorized here.
+
+V9 lacked even one completed same-round memory/control pair because each GPU
+waited for an entire first arm. V10 tests the SAME frozen V8/V9 policies with
+complete pairing, not a new memory skill, trained adapter or fresh holdout.
+Eight development-selected forensic tasks: fastapi_14463, rich_3454, rich_3518,
+rich_3882, rich_4077, fastapi_14458, fastapi_9425, rich_2725. These deliberately
+cover lost edits, rollback/error use, and both memory-only/control solves; this
+is selected mechanistic replication, not an unbiased solve-rate estimate.
+
+Two rounds x two arms x eight tasks =32 runs. A balanced mapping mixes both
+arms/rounds on every GPU; all eight jobs/GPU enter their evaluator together,
+with no arm barrier or second wave. Both arms unchanged, eight concurrent jobs/
+GPU and four L4s as V9. Synthetic wiring is separate and excluded from scores.
+Keep 2000s task wall, 2850s main-evaluation cap, request 3600s platform cap.
+No automatic rerun. Actual hardware/quota/runtime remain to be verified remotely.
+
+Primary operational bar: all16 same-task/same-round pairs graded; all16 first-
+recall audits valid per arm; control nonempty recall count zero. Exploratory
+score signal ONLY if memory wins both rounds and totals at least four extra
+solved executions. Missing pairs make that rule unevaluable, not scored zeros.
+Even meeting it does not establish generalization or predict leaderboard score.
+
+Frozen package `kaggle_pkg/push_memory_v10`; expected next remote version10:
+- notebook SHA256 `3bc653f4edf932680e7722d254e299fcf2cd0c5d39f27f554579355000af3b70`
+- bundle SHA256 `2a34c9f3bb63c3f35301a2c36b7b0c96c95ad9b108d125d5a909a66a5fa1b185`
+- task SHA256 `c8f8155936cc638504680de8b06dc813c4c57865dda8ca2071161cb16f339a98`
+- arm hashes unchanged from V9, checked by consolidated launcher's preflight.
+
+Validation before launch:18 focused Windows tests (two scheduling plus16
+launcher); all8 WSL Linux process/schedule tests passed, including a32-party
+barrier proving every paired main task starts before any finishes. Frozen
+V1-V9 packages untouched. Launch and actual outcomes are recorded separately.
+
+
+### 2026-11-17T02:14:31.698126+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b_task_memory_kaggle_20261117_v10_run`; slug `comfyops/e4b-task-memory-20261114`; expected version 10; accelerator `NvidiaL4`; requested platform cap 3600s.
+Notebook SHA256 `3bc653f4edf932680e7722d254e299fcf2cd0c5d39f27f554579355000af3b70`; metadata SHA256 `478ced4fbc580da35661a1a8ecf932098521bb3fcaa99716cd4d202c6a2e145f`; registration SHA256 `e85c802d27c2166fbd781a7fe53dd26c2771689b4b0515d18a164706cadb49d0`.
+Comparison: same prompts/tools/gate; saved evidence present vs withheld
+
+Decision criteria: `{"all_task_round_pairs_graded": 16, "control_nonempty_recalls": 0, "extra_solves_at_least": 4, "first_recall_delivery_each_arm_at_least": 16, "round_wins_at_least": 2}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-17T03:10:22.286481+00:00 - private experiment collected
+
+`comfyops/e4b-task-memory-20261114` version 10; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b_task_memory_kaggle_20261117_v10_run\result_report.json`; SHA256 `6f17c41befc5c481d2b0efea3ea376d8229cf558ce4f282f23f23318ac2a32e9`.
+
+Saved summary: `{"arms": {"M_memory": {"evaluation_deadline": 0, "expected": 16, "graded": 16, "not_started_deadline": 0, "process_errors": 0, "resolved_among_graded": 6, "task_timeouts": 0}, "N_none": {"evaluation_deadline": 0, "expected": 16, "graded": 16, "not_started_deadline": 0, "process_errors": 0, "resolved_among_graded": 6, "task_timeouts": 0}}, "complete": true, "control_nonempty_recalls": 0, "delivery_by_arm": {"M_memory": 16, "N_none": 16}, "exploratory_score_signal": false, "memory_round_wins": 1, "paired_task_rounds": 16, "treatment_delivered": true, "warning": "Ungraded tasks are not scored failures; partial totals are not paired comparisons."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+### 2026-11-18 - evidence-to-edit seed-pilot preregistration (not launched)
+
+User-supplied repeat39 snapshot at 2,344.6s: 71 matched task-round pairs;
+p5 24 vs base 20 reported resolves (8 p5-only, 4 base-only). On the 52
+matched pairs where both graded without a logged error, p5 20 vs base 18.
+Round 1 was complete (39 pairs): p5 12 vs base 9 overall and 9 vs 9 on the
+26 clean pairs. Each arm logged eight overflows in the snapshot; p5 solved
+`fastapi_14492` against a base overflow in both matched rounds. This is
+interim log evidence, not the preregistered repeat39 verdict or proof of a
+better repair decision. The new pilot does not use any repeat39 tasks or patches.
+
+Pilot artifact: `train/kaggle_evidence_to_edit_pilot.ipynb`, SHA256
+`cc6308150f06851ea2ebdd0bd2fafaff0dc96c5d770f36c9111ef860ccf956db`.
+Frozen inline registration with five native edit-core fixture replays (four
+train families, one validation family), the exact E4B QAT v2 checkpoint hash,
+and hashed source and supplemental wheels. Run three fresh packed-BF16 q/v
+updates on one L4 (30-minute/0.5-device-hour cap), using the public competition
+wheelhouse, private notebook, and Internet off. Stop rather than change the
+allocation if only four L4s are offered. Check fresh quota before launch; no
+quota was reserved, and no run or upload was performed here. Success requires
+finite updates, q42/v24 coverage, reference fidelity, zero-adapter equality,
+nonzero adapter effect, numerical reload, and a hashed mapped export.
+Serving and repair capability are explicitly pending; this tiny two-tool
+engineering pilot does not qualify as the larger full-corpus pilot.
+
+Local validation: the generated notebook's CPU path replayed all five
+fixtures successfully, and 22 targeted tests passed. GPU execution and actual
+Kaggle cost remain unverified. Repeat39 was left unchanged.
+
+### 2026-11-18 - evidence-to-edit Colab seed pilot (prepared, not launched)
+
+The user will run the same five-family, three-update engineering pilot on
+Colab. `train/colab_evidence_to_edit_pilot.ipynb` SHA256:
+`1d83f977d5d22ab33d736f8bf8ac7a07ffb3a2c2c8d58f94d68ca7b288755fde`.
+One L4, current displayed rate at most 2.0 CU/hour, effective notebook job
+cap 3,780 seconds or 2.1 estimated CU at the registered ceiling. Check
+displayed rate and available balance before running; runtime allocation and
+idle billing outside the job are user-controlled. No runtime was allocated.
+The user handles any Drive consent and disconnects after collection.
+
+Uses the existing p5 Drive environment and cached model; model weights and
+native edit wheel are hash-checked. Saves new checkpoints, visible foreground
+log and failure/outcome receipts under the separate Drive run tag
+`e4b-evidence-to-edit-colab-seed-pilot`. No automatic relaunch, overwrite, or
+leaderboard submission. The generated CPU cell path replayed all five seed
+families against the cached wheel; 26 targeted tests passed locally. No
+observed Colab training, cost, serving or repair result yet.
+
+### 2026-11-18 - evidence-to-edit Colab seed pilot completed
+
+The first VS Code execution requests failed before notebook code ran with
+`notebook controller is DISPOSED`. Reopening the notebook and connecting to
+the same newly allocated L4 restored execution. The user completed Google
+Drive consent. The frozen cell sources and registration matched the original
+build after excluding the two runtime settings; no second GPU was allocated.
+
+All three optimizer updates completed on one NVIDIA L4 at a displayed
+1.94 CU/hour. All five fixtures replayed, and reference fidelity,
+zero-adapter equivalence, nonzero adapter effect, and native reload
+equivalence passed. Drive contains three checkpoints and a mapped export
+with 132 tensors. The exported weights and config matched their recorded
+SHA256s; weights:
+`0813058204986fe21f6f7b4c9b87dd309b394e688974dc049064f38bf54882`.
+Peak CUDA allocation was 14.34 GiB. The launcher took 869.08 seconds
+(0.468 estimated CU at the entered rate). The displayed balance moved
+from 273.37 to 272.52 CU across allocation, setup, run and cleanup; this is
+a balance snapshot difference, not an itemized charge. After removing the
+runtime, Colab showed zero active sessions and 0.00 CU/hour.
+
+Receipts are under `MyDrive/gemma_fasteval/lora_runs/e4b-evidence-to-edit-colab-seed-pilot`.
+The single validation example's NLL changed from 0.107534 to 0.107290.
+This is an engineering result only: serving and repair lift remain
+unvalidated, and the full-corpus run stays gated.
+
+
+### 2026-11-17T04:49:23.418886+00:00 - PRE-REGISTER Colab e4b_tool_lora_20261117_p2
+
+User answered ready: one L4, <=2 monitored hours or4CU, no automatic retry/relaunch. Read-only precheck276.82CU,0/hr,zero active sessions. Visible terminal Drive consent.
+Registration: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b_tool_lora_20261117_p2`; bundle SHA256 `52077e737cdfd64b58371ab3cc71b6cf0b590437a92e29c51cfd252d2b4411e5`.
+Dataset SHA256 `e7cdf73a3a2d05ebc14c3a8fdc66a651ceba52ee8cead54da2a23f309e4db223`;3 updates, accumulation4, length2048, q/v rank8/alpha4 LR1e-5. Native 96-example engineering corpus, not capability training.
+Criteria: `["supported-reference fidelity >=99% top1, KL<=1e-3", "zero-adapter logit delta <=0.05", "three finite nonzero-gradient optimizer updates", "nonzero adapter on/off logits", "native-adapter reload logit delta <=0.05"]`. Serving compatibility remains unverified; no leaderboard submission. Any failed gate stops this job. Original p1 preserved.
+### 2026-11-17 - Colab p2 actual failure; original synthetic corpus scaled
+
+- **p2 failed before model loading**, after cached checkpoint size/SHA256
+  verification and environment restore. No gradients, optimizer updates,
+  adapter export or numerical/serving validation occurred.
+- Native Transformers5.13.1 `apply_chat_template` defaults to
+  `return_dict=True`; `encode` expected a token-ID list. The actual error was
+  `ValueError: Unstable or oversized native template: increment-fresh_recall`.
+  Independently reproduced `BatchEncoding` with `input_ids`/`attention_mask`.
+  Both template calls now explicitly request `return_dict=False`; all96
+  original rows pass exact5.13.1 CPU prefix/cap checks, max1851, no metadata
+  override. Added regression against dictionary-default tokenizer behavior.
+- Visible monitor also reported `RuntimeError: Connection was lost`.
+  Recovered actual logs/status/environment directly from Drive and stopped
+  the specific session. Final usage275.86 CU,0/hr,0 assignments, no sessions.
+  Initial276.82 CU -> displayed difference0.96 CU. Do not equate failed
+  preparation with trained model results. No automatic new allocation.
+  Evidence: `Outputs/e4b_tool_lora_20261117_p2/outcome.json` and `drive_receipts/`.
+- Future preparation now performs native tokenizer preflight before staging
+  packed weights; read-only commands have65s outer bounds and watchdog reserves
+  cleanup time. Suppressed bare-runpy globals. Frozen p2 payload remains intact.
+- **Generated and executed384 original buggy/fixed programs,3072 tool-decision
+  rows**, split2048/512/512 across12 disjoint underlying families. These are
+  parameterized programs, NOT384 independent mechanism families. Native core
+  editing plus real Git/task-memory executed; workspace/gate envelopes are
+  explicitly constructed. An initial iterator-state counterfactual was rejected,
+  corrected and regression-tested before the successful build.
+- Exact Transformers5.13.1/tokenizer audit:3072 accepted,0 rejected,
+  maximum1879 tokens,96928 supervised tokens; no metadata overrides/truncation.
+  Dataset SHA256:
+  `cf79d697c37fd0d2e1005a481ba232e4306f58da151f90458e7d0ce3f1773df9`.
+  Dataset/manifest/execution/token receipts: `Outputs/tool_state_synthetic_3072`.
+  Still `training_ready=false`: full server-schema/sandbox equivalence and
+  broader family diversity remain unresolved. No repair-score claim.
+
+
+### 2026-11-17T05:29:48.379341+00:00 - PRE-REGISTER Colab e4b_tool_lora_20261117_p3
+
+Prepared only: one L4, <=5400 monitored seconds or3.0CU. Fresh user ready approval is required before each new attempt; no automatic retry/relaunch. Visible terminal Drive consent. Recheck actual balance/rate before allocation.
+Registration: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b_tool_lora_20261117_p3`; bundle SHA256 `230ed4dbebeb3f00fb0f8b0b845f97bed71ddd43e140a027f111959a7b4961b6`.
+Dataset SHA256 `e7cdf73a3a2d05ebc14c3a8fdc66a651ceba52ee8cead54da2a23f309e4db223`;3 updates, accumulation4, length2048, q/v rank8/alpha4 LR1e-5. Native 96-example engineering corpus, not capability training.
+Criteria: `["supported-reference fidelity >=99% top1, KL<=1e-3", "zero-adapter logit delta <=0.05", "three finite nonzero-gradient optimizer updates", "nonzero adapter on/off logits", "native-adapter reload logit delta <=0.05"]`. Serving compatibility remains unverified; no leaderboard submission. Any failed gate stops this job. Original p1 preserved.
+### 2026-11-17 - Corrected p3 Drive mounted; cached environment restoring
+
+- User explicitly answered ready for one L4, <=90 minutes/3 CU. Preregistered
+  before launch in `Outputs/e4b_tool_lora_20261117_p3/registration.json`;
+  bundle SHA256
+  `230ed4dbebeb3f00fb0f8b0b845f97bed71ddd43e140a027f111959a7b4961b6`.
+- Exactly one fresh allocation, `e4b-tool-lora-20261117-p3`.
+  Runtime responded to hostname/mount probe. Rate1.94 CU/hour;
+  starting275.86 CU, stop floor272.86 CU. This adds at most3 CU to p2's
+  displayed0.96 CU, within the original4-CU total authorization.
+- User granted Drive authorization in the visible VS Code terminal; mount
+  succeeded, bundle uploaded and worker1118 started. A fresh read-only terminal
+  observation still reported `LORA_JOB_RUNNING` / `RESTORING_ENVIRONMENT`.
+  Balance275.86 CU, rate1.94 CU/hour, one active assignment. No model load,
+  training update or adapter success observed yet. The bounded launcher remains
+  responsible for monitoring and cleanup. Avoid competing CLI calls while its
+  monitor owns this session.
+- Fixed tokenizer, native preflight before weight staging and bounded monitor
+  are frozen. Thirteen focused CPU tests plus five WSL launcher cases passed;
+  syntax and task-related whitespace checks passed. No leaderboard submission.
+
+
+### 2026-11-17T05:46:18.892074+00:00 - PRE-REGISTER Colab e4b_tool_lora_20261117_p4
+
+Prepared only: one L4, <=4800 monitored seconds or2.7CU. Fresh user ready approval is required before each new attempt; no automatic retry/relaunch. Visible terminal Drive consent. Recheck actual balance/rate before allocation.
+Registration: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b_tool_lora_20261117_p4`; bundle SHA256 `2e77b507b1e926dc75c4e341c5f8d6091c38cb66b7992a85a2eacd3820ef2334`.
+Dataset SHA256 `cf79d697c37fd0d2e1005a481ba232e4306f58da151f90458e7d0ce3f1773df9`; 32 updates, accumulation4, length2048, q/v rank8/alpha4 LR1e-5; exploratory=True, validation_limit=32. Dataset readiness=False; no capability or leaderboard claim.
+Criteria: `["supported-reference fidelity >=99% top1, KL<=1e-3", "zero-adapter logit delta <=0.05", "32 finite nonzero-gradient optimizer updates", "nonzero adapter on/off logits", "native-adapter reload logit delta <=0.05"]`. Serving compatibility remains unverified; no leaderboard submission. Any failed gate stops this job. Original p1 preserved.
+### 2026-11-17 - p3/p4 actual outcomes; p5 IDE notebook prepared
+
+- p3 accepted96 native tokenizer rows and verified the packed checkpoint hash.
+  The official reference model loaded/decompressed, but execution stopped
+  before generating reference logits because the first prompt was13 tokens,
+  below the registered16-token minimum. No optimizer updates or adapter export.
+  Failure and environment receipts:
+  `Outputs/e4b_tool_lora_20261117_p3/drive_receipts`.
+- Stopped p3 and verified0 assignments/0 CU per hour. Starting275.86,
+  ending275.58 CU, displayed difference0.28 CU; p2+p3 displayed cost1.24 CU.
+  This was a preventable preflight error, not evidence against the LoRA idea.
+- Extended the three short prompts and moved prompt-length verification before
+  model loading. Exact v5.13.1 cached E4B tokenizer counts:
+  `[19,16,16,16,16,17,18,17]`; short-prompt regression included.
+- p4 passed the dataset/tokenizer checks and independent official-reference
+  fidelity over128 positions (top-1=1.0, mean KL=0). It failed before the
+  first optimizer update because the trainer expected q/v projections in all42
+  layers; the pinned E4B config shares K/V in18 layers, so actual coverage is
+  q=42, v=24, total66 rather than84. No adapter was exported. The trainer now
+  checks expected q/v counts from the model config; this is CPU/meta-model
+  tested but not yet GPU-verified.
+- p4 ran711.5 seconds on one L4 at1.94 CU/hour, balance275.58 ->275.11 CU
+  (displayed delta0.47 CU), then stopped with0 active assignments and0 CU/hour.
+  CLI status reads lost connection, but the bounded launcher collected the
+  worker's actual failure and stopped it. Cumulative displayed p2-p4 cost:
+ 1.71 CU. Exact outcome:
+  `Outputs/e4b_tool_lora_20261117_p4/outcome.json`; receipts remain under
+  `Outputs/e4b_tool_lora_20261117_p4/drive_receipts`.
+- The focused Windows suite reports22 tests:17 passed,5 WSL-only cases skipped.
+  The separate WSL launcher suite previously passed5 cases. The p4 fidelity
+  pass is a model-reconstruction check, not a tool-use or repair result.
+- p5 was preregistered at
+  `Outputs/e4b_tool_lora_20261117_p5/registration.json`, bundle SHA256
+  `2c8611974bc0bb711494e05bffeba72f124b271e89880cab8cab344e3c862cbc`.
+  Design:32 intended updates, accumulation4, validation sample32, checkpoint
+  after each update; one L4, <=3900 seconds or2.1 CU, max rate2.0 CU/hour.
+  Dataset SHA256 remains
+  `cf79d697c37fd0d2e1005a481ba232e4306f58da151f90458e7d0ce3f1773df9`,
+  `training_ready=false`, exploratory only.
+- `train/colab_tool_lora_ide.ipynb` and its frozen bundle are prepared for the
+  user to run from an IDE-connected Colab kernel. Training runs in the
+  foreground notebook process with flushed cell output and per-update Drive
+  checkpoints; no CLI monitor or detached worker. The bundle is staged at
+  `G:\My Drive\gemma_fasteval\ide_lora_bundle_e4b_tool_state_p5`.
+  No p5 runtime has been allocated by the assistant. The notebook requires the
+  user to choose the L4, check balance/rate, and execute cells; no new training
+  result or leaderboard prediction exists.
+
+
+### 2026-11-17T06:46:50.418182+00:00 - PRE-REGISTER Colab e4b_tool_lora_20261117_p5
+
+Prepared only: one L4, <=3900 seconds or2.1CU, whichever comes first, at a maximum2.0 CU/hour. The user must choose/run the L4 and approve any Drive mount in the notebook; no runtime allocation or Drive authorization was triggered by the assistant. No automatic retry/relaunch.
+Registration: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b_tool_lora_20261117_p5`; bundle SHA256 `2c8611974bc0bb711494e05bffeba72f124b271e89880cab8cab344e3c862cbc`.
+Dataset SHA256 `cf79d697c37fd0d2e1005a481ba232e4306f58da151f90458e7d0ce3f1773df9`; 32 updates, accumulation4, length2048, q/v rank8/alpha4 LR1e-5; exploratory=True, validation_limit=32. Dataset readiness=False; no capability or leaderboard claim.
+Criteria: `["supported-reference fidelity >=99% top1, KL<=1e-3", "zero-adapter logit delta <=0.05", "32 finite nonzero-gradient optimizer updates", "nonzero adapter on/off logits", "native-adapter reload logit delta <=0.05"]`. Serving compatibility remains unverified; no leaderboard submission. Any failed gate stops this job. Original p1 preserved.
+
+### 2026-11-17 - p5 notebook execution-method amendment
+
+- The user requested unattended notebook execution and explicitly approved
+  pinned dependency setup and Drive access. Reconnected the existing,
+  user-created `L4P5111626` session; no additional runtime was allocated.
+  Observed balance275.06 CU, rate1.94 CU/hour, one active session.
+- Hardware preflight confirmed one NVIDIA L4 with22.03 GiB total/21.84 GiB
+  free VRAM. Its live notebook kernel is Python3.13.16/Torch2.14.1+cu130,
+  not the tested Torch2.10.0 environment. The execution wrapper now restores
+  the cached environment and runs the unchanged frozen trainer in a foreground
+  child, streaming stdout/stderr to the notebook and training log.
+- Frozen p5 bundle, source/data hashes, optimizer settings, gates,32-update
+  target and validation sample32 are unchanged. The original start marker
+  remains authoritative; setup and this correction consume the same3780-second
+  effective budget. No new runtime or training retry is authorized.
+- Drive mount and frozen bundle hash checks passed. Bundle extraction stopped
+  before model staging or training because the notebook incorrectly compared
+  the receipt's `rejected` list with numeric0. The frozen receipt correctly
+  contains `rejected: []`. Corrected only the wrapper check, and resumed
+  verified staging without overwriting it. All nine frozen member hashes pass.
+  Local regression tests cover an empty rejection list, a nonempty rejection
+  list, tampered staged inputs, and a hard timeout of a silent foreground child.
+- Model staging finished at1115.9 elapsed seconds with the registered packed
+  checkpoint SHA256. Cached environment restoration has started. No optimizer
+  update or trained adapter has yet been verified. Final outcome must be
+  recorded below; setup/reference checks are not a capability result.
+
+### 2026-11-17 - p5 actual result:32 updates completed; native adapter saved
+
+- Restored environment verified Torch2.10.0, Transformers5.13.1,
+  compressed-tensors0.15.0.1, PEFT0.21.3 and Accelerate1.15.0. The live notebook
+  kernel remained on its original Python3.13/Torch2.14 installation.
+- The frozen trainer started at1414.5 elapsed seconds and finished with a
+  persisted `training_complete` status at1822.2 seconds. It completed32/32
+  optimizer updates, accumulation4, with finite losses and nonzero gradients.
+  All32 updates emitted native PEFT Drive checkpoint receipts.
+- Shared-KV-aware coverage is now GPU-verified: q=42, v=24, total66 target
+  modules,132 exported adapter tensors.
+- Registered engineering gates all passed:
+  - Independent supported-reference fidelity:128 positions, top-1=1.0,
+    mean KL=0, maximum logit delta0.
+  - Zero-adapter equivalence: maximum logit delta0 (limit0.05).
+  - Adapter on/off effect: maximum logit delta1.25, mean KL0.00690447.
+    A nonzero change is evidence of applied training, not correctness.
+  - Native export/reload equivalence: maximum logit delta0 (limit0.05).
+- Validation NLL on the registered32-example sample:0.9148507796 ->
+  0.9127110203. This small sampled-loss reduction is not evidence of improved
+  tool decisions, repair solve rate, or leaderboard performance.
+  Dataset readiness remains false; sealed test and serving compatibility
+  remain unmeasured.
+- Drive result root:
+  `G:\My Drive\gemma_fasteval\lora_runs\e4b_tool_lora_20261117_p5`.
+  Native reload-tested export is `pilot/native_adapter`; the separately mapped
+  export in `pilot/adapter` has **not** been validated in competition serving.
+  Mapped export SHA256:
+  `9aa8cbb60795b137f061c4f887f50b2f1118c975d9ef41b1e083c209379b4a92`.
+- `runtime.unassign()` ran after persistence. VS Code Colab verified no assigned
+  servers,0 active sessions and0.00 CU/hour. Observed balance275.06 ->274.10 CU,
+  displayed difference0.96 CU over the observed interval, not an itemized bill.
+  The original3900-second/2.1-CU ceiling was not increased; effective budget
+  clock stayed3780s. No runtime/training relaunch or submission occurred.
+- Post-run verification independently checked all32 curve updates for finite,
+  positive gradient norms, all32 checkpoint file SHA256 values against their
+  receipts,132 native tensors, and the mapped export SHA256. The9,094,104-byte
+  native export matches checkpoint32:
+  `07fd27ef6eb6feb980b5442c9f5fe7864cac005a74f23cd3dfa46604cafc9bf2`.
+  Copied final exports, gate reports, curve, registration, environment, status
+  and log to `Outputs/e4b_tool_lora_20261117_p5/drive_receipts`; all intermediate
+  checkpoints remain in Drive. Summary:
+  [p5 outcome](Outputs/e4b_tool_lora_20261117_p5/outcome.json).
+
+### 2026-11-17 - p5 adapter uploaded to private Kaggle dataset
+
+- User requested uploading p5 and a full129-task Kaggle validation, and pointed
+  to the existing LoRA workflow/notebook. Referenced the existing adapter
+  dataset/load probe, ca5 adapter-pack builder and full129 evaluation machinery;
+  no older adapter dataset or notebook has been overwritten.
+- Created private dataset
+  `https://www.kaggle.com/datasets/comfyops/e4b-tool-state-lora-p5`
+  (dataset13430618), with the serving-name-mapped export, its config and the
+  training outcome. Confirmed processing `ready` and server `isPrivate=true`.
+  Used `other` license with the Gemma-terms qualification, not a CC0 grant.
+- Downloaded the uploaded files once and checked the4,557,784-byte adapter
+  against frozen mapped SHA256
+  `9aa8cbb60795b137f061c4f887f50b2f1118c975d9ef41b1e083c209379b4a92`;
+  adapter config bytes also match. Native reload-tested export remains separate.
+- Kaggle reported47.96/60 GPU-hours remaining (12.04 used). This supersedes
+  older handoff quota estimates, but is a point-in-time allowance, not a
+  guarantee of allocation. No Kaggle GPU session has been started for p5 yet.
+- The current LoRA spec explicitly names G_startup as the repair baseline;
+  the old31B ca5 workflow is not an interchangeable E4B policy. Baseline/adapter
+  role choice must be frozen before this full129 diagnostic is launched.
+  Serving-load/parser/effect checks precede repair evaluation; upload success
+  is not serving compatibility or a leaderboard submission.
+- Upload receipt:
+  [p5 Kaggle upload](Outputs/e4b_tool_lora_20261117_p5/kaggle_upload.json).
+
+### 2026-11-18 - full129 p5 Kaggle diagnostic execution started
+
+- User selected G_startup, adapter on fixer only, verifier unchanged. Verified
+  that only `sub_agents/fixer.yaml` differs from the frozen baseline policy.
+  This single pass replaces the proposed staged task A/B for this requested
+  diagnostic only; sealed behavioral test and repair-promotion claims remain
+  separate and unperformed.
+- Historical probe-source lookup was unavailable. A new-kernel push returned
+  HTTP400 before any GPU reservation was observed; original frozen receipt is
+  retained at `Outputs/kaggle_tool_lora_p5_129/receipt.json`. No successful
+  runtime allocation is claimed for that request.
+- Matched the title to the registered slug and compressed the embedded bundle,
+  reducing notebook source from2,767,210 to406,674 bytes without changing task
+  definitions, policy, helper source or adapter. A private **non-executing**
+  quick-save succeeded as v1. The actual registered execution is
+  **`comfyops/e4b-tool-lora-p5-129` v2**, confirmed RUNNING with exact private
+  remote source verified. No leaderboard submission.
+- Frozen package: `kaggle_pkg/push_tool_lora_p5_v2`; active receipt:
+  `Outputs/kaggle_tool_lora_p5_129_v2/receipt.json`. Notebook SHA256:
+  `98d1dbadf268c0d397c69899a616697c19f988f02ee6e96468e06c03d91d8c76`.
+  Input tasks SHA256:
+  `e4b3fd60f69dbc2b9213e54eeb9636db78aefe92c1d06269d73d9f5f8f3c8ad6`.
+- Reuses existing LoRA adapter discovery/model registry and per-task isolation,
+  with four independently pinned E4B tp1 lanes. Requires exactly four L4s,
+  unchanged30-minute/80-tool/200-turn/300s timeout policy,2000s outer task wall,
+  eight tasks/lane,12000s eval and14400s platform cap. Quota checked with actual
+  timedeltas:47.96399 GPU-hours remaining before launch. At most16 device-hours
+  requested, not an itemized billing prediction.
+- Every lane must pass actual adapter requests, duplicate deterministic
+  base/adapter logprob-effect checks and native-parser tool invocation before
+  repair evaluation. Every grade/trace is persisted separately. Completion
+  requires129 unique expected tasks with real test outputs/valid test exit
+  codes; missing/errors/timeouts and observed role/model violations are reported.
+  Compatibility `memory_summary.json` is solely for the existing collector;
+  `lora_summary.json` and `lora_progress.json` identify this LoRA diagnostic.
+- Twenty focused LoRA/launcher tests passed; all changed Python and generated
+  notebook code passed syntax checks. Actual allocated hardware, serving gates
+  and task outcomes are pending: the running-output API initially exposed no
+  live logs or output files. Do not equate RUNNING or uploaded weights with
+  validated serving or improved repairs.
+
+### 2026-11-18 - preregistered small E4B positive-control follow-up
+
+- User supplied live logs confirming four NVIDIA L4s and the expected
+  adk_submission0.2.13 / swegemma0.2.11 installs, then requested: "Next Run a
+  much smaller run with the smaller Control group of tasks that we know are
+  resolable by the e4B model." Leave the current129-task v2 running; next
+  allocation is sequential, not concurrent.
+- Reused the old seven-task solvable cohort but checked actual recorded E4B
+  outcomes rather than trusting its label. In
+  `Outputs/e4b_repro_ab/variance_ab.json`, ARM_F_retry_fresh has16/16 clean
+  resolves each on `rich_3006`, `rich_3454`, `rich_3905`; only2/16 on3518,
+  5/16 on4077, and0/16 on3777/3882. Freeze the three reliable positives.
+  Independently checked their raw node0/run1 task_results rows: resolved=True,
+  test_exit_code=0, error=None. This does not reopen the closed repro gate.
+- Frozen package `kaggle_pkg/push_tool_lora_p5_controls_v2`; private target
+  `comfyops/e4b-tool-lora-p5-controls`, first executed version1. Notebook SHA256
+  `e08e31212ab570f8c1fbf4e46a13d61057caf31f2c4ec4980828a3188fbadb43`.
+  Registration includes source/result SHA256s and the actual historical rows.
+- G_startup base vs p5-fixer-only, verifier unchanged, three tasks x two arms x
+  two rounds =12 executions/six pairs. Counterbalanced GPU placement; three
+  simultaneous jobs/GPU. Preserve all policy/caps;2000s outer task wall,
+  2400s evaluation deadline,4800s platform cap (at most5.34 device-hours).
+  Check quota again immediately before the single follow-up push.
+- Require the full129 run to terminate and its saved serving gates to pass
+  before spending the follow-up allocation. Stop rather than automatically
+  rerunning a serving failure. Report all paired solves, base-only/adapter-only
+  outcomes, actual role/model receipts, missing grades/errors/timeouts.
+  These selected positives are not a fresh holdout or leaderboard estimate;
+  ARM_F historical policy differs from G_startup, so the off arm is necessary.
+- Twenty-one focused tests pass. Generated invocation binds to the actual
+  runner signature; Pylance found no builder diagnostics and no runner errors
+  except locally absent GPU-only adk_submission/swegemma imports. Dependencies
+  were observed installed remotely; no claim of a clean local GPU type-check.
+- Started a bounded detached sequential collector/launcher and independently
+  verified its readiness receipt and live Python PID5408. State is
+  `waiting_full129`, current v2 RUNNING. Receipt:
+  `Outputs/kaggle_tool_lora_control_queue.json`; transcript:
+  `Outputs/kaggle_tool_lora_control_queue.log`. It waits/collects, enforces
+  predecessor serving gates and fresh quota, pushes the private control once,
+  then collects that version. No concurrent GPU allocation or automatic retry.
+
+
+### 2026-11-18T02:31:38.548370+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_129`; slug `comfyops/e4b-tool-lora-p5-129`; expected version 1; accelerator `NvidiaL4`; requested platform cap 14400s.
+Notebook SHA256 `50bb84780faf0da067bdc6abc34eef534d0460cda86e9fb6630eb918892aef8c`; metadata SHA256 `4e449d619cb23d5a36e0f11d577ff1b2c052e1e2cee9be4e2287c9c546d5c0b1`; registration SHA256 `41dc9850f90e377f6941ac3b73ed5c8b5f45d33ead089e55d6506700e962744a`.
+Comparison: User-requested single full129 G_startup diagnostic; p5 on fixer only. Not the proposed paired repair gate; no adapter-off repair arm or sealed behavioral gate.
+
+Decision criteria: `{"fixer_adapter_request_evidence": "per-task trace model/author receipts", "native_parser_each_lane": true, "real_grades_required": 129, "repeatable_nonzero_logprob_effect_each_lane": true, "serving_lanes_required": 4, "timeouts_and_errors": "separate from repair failures; never invent grades", "unique_expected_tasks": 129, "verifier": "unchanged base model; flag any observed routing violation"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-18T02:36:10.238198+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_129_v2`; slug `comfyops/e4b-tool-lora-p5-129`; expected version 2; accelerator `NvidiaL4`; requested platform cap 14400s.
+Notebook SHA256 `98d1dbadf268c0d397c69899a616697c19f988f02ee6e96468e06c03d91d8c76`; metadata SHA256 `8261cd6d9cd85fd1220af39fc7c45543d958ba3169285df99587d060a649050d`; registration SHA256 `0cdbf7b781a5839fbfce3be7a1af4c89a175b60ce2c1325ac01346d675dfccba`.
+Comparison: User-requested single full129 G_startup diagnostic; p5 on fixer only. Not the proposed paired repair gate; no adapter-off repair arm or sealed behavioral gate.
+
+Decision criteria: `{"fixer_adapter_request_evidence": "per-task trace model/author receipts", "native_parser_each_lane": true, "real_grades_required": 129, "repeatable_nonzero_logprob_effect_each_lane": true, "serving_lanes_required": 4, "timeouts_and_errors": "separate from repair failures; never invent grades", "unique_expected_tasks": 129, "verifier": "unchanged base model; flag any observed routing violation"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-18T03:30:01.991205+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_controls`; slug `comfyops/e4b-tool-lora-p5-controls`; expected version 1; accelerator `NvidiaL4`; requested platform cap 4800s.
+Notebook SHA256 `e08e31212ab570f8c1fbf4e46a13d61057caf31f2c4ec4980828a3188fbadb43`; metadata SHA256 `cc55ef669248ba118573fac450b097a6ba719607c92b252c14d147c292bd800b`; registration SHA256 `a47ed06b107a95e41e6ea5a4b791c91642642f5a959d952c7d3a23596a006c81`.
+Comparison: User-requested next experiment: three historically16/16 E4B positive controls, G_startup adapter off/on x two counterbalanced rounds =12 executions. Both arms have identical prompts/tools/gate/caps; fixer adapter only.
+
+Decision criteria: `{"all_real_grades_required": true, "expected_executions": 12, "native_parser_each_lane": true, "paired_task_rounds_required": 6, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "paired solves, base-only/adapter-only, errors and timeouts; no promotion/LB claim", "role_model_trace_audit": "base fixer+verifier base; adapter fixer p5, verifier base"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+### 2026-11-18 - full129 complete; smaller paired control running
+
+- Actual full129 v2 platform status is COMPLETE. Requested CLI notebook pull
+  succeeded under `Outputs/kaggle_tool_lora_p5_129_v2/pulled`; code-cell sources
+  match the registered execution. No new full129 execution was launched.
+- Downloaded final serving gates, summary and progress before bulk collection.
+  All four serving gates passed. There are129 task records,129 tasks with
+  fixer-adapter observations and no recorded routing violations.
+- Registered real-grade accounting:80 grades,13 solves,67 test failures (exit1);
+  49 additional records have test exit2 (35),-1 (11),124 (3). The129-real-grade
+  requirement is unmet (`complete=false`). These are actual diagnostic
+  outcomes, not a leaderboard prediction or paired improvement measurement.
+- Two inspected code2 logs show test collection failures: missing
+  `scripts.prepare_release` (`fastapi_15661`) and missing `is_typealiastype`
+  import (`fastapi_13920`). The `rich_3518` row reports context overflow:
+  27769 input tokens +5000 requested output >32768. Test collection failures
+  may be patch-induced; infrastructure versus candidate failure is not
+  established by these logs alone.
+- Stopped old local sequential collector PID5408 while it was downloading,
+  not the completed remote kernel. Rechecked the control receipt to avoid a
+  duplicate push. With saved full-run gates passing and46.36677 GPU-hours
+  available, launched the frozen control once as private v1 and verified its
+  exact remote source and RUNNING status.
+- Control remains the preselected three tasks x adapter off/on x two rounds:
+  12 executions, six pairs. No policy changes, new task selection, sealed-test
+  use, leaderboard submission, automatic retry or concurrent GPU allocations.
+- Replacement detached Python PID34448 is verified alive and independently
+  collecting both versions. State: `Outputs/kaggle_tool_lora_control_queue.json`;
+  transcript: `Outputs/kaggle_tool_lora_both_collectors.log`. Bulk full-run
+  collection is still pending; the smaller run is no longer blocked by it.
+
+### 2026-11-18 - complete context-error audit and full-result collection
+
+- Cross-checked all129 pasted TASK_END rows against persisted progress:
+  13 solves,80 real grades,22 tasks with ContextWindowExceededError.
+  Every overflow reports27769 input +5000 requested output >32768 and five
+  retries. Their `test_exit_code` values are -1 (11),2 (7),1 (4).
+- The four overflow tasks that still have real grades are `rich_4070`,
+  `fastapi_11194`, `rich_3130`, `fastapi_15800`. Thus the67 exit1 failures
+  comprise63 without recorded context errors and4 with them. A persisted
+  grade is not evidence that the agent completed without an execution error.
+- This establishes the failing request budget, not the source-level cause of
+  the one-token discrepancy. No running policy, frozen package or model
+  configuration was changed; no retry or extra GPU allocation was launched.
+- Full129 bulk collection is now complete; report:
+  `Outputs/kaggle_tool_lora_p5_129_v2/result_report.json`. Collector return2
+  reflects the registered real-grade shortfall. Small paired control v1
+  remains remotely RUNNING and monitored.
+
+### 2026-11-18 - trace causality audit; paired control complete
+
+- Both versions are COMPLETE and collected. Small-control v1 has12/12 real
+  grades and solves: base6/6, p5 adapter6/6, six paired grades, verified routing,
+  no errors. Notebook pull succeeded; source cells match the registered
+  package. No further GPU execution was launched.
+- The same six selected task-rounds cost37 tool calls/62 LLM calls for base
+  versus53/80 for p5. This small, selected positive control demonstrates
+  working deployment and no observed solve regression, not improved efficiency
+  or immunity to the harder long-context failures.
+- Audited all22 overflow traces. Median tools/LLM calls are30/35.5 versus11/15
+  on the other107 tasks. `rich_3518`:13 edit attempts,12 FileEditErrors;
+  `fastapi_13713`:31 edit attempts,31 FileEditErrors. These trajectories show
+  persistent edit recovery/repetition problems before context rejection.
+- Historical pre-LoRA repro artifacts contain62 context errors in312 saved
+  grade rows, including the same error text and overlapping tasks. Those
+  ARM_F/ARM_R policies and coverage differ; do not interpret their rate versus
+  this129-task pass as an adapter effect. Current evidence does not establish
+  whether p5 makes long-context loops more or less likely.
+- **Correction to earlier "one-token overflow" wording:** exact deployed
+  vLLM0.19.1 source (`vllm/renderers/params.py`, `get_encode_kwargs` and
+  `_token_len_check`) intentionally limits tokenization to maximum allowed
+  input +1 when rejecting an oversized request. Thus "at least27769" is a
+  lower bound; the true prompt may be longer. It is not proof of an off-by-one
+  bug, and merely adding one token is not a justified fix.
+  Source: https://github.com/vllm-project/vllm/blob/v0.19.1/vllm/renderers/params.py
+- The rejected request fails during rendering/token validation before model
+  inference. Our runner sets context32768; the frozen G_startup sampling
+  reserves5000 output tokens. Context management and repeated-error recovery
+  need consideration independently of adapter loading.
+- Larger-context feasibility remains unverified against the exact mounted
+  Kaggle base configuration and L4 memory. A Hugging Face config-only metadata
+  request was interrupted; no replacement weights or adapter were fetched.
+  Existing Kaggle/Drive p5 artifacts remain authoritative and unchanged.
+
+### 2026-11-18 - prior-log reconciliation before any larger-context proposal
+
+- User correctly challenged presenting context/recovery issues as new.
+  Re-read the historical context, compaction and memory-pressure analyses and
+  recovered the earlier conversation interpreting them. No GPU run, model
+  download or configuration change was made.
+- Already established: E4B history inclusion A/B at32768,260 task executions,
+  H_default50/130 versus N_none58/130, formally inconclusive; overflow11 versus13.
+  In its8-versus15 round, both arms had three context errors, so overflow did
+  not explain the solve gap. This tested `include_contents`, not larger
+  context capacity or structured saved-solution memory.
+- Already established:31B post-compaction rereads increased4% to13%, but the
+  within-task solve analysis found no detectable effect; the "compaction
+  explains it all" theory was explicitly retracted. Matching CLI defaults
+  also did not explicitly enable scorer-documented compaction.
+- Already established:416 startup-gate outcomes and matched trajectories
+  exposed useful fixes rejected/undone by existing tests, subsequent wrong
+  target drift, and saved-attempt restoration rescuing a solve. Current
+  repeated-edit observations must be interpreted alongside this prior work,
+  not attributed automatically to model incapability or p5.
+- The logged65536 local-server setting was a12B llama.cpp shared pool with
+  two32768-token slots, not a64k-per-request Kaggle E4B capacity comparison.
+  No matched E4B64k-versus128k sweep was found in the reviewed log; do not
+  claim this proves such an experiment never existed.
+- User supplied model configuration with
+  `text_config.max_position_embeddings=131072`. That establishes the declared
+  native limit in the supplied config, not measured L4 throughput at that
+  limit. The earlier generic rerun recommendation was premature without
+  reconciling prior results and defining a distinct unanswered hypothesis.
+
+
+### 2026-11-18T03:40:25.170353+00:00 - private experiment collected
+
+`comfyops/e4b-tool-lora-p5-129` version 2; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_129_v2\result_report.json`; SHA256 `8fab80b05519d9b83b93a96c0f375d7fb45564cf0db0dec4f7e82cb53736df68`.
+
+Saved summary: `{"complete": false, "errors": {"fastapi_11194": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_11355": {"error": null, "result_error": null, "status": "completed"}, "fastapi_12942": {"error": null, "result_error": null, "status": "completed"}, "fastapi_13207": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_13713": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_13786": {"error": null, "result_error": null, "status": "completed"}, "fastapi_13920": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14099": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14186": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14246": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14258": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14262": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14266": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14297": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14303": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14306": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14349": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14356": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14360": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14361": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14371": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14430": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14455": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14459": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14482": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14485": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14512": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14583": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14605": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14609": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14791": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14953": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14962": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_14964": {"error": null, "result_error": null, "status": "completed"}, "fastapi_14978": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_15023": {"error": null, "result_error": null, "status": "completed"}, "fastapi_15030": {"error": null, "result_error": null, "status": "completed"}, "fastapi_15661": {"error": null, "result_error": null, "status": "completed"}, "fastapi_15745": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_15785": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_15800": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "fastapi_5624": {"error": null, "result_error": null, "status": "completed"}, "httpx_3672": {"error": null, "result_error": null, "status": "completed"}, "rich_2725": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "rich_3130": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "rich_3480": {"error": null, "result_error": null, "status": "completed"}, "rich_3518": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "rich_3535": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}, "rich_3772": {"error": null, "result_error": null, "status": "completed"}, "rich_3930": {"error": null, "result_error": null, "status": "completed"}, "rich_4006": {"error": null, "result_error": null, "status": "completed"}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed"}}, "expected": 129, "experiment": "p5 LoRA; G_startup fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 129, "graded": 80, "missing_task_ids": [], "recorded": 129, "resolved_among_graded": 13, "routing_violations": [], "ungraded_task_ids": ["fastapi_15661", "fastapi_13920", "fastapi_14459", "fastapi_15030", "fastapi_14873", "fastapi_15023", "fastapi_14349", "fastapi_14246", "fastapi_14361", "fastapi_14258", "fastapi_14609", "fastapi_14512", "fastapi_14964", "fastapi_14430", "fastapi_14978", "fastapi_14262", "fastapi_14485", "rich_4006", "fastapi_14953", "fastapi_14791", "fastapi_14455", "fastapi_14962", "fastapi_13207", "fastapi_14360", "fastapi_14303", "fastapi_12942", "fastapi_14266", "fastapi_14186", "fastapi_14306", "fastapi_11355", "fastapi_5624", "rich_3930", "fastapi_14371", "fastapi_14356", "fastapi_14099", "fastapi_14297", "fastapi_15745", "fastapi_14482", "fastapi_15785", "fastapi_14583", "fastapi_13786", "httpx_3672", "rich_3772", "rich_3535", "rich_3480", "rich_3518", "rich_2725", "fastapi_14605", "fastapi_13713"], "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-18T03:48:23.432771+00:00 - private experiment collected
+
+`comfyops/e4b-tool-lora-p5-controls` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_controls\result_report.json`; SHA256 `27d7dc9a1cb2a3c649c9be0fcc279124c1b14ccf9969d42c9ffaf7955daac4ba`.
+
+Saved summary: `{"adapter_resolved": 6, "base_resolved": 6, "complete": true, "expected_executions": 12, "experiment": "historically solved E4B positive controls; paired G_startup base/p5", "paired_graded": 6, "pairs": [{"adapter_resolved": true, "base_resolved": true, "id": "rich_3006", "paired_graded": true, "round": 1}, {"adapter_resolved": true, "base_resolved": true, "id": "rich_3454", "paired_graded": true, "round": 1}, {"adapter_resolved": true, "base_resolved": true, "id": "rich_3905", "paired_graded": true, "round": 1}, {"adapter_resolved": true, "base_resolved": true, "id": "rich_3006", "paired_graded": true, "round": 2}, {"adapter_resolved": true, "base_resolved": true, "id": "rich_3454", "paired_graded": true, "round": 2}, {"adapter_resolved": true, "base_resolved": true, "id": "rich_3905", "paired_graded": true, "round": 2}], "routing_verified": true, "runs": {"adapter_round_1": {"complete": true, "errors": {}, "expected": 3, "experiment": "p5 LoRA; G_startup fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 3, "graded": 3, "missing_task_ids": [], "recorded": 3, "resolved_among_graded": 3, "routing_violations": [], "ungraded_task_ids": [], "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "adapter_round_2": {"complete": true, "errors": {}, "expected": 3, "experiment": "p5 LoRA; G_startup fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 3, "graded": 3, "missing_task_ids": [], "recorded": 3, "resolved_among_graded": 3, "routing_violations": [], "ungraded_task_ids": [], "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "base_round_1": {"complete": true, "errors": {}, "expected": 3, "experiment": "p5 LoRA; G_startup fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 0, "graded": 3, "missing_task_ids": [], "recorded": 3, "resolved_among_graded": 3, "routing_violations": [], "ungraded_task_ids": [], "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "base_round_2": {"complete": true, "errors": {}, "expected": 3, "experiment": "p5 LoRA; G_startup fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 0, "graded": 3, "missing_task_ids": [], "recorded": 3, "resolved_among_graded": 3, "routing_violations": [], "ungraded_task_ids": [], "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}}, "warning": "Selected positive controls, not a held-out capability or leaderboard estimate. Historical solves do not guarantee this different policy will solve every repeat."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+### 2026-11-18 - preregistration: p5 overflow-only 64K recovery
+
+- **Approved scope:** all22 full129 v2 tasks whose saved error contains
+  `ContextWindowExceededError`, including four with real grades. Keep original
+  task-file order; no selection on later outcomes. Source progress SHA256:
+  `22cf6bc9ebac52ad29368bb04af918c920e024a41c070b08068c0da1fd818555`.
+- **Hypothesis:** more available context may allow a previously overflowing
+  p5 trajectory to produce a verified solve. A continued failure, remaining
+  overflow or early stop is an actual negative/partial diagnostic outcome,
+  not a fabricated grade or leaderboard estimate. This is not a matched
+  adapter-off or context-capacity A/B; reduced concurrency is a confound.
+- **Unchanged inputs:** original129-task SHA256
+  `e4b3fd60f69dbc2b9213e54eeb9636db78aefe92c1d06269d73d9f5f8f3c8ad6`;
+  all G_startup baseline/treatment policy hashes and p5 adapter checked against
+  the full129 execution registration. Mounted Kaggle E4B version2 base and
+  private p5 adapter retain their existing weight/config hash checks. No HF
+  fetch, new Colab runtime, Drive authorization or leaderboard submission.
+- **Frozen source:** `kaggle_pkg/push_tool_lora_p5_overflow64k`;
+  notebook SHA256 `9eedfcafacb6fd30c566250b8aff3bf0168e1c65297bb0130c46bc044326aa1d`;
+  bundle SHA256 `a9c5a5e86842d11d348a4904f30736cf640506755be7166267b8c88574ac327b`;
+  selected tasks SHA256 `3f4103572e79d8236be14448df2d03af58dcba3e2149505831cdfce1be7421bc`.
+- **Single authorized launch:** new private
+  `comfyops/e4b-tool-lora-p5-overflow64k` v1. Four L4s, tp1 each,
+  `max_model_len=65536`; one evaluator/GPU and at most four in flight.
+  Existing task wall2000s,80 tools,30 agent minutes,200 turns and300s tool
+  timeout remain unchanged. Evaluation deadline3600s; platform cap4800s,
+  at most5.34 device-hours. No automatic relaunch.
+- **Before tasks:** all four lanes must pass unchanged native parser and
+  deterministic nonzero adapter-effect gates, advertise65536 and successfully
+  serve65528 native input token IDs with8 output-token allowance using p5.
+  Save raw full-window responses and actual hardware/runtime logs.
+- **Stop rule chosen by user:** ten consecutive completed/finalized attempts
+  that are not verified solves, in saved shared-lock finalization order.
+  Count ordinary unresolved grades, execution/context errors and timeouts.
+  A success requires completed evaluator, real grade, resolved=True,
+  test_exit_code=0, no row/result/trace errors and audited p5 fixer routing
+  without observed violations. A verified solve resets the streak. At10,
+  stop dispatch, cancel active evaluator process trees, persist results and
+  shut down all serving lanes. Late completions do not reset the stop;
+  never-started deadline tasks do not count as executed failures.
+- **Report:** verified solves/rescues, remaining overflows, other errors,
+  raw real grades, cancelled and unstarted IDs and exact stop receipt.
+  Missing/cancelled attempts are not invented test failures. An early cutoff
+  is incomplete even if Kaggle labels the notebook COMPLETE.
+- **Prelaunch resources checked04:25 UTC:**45.840851 device-hours remaining,
+  0 reserved; both prior kernels COMPLETE; new target absent.
+  SDK durations converted with `total_seconds()` (allowed216000s,
+  used50972.936s); string serialization drops days. Pay-to-scale enabled;
+  no independent dollar tariff quoted. Saved receipt:
+  `Outputs/kaggle_tool_lora_p5_overflow64k_preflight.json`.
+- **Offline validation:**33 Windows tests ran (26 passed,7 Linux-only skipped);
+  15 Linux tests passed, including actual active/detached-descendant
+  cancellation and isolation. Frozen cohort/input hashes, generated-call
+  signature binding, syntax and launcher preflight passed. Pylance reports
+  only known absent local GPU SDK imports; no new type error.
+
+
+### 2026-11-18T04:29:11.634720+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_overflow64k`; slug `comfyops/e4b-tool-lora-p5-overflow64k`; expected version 1; accelerator `NvidiaL4`; requested platform cap 4800s.
+Notebook SHA256 `9eedfcafacb6fd30c566250b8aff3bf0168e1c65297bb0130c46bc044326aa1d`; metadata SHA256 `4b02932a158cd93f1359700c0a630c35642dfce0136dad83562b36b9785a5361`; registration SHA256 `31756b255ca18e609f98ab8fe5e6d422068f55a3f3aff7c2cb410d3f91c73f76`.
+Comparison: User-approved all22 prior p5 overflow tasks at64K; unchanged G_startup fixer adapter and base verifier. Single diagnostic pass; lower concurrency enforces stop control and confounds any pure context-effect claim.
+
+Decision criteria: `{"expected_tasks": 22, "failure": "Anything not verified solved, including unresolved/error/timeout or invalid routing", "failure_order": "record finalization under shared lock", "failure_streak_limit": 10, "full_window_adapter_probe": "65528 input token IDs +8 output allowance on each lane", "native_parser_each_lane": true, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Verified rescues, errors, cancelled/unstarted tasks and failure streak; no improvement/LB claim", "stop_action": "Stop dispatch, cancel active evaluator process trees, persist results and stop servers", "success": "Completed evaluator, real grade, resolved true, test exit0, no errors, audited p5 routing"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-18T04:44:20.846936+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_overflow131k`; slug `comfyops/e4b-tool-lora-p5-overflow131k`; expected version 1; accelerator `NvidiaL4`; requested platform cap 4800s.
+Notebook SHA256 `7cbd54c2b03af4e245d0e416724e344c52162eb7b53360202b7fe9265878b49d`; metadata SHA256 `ae2f0550c188cd467a9a24c53ac5bc82439f727befa5f4ece3fcc0501c3f5ccd`; registration SHA256 `be22a2edbc1383a8704646b9a1e6c9522969788bca99ae6c02a0dacef1454937`.
+Comparison: User-approved all22 prior p5 overflow tasks at131072 tokens; unchanged G_startup fixer adapter and base verifier. Single diagnostic pass; lower concurrency enforces stop control and confounds any pure context-effect claim.
+
+Decision criteria: `{"expected_tasks": 22, "failure": "Anything not verified solved, including unresolved/error/timeout or invalid routing", "failure_order": "record finalization under shared lock", "failure_streak_limit": 10, "full_window_adapter_probe": "131064 input token IDs +8 output allowance on each lane", "native_parser_each_lane": true, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Verified rescues, errors, cancelled/unstarted tasks and failure streak; no improvement/LB claim", "stop_action": "Stop dispatch, cancel active evaluator process trees, persist results and stop servers", "success": "Completed evaluator, real grade, resolved true, test exit0, no errors, audited p5 routing"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-18T05:06:48.996459+00:00 - private experiment collected
+
+`comfyops/e4b-tool-lora-p5-overflow64k` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_overflow64k\result_report.json`; SHA256 `6ed771d9cc1a453b5ea7374b55f8d19e03178db351bc86e7f696de4a2b09aab4`.
+
+Saved summary: `{"cancelled_task_ids": ["fastapi_15800", "fastapi_14361", "fastapi_14430"], "complete": false, "errors": {"fastapi_13207": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14099": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14356": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14361": {"error": null, "result_error": null, "status": "cancelled_failure_streak", "trace_error": "Trace not available"}, "fastapi_14430": {"error": null, "result_error": null, "status": "cancelled_failure_streak", "trace_error": "Trace not available"}, "fastapi_14482": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14609": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14962": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14978": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_15800": {"error": null, "result_error": null, "status": "cancelled_failure_streak", "trace_error": "Trace not available"}}, "expected": 22, "experiment": "p5 overflow-only 64K recovery; single arm, not a paired context effect", "failure_stop": {"completion_order": ["fastapi_14962", "fastapi_14258", "fastapi_14978", "fastapi_14482", "rich_4070", "fastapi_14609", "fastapi_14873", "fastapi_14099", "fastapi_13207", "fastapi_14356"], "consecutive_failures": 10, "limit": 10, "trigger_task": "fastapi_14356", "triggered": true}, "fixer_adapter_observed_tasks": 10, "graded": 2, "max_model_len": 65536, "missing_task_ids": ["fastapi_11194", "fastapi_13713", "fastapi_14266", "fastapi_15745", "fastapi_15785", "rich_2725", "rich_3130", "rich_3518", "rich_3535"], "not_started_task_ids": ["fastapi_11194", "fastapi_13713", "fastapi_14266", "fastapi_15745", "fastapi_15785", "rich_2725", "rich_3130", "rich_3518", "rich_3535"], "recorded": 13, "resolved_among_graded": 0, "routing_violations": [], "ungraded_task_ids": ["fastapi_14962", "fastapi_14978", "fastapi_14482", "fastapi_14609", "fastapi_14873", "fastapi_14099", "fastapi_13207", "fastapi_14356", "fastapi_15800", "fastapi_14361", "fastapi_14430"], "verified_solves": 0, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-18T05:26:04.094723+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_repeat39`; slug `comfyops/e4b-tool-lora-p5-repeat39`; expected version 1; accelerator `NvidiaL4`; requested platform cap 18000s.
+Notebook SHA256 `a490a2dcb65ac59aa11958443146c9b25da5aa15039f414b61758f4b0d468e17`; metadata SHA256 `6ce1a027377500be050bf2a00674be0b447229a170fe8988013fabfd4128edc9`; registration SHA256 `fb64a8f74f0ce5e1c43d22b5c491fc95201fdb6ff9234c2394b6ec66b32f2cf9`.
+Comparison: 16 paired rounds on the historical score39 set at 32K. Compare concurrent G_startup base and p5, differing only in the fixer adapter declaration.
+
+Decision criteria: `{"dispatch": "Both arms per task-round on one GPU, opposite arm start order alternated; seeded shuffle per round and at most four pairs per GPU", "expected_executions": 1248, "expected_pairs": 624, "native_parser_each_lane": true, "order_seed": 32768, "positive_signal": "At least 16 net additional verified solves and one-sided task-level sign-flip p <= 0.05 (10,000 seeded draws).", "primary": "Verified solves on each arm across the scheduled pairs. No decision if any pair is missing/unstarted, a global deadline interrupted an attempt, or a routing violation occurred.", "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Per-task and per-round resolves, clean paired grades and discordance, baseline regressions, overflow, ungraded errors and timeouts separately. Not a held-out, equivalence, or leaderboard claim.", "serving_lanes_required": 4}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-18T05:28:15.876762+00:00 - private experiment collected
+
+`comfyops/e4b-tool-lora-p5-overflow131k` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_overflow131k\result_report.json`; SHA256 `86a1319699c009bd2d2a255ebdaca5bcfe4b144cef9b3d868090f8c9f904a03d`.
+
+Saved summary: `{"cancelled_task_ids": ["fastapi_15785", "fastapi_13713", "fastapi_13207"], "complete": false, "errors": {"fastapi_13207": {"error": null, "result_error": null, "status": "cancelled_failure_streak", "trace_error": "Trace not available"}, "fastapi_13713": {"error": null, "result_error": null, "status": "cancelled_failure_streak", "trace_error": "Trace not available"}, "fastapi_14099": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14258": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14356": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14361": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14482": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14609": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14962": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14978": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_15785": {"error": null, "result_error": null, "status": "cancelled_failure_streak", "trace_error": "Trace not available"}, "rich_4070": {"error": "Agent exceeded tool call budget (80 calls)", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 22, "experiment": "p5 overflow-only 131072-token recovery; single arm, not a paired context effect", "failure_stop": {"completion_order": ["fastapi_14978", "fastapi_14099", "fastapi_14962", "fastapi_14258", "fastapi_14482", "fastapi_14361", "rich_4070", "fastapi_14356", "fastapi_14609", "fastapi_14873"], "consecutive_failures": 10, "limit": 10, "trigger_task": "fastapi_14873", "triggered": true}, "fixer_adapter_observed_tasks": 10, "graded": 1, "max_model_len": 131072, "missing_task_ids": ["fastapi_11194", "fastapi_14266", "fastapi_14430", "fastapi_15745", "fastapi_15800", "rich_2725", "rich_3130", "rich_3518", "rich_3535"], "not_started_task_ids": ["fastapi_11194", "fastapi_14266", "fastapi_14430", "fastapi_15745", "fastapi_15800", "rich_2725", "rich_3130", "rich_3518", "rich_3535"], "recorded": 13, "resolved_among_graded": 0, "routing_violations": [], "ungraded_task_ids": ["fastapi_14978", "fastapi_14099", "fastapi_14962", "fastapi_14258", "fastapi_14482", "fastapi_14361", "fastapi_14356", "fastapi_14609", "fastapi_14873", "fastapi_15785", "fastapi_13713", "fastapi_13207"], "verified_solves": 0, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-18T07:15:26.310224+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_evidence_seed39`; slug `comfyops/e4b-evidence-to-edit-seed39`; expected version 1; accelerator `NvidiaL4`; requested platform cap 4800s.
+Notebook SHA256 `02d796fbed36eb27ba0a9251f36836110b6c6bf911f2e716536c3a2ffe08ab9e`; metadata SHA256 `42f376ccda3d39a46bb1ef165d1aa4b42a74d589281dada420da7182b787ef59`; registration SHA256 `71f3124f1e5fa2ede3fbccd784583042c834d7824fd43794ec85c80429a3ed1d`.
+Comparison: One adapter-only pass on the exact repeat39 task definitions at 32K; G_startup with the three-update evidence-to-edit seed on the fixer only. Compare descriptively against full contemporaneous repeat39 rounds once collected. No live base arm, promotion rule, held-out or leaderboard claim.
+
+Decision criteria: `{"expected_tasks": 39, "native_parser_each_lane": true, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Verified solve IDs, overlaps with historical solves, real grades, overflows, timeouts, missing tasks and routing errors separately", "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-18T07:47:59.735941+00:00 - private experiment collected
+
+`comfyops/e4b-evidence-to-edit-seed39` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_evidence_seed39\result_report.json`; SHA256 `6bf3256c3220d74b751e75b97979ebc104f1b33954a867ff638cf6ab21ec226b`.
+
+Saved summary: `{"complete": false, "errors": {"fastapi_11194": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14458": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3043": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 36, "missing_task_ids": [], "overflows": 5, "recorded": 39, "resolved_among_graded": 13, "routing_violations": [], "ungraded_task_ids": ["fastapi_14492", "fastapi_14873", "rich_3480"], "verified_solve_ids": ["fastapi_14786", "rich_4077", "rich_3905", "fastapi_14301", "fastapi_14077", "rich_3454", "rich_3067", "rich_3882", "rich_3006", "fastapi_14616", "rich_3894", "rich_3506", "rich_2725"], "verified_solves": 13, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-18T08:02:51.212343+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_evidence_seed39_r2_r10`; slug `comfyops/e4b-evidence-to-edit-seed39-r2-r10`; expected version 1; accelerator `NvidiaL4`; requested platform cap 10800s.
+Notebook SHA256 `c7bb04adf7a8700c08ae65bc5cdb2e0d927922bfe1733bcb7ad7002dd54f50cf`; metadata SHA256 `2435e94ad5e69d6a89d9b0533d89287f9d9afd6ce9abebb3013c5be4909d448d`; registration SHA256 `16aa286ac57c99e57b5e93ddec2819309275862d5d7906bbd1b3a6896bf35cb3`.
+Comparison: Extend the frozen Seed39 v1 with nine additional adapter-only passes; compare round and task distributions descriptively to existing base/p5 repeat39.
+
+Decision criteria: `{"expected_executions": 351, "expected_tasks": 39, "native_parser_each_lane": true, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Score and coverage for every round including original v1 separately, mean/range/dispersion over complete rounds, counts below 12 and at least 13, per-task stability, verified solves, overflows and other errors. No auto-resubmit.", "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-18T14:49:37.943522+00:00 - private experiment collected
+
+`comfyops/e4b-evidence-to-edit-seed39-rounds-2-to-10` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_evidence_seed39_r2_r10\result_report.json`; SHA256 `c5619493e9783d4a166c9d1eb08979b85758931f146820102ea053c09bc1c823`.
+
+Saved summary: `{"attempted": 351, "complete": true, "expected_executions": 351, "experiment": "Seed39 32K; nine additional adapter-only rounds", "global_deadline_hits": 0, "overflows": 46, "recorded": 351, "rounds": {"10": {"complete": false, "errors": {"fastapi_11194": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14851": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2725": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3105": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 35, "missing_task_ids": [], "overflows": 4, "recorded": 39, "resolved_among_graded": 13, "routing_violations": [], "ungraded_task_ids": ["fastapi_14851", "fastapi_11194", "rich_3480", "fastapi_14873"], "verified_solve_ids": ["fastapi_9753", "rich_3454", "fastapi_9555", "rich_3518", "rich_4077", "fastapi_14786", "rich_3006", "rich_3905", "fastapi_14077", "fastapi_14458", "fastapi_14301", "rich_3067", "fastapi_14616"], "verified_solves": 13, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "2": {"complete": false, "errors": {"fastapi_14372": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14616": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14794": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_3777": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 35, "missing_task_ids": [], "overflows": 5, "recorded": 39, "resolved_among_graded": 12, "routing_violations": [], "ungraded_task_ids": ["fastapi_14794", "fastapi_14372", "rich_3480", "fastapi_14616"], "verified_solve_ids": ["fastapi_14786", "fastapi_14301", "rich_3905", "fastapi_9555", "rich_3454", "rich_3067", "fastapi_9753", "fastapi_14077", "rich_3006", "rich_2725", "rich_4077", "fastapi_9425"], "verified_solves": 12, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "3": {"complete": false, "errors": {"fastapi_11194": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14463": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14794": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14851": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 33, "missing_task_ids": [], "overflows": 6, "recorded": 39, "resolved_among_graded": 9, "routing_violations": [], "ungraded_task_ids": ["fastapi_14463", "fastapi_14794", "fastapi_14851", "fastapi_11194", "fastapi_14873", "rich_3480"], "verified_solve_ids": ["fastapi_9753", "fastapi_14786", "fastapi_14301", "rich_3905", "rich_3454", "fastapi_14077", "rich_3006", "fastapi_14616", "rich_2943"], "verified_solves": 9, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "4": {"complete": false, "errors": {"fastapi_14458": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14463": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14616": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 33, "missing_task_ids": [], "overflows": 3, "recorded": 39, "resolved_among_graded": 11, "routing_violations": [], "ungraded_task_ids": ["fastapi_14492", "fastapi_14463", "fastapi_14616", "fastapi_14458", "rich_3480", "fastapi_14873"], "verified_solve_ids": ["fastapi_14786", "rich_3454", "rich_4077", "fastapi_9555", "fastapi_9425", "fastapi_14077", "rich_3905", "rich_3894", "fastapi_14301", "rich_3006", "rich_3067"], "verified_solves": 11, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "5": {"complete": false, "errors": {"fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_9753": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_3063": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 36, "missing_task_ids": [], "overflows": 5, "recorded": 39, "resolved_among_graded": 12, "routing_violations": [], "ungraded_task_ids": ["fastapi_9753", "fastapi_14873", "rich_3480"], "verified_solve_ids": ["fastapi_14786", "fastapi_14794", "rich_3518", "fastapi_9425", "rich_3905", "fastapi_14463", "rich_3454", "fastapi_14077", "rich_3006", "fastapi_14301", "rich_3067", "rich_3882"], "verified_solves": 12, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "6": {"complete": false, "errors": {"fastapi_11194": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14851": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2725": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3043": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 34, "missing_task_ids": [], "overflows": 5, "recorded": 39, "resolved_among_graded": 10, "routing_violations": [], "ungraded_task_ids": ["fastapi_14492", "fastapi_14851", "fastapi_11194", "rich_3480", "fastapi_14873"], "verified_solve_ids": ["fastapi_9753", "fastapi_14786", "fastapi_14458", "fastapi_14077", "fastapi_9425", "rich_3454", "fastapi_14301", "rich_3905", "rich_3006", "rich_3067"], "verified_solves": 10, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "7": {"complete": false, "errors": {"fastapi_14458": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2943": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3105": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 34, "missing_task_ids": [], "overflows": 5, "recorded": 39, "resolved_among_graded": 12, "routing_violations": [], "ungraded_task_ids": ["fastapi_14492", "fastapi_14458", "rich_3480", "rich_3105", "rich_2943"], "verified_solve_ids": ["fastapi_9753", "fastapi_14786", "rich_3454", "fastapi_14301", "fastapi_9425", "rich_3905", "rich_3006", "rich_3506", "rich_3894", "fastapi_14077", "rich_2725", "rich_3067"], "verified_solves": 12, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "8": {"complete": false, "errors": {"fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_9753": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_3777": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 36, "missing_task_ids": [], "overflows": 5, "recorded": 39, "resolved_among_graded": 10, "routing_violations": [], "ungraded_task_ids": ["fastapi_14492", "rich_3480", "fastapi_14873"], "verified_solve_ids": ["fastapi_14786", "fastapi_13537", "rich_3454", "rich_4077", "fastapi_14794", "rich_3006", "rich_2725", "rich_3905", "fastapi_14301", "rich_3067"], "verified_solves": 10, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "9": {"complete": false, "errors": {"fastapi_11194": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14794": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2725": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3043": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3777": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 35, "missing_task_ids": [], "overflows": 8, "recorded": 39, "resolved_among_graded": 12, "routing_violations": [], "ungraded_task_ids": ["fastapi_11194", "rich_3043", "rich_2725", "rich_3480"], "verified_solve_ids": ["fastapi_9753", "rich_3454", "fastapi_14786", "fastapi_9555", "rich_3006", "rich_3894", "fastapi_14301", "fastapi_14077", "rich_3905", "rich_3506", "rich_3067", "fastapi_14873"], "verified_solves": 12, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}}, "routing_violations": [], "verified_solves": 101, "warning": "Round 1 is the separate original Seed39 run. Comparisons to p5/base are descriptive, not concurrent matched attempts or a leaderboard prediction."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-18T15:41:27.542140+00:00 - private experiment collected
+
+`comfyops/e4b-tool-lora-p5-repeat39` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_tool_lora_p5_repeat39\result_report.json`; SHA256 `706dfe08a8d3dd521b4eb7a084e66007b0926607c9956ffd660c9b39f524ee01`.
+
+Saved summary: `{"attempted_pairs": 624, "clean_grade_pairs": {"adapter_only": 40, "base_only": 48, "both_solved": 124, "neither_solved": 243}, "complete": true, "expected_executions": 1248, "expected_pairs": 624, "experiment": "32K paired G_startup base vs p5 on the historical score39 cohort", "gain_per_round": -0.6875, "global_deadline_hits": 0, "one_sided_task_cluster_p": 0.9393060693930607, "positive_signal": false, "recorded": 1248, "rounds": {"1": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 2, "overflows": 5, "valid_grades": 35, "verified_solves": 12}, "base": {"attempted": 39, "other_abnormal_outcomes": 4, "overflows": 5, "valid_grades": 33, "verified_solves": 9}}, "10": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 2, "overflows": 6, "valid_grades": 35, "verified_solves": 12}, "base": {"attempted": 39, "other_abnormal_outcomes": 3, "overflows": 4, "valid_grades": 35, "verified_solves": 15}}, "11": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 4, "valid_grades": 36, "verified_solves": 11}, "base": {"attempted": 39, "other_abnormal_outcomes": 2, "overflows": 3, "valid_grades": 36, "verified_solves": 16}}, "12": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 3, "overflows": 6, "valid_grades": 32, "verified_solves": 9}, "base": {"attempted": 39, "other_abnormal_outcomes": 3, "overflows": 6, "valid_grades": 32, "verified_solves": 10}}, "13": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 2, "overflows": 6, "valid_grades": 35, "verified_solves": 9}, "base": {"attempted": 39, "other_abnormal_outcomes": 2, "overflows": 3, "valid_grades": 36, "verified_solves": 12}}, "14": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 6, "valid_grades": 35, "verified_solves": 13}, "base": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 5, "valid_grades": 35, "verified_solves": 10}}, "15": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 3, "overflows": 6, "valid_grades": 33, "verified_solves": 11}, "base": {"attempted": 39, "other_abnormal_outcomes": 3, "overflows": 4, "valid_grades": 33, "verified_solves": 9}}, "16": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 2, "overflows": 5, "valid_grades": 36, "verified_solves": 11}, "base": {"attempted": 39, "other_abnormal_outcomes": 2, "overflows": 6, "valid_grades": 34, "verified_solves": 14}}, "2": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 4, "valid_grades": 36, "verified_solves": 12}, "base": {"attempted": 39, "other_abnormal_outcomes": 3, "overflows": 4, "valid_grades": 34, "verified_solves": 11}}, "3": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 4, "overflows": 4, "valid_grades": 33, "verified_solves": 12}, "base": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 3, "valid_grades": 37, "verified_solves": 11}}, "4": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 4, "valid_grades": 36, "verified_solves": 13}, "base": {"attempted": 39, "other_abnormal_outcomes": 3, "overflows": 4, "valid_grades": 34, "verified_solves": 11}}, "5": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 2, "overflows": 2, "valid_grades": 37, "verified_solves": 11}, "base": {"attempted": 39, "other_abnormal_outcomes": 2, "overflows": 4, "valid_grades": 35, "verified_solves": 12}}, "6": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 5, "valid_grades": 35, "verified_solves": 11}, "base": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 4, "valid_grades": 36, "verified_solves": 11}}, "7": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 3, "overflows": 6, "valid_grades": 34, "verified_solves": 11}, "base": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 3, "valid_grades": 37, "verified_solves": 12}}, "8": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 3, "overflows": 5, "valid_grades": 34, "verified_solves": 9}, "base": {"attempted": 39, "other_abnormal_outcomes": 0, "overflows": 7, "valid_grades": 35, "verified_solves": 15}}, "9": {"adapter": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 6, "valid_grades": 34, "verified_solves": 11}, "base": {"attempted": 39, "other_abnormal_outcomes": 1, "overflows": 8, "valid_grades": 34, "verified_solves": 11}}}, "routing_violations": [], "tasks": {"fastapi_11194": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 2, "overflows": 7, "valid_grades": 11, "verified_solves": 1}, "base": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 5, "valid_grades": 10, "verified_solves": 1}}, "fastapi_13537": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 15, "verified_solves": 3}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 15, "verified_solves": 2}}, "fastapi_14077": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 0, "valid_grades": 15, "verified_solves": 15}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 15, "verified_solves": 15}}, "fastapi_14301": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 0, "valid_grades": 15, "verified_solves": 15}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 16}}, "fastapi_14372": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 1, "valid_grades": 15, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 1}}, "fastapi_14419": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 0}}, "fastapi_14458": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 2, "overflows": 1, "valid_grades": 13, "verified_solves": 1}, "base": {"attempted": 16, "other_abnormal_outcomes": 3, "overflows": 0, "valid_grades": 13, "verified_solves": 1}}, "fastapi_14463": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 2, "overflows": 0, "valid_grades": 14, "verified_solves": 7}, "base": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 0, "valid_grades": 15, "verified_solves": 9}}, "fastapi_14492": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 3, "valid_grades": 15, "verified_solves": 8}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 9, "valid_grades": 11, "verified_solves": 6}}, "fastapi_14616": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 5, "valid_grades": 13, "verified_solves": 2}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 3, "valid_grades": 15, "verified_solves": 3}}, "fastapi_14786": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 16}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 16}}, "fastapi_14794": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 6, "valid_grades": 12, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 1, "valid_grades": 14, "verified_solves": 0}}, "fastapi_14851": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 0, "valid_grades": 15, "verified_solves": 2}, "base": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 1, "valid_grades": 14, "verified_solves": 2}}, "fastapi_14873": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 10, "valid_grades": 6, "verified_solves": 4}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 9, "valid_grades": 7, "verified_solves": 7}}, "fastapi_15589": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 3, "overflows": 0, "valid_grades": 13, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 3, "overflows": 1, "valid_grades": 13, "verified_solves": 0}}, "fastapi_5077": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 0}}, "fastapi_5624": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 2, "overflows": 1, "valid_grades": 13, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 3, "overflows": 1, "valid_grades": 13, "verified_solves": 0}}, "fastapi_9425": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 15, "verified_solves": 10}, "base": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 1, "valid_grades": 14, "verified_solves": 9}}, "fastapi_9555": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 9}, "base": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 2, "valid_grades": 13, "verified_solves": 8}}, "fastapi_9753": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 2, "valid_grades": 15, "verified_solves": 6}, "base": {"attempted": 16, "other_abnormal_outcomes": 2, "overflows": 0, "valid_grades": 14, "verified_solves": 9}}, "rich_2725": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 7, "valid_grades": 11, "verified_solves": 4}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 4, "valid_grades": 14, "verified_solves": 3}}, "rich_2943": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 15, "verified_solves": 1}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 16, "verified_solves": 3}}, "rich_3006": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 16}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 16}}, "rich_3043": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 5, "valid_grades": 16, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 1, "overflows": 7, "valid_grades": 15, "verified_solves": 0}}, "rich_3063": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 3, "valid_grades": 15, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 3, "valid_grades": 16, "verified_solves": 0}}, "rich_3067": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 3, "valid_grades": 15, "verified_solves": 11}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 15, "verified_solves": 13}}, "rich_3105": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 16, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 4, "valid_grades": 14, "verified_solves": 0}}, "rich_3454": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 16}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 16}}, "rich_3480": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 15, "overflows": 1, "valid_grades": 0, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 14, "overflows": 2, "valid_grades": 0, "verified_solves": 0}}, "rich_3506": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 2}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 0}}, "rich_3518": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 16, "verified_solves": 2}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 4}}, "rich_3521": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 1}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 1}}, "rich_3718": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 0}}, "rich_3777": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 3, "valid_grades": 15, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 3, "valid_grades": 14, "verified_solves": 0}}, "rich_3882": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 16, "verified_solves": 2}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 2}}, "rich_3894": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 5}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 8}}, "rich_3905": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 15, "verified_solves": 15}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 14}}, "rich_4070": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 14, "valid_grades": 16, "verified_solves": 0}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 13, "valid_grades": 16, "verified_solves": 0}}, "rich_4077": {"adapter": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 1, "valid_grades": 15, "verified_solves": 4}, "base": {"attempted": 16, "other_abnormal_outcomes": 0, "overflows": 0, "valid_grades": 16, "verified_solves": 4}}}, "totals": {"adapter": {"attempted": 624, "other_abnormal_outcomes": 32, "overflows": 80, "valid_grades": 556, "verified_solves": 178}, "base": {"attempted": 624, "other_abnormal_outcomes": 32, "overflows": 73, "valid_grades": 556, "verified_solves": 189}}, "verified_solve_delta": -11, "warning": "Selected historical cohort, not a held-out or leaderboard estimate. Unstarted attempts are not scored. Abnormal attempts are not valid grades."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+### 2026-11-18 PT - Colab repair decisions v1 development pilot preregistration (not launched)
+
+- Run tag `e4b-repair-decisions-v1-colab-pilot`. Question: can replay-verified,
+  native edit labels from the new development corpus survive exact tokenizer
+  masking, fresh LoRA training and the numerical/export gates on Colab?
+  No benchmark inputs, serving changes, promotion or leaderboard submission.
+- Frozen [Colab notebook](train/colab_repair_decisions_v1.ipynb) SHA256
+  `b576f40f06c1b168d0ce9b181d1ea86b3ad4d9b45bc1cb9daae2fbd7835a1fbd`;
+  [registration](train/data/repair-decisions-v1/registration.json) SHA256
+  `c0d67aeac9ea2bf9d7d665d4823455f4ce2f24bcecc32f0c41486b8300ee3510`.
+  [Training ZIP](train/data/repair-decisions-v1/repair-train-validation-v1.zip)
+  SHA256 `ea48e497524d3342aacab2c4b8218e34d73528721765a7bced86d1c183068af1`.
+  [Separate replay ZIP](train/data/repair-decisions-v1/replay-audit-v1.zip)
+  SHA256 `04bd1b5d00a06dbeedef079cbccc813a0a047573c486906ba18583de70e1c470`.
+- CPU: 24 train and eight validation families from **one** original authoring
+  lineage, no sealed holdout. 384 behavioral subprocesses replayed
+  baseline/intended/same-anchor negative and issue/regression twice; 32
+  cases accepted, zero rejected. Exact Transformers 5.13.1 template prefix
+  and cap checks passed (526 tokens max); notebook inspect and child CPU
+  preflight passed. No exact or joint normalized-AST collisions in the
+  corpus; no external benchmark-overlap scan. Two native tools only, not
+  `G_startup` parity or an upper-context GPU test.
+- User-run only, default inspect. Requires one physical L4, displayed
+  rate at most 2.0 CU/hour, available balance at least 2.1 CU, and explicit
+  approval. Job cap is 3,780 seconds from the launch cell, 2.1 estimated CU
+  at the ceiling; allocation/idle can bill separately. Use the existing
+  pinned p5 environment/model cache, no automatic retry, and distinct
+  Drive receipts/checkpoints. The user confirms `ready` before any fresh
+  Drive consent. No runtime, consent, billing or outcome was observed.
+- Recipe: fresh q42/v24 rank-8/alpha-4, BF16, 3 updates, batch 1, accumulate 4,
+  seed 42, LR 1e-5, 12 distinct train families with the longest first, eight
+  validation rows, 4,096-token cap without truncation. Gate: all three updates,
+  numerical fidelity/zero-adapter/effect/reload checks and verified 132-tensor
+  export. Success is engineering-only. The 64-update experiment stays blocked
+  pending split/source floors, sealed decisions, full serving parity and the
+  separate pilot/routing receipts.
+
+  **Notebook output revision (not launched):** Use
+  [colab_repair_decisions_v1_visible.ipynb](train/colab_repair_decisions_v1_visible.ipynb),
+  SHA256 `ddc44ed4b6d958c170bd81a4dddb76b78623f02f8181d4c7a28c45957408a943`.
+  The settings cell now prints `SETTINGS_OK`, and the final cell streams child
+  stdout/stderr into notebook output. Registration, dataset, trainer, run tag,
+  launch gates and cap are unchanged. Validated locally in inspect mode,
+  including visible errors on a bad archive; no Colab runtime was started.
+
+### 2026-11-18 - repair-decisions v1 Colab development pilot completed
+
+- One existing `dfasd` Colab session; physical GPU reported NVIDIA L4,
+  23,034 MiB. The user approved Drive access and the registered dependency
+  installation, then approved termination after receipt collection. The
+  visible notebook was run with pilot settings and an additional read-only GPU
+  and Drive probe; its frozen inputs and registration remained unchanged.
+- Drive output:
+  `MyDrive/gemma_fasteval/lora_runs/e4b-repair-decisions-v1-colab-pilot`.
+  `outcome.json` status is `development_pilot_trained_requires_serving_probe`;
+  SHA256 `58d955f7dbda2285d759e2d719a47fe894ea0f14ff7de3e50bd26e65b7833ca3`.
+  Three updates and three checkpoints were saved; all four registered
+  numerical/export gates passed and the adapter contains 132 tensors. Saved
+  adapter SHA256 `9f6b42913234eb5b9ff27a9c686bb68348c29403ca0ba9c761c8d6538827cc85`;
+  config SHA256 `a0d3ea9560655956305345562eeb7985a49f3622eff8e3539bf665343baa53cf`.
+  Both hashes were independently checked against the Drive files.
+- Validation NLL on eight development families was 0.27265343 before and
+  0.27124039 after; this is not a repair evaluation or leaderboard prediction.
+  Peak CUDA allocation was 15,480,815,616 bytes. The serving probe, independent
+  corpus, full serving parity and 64-update training remain unverified.
+- Environment preflight matched the seven registered package versions.
+  Installing `peft==0.21.3` also updated `click` and `hf-xet`; pip warned that
+  `papermill` lacked `nbformat`, `tpot` lacked `func-timeout`, `lightgbm`,
+  `stopit` and `xgboost`, and `fastapi-cloud-cli` required a newer `typer`.
+  The pilot nonetheless completed; these dependency conflicts remain a
+  reproducibility caveat, not evidence that the whole environment is clean.
+- Receipt elapsed time was 851.05 seconds and estimated job cost was
+  0.459 CU at the entered 1.94 CU/hour. The displayed account balance changed
+  from 271.75 to 269.65 CU across the broader session, including time outside
+  the launch clock; this is not an itemized job bill. After termination the
+  UI reported zero active sessions and 0.00 CU/hour.
+- This notebook was built with the same base notebook builder and Colab
+  environment-staging helper as the standard seed-pilot template, but was
+  not generated via `python -m notebooks.prepare colab`; the repair-corpus
+  launcher and registration were customized separately.
+
+### 2026-11-18 - repair-decisions pilot adapter uploaded to Kaggle
+
+The user authorized a private dataset upload only, not a GPU job or
+competition submission. Created
+[`comfyops/e4b-repair-decisions-v1-pilot`](https://www.kaggle.com/datasets/comfyops/e4b-repair-decisions-v1-pilot)
+as dataset ID 13475589; Kaggle reports private, version 1, status `ready`.
+The remote dataset contains only `adapter_model.safetensors` and
+`adapter_config.json`. Downloaded the dataset and independently verified
+their SHA256 hashes match the training outcome above. The dataset metadata
+records Gemma terms and explicitly says serving compatibility and repair
+improvement are unvalidated. No base weights, training data or test oracles
+were uploaded. The upload is not a serving or repair evaluation.
+
+
+### 2026-11-19T06:04:48.112591+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_repair_decisions_seed39_r1_r5`; slug `comfyops/e4b-repair-decisions-seed39-rounds-1-to-5`; expected version 1; accelerator `NvidiaL4`; requested platform cap 10800s.
+Notebook SHA256 `9ab61ca34dd037df7115347583b9f1a95ef0bf6cc9d3dd4b4294c877d7cae75e`; metadata SHA256 `4ddab5088da8da5090bbe2349c91d729bc1be3e6a0f8ae07e66b83858745f673`; registration SHA256 `c62743b7e882b4b937d9afc0b3d4a1fe54f1716f0e30e4df6ac98b375a2f1562`.
+Comparison: Five adapter-only rounds on the exact frozen Seed39 cohort at 32K. The repair-decisions v1 adapter is on the fixer only and the verifier remains base; historical comparisons are descriptive, not a contemporaneous paired A/B.
+
+Decision criteria: `{"expected_executions": 195, "expected_tasks": 39, "native_parser_each_lane": true, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Per-round verified solves, valid grades, incomplete coverage, routing violations, overflows, timeouts and other errors. No auto-resubmit or leaderboard claim.", "round_labels": [1, 2, 3, 4, 5], "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-19T06:07:58.489882+00:00 - private experiment collected
+
+`comfyops/e4b-repair-decisions-seed39-rounds-1-to-5` version 1; platform `ERROR`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_repair_decisions_seed39_r1_r5\result_report.json`; SHA256 `99a9871124f52a2d60bf3398a9a58c5126ef00ab2c0b2105852bb745ce02c61b`.
+
+Saved summary: `null`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-19T06:10:37.769370+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_repair_decisions_seed39_r1_r5_v2`; slug `comfyops/e4b-repair-decisions-seed39-rounds-1-to-5`; expected version 2; accelerator `NvidiaL4`; requested platform cap 10800s.
+Notebook SHA256 `15c3d07e0d18e6d3369cac70680cf113c79397e1a872187104d609763c30843d`; metadata SHA256 `4ddab5088da8da5090bbe2349c91d729bc1be3e6a0f8ae07e66b83858745f673`; registration SHA256 `30ceb6244560dae2b7469c2c6c3556ae3ca7a5f93ad5567ae84f22cfd3cf8cca`.
+Comparison: Five adapter-only rounds on the exact frozen Seed39 cohort at 32K. The repair-decisions v1 adapter is on the fixer only and the verifier remains base; historical comparisons are descriptive, not a contemporaneous paired A/B.
+
+Decision criteria: `{"expected_executions": 195, "expected_tasks": 39, "native_parser_each_lane": true, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Per-round verified solves, valid grades, incomplete coverage, routing violations, overflows, timeouts and other errors. No auto-resubmit or leaderboard claim.", "round_labels": [1, 2, 3, 4, 5], "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-19T06:59:40.460018+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_repair_decisions_seed39_r6_r10`; slug `comfyops/e4b-repair-decisions-seed39-rounds-6-to-10`; expected version 1; accelerator `NvidiaL4`; requested platform cap 10800s.
+Notebook SHA256 `d1395c62b036df34ad774d9f5c9f6b285fb28f7470027c04cb85b5e88df4ca1d`; metadata SHA256 `ece964e887861849028636d19141ae292660c646603816a49838417001b7e3d1`; registration SHA256 `df85fe3757e9ab0aff5371489fb2f2fe6e100ef4513e309a50f06fdb1f19152d`.
+Comparison: Five adapter-only rounds on the exact frozen Seed39 cohort at 32K. The repair-decisions v1 adapter is on the fixer only and the verifier remains base; historical comparisons are descriptive, not a contemporaneous paired A/B.
+
+Decision criteria: `{"expected_executions": 195, "expected_tasks": 39, "native_parser_each_lane": true, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Per-round verified solves, valid grades, incomplete coverage, routing violations, overflows, timeouts and other errors. No auto-resubmit or leaderboard claim.", "round_labels": [6, 7, 8, 9, 10], "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-19T07:16:56.271667+00:00 - private experiment collected
+
+`comfyops/e4b-repair-decisions-seed39-rounds-1-to-5` version 2; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_repair_decisions_seed39_r1_r5_v2\result_report.json`; SHA256 `53fb242c200ef039c974cb08766e6117e53bee13d46afc08785c5a4ead8ad5a4`.
+
+Saved summary: `{"attempted": 195, "complete": false, "expected_executions": 195, "experiment": "Repair-decisions v1 adapter; Seed39 32K; five adapter-only rounds", "global_deadline_hits": 0, "overflows": 25, "recorded": 195, "rounds": {"1": {"complete": false, "errors": {"fastapi_14458": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_15589": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_5624": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2725": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2943": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_3777": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 32, "missing_task_ids": [], "overflows": 7, "recorded": 39, "resolved_among_graded": 10, "routing_violations": [], "ungraded_task_ids": ["fastapi_15589", "fastapi_5624", "fastapi_14873", "rich_3480", "rich_3777", "rich_2943", "rich_2725"], "verified_solve_ids": ["fastapi_14786", "fastapi_14301", "rich_3905", "fastapi_9425", "fastapi_14492", "fastapi_14077", "rich_3006", "fastapi_14616", "rich_3454", "rich_3894"], "verified_solves": 10, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "2": {"complete": false, "errors": {"fastapi_14077": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_15589": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3043": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 35, "missing_task_ids": [], "overflows": 4, "recorded": 39, "resolved_among_graded": 14, "routing_violations": [], "ungraded_task_ids": ["fastapi_14077", "fastapi_15589", "fastapi_14873", "rich_3480"], "verified_solve_ids": ["fastapi_14786", "fastapi_9753", "fastapi_14463", "fastapi_14301", "fastapi_14492", "rich_3905", "fastapi_14851", "rich_3454", "fastapi_9555", "rich_3067", "rich_2725", "rich_3894", "rich_3006", "fastapi_11194"], "verified_solves": 14, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "3": {"complete": false, "errors": {"fastapi_11194": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_15589": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_5624": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3067": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4077": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 33, "missing_task_ids": [], "overflows": 6, "recorded": 39, "resolved_among_graded": 11, "routing_violations": [], "ungraded_task_ids": ["rich_4077", "fastapi_5624", "fastapi_15589", "rich_3067", "fastapi_14873", "rich_3480"], "verified_solve_ids": ["fastapi_14786", "fastapi_14492", "fastapi_9753", "fastapi_14301", "rich_3454", "fastapi_9555", "rich_3905", "rich_3006", "fastapi_14077", "rich_2725", "fastapi_14616"], "verified_solves": 11, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "4": {"complete": false, "errors": {"fastapi_15589": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_9555": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_3777": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 37, "missing_task_ids": [], "overflows": 3, "recorded": 39, "resolved_among_graded": 12, "routing_violations": [], "ungraded_task_ids": ["fastapi_15589", "rich_3480"], "verified_solve_ids": ["fastapi_9753", "fastapi_14786", "fastapi_9425", "fastapi_14077", "rich_3905", "fastapi_14463", "rich_3454", "fastapi_14301", "rich_3894", "rich_3067", "rich_3006", "fastapi_14873"], "verified_solves": 12, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "5": {"complete": false, "errors": {"fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3043": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3105": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_3777": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 36, "missing_task_ids": [], "overflows": 5, "recorded": 39, "resolved_among_graded": 13, "routing_violations": [], "ungraded_task_ids": ["rich_3043", "fastapi_14873", "rich_3480"], "verified_solve_ids": ["fastapi_14492", "fastapi_14786", "fastapi_14851", "rich_3518", "fastapi_14794", "fastapi_14077", "rich_3905", "rich_3454", "fastapi_9425", "fastapi_14301", "rich_3006", "rich_3067", "fastapi_14616"], "verified_solves": 13, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}}, "routing_violations": [], "verified_solves": 60, "warning": "Adapter-only diagnostic; historical comparisons are descriptive, not concurrent matched attempts or a leaderboard prediction."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-19T16:51:49.557591+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_seed39_evidence_first`; slug `comfyops/e4b-seed39-evidence-first`; expected version 1; accelerator `NvidiaL4`; requested platform cap 10800s.
+Notebook SHA256 `7931353d0a3d8cefec363263eb3098026e54120220c7ad29c28a81534cf11cb4`; metadata SHA256 `a86d11a1374b7d7f4c97efce880d98b656ceb3d3b029e169d3a2814d9032a795`; registration SHA256 `8493eff36a986c304583583a422fb63a7c87e09de545cfb11658ade7d42fe968`.
+Comparison: Five candidate-only rounds vs the ten saved repair-decisions Seed39 rounds: 10,14,11,12,13,10,11,13,11,14 verified resolves. Only fixer.md changes. Historical screen, not randomized or evidence of transfer to hidden tasks.
+
+Decision criteria: `{"expected_executions": 195, "expected_tasks": 39, "native_parser_each_lane": true, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Per-round verified solves, valid grades, incomplete coverage, routing violations, overflows, timeouts and other errors. No auto-resubmit or leaderboard claim.", "round_labels": [1, 2, 3, 4, 5], "screen": "Require full attempt coverage and clean routing, at least 60/195 verified solves and at least 10% lower median task elapsed time on jointly verified task IDs (compare task-level medians under each prompt). Report timeouts, overflows, p95 elapsed time, tool calls, and all-task losses separately; screen is not promotion.", "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-20T02:04:47.457606+00:00 - private experiment collected
+
+`comfyops/e4b-seed39-evidence-first` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle_e4b_seed39_evidence_first\result_report.json`; SHA256 `94444478d3a8af3f9d1e0f9a37064e76048030aba6ddd8c557684f13bb733c61`.
+
+Saved summary: `{"attempted": 195, "complete": false, "expected_executions": 195, "experiment": "Repair-decisions v1 adapter; Seed39 32K; five adapter-only rounds", "global_deadline_hits": 0, "overflows": 24, "recorded": 195, "rounds": {"1": {"complete": false, "errors": {"fastapi_11194": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14372": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_15589": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_3063": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 34, "missing_task_ids": [], "overflows": 4, "recorded": 39, "resolved_among_graded": 13, "routing_violations": [], "ungraded_task_ids": ["fastapi_15589", "fastapi_11194", "fastapi_14372", "rich_3480", "fastapi_14873"], "verified_solve_ids": ["fastapi_14786", "fastapi_14301", "rich_4077", "fastapi_9425", "fastapi_14077", "rich_3905", "rich_3454", "rich_3067", "fastapi_9555", "rich_3894", "rich_3006", "rich_3882", "rich_2725"], "verified_solves": 13, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "2": {"complete": false, "errors": {"fastapi_14077": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14372": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2943": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_3518": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 34, "missing_task_ids": [], "overflows": 4, "recorded": 39, "resolved_among_graded": 9, "routing_violations": [], "ungraded_task_ids": ["rich_3518", "fastapi_14077", "fastapi_14372", "rich_4070", "rich_3480"], "verified_solve_ids": ["fastapi_14786", "fastapi_9753", "fastapi_14301", "fastapi_9555", "rich_3905", "rich_3006", "rich_3454", "fastapi_14873", "rich_2725"], "verified_solves": 9, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "3": {"complete": false, "errors": {"fastapi_14851": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_15589": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_9753": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 35, "missing_task_ids": [], "overflows": 3, "recorded": 39, "resolved_among_graded": 12, "routing_violations": [], "ungraded_task_ids": ["fastapi_14851", "fastapi_9753", "fastapi_14873", "rich_3480"], "verified_solve_ids": ["fastapi_14786", "rich_3518", "fastapi_14301", "fastapi_14077", "rich_3905", "fastapi_9425", "fastapi_14616", "rich_3006", "rich_3067", "rich_3894", "rich_3454", "rich_2725"], "verified_solves": 12, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "4": {"complete": false, "errors": {"fastapi_14616": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2725": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2943": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3043": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3067": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 34, "missing_task_ids": [], "overflows": 7, "recorded": 39, "resolved_among_graded": 9, "routing_violations": [], "ungraded_task_ids": ["fastapi_14616", "rich_3067", "rich_2725", "fastapi_14873", "rich_3480"], "verified_solve_ids": ["fastapi_14492", "fastapi_14786", "fastapi_14463", "fastapi_14301", "fastapi_9425", "rich_3454", "rich_3905", "rich_3006", "fastapi_14077"], "verified_solves": 9, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}, "5": {"complete": false, "errors": {"fastapi_11194": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14458": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14492": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_14873": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "fastapi_15589": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_2725": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}, "rich_3480": {"error": null, "result_error": null, "status": "completed", "trace_error": null}, "rich_4070": {"error": "Sandbox execution error: litellm.ContextWindowExceededError: litellm.BadRequestError: ContextWindowExceededError: OpenAIException - This model's maximum context length is 32768 tokens. However, you requested 5000 output tokens and your prompt contains at least 27769 input tokens, for a total of at least 32769 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=27769) LiteLLM Retried: 5 times", "result_error": null, "status": "completed", "trace_error": null}}, "expected": 39, "experiment": "Evidence-to-edit seed; single score39 pass; fixer only; verifier unchanged", "fixer_adapter_observed_tasks": 39, "graded": 34, "missing_task_ids": [], "overflows": 6, "recorded": 39, "resolved_among_graded": 11, "routing_violations": [], "ungraded_task_ids": ["fastapi_11194", "fastapi_14458", "fastapi_15589", "fastapi_14873", "rich_3480"], "verified_solve_ids": ["rich_3518", "fastapi_14786", "fastapi_9555", "fastapi_14301", "rich_3894", "rich_3905", "rich_3006", "rich_3454", "fastapi_14077", "rich_3067", "fastapi_14616"], "verified_solves": 11, "warning": "One diagnostic pass, not an adapter-off comparison or leaderboard prediction. Missing, errored and ungraded tasks are reported separately."}}, "routing_violations": [], "verified_solves": 54, "warning": "Adapter-only diagnostic; historical comparisons are descriptive, not concurrent matched attempts or a leaderboard prediction."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-20T16:54:44.960126+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle-e4b-fixer-thinking-pair`; slug `comfyops/e4b-fixer-thinking-pair`; expected version 1; accelerator `NvidiaL4`; requested platform cap 10800s.
+Notebook SHA256 `5c19c1dee3b2b2b6c59a347fc90e5877787554b0a5c3aa35f395ea496d2f5528`; metadata SHA256 `a7b29315359acdc48b36b608c6e5cd3df43eeb5ddeadca0b09091d39d3bf629e`; registration SHA256 `f670f846560e00b0d84508e5b1b1c081f7192102c76d50b51fb5972d99ae6d55`.
+Comparison: Contemporaneous, same-lane matched task/round pairs: fixer budget 4096 vs 0. Both fixers use repair-decisions v1. The base verifier stays at 4096, output cap at 5000; prompt, model, tools, verifier and limits are fixed.
+
+Decision criteria: `{"expected_executions": 200, "expected_tasks": 20, "native_parser_each_lane": true, "positive_screen": "Require 100 attempted pairs, no global deadline or routing violations, at least five additional verified solves for think0, task-cluster sign flip p <= 0.05, and a positive delta in clean paired grades.", "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Verified solves, per-round and per-repo outcomes, clean discordances, ungraded, timeouts, overflows, and collection errors. Partial results are descriptive. Abort on input/serving gates; no automatic retry or leaderboard claim.", "round_labels": [1, 2, 3, 4, 5], "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-21T01:24:57.397401+00:00 - private experiment collected
+
+`comfyops/e4b-fixer-thinking-pair` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle-e4b-fixer-thinking-pair\result_report.json`; SHA256 `0f414c30895d555c55b3aa887526b8b75b49bd171c31e3a2cab978c97f45ec88`.
+
+Saved summary: `{"attempted_pairs": 100, "clean_grade_pairs": {"both_solved": 14, "neither_solved": 43, "think0_only": 10, "think4096_only": 16}, "clean_pair_delta": -6, "complete": true, "expected_executions": 200, "expected_pairs": 100, "experiment": "32K paired fixer thinking 4096 vs 0 on maintenance tasks", "gain_per_round": -1.6, "global_deadline_hits": 0, "one_sided_task_cluster_p": 0.9368063193680632, "positive_signal": false, "recorded": 200, "repositories": {"fastapi": {"think0": {"attempted": 55, "collection_errors": 2, "other_abnormal_outcomes": 1, "overflows": 6, "task_timeouts": 0, "ungraded": 5, "valid_grades": 48, "verified_solves": 16}, "think4096": {"attempted": 55, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 6, "task_timeouts": 0, "ungraded": 4, "valid_grades": 49, "verified_solves": 21}}, "rich": {"think0": {"attempted": 45, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 5, "task_timeouts": 0, "ungraded": 0, "valid_grades": 40, "verified_solves": 8}, "think4096": {"attempted": 45, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 4, "task_timeouts": 0, "ungraded": 0, "valid_grades": 41, "verified_solves": 11}}}, "rounds": {"1": {"think0": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 2, "task_timeouts": 0, "ungraded": 2, "valid_grades": 18, "verified_solves": 3}, "think4096": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 2, "valid_grades": 17, "verified_solves": 7}}, "2": {"think0": {"attempted": 20, "collection_errors": 1, "other_abnormal_outcomes": 0, "overflows": 2, "task_timeouts": 0, "ungraded": 1, "valid_grades": 18, "verified_solves": 7}, "think4096": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 1, "valid_grades": 17, "verified_solves": 7}}, "3": {"think0": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 1, "valid_grades": 17, "verified_solves": 4}, "think4096": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 1, "task_timeouts": 0, "ungraded": 1, "valid_grades": 19, "verified_solves": 7}}, "4": {"think0": {"attempted": 20, "collection_errors": 1, "other_abnormal_outcomes": 1, "overflows": 2, "task_timeouts": 0, "ungraded": 1, "valid_grades": 17, "verified_solves": 4}, "think4096": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 0, "valid_grades": 17, "verified_solves": 5}}, "5": {"think0": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 2, "task_timeouts": 0, "ungraded": 0, "valid_grades": 18, "verified_solves": 6}, "think4096": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 20, "verified_solves": 6}}}, "routing_violations": [], "tasks": {"fastapi_14077": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 5}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 5}}, "fastapi_14458": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 1}}, "fastapi_14463": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 3}}, "fastapi_14492": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 1, "valid_grades": 2, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}}, "fastapi_14794": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 1, "task_timeouts": 0, "ungraded": 0, "valid_grades": 4, "verified_solves": 0}}, "fastapi_14851": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 3}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 1, "task_timeouts": 0, "ungraded": 1, "valid_grades": 4, "verified_solves": 1}}, "fastapi_14873": {"think0": {"attempted": 5, "collection_errors": 1, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 3, "valid_grades": 2, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 4, "task_timeouts": 0, "ungraded": 3, "valid_grades": 1, "verified_solves": 1}}, "fastapi_5077": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}}, "fastapi_9425": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 3}}, "fastapi_9555": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 3}}, "fastapi_9753": {"think0": {"attempted": 5, "collection_errors": 1, "other_abnormal_outcomes": 1, "overflows": 0, "task_timeouts": 0, "ungraded": 1, "valid_grades": 4, "verified_solves": 3}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}}, "rich_3506": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}}, "rich_3518": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 3}}, "rich_3521": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 1, "task_timeouts": 0, "ungraded": 0, "valid_grades": 4, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}}, "rich_3718": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}}, "rich_3777": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 1, "task_timeouts": 0, "ungraded": 0, "valid_grades": 4, "verified_solves": 0}}, "rich_3894": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 3}}, "rich_3905": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 5}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 5}}, "rich_4070": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 4, "task_timeouts": 0, "ungraded": 0, "valid_grades": 1, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 0, "valid_grades": 2, "verified_solves": 0}}, "rich_4077": {"think0": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}}}, "totals": {"think0": {"attempted": 100, "collection_errors": 2, "other_abnormal_outcomes": 1, "overflows": 11, "task_timeouts": 0, "ungraded": 5, "valid_grades": 88, "verified_solves": 24}, "think4096": {"attempted": 100, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 10, "task_timeouts": 0, "ungraded": 4, "valid_grades": 90, "verified_solves": 32}}, "verified_solve_delta": -8, "warning": "Selected historical cohort, not a held-out or leaderboard estimate. Unstarted attempts are not scored. Abnormal attempts are not valid grades."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-21T05:04:57.029997+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle-e4b-fixer-thinking-2048-r5`; slug `comfyops/e4b-fixer-thinking-2048-r5`; expected version 1; accelerator `NvidiaL4`; requested platform cap 5400s.
+Notebook SHA256 `ea505d2092225fd668b6e5a10356087911b540433cea106bbf18a7482ff363b1`; metadata SHA256 `64cfb73bd8f481cf78085eaf5f85060272caa1d7dc1fdec58e3065bc2b0febd9`; registration SHA256 `fb0b25920421e84572b9da95c0bb6d43ca21aa3ad6fc930b943ef3995fadafef`.
+Comparison: Contemporaneous, same-lane matched task/round pairs: fixer budget 4096 vs 2048. Both fixers use repair-decisions v1. The base verifier stays at 4096, output cap at 5000; prompt, model, tools, verifier and limits are fixed.
+
+Decision criteria: `{"expected_executions": 200, "expected_pairs": 100, "expected_tasks": 20, "native_parser_each_lane": true, "positive_screen": "Require 100 attempted pairs, no global deadline or routing violations, at least 5 additional verified solves for think2048, task-cluster sign flip p <= 0.05, and a positive delta in clean paired grades.", "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Verified solves, per-round and per-repo outcomes, clean discordances, ungraded, timeouts, overflows, and collection errors. Partial results are descriptive. Abort on input/serving gates; no automatic retry or leaderboard claim.", "round_labels": [1, 2, 3, 4, 5], "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+
+### 2026-11-21T07:35:16.605356+00:00 - private experiment collected
+
+`comfyops/e4b-fixer-thinking-2048-r5` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\kaggle-e4b-fixer-thinking-2048-r5-collected\result_report.json`; SHA256 `4c4eaea949a96ba47d4601b757a8c296abcca7c3316fc2f4a6d05eac16f7ea56`.
+
+Saved summary: `{"attempted_pairs": 100, "clean_grade_pairs": {"both_solved": 18, "neither_solved": 36, "think2048_only": 7, "think4096_only": 12}, "clean_pair_delta": -5, "complete": true, "expected_executions": 200, "expected_pairs": 100, "experiment": "32K paired fixer thinking 4096 vs 2048 on maintenance tasks", "gain_per_round": -1.4, "global_deadline_hits": 0, "one_sided_task_cluster_p": 0.918108189181082, "positive_signal": false, "recorded": 200, "repositories": {"fastapi": {"think2048": {"attempted": 55, "collection_errors": 3, "other_abnormal_outcomes": 2, "overflows": 10, "task_timeouts": 0, "ungraded": 6, "valid_grades": 43, "verified_solves": 19}, "think4096": {"attempted": 55, "collection_errors": 2, "other_abnormal_outcomes": 1, "overflows": 10, "task_timeouts": 0, "ungraded": 6, "valid_grades": 44, "verified_solves": 25}}, "rich": {"think2048": {"attempted": 45, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 4, "task_timeouts": 0, "ungraded": 1, "valid_grades": 41, "verified_solves": 9}, "think4096": {"attempted": 45, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 8, "task_timeouts": 0, "ungraded": 0, "valid_grades": 37, "verified_solves": 10}}}, "rounds": {"1": {"think2048": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 1, "valid_grades": 17, "verified_solves": 6}, "think4096": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 1, "valid_grades": 17, "verified_solves": 11}}, "2": {"think2048": {"attempted": 20, "collection_errors": 1, "other_abnormal_outcomes": 1, "overflows": 3, "task_timeouts": 0, "ungraded": 2, "valid_grades": 16, "verified_solves": 4}, "think4096": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 5, "task_timeouts": 0, "ungraded": 1, "valid_grades": 15, "verified_solves": 6}}, "3": {"think2048": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 2, "task_timeouts": 0, "ungraded": 1, "valid_grades": 18, "verified_solves": 7}, "think4096": {"attempted": 20, "collection_errors": 1, "other_abnormal_outcomes": 1, "overflows": 2, "task_timeouts": 0, "ungraded": 1, "valid_grades": 17, "verified_solves": 7}}, "4": {"think2048": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 1, "valid_grades": 17, "verified_solves": 5}, "think4096": {"attempted": 20, "collection_errors": 1, "other_abnormal_outcomes": 0, "overflows": 6, "task_timeouts": 0, "ungraded": 2, "valid_grades": 14, "verified_solves": 5}}, "5": {"think2048": {"attempted": 20, "collection_errors": 2, "other_abnormal_outcomes": 1, "overflows": 3, "task_timeouts": 0, "ungraded": 2, "valid_grades": 16, "verified_solves": 6}, "think4096": {"attempted": 20, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 2, "task_timeouts": 0, "ungraded": 1, "valid_grades": 18, "verified_solves": 6}}}, "routing_violations": [], "tasks": {"fastapi_14077": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 5}, "think4096": {"attempted": 5, "collection_errors": 1, "other_abnormal_outcomes": 0, "overflows": 1, "task_timeouts": 0, "ungraded": 1, "valid_grades": 4, "verified_solves": 4}}, "fastapi_14458": {"think2048": {"attempted": 5, "collection_errors": 1, "other_abnormal_outcomes": 1, "overflows": 0, "task_timeouts": 0, "ungraded": 1, "valid_grades": 4, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}}, "fastapi_14463": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 4}}, "fastapi_14492": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 0, "valid_grades": 2, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 0, "valid_grades": 2, "verified_solves": 0}}, "fastapi_14794": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 2, "task_timeouts": 0, "ungraded": 0, "valid_grades": 3, "verified_solves": 0}}, "fastapi_14851": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 1}}, "fastapi_14873": {"think2048": {"attempted": 5, "collection_errors": 1, "other_abnormal_outcomes": 0, "overflows": 4, "task_timeouts": 0, "ungraded": 4, "valid_grades": 1, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 1, "other_abnormal_outcomes": 1, "overflows": 4, "task_timeouts": 0, "ungraded": 5, "valid_grades": 0, "verified_solves": 0}}, "fastapi_5077": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}}, "fastapi_9425": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 1, "task_timeouts": 0, "ungraded": 0, "valid_grades": 4, "verified_solves": 3}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 5}}, "fastapi_9555": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 2, "task_timeouts": 0, "ungraded": 0, "valid_grades": 3, "verified_solves": 3}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 5}}, "fastapi_9753": {"think2048": {"attempted": 5, "collection_errors": 1, "other_abnormal_outcomes": 1, "overflows": 0, "task_timeouts": 0, "ungraded": 1, "valid_grades": 4, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 4}}, "rich_3506": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 1}}, "rich_3518": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 1, "task_timeouts": 0, "ungraded": 0, "valid_grades": 4, "verified_solves": 0}}, "rich_3521": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}}, "rich_3718": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}}, "rich_3777": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 2, "task_timeouts": 0, "ungraded": 0, "valid_grades": 3, "verified_solves": 0}}, "rich_3894": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}}, "rich_3905": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 5}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 5}}, "rich_4070": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 3, "task_timeouts": 0, "ungraded": 0, "valid_grades": 2, "verified_solves": 0}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 5, "task_timeouts": 0, "ungraded": 0, "valid_grades": 0, "verified_solves": 0}}, "rich_4077": {"think2048": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 1, "task_timeouts": 0, "ungraded": 1, "valid_grades": 4, "verified_solves": 1}, "think4096": {"attempted": 5, "collection_errors": 0, "other_abnormal_outcomes": 0, "overflows": 0, "task_timeouts": 0, "ungraded": 0, "valid_grades": 5, "verified_solves": 2}}}, "totals": {"think2048": {"attempted": 100, "collection_errors": 3, "other_abnormal_outcomes": 2, "overflows": 14, "task_timeouts": 0, "ungraded": 7, "valid_grades": 84, "verified_solves": 28}, "think4096": {"attempted": 100, "collection_errors": 2, "other_abnormal_outcomes": 1, "overflows": 18, "task_timeouts": 0, "ungraded": 6, "valid_grades": 81, "verified_solves": 35}}, "verified_solve_delta": -7, "warning": "Selected historical cohort, not a held-out or leaderboard estimate. Unstarted attempts are not scored. Abnormal attempts are not valid grades."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+### 2026-11-21 -- INFRASTRUCTURE: per-attempt database `kb/attempts.sqlite` (handoff item "not implemented" -> built)
+`kb/attemptdb/{build,verify,q}.py` + README. One row per attempt from task_results.jsonl, lora_progress.json and
+progress/variance_ab summaries (24,272 rows -> 13,306 unique), joined to 51 experiments (registration/report hashes),
+133 agent bundles (sha12 + per-file sha256; 20/34 registered roles matched by file hash), 129 tasks, submissions.
+Artifact paths (trace/patch/test output/log) per attempt. `verified` follows the handoff definition; NULL = not on disk.
+VALIDATION (`verify.py`, 13/13 pass): p5 178 vs 189 verified over 624/624; batch-2 all 32 pass totals; repair-decisions
+r1-r5 60 and r6-r10 10/11/13/11/14; evidence seed r1 13/39; pack 1 sha12 84f904c63afd; L_loc a60585682580; zero
+same-pass and zero cross-arm merges. The checks caught 4 dedupe bugs during the build (fixed): round missing from key
+(10 p5 false merges), 0.1 s duration collisions across experiments (rich_3006), round-less copies, arm-less copies.
+FIRST NEW READ: `comfyops/e4b-seed39-evidence-first` (handoff: "live dispatch to be confirmed") is on disk complete: 195
+attempts, 54 verified = 13, 9, 12, 9, 11 per round (10.8/round; overflow 24). Descriptive vs evidence seed 11.2/round
+(rounds 2-10) and repair-decisions 11.8/round (both batches): no sign of a gain; not a paired comparison.
+OPEN: `Outputs/_submissions.json` is stale (stops at 58263186, 11-12); the Kiro OS sandbox now blocks reading
+`~/.kaggle/access_token` and `~/.gitconfig`, so neither the refresh nor git commit/push ran this session.
+
+### 2026-11-21 -- INFRASTRUCTURE: intel DB deepened to step / tool-call / vLLM / crawl level (`kb/attemptdb/`)
+Stages core, traces, logs, vllm, crawl, gemmalog, catalog (~60-90 s, read-only). Now holds: 13,697 unique attempts (incl.
+302 31B traces read from the ca5 results.tar.gz archives and 83 trace-only attempts from old submission folders);
+4,375 traces -> 93,011 steps and 67,874 tool calls with full observations (status, error type/message, exit code, edit
+diff, gate verdict, gold-file flag, repeat flag); 4,104 display logs -> log_events; attempt_features for every attempt
+with a trace or log; 44 vLLM server logs -> config, 10 s metrics, timestamped errors, HTTP counts, joined to 2,460
+attempts by lane + time; 4,472 crawled documents (notebooks incl. outputs, kernel metadata, registrations, receipts,
+adapter configs, training artifacts, run logs, docs, code, chat history) with FTS5; 2,535 log sections linked by 2,309
+entity mentions; experiment/arm catalog with bundle diffs vs pack 1 and repeat signatures.
+VALIDATION 16/16: all earlier checks plus trace-decoded tool calls == swegemma counts (excl. get_status and
+submit_patch) in 4,196/4,292; 306/306 overflow attempts have a vLLM overflow on their own lane in their window; no
+prompt above its server's context minus 5,000. Checks corrected two assumptions (swegemma's tool-call definition;
+larger-context runs) and caught a lane-mapping bug (task_results rows lacked the GPU lane).
+FIRST LEAD (correlational, NOT a result): E4B `edit_file` "old_string not found" = 3,712 failed calls, the most common
+tool failure. On mixed-outcome tasks: 0 such errors 35.6% solved (n 1,895), 1 -> 12.5%, 2-3 -> 10.8%, 4+ -> 8.9%.
+Within-task (30 tasks, >= 5 attempts each way): 24.7% clean vs 13.4% with any; worse on 19 tasks, better on 4.
+"Target string occurs N times" (ambiguous anchor) attempts almost never solve. This CHALLENGES standing truth #2 ("edit
+anchor is NOT the bottleneck", from a small 31B / v2-LoRA forensic) for E4B, but the direction of cause is untested: a
+wrong-theory attempt may also miss anchors. Next: an intervention A/B (anchor re-read before edit, or a tolerant
+anchor skill) on the mixed-outcome tasks, pre-registered.
+
+### 2026-11-21 -- Drive ab_runs pulled into the intel DB; batch 6 answered; status-normalisation fix
+Pulled Drive `gemma_fasteval/ab_runs` -> `Outputs/drive_ab_runs` (robocopy /MT:32: 13,683 files, 303 MB, 0 failed, 4.5
+min; single-threaded Drive-for-Desktop streaming was ~150 files/min). 10 tags, 3,432 traces, incl. tags never local
+before (context_history x2, gate_startup_ab, pack1_rawnear, all three batch-6 tags). DB: 14,739 unique attempts, 7,807
+traces; display-log-only attempts 4,104 -> 1,715. verify.py 27/27: every Drive tag's per-pass totals == its own
+progress.json (134 passes) and 100% of those attempts are traced.
+BATCH 6 FACTS (corrects the 2026-11-12/13 entries): attempt 1 (`e4b_ab6_locate_20261112`) ran ALL 10 rounds -- the VM was
+not lost early; every L_loc pass died on the SKILL.md YAML bug (120/120 bundle_load errors). Its 10 C_pack1 passes are
+valid: 8,10,6,7,7,6,9,10,8,11 (mean 8.2/12). Attempt 4 (`ab6c`) ran 2 paired rounds with the fixed skill: L_loc 8, 7 vs
+C_pack1 9, 6 -> the skill LOADS; the fixer called locate in only 6 of 24 attempts (7 calls, all returned output). Two
+rounds cannot test the pre-registered rule (>= 8 rounds); descriptively no gain, matching the offline prediction.
+FIX: tools report status ok / success / error; skills use "success". Features previously counted "success" as a failed
+call (inflating n_failed_calls); normalised to ok / error / unknown (103,420 / 13,807 / 318), new check added.
+LEAD re-run with corrected features and the Drive traces (still correlational): E4B attempts with any edit_file
+"old_string not found" solve 15.9% vs 28.7% clean within the same 32 tasks (1,245 vs 4,523 attempts), worse on 21
+tasks, better on 4 (sign test p ~ 0.0005). Mixed-outcome tasks, traced attempts: failed edits 1.09 (failed) vs 0.32
+(solved) per attempt; failed tool calls 2.01 vs 0.97; first edit on a gold file 72% vs 79%.
+
+### 2026-11-21 -- BREAKTHROUGH SCAN over the intel DB (scripts `Outputs/_bt_*.py`; all correlational, public tasks)
+LEAD 1 -- INCOMPLETE MULTI-SITE FIXES (largest). E4B patches vs gold source hunks (+-15 lines): cover none 3.4% solved
+(n 1,701), some 20.1% (819), all 63.2% (2,345); multi-hunk tasks: some 20.1% vs all 52.5%; 654 failed attempts covered
+some-not-all vs 189 covering all. 81% of the 4,759 missed gold hunks share an identifier with the agent's own applied
+edits; 63% are in files it never edited. 31B edits 2.09 files/attempt vs E4B 1.19 on 24 shared tasks. Never tried as a
+mechanism (log FTS: prompt wording only). Proposed: post-edit "other sites" skill (grep identifiers of the applied edit).
+LEAD 2 -- READ WASTE -> OVERFLOW. Overflow = 17.0% of failures on E4B-solvable tasks; FIXER overflows (738/786), not the
+verifier (corrects the 10-10 diagnosis; verifier include_contents fix would not help). Overflow attempts: 57k read_file
+chars vs 17.5k; 74.6% of it re-reads (24.7k), identical repeats (11.8k), tests/docs (6.1k). Estimated loss ~120 solves
+(+5% relative). Every bundle ever built gives the fixer read_file; read limits were prompt-only (L4641: "UNENFORCED").
+Proposed: drop read_file from the fixer + ranged view skill that refuses re-shown ranges and tests/docs.
+DOWNGRADED: "old_string not found" is a symptom -- failed-anchor edits carry a gold line 12.7% vs 38.6% for applied edits
+in solved attempts; only 77/4,830 failed attempts (1.6%) lost a gold-like edit (49 on rich_3043). Anchor causes:
+near-miss 41.8%, invented 26.3%, partial 12.7%, stale (pre-own-edit text) 11.5%, escaping 6.8%; the next edit on the same
+file fails 71% (re-read first: 24.5% succeed vs 10%).
+OTHER: gate accepts ~80% of wrong-file / wrong-fix attempts. p5 tool-state adapter = base on every behaviour feature
+(calls 15.6/15.2, reads 6.2/5.9, failed edits 1.03/1.04, files 1.24/1.22, overflow 12.8%/11.7%). Failure map (3,666
+failed attempts, 34 tasks): right file wrong fix 24.2%, right file no test output 23.2%, wrong file 20.6%, overflow
+17.0%, right-file near miss 8.9% (rich_3506, rich_3894, fastapi_14794, fastapi_14616), no edit 5.6%, timeout 0.4%.
+NEXT (free, CPU): precision test of the sites grep; offline replay of a read-dedupe rule; then pre-register the A/B.
+
+### 2026-11-21 -- AUDIT of the breakthrough scan (`Outputs/_bt_audit.py`, `_bt_audit2.py`) -- CORRECTIONS, read these first
+DATA-ANALYST PASS
+- Lead 1 (incomplete fixes): pooled gap robust to tolerance 0/5/15/30 and to runtime-only gold hunks (some 16-24% vs
+  all 42-70%). BUT only 5-7 tasks have >= 5 attempts in both buckets; within-task gap +0.23..+0.34 with all>some on 2-5
+  tasks and some>all on 1-2 -> the pooled 20.1% vs 52.5% is mostly BETWEEN-task; within-task evidence is thin.
+- Lead 1 feasibility: missed gold hunks share an identifier with the agent's edit 83% vs a NULL (random other-task gold
+  hunk, same repo) 58% -> signal +25 points, not "81%". A grep from the edit will be noisy; precision untested.
+- Lead 2 (overflow): of 786 overflow attempts only 447 are ungraded; 225 had hidden tests run that FAILED, 114 output
+  without a pytest summary -> overflow did not cost those solves. Corrected loss = ungraded gold-edit overflows (155)
+  x same-task solve rate = ~75 solves (+2.9% relative, +0.39 tasks per 39-task round, UPPER bound); was "120 / +5%".
+- Lead 2 waste: overlapping re-reads = 49% of overflow read volume (27.8k chars) vs 32% normal; "74.6%" counted new
+  windows of long files as waste. Model text also doubles in overflow attempts (40.0k vs 19.5k chars) -> reads are only
+  part of the overflow.
+- Anchor downgrade: with token-Jaccard >= 0.5, failed-anchor edits are gold-like 44.3% in failed attempts vs 42.3% for
+  applied edits in failed attempts vs 75.8% applied in solved -> direction holds (they resemble failing edits), but the
+  "1.6% recoverable" magnitude was proxy-dependent.
+ML-RESEARCHER PASS
+- Realistic effects on Seed39 (39 tasks): lead 1 +0.24..+0.65 tasks/round (10.8% of attempts in the 'some' bucket x
+  within-task gap 0.23-0.31 x uptake 25-50%); lead 2 <= +0.39. Neither is a breakthrough on its own.
+- Power: Seed39 per-round verified sd 1.47 (24 rounds). t >= 2 needs ~9 rounds/arm for +1.0, ~35 for +0.5, ~96 for
+  +0.3. Our usual 5-round A/Bs detect only >= ~1.5 tasks/round -> the past nulls are consistent with real small effects.
+- Leads were chosen after searching many features (forking paths); confounded by task difficulty; coverage only exists
+  for attempts with a saved patch; interventions interact (a sites skill adds context -> more overflow).
+REVISED PLAN: test MECHANISMS on intermediate outcomes first (coverage of gold hunks, overflow rate, overlapping re-read
+volume) on TARGETED cohorts (multi-hunk tasks for lead 1; overflow-prone fastapi_14873 / rich_2725 / rich_3518 /
+fastapi_14616 for lead 2) -- far higher power than solve rate; stop if the mechanism does not move; only then a solve-rate
+A/B with >= 10 rounds/arm and guard tasks. Note "right file, no test output" (23% of failures) is unclassifiable.
+
+### 2026-11-21 -- findings paper written: `Write-up/FINDINGS_E4B_INTEL_DB_20261121.md` (+ comparison with public-repair-triage v2)
+Consolidates the scan and audit (F1 failure map, F2 incomplete multi-site fixes, F3 read waste / fixer overflow, F4
+anchor failures = symptom, F5 p5 adapter changed no behaviour, F6 31B vs E4B, F7 fix shape), threats to validity, power,
+recommendations. NEW calibration (`Outputs/_bt_task_shape.py`): E4B mean task solve rate by gold fix shape -- 1 file /
+1 hunk 17.1% (21 of 54 tasks ever solved), 1 file / 2+ hunks 5.8% (10 of 34), 2+ files 2.9% (3 of 41); <= 10 changed
+runtime lines 17.5% vs 41+ 0.7%. COMPARISON with `Outputs/public-repair-triage-20261121-combined-v2/REPORT.md` (35 leads,
+0 qualifying, 1 multi-file): aligned on multi-site priority; recommend the triage also score single-file MULTI-HUNK PRs
+(hunk headers only, no patch bodies), tighten the 300-line size bonus toward E4B's range, and define each family's
+acceptance by the behaviour it should move (coverage, re-reads), since F5 shows an adapter can train and change nothing.
+
+### 2026-11-21 -- corrections to the findings paper (user review)
+1. Section 6 said single-file multi-hunk tasks are "more common (34 vs 41 of 129)" -- wrong; 34 < 41. Now "a comparable
+   share". The supporting points stand: hard for E4B (5.8% vs 2.9% mean solve) and more often within reach (10 vs 3 ever
+   solved).
+2. The comparison table said "disjoint by design (no leakage)" -- overstated. Separate source lists do not prove absence
+   of leakage; lineage and benchmark overlap are unadjudicated. The 35 triage leads remain unverified (no lineage,
+   overlap, licence or executable check passed).
+
+### 2026-11-21 -- vLLM log scan (`Outputs/_vllm_scan.py`; 44 servers, 11 LoRA-era Kaggle experiments)
+- Config identical across runs: vLLM 0.19.1, E4B QAT compressed-tensors, TP1 per L4 lane, gmu 0.85, LoRA rank 8, gemma4
+  tool + reasoning parsers, prefix caching ON, chunked prefill ON, seed 0. KV cache 85,216 tokens -> 13.03x max
+  concurrency at 32K (7.11x at 64K, 3.72x at 131K). Engine init ~200 s per lane. Not scorer parity (scorer: 4xL4 TP4).
+- GPUs are UNDER-USED: over 13,048 busy 10-s samples, KV-cache use averaged 14.5% and never exceeded 31.9%; running
+  requests averaged 5.6 (max 8 = the slot limit); requests waited in only 154 samples. Prefix-cache hit 83.6% average
+  (69-73% in the 64K/131K runs). -> concurrency per lane could rise from 8 toward ~12-13 for more rounds per GPU-hour.
+  Load is not entirely neutral: within-task, attempts on a lane that queued solve 2.8 points less (39 tasks: worse 17,
+  better 7) -> check outcomes if concurrency is raised.
+- Only error type: context overflow (2,130 HTTP 400s vs 49,611 OK). vLLM always reports "at least 27769 input tokens"
+  = the limit + 1, so these lines carry no prompt-size information (use the trace's per-step prompt_tokens).
+- After its first overflow an attempt keeps resending: median 12 overflow errors per attempt (max 66) and median 172 s
+  (max 1,093 s) of wall time from the first overflow to the end of its trace; no overflow attempt was ever resolved.
+  Experiments only: stopping an attempt at its first overflow would free ~170 s of lane time per overflow attempt.
+- Warnings: only "no matching PunicaWrapper ... vision_tower ... will be ignored" (LoRA does not touch the vision tower;
+  benign for text-only adapters). reasoning_config = Gemma channel delimiters, same on all servers.
+- Gap: Colab runs never saved their vLLM logs (gpu_ab_run.py), so ~70% of attempts have no server telemetry.
+
+### 2026-11-21 -- GPU-usage guidance (standing; steering file `.kiro/steering/gpu-usage.md`) + offline validation
+Offline check (`Outputs/_vllm_concurrency_check.py`, 32K servers): aggregate generation throughput by running requests
+44, 80, 106, 129, 147, 163, 177, 195 tok/s for 1..8 -> NOT saturated at 8 (+16.1 tok/s per extra request on 4-8).
+KV use 19.8% at 8 running (+2.2 points per request). Projected (linear extrapolation, unmeasured above 8): 12 slots =
+x1.33 throughput (259 tok/s), per-request -13% (24.3 -> 21.6 tok/s), KV ~29%, mean attempt 296 -> ~334 s, 0% over the
+30-min cap. CORRECTION: the "~1.5x rounds per GPU-hour" stated in chat was too high; x1.33 is the projection.
+Overflow tail after the first overflow = 85,055 of 727,832 attempt-seconds = 11.7% of slot time; 0 of 786 overflow
+attempts were ever resolved.
+RULES (status): size every A/B before launch (VALIDATED: ~9 rounds/arm for +1.0, ~35 for +0.5); mechanism metrics
+first; concurrency 12 (PENDING on-GPU check -- keep 8 until it passes); stop at first overflow in experiments only
+(PENDING implementation); don't raise max_model_len to fix overflow; save vLLM logs + lane + timestamps with every run;
+overflow log lines carry no size; experiment timing != scorer timing (TP1 vs TP4).
+PRE-REGISTERED VALIDATION (not launched; needs user authorization + GPU quota): one Kaggle 4xL4 job, Seed39 cohort, pack 1
+unchanged, 2 lanes at 8 slots vs 2 lanes at 12 slots, same rounds in both (>= 4 rounds = 156 attempts per arm).
+PASS if (a) attempts per lane-hour rise >= 1.2x, (b) mean attempt duration rises <= 25% and none exceed 30 min, (c)
+verified solve rate per attempt does not fall by more than 2 points (paired by task-round), (d) no new error types in
+the vLLM logs. Any fail -> keep 8 slots. Overflow early-stop is validated separately by replay: it must change no
+recorded outcome (0 of 786 resolved) before it is enabled.
+
+### 2026-11-21 -- validation of GPU rule 4 (overflow early stop): outcome-neutral, but its premise was wrong
+`Outputs/_overflow_stop_replay.py`, `_overflow_after.py`, 338 overflow attempts on lanes with vLLM logs:
+(a) 0 of 1,305 overflow attempts resolved -> stopping at the first overflow cannot lose a recorded solve.
+(b) CORRECTION to the vLLM-scan entry: an overflow attempt does not just resend one request. After the first overflow
+the agent keeps working (4,114 fixer + 228 verifier tool calls afterwards; 59% of attempts made edits after it); 60%
+overflowed in 2+ separate bursts (gaps > 60 s); every attempt's trace ends within 30 s of its LAST overflow. So the
+post-overflow work (11.7% of slot time) is a second chance that is never credited, because a later overflow ends the
+attempt with an error. Steering rule 4 rewritten accordingly. Open question worth a look: why does the work after a
+recovered overflow never get graded as a solve -- is a later overflow always terminal by design (error recorded ->
+unresolved), and would ending the attempt cleanly before the second overflow keep a good patch?
+
+### 2026-11-21 -- Click multi-site development decisions, not training-ready
+`Outputs/click-2935-multisite-development-20261121-v1/` contains the first
+two-hunk local replay. Its upstream issue test and selected existing
+regressions passed on the first-edit-only state, so they did not justify
+classifying that state as an incomplete fix. After inspecting differing
+chained-completion outputs, two authored oracle-only contract checks failed on
+both baseline and first-edit-only states and passed after both edits, twice
+each. These post-hoc checks are not independent holdout evidence and do not
+prove that every correct fix needs two edits.
+
+`development-rows-v3/assessment.json` records two schema-validated final-turn
+decisions, one family: pinned native read/edit functions, local copy transport,
+real preceding edit feedback and source/test manifest hashes. Only the target
+source changed in those manifest folders. Structural continuity validation
+checks the prior history, tool response hashes and adjacent state hashes.
+Earlier versions are superseded: `development-rows` labels a partial
+source/test manifest as `workspace_sha256`, and v2 uses a single-edit
+instruction that conflicts with multi-step behavior. The pinned Transformers 5.13.1
+tokenizer, with attested assets and 32 matching reference lengths, reports
+511 and 992 full tokens on these two-tool rows and exact final-turn prefixes.
+Full startup/serving parity, Linux path behavior, complete workspace hashing,
+exploratory prompt parity, lineage and overlap checks, independent
+split/holdout and family floors remain open. This is one quarantined
+development family, not a training-ready corpus; no training was launched.
+
+### 2026-11-21 -- attrs two-file ablations and multi-step policy conflict
+`python-humanize/humanize#169` and `python-humanize/humanize#206` are not
+strong multi-site candidates: in each case one apparent source hunk only
+changes a docstring. `python-attrs/attrs#1328` instead has a converter
+definition and a separate setter caller. The actual merged commit is
+`6fda0a4e086b56d7058855e4c15112c8f58de74c`, with parent
+`53e632c5218b729da6ac37a35b4b68379dc18999`; both revision notices are MIT.
+
+`Outputs/attrs-1328-multifile-development-20261121-v1/replay-py312/`
+replays the baseline, each exact single-file upstream ablation and the
+complete fix against three fixed-revision issue tests and ten selected
+unchanged upstream regression cases. Each matrix cell was run twice under
+Python 3.12 with in-process import provenance: baseline and both partials
+failed issue tests, complete passed, and all selected regressions passed.
+The partials fail by AttributeError or TypeError rather than the named
+assertion required by the current hard-negative gate. This is evidence for
+these exact ablations, not proof that no other single-file repair can work.
+The earlier Python 3.14 replay is superseded for historical runtime analysis.
+
+`development-rows-v1/` contains three linked development decisions for that
+one family. Native read/edit implementations used local transport, with the
+budget wrapper omitted. The final source (omitting upstream cosmetic edits)
+passed the same selected issue/regression tests twice in Python 3.12. Exact
+two-tool tokenizer lengths were 806, 1763 and 2428; these are not full
+serving requests.
+
+Critical conflict: the frozen G_startup fixer prompt says the moment an edit
+returns OK, reply DONE and make no more calls, despite also saying to bank
+multi-item fixes. Subsequent-edit supervision conflicts with that instruction.
+A static proxy using the frozen instruction and eight reconstructed schemas
+gave Click 2963/3444 tokens and attrs 3270/4227/4892. It omits the real dynamic
+user message and ADK serialization, so it is not a serving-parity or exact
+4096-token gate. The latter two proxy results exceed the cap. Do not silently
+drop tools, truncate context, change policy, or train; resolve policy design
+and serving parity, then independently gate the corpus. No GPU was launched.
+
+### 2026-11-21 -- separate multi-step policy development variant
+User approved a separate policy variant permitting necessary follow-up edits,
+without changing the competition harness. Copied the nine-file G_startup
+baseline to `colab_fasteval/arms_gate_fix/G_multistep_development`; confirmed
+against the frozen baseline registration that only its fixer prompt differs.
+The experimental prompt removes the unconditional stop-after-first-edit
+instruction, keeps budget and scope controls, and corrects the assertion that
+a partial fix necessarily scores. Agent, subagent, evaluation and sampling
+YAML parse; referenced includes and skill exist. No actual model execution,
+deployment, GPU launch or effectiveness claim.
+
+Prior work already rejected generic apply-as-you-go prompting (see 2026-10-14
+audit above); this variant is a narrowly targeted consistency change, not
+evidence of a new breakthrough. Isolate policy-only from adapter effects and
+include single-file regression controls before any outcome claim. The five
+existing development rows omit other policy-requested steps, so they remain
+ineligible. A static variant-instruction/eight-schema token proxy gives Click
+2998/3479 and attrs 3305/4262/4927; two exceed the unchanged cap. These are
+not actual dynamic ADK requests or proof of serving parity.
+
+### 2026-11-21 -- PRE-REGISTERED + FROZEN: slots-per-lane validation `comfyops/e4b-slots-per-lane-8v12-r4` (not yet launched)
+Package `Outputs/e4b-slots-per-lane-8v12-r4-package` (builder `kaggle_pkg/_build_e4b_slots_check.py --rounds 4`);
+`run_experiment check` -> OFFLINE_PREFLIGHT_OK, notebook sha256 6b850c88e0e7617b8a358c230ce9953c7f444081fb276b7bd0080892018d19ea.
+Design: parent = frozen repair-decisions Seed39 package (39 tasks, repair_decisions_v1 adapter on the fixer, base verifier,
+32K, caps 80 calls / 30 min / 200 turns, arm hash 00181863...a14f unchanged). Identical policy in both arms; only slots
+per lane differ: gpu0-1 = 8, gpu2-3 = 12. Every task/round runs once per arm (4 rounds -> 156 pairs, 312 executions);
+tasks alternate lanes across rounds. Runner change (`tool_lora_runner.py`): new `slot_compare` mode only (per-lane slot
+count, wall start/end per attempt, `summarize_slots`); other modes unchanged. Offline dry run (`Outputs/_slots_dryrun.py`):
+coverage exact; synthetic pass case -> throughput x1.327, synthetic fail case fails a/b/c.
+Resources: private, internet off, 4xL4, 6,000 s notebook cap = 6.67 device-hours maximum, 4,800 s evaluation, 2,000 s
+task wall. PASS (all on complete data): (a) attempts per lane-hour ratio >= 1.2; (b) mean duration ratio <= 1.25 and no
+slots12 attempt over 30 min; (c) paired verified-solve rate delta >= -2.0 points; (d) no vLLM error type other than
+context overflow. Otherwise keep 8 slots. Launch blocked here: the Kiro sandbox cannot read ~/.kaggle/access_token.
+
+
+### 2026-11-22T00:05:57.322045+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b-slots-per-lane-8v12-r4`; slug `comfyops/e4b-slots-per-lane-8v12-r4`; expected version 1; accelerator `NvidiaL4`; requested platform cap 6000s.
+Notebook SHA256 `6b850c88e0e7617b8a358c230ce9953c7f444081fb276b7bd0080892018d19ea`; metadata SHA256 `91d46208d933c4cbc948d39953a0e03d7b8c044ae18aba35173fd9c78a3161ca`; registration SHA256 `fe5bd082a17f0e057a3cd062ba3ad5b61d2511f86dbc40875dd9e8017a30f5e1`.
+Comparison: Contemporaneous paired test of slots per lane (8 on gpu0-1 vs 12 on gpu2-3) with an identical policy: repair-decisions v1 adapter on the fixer, base verifier, 32K, task caps unchanged. Each task/round runs once per arm. Tests GPU-usage rule 3 (projected x1.33 throughput at 12 slots).
+
+Decision criteria: `{"expected_executions": 312, "expected_pairs": 156, "expected_tasks": 39, "native_parser_each_lane": true, "pass_rule": "Adopt 12 slots only if ALL hold on complete data: (a) attempts per lane-hour slots12/slots8 >= 1.2; (b) mean attempt duration ratio <= 1.25 and no slots12 attempt over 30 min; (c) paired verified-solve rate (slots12 - slots8) >= -2.0 points; (d) no vLLM error type other than context overflow. Any failure or incomplete data -> keep 8 slots.", "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Per-arm attempts, lane-hours, throughput, mean/max seconds, verified solves, overflows; paired pairs and discordances. Abort on serving gates; no automatic retry or leaderboard claim.", "round_labels": [1, 2, 3, 4], "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+### 2026-11-22T00:05:57Z -- LAUNCHED `comfyops/e4b-slots-per-lane-8v12-r4` v1 (user ran the launcher; status RUNNING)
+Receipt `Outputs/e4b-slots-per-lane-8v12-r4/receipt.json`: version 1, NvidiaL4, notebook sha256 6b850c88...19ea (= frozen
+package), registration sha256 fe5bd082...f5e1, 6,000 s cap (<= 6.67 device-hours; user reports ~60 h quota available).
+Monitoring/collection: `python -m kaggle_pkg.run_experiment resume --output "Outputs\e4b-slots-per-lane-8v12-r4"`
+(read-only on Kaggle; must run outside the Kiro sandbox, which cannot read the Kaggle token).
+
+
+### 2026-11-22T01:35:21.710925+00:00 - private experiment collected
+
+`comfyops/e4b-slots-per-lane-8v12-r4` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b-slots-per-lane-8v12-r4\result_report.json`; SHA256 `5da202537df65b99e51fedb91da2205c942916289fe2562d5f088f6374cb79bd`.
+
+Saved summary: `{"arms": {"slots12": {"attempts": 156, "attempts_per_lane_hour": 105.045, "lane_hours": 1.4851, "lanes": [2, 3], "max_seconds": 1489.51, "mean_seconds": 357.5, "over_30_min": 0, "overflows": 19, "real_graded": 143, "slots_per_lane": 12, "verified_solves": 45}, "slots8": {"attempts": 156, "attempts_per_lane_hour": 81.144, "lane_hours": 1.9225, "lanes": [0, 1], "max_seconds": 1484.27, "mean_seconds": 320.7, "over_30_min": 0, "overflows": 13, "real_graded": 145, "slots_per_lane": 8, "verified_solves": 48}}, "complete": true, "expected_executions": 312, "experiment": "slots per lane: 8 vs 12, identical policy (repair-decisions fixer adapter, base verifier)", "paired": {"only_slots12": 13, "only_slots8": 16, "pairs": 156, "rate_delta_points": -1.92, "verified_slots12": 45, "verified_slots8": 48}, "pass_a_b_c": true, "recorded": 312, "rounds": 4, "rules": {"a_pass": true, "a_throughput_ratio": 1.295, "b_duration_ratio": 1.115, "b_pass": true, "c_pass": true, "d": "check vllm_gpu*.log offline: no error types other than context overflow"}, "started": 312, "warning": "Throughput/timing apply to TP1 experiment lanes, not scorer wall time; outcome check is paired by task and round. Partial results are descriptive."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+
+### 2026-11-22T01:44:41.887310+00:00 - private experiment collected
+
+`comfyops/e4b-slots-per-lane-8v12-r4` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b-slots-per-lane-8v12-r4\result_report.json`; SHA256 `5da202537df65b99e51fedb91da2205c942916289fe2562d5f088f6374cb79bd`.
+
+Saved summary: `{"arms": {"slots12": {"attempts": 156, "attempts_per_lane_hour": 105.045, "lane_hours": 1.4851, "lanes": [2, 3], "max_seconds": 1489.51, "mean_seconds": 357.5, "over_30_min": 0, "overflows": 19, "real_graded": 143, "slots_per_lane": 12, "verified_solves": 45}, "slots8": {"attempts": 156, "attempts_per_lane_hour": 81.144, "lane_hours": 1.9225, "lanes": [0, 1], "max_seconds": 1484.27, "mean_seconds": 320.7, "over_30_min": 0, "overflows": 13, "real_graded": 145, "slots_per_lane": 8, "verified_solves": 48}}, "complete": true, "expected_executions": 312, "experiment": "slots per lane: 8 vs 12, identical policy (repair-decisions fixer adapter, base verifier)", "paired": {"only_slots12": 13, "only_slots8": 16, "pairs": 156, "rate_delta_points": -1.92, "verified_slots12": 45, "verified_slots8": 48}, "pass_a_b_c": true, "recorded": 312, "rounds": 4, "rules": {"a_pass": true, "a_throughput_ratio": 1.295, "b_duration_ratio": 1.115, "b_pass": true, "c_pass": true, "d": "check vllm_gpu*.log offline: no error types other than context overflow"}, "started": 312, "warning": "Throughput/timing apply to TP1 experiment lanes, not scorer wall time; outcome check is paired by task and round. Partial results are descriptive."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+### 2026-11-22 -- RESULT `comfyops/e4b-slots-per-lane-8v12-r4` v1: ALL FOUR PRE-REGISTERED RULES PASS -> adopt 12 slots (with caveats)
+Kaggle COMPLETE; collected with `run_experiment resume` (the first collection hit a transient Windows file lock on one
+`.part` file; re-run completed, 1,872 files). Complete data: 312/312 executions, 156 pairs, 4 rounds, all traced.
+| | slots8 (gpu0-1) | slots12 (gpu2-3) |
+|---|---|---|
+| attempts / lane-hour | 81.1 | 105.0 -> (a) x1.295 PASS (>= 1.2; projection x1.33) |
+| mean / max seconds | 320.7 / 1,484 | 357.5 / 1,490 -> (b) x1.115, 0 over 30 min PASS |
+| verified solves (paired) | 48 | 45 -> (c) -1.92 points PASS (line -2.0); discordant 16 vs 13 |
+| real-graded | 145 | 143 |
+| overflow attempts | 13 (8.3%) | 19 (12.2%) |
+(d) vLLM logs: 204 errors, all context_overflow; no other error type on any lane -> PASS.
+VERDICT per pre-registration: adopt 12 slots per lane for E4B experiments at 32K (steering rule 3 now VALIDATED).
+CAVEATS: (c) passed by 0.08 points, and overflow attempts were 19 vs 13 (not significant at n=156, Fisher p ~0.36).
+Report slots per lane in every pre-registration and watch overflow; revert to 8 on a sustained gap.
+DB: rebuilt (15,051 unique attempts, 8,119 traces, 48 vLLM servers), verify 27/27; slots run matches its own
+lora_progress exactly per arm. Also confirmed in the DB: `kaggle-e4b-fixer-thinking-2048-r5-collected` (100 attempts per
+arm, 5 rounds, all traced; resolved think4096 35 vs think2048 28; overflow 18 vs 14), matching its lora_progress exactly;
+the uncollected `kaggle-e4b-fixer-thinking-2048-r5` folder holds only a duplicate progress file (deduped, 0 unique).
+
+### 2026-11-22 -- DISCOVERY over the full DB (`Outputs/_disc_high_rounds.py`, `_disc_within_task.py`, `_disc_restart.py`)
+1. HIGH ROUNDS are not special: across 49 experiment-arms with >= 4 rounds, the observed sd of round totals matches the
+   independent per-task coin-flip sd (e.g. pack 1 1.17-1.72 vs 1.44-1.74). A high round = several swing tasks landing at
+   once, and it is the SAME ~15 swing tasks everywhere (fastapi_9425 swings in 44/49 arms, fastapi_9753 43, fastapi_14873
+   42, fastapi_9555 40, fastapi_14463 38, rich_3894 38, rich_3067 36, rich_2725 36, rich_3518 35, ...).
+2. WITHIN-TASK contrast (103 strata = exp x arm x task with >= 3 solved and >= 3 failed; 1,106 traced attempts; 15 tasks;
+   Bonferroni p < 0.0017): winners' first edit is on a gold file (52 strata vs 0, p 4e-16); they touch a gold file in the
+   first 4 calls (43 vs 4, p 3e-9) and read it before editing (36 vs 0); they are shorter and leaner (less wall time,
+   thinking, max prompt, reads, greps, repeats, failed calls; ~20 vs ~80 strata, p <= 4e-6); they run tests/scripts AFTER
+   editing LESS (6 vs 35, p 5e-6). NOT different: files edited (28 vs 25, p 0.78), patch size (p 0.43), calls before the
+   first edit (p 0.23). -> CORRECTION: "incomplete multi-site fixes" (paper F2 / lead 1) is NOT supported within task on
+   the swing tasks; it was a between-task effect. "Commit earlier" is also not supported; WHERE the first edit lands is.
+3. RESTART LEAD (new, observable at runtime): an attempt still without any successful edit at call 12 solves 25.2%
+   (n 222) vs 41.4% for a fresh attempt in the same strata (ratio 0.61) after a median 142 s; at call 15 22.0% vs 40.8%.
+   First edit by call k on a non-gold file -> ~17-23% solve vs ~57-58% on a gold file. Estimated value of "abandon and
+   restart fresh if no edit by call 12": ~20% of swing-task attempts x ~16 points ~ +0.5 tasks per 39-task round (upper
+   bound: a restart has less budget left; the fixer may not obey a prompt rule). Pack 1's existing fresh-retry machinery
+   could carry it. Correlational; needs a pre-registered A/B (mechanism metric: share of attempts restarted at call 12 and
+   their solve rate; outcome: paired solves on the swing cohort, >= 20 rounds at 12 slots).
+
+### 2026-11-22 -- GRADING IS DETERMINISTIC + SWING-TASK DOSSIER (`Outputs/_disc_patch_flaky.py`, `_swing_dossier.py`)
+1. Grading: identical patches received the same grade everywhere in the DB, except one: fastapi_14873 patch
+   e85ff48d04ec passed 20/21 (the failing grade, `test_startup_shutdown_handlers_as_parameters`, is in
+   drive_e4b_ab6_locate_20261112 C_pack1 round 1). So swing-task variance is agent behaviour; a 100x re-grade is not needed.
+2. Swing dossier: 18 tasks (E4B, n >= 40, solve rate 10-90%), traced attempts only, exclusive failure taxonomy. Output:
+   `Outputs/SWING_DOSSIER.md`, `Outputs/swing_dossier.json`. GOLD-LABEL CHECK: fastapi_14851 is suspect, since 15/16
+   traced winners never edited gold `fastapi/routing.py` (they fix `applications.py`); its "90% wrong_file" is a label
+   artefact and it is excluded from the totals. Over the other 17 tasks, failures: right file, wrong fix 1,429 (55%),
+   wrong file 508 (19%), overflow 498 (19%), no edit 128 (5%), gold after a wrong first edit 46 (2%).
+   Archetypes: A right-file contract/regression misses (rich_3882, fastapi_13537, fastapi_14458, fastapi_14616,
+   rich_2943, rich_3518, rich_3894, fastapi_9753, fastapi_14463; the same hidden test is missed repeatedly, 24-44% of
+   these failures lack local test output); B wrong-file attractors (rich_4077 console.py vs file_proxy.py, fastapi_9555
+   dependencies/utils.py vs dependencies/models.py, fastapi_9425 routing.py vs dependencies/utils.py, rich_3067 style.py
+   vs highlighter.py; top winning fix family 42-60%); C overflow (fastapi_14873 68%, fastapi_14492 51%, rich_2725 48%).
+   Use: train per archetype on an INDEPENDENT corpus (not these tasks); keep the 17 as a held-out eval with mechanism
+   metrics (first-edit-gold rate, hidden-test pass given the right file, overflow rate). Open: pull missing test outputs;
+   audit gold labels on all tasks; pre-register restart-at-12 A/B (awaiting approval).
