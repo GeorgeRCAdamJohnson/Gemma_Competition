@@ -22792,3 +22792,40 @@ Reading: no evidence the policy is better than pack 1; treat 0.08 as one draw. C
 notebook (1 submission/day) or a paired local A/B sized for +1 task/round (~9 rounds/arm, GPU rule 1).
 `submissions` table in the DB stops at 11-12 and lacks 58547656; it will appear after the next rebuild if the source
 lists it.
+
+### 2026-11-22 -- OFFLINE DATASET READ-HISTORY AND THINKING-FLAG AUDIT
+- The actual local ADK fixer with a dummy model captured a read call and its response
+  (`Outputs/adk-schema-inspection-20261121-v1/offline-read-history-with-id-v2.json`).
+  Its response matches the packaging-830 single-edit development row byte for byte; the call's
+  JSON-string arguments decode to the row's object. A synthetic matched ID was used.
+- `offline-read-history-token-comparison-v3.json` verifies all 32 frozen reference counts and exact
+  prefix boundaries before comparing the captured history. Directly templating the raw JSON-string
+  history yields 4,034 full tokens; decoding its argument object yields 4,030, with exact fixture
+  token IDs. The 162-token supervised suffix is identical. This is NOT a finding of a production
+  mismatch: the earlier vLLM audit at L11631 reports server-side argument deserialization, which
+  must be reverified in the actual serving build. A no-ID dummy call failed the local template;
+  no inference about production call IDs is justified.
+- The compiled variant's model additional arguments include `enable_thinking=true` and a 4,096
+  thinking budget. Existing `packed_memory_lora.encode` and earlier proxies do not explicitly pass
+  the template flag. Here adding it changes the prefix by two tokens: 4,032 full tokens for the
+  normalized history and 4,036 for raw ADK history. Prefix boundaries remain exact. The prior
+  4,016 proxy also omitted the ADK agent suffix; neither it nor the new values include workspace,
+  budget, policy-required grep/status, prior real model reasoning, or actual server behavior.
+- No production-parity or 4,096 gate is passed, no trainer or frozen registration changed, and
+  packaging is still one quarantined family. The local laptop is an RTX 4050 with 6,141 MiB VRAM;
+  feasibility, runtime and cost for this LoRA are not established. No GPU work was launched.
+
+### 2026-11-22 -- CORRECTION: repair-decisions v1 already has THREE public draws (user screenshot)
+`Gemma submit E4B repair decisions v1 - Version 1` scored 0.05 (3d ago), 0.06 (2d ago), 0.08 (1d ago) = 3, 4, 5 of 58
+tasks; mean 4.0 (0.069), sd 1.0. The earlier entry treated 0.08 as a single draw; it is the best of three. Other E4B
+draws: pack-1 fresh-retry 0.01 and 0.06 (1, 4; mean 2.5); evidence-to-edit Seed39 v1 0.05 (3); E4B ca5 0.03 (1-2).
+Repair-decisions is the most consistent E4B entry and its mean is ~1.5 tasks above pack 1's, but with 3 vs 2 draws the
+difference is not significant (rough t ~0.9). Selecting finals by the best public draw selects on noise; the private
+71 tasks score each submission independently.
+
+### 2026-11-22 -- FINAL SUBMISSIONS SELECTED (user)
+User selected two finals: 31B ca5 0.20 (57760641, "ca5: pre-edit anchor-grep rule, no sub-agents, v10 config") and
+E4B repair-decisions v1 0.08 (best of three draws: 0.05/0.06/0.08). Both have completed on the scorer, so both fit
+the runtime limit. Expected private performance follows each policy's mean, not the selected draw: 31B ca5 ~0.18
+(10.6/58 mean), E4B repair-decisions ~0.07 (4.0/58 mean). Selections can be changed until the deadline (Dec 2) if a
+better-evidenced candidate is scored.

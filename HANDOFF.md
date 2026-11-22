@@ -13,6 +13,9 @@ last verified progress, budget/cleanup status, and the next authorized action.
 
 ## Update 2026-11-22: intel DB, slots validation, swing dossier
 
+- **Final submissions selected by the user:** 31B ca5 0.20 (57760641) and E4B repair-decisions v1 0.08 (draws
+  0.05/0.06/0.08). Change only if a new candidate has stronger evidence; selections stay editable until Dec 2.
+
 - Per-attempt intel DB: `kb/attemptdb/` (see its README). Rebuild `python kb/attemptdb/build.py`, check
   `python kb/attemptdb/verify.py` (27 checks), query `python kb/attemptdb/q.py`. The `.sqlite` is gitignored; rebuild it.
 - GPU rules: `.kiro/steering/gpu-usage.md`. 12 slots per L4 lane VALIDATED by `comfyops/e4b-slots-per-lane-8v12-r4` v1
