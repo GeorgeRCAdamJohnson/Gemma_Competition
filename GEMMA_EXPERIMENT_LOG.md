@@ -22916,3 +22916,23 @@ verify ran the existing tests and returned PASS while the hidden test failed (th
 fails" class). Earlier, L4566: a fix/verify loop adds wall-clock to tasks already dying at the time limit (v12).
 Tested on E4B, not on 31B, but the mechanism (existing tests do not contain the hidden contract) is model-independent.
 All four differences in the 0.22 comparison therefore have prior work; none is a new lever.
+
+### 2026-11-22 -- 31B on Colab: point the E4B Drive pipeline at the 31B (prep, not launched)
+User: run the four public 0.22 configs on Colab against our tasks; the E4B Drive pipeline already works.
+- Drive model cache holds ONLY E4B (`gemma-4-developer-agent-cache/models/google/gemma-4/Other/gemma-4-e4b-it-qat-w4a16-ct/2`,
+  8 files). `gemma_fasteval/model` is the known-incomplete 31B (9.26 of 23.27 GB, L18918). The scorer checkpoint in
+  every 31B kernel we ran is `google/gemma-4/Other/gemma-4-31b-it-qat-w4a16-ct/2`; Kaggle listing (today): 8 files,
+  model.safetensors 23,265,352,448 B.
+- NEW `colab_fasteval/_stage_model_to_drive.py` (runs on a Colab CPU VM with Drive + Kaggle auth): download /2 to local
+  disk, verify sizes, copy into the same Drive layout, re-verify, write `_stage_receipt.json`; refuses if Drive is not
+  mounted, disk is short or a verified copy exists.
+- `_gpu_prep_ab.py` and `gpu_ab_run.py` take `MODEL_NAME` (default E4B); prep exits 4 if the model is not on Drive;
+  the runner asserts every arm's agent.yaml declares the served model.
+- BUG FIXED in `gpu_ab_run.py`: per-arm `timeout_seconds` (the scorer's per-command timeout) was never passed to
+  `swegemma eval`, so every Colab arm ran at the 300 s default. All 41 past Colab arms declare 300, so no past result
+  is affected; the competitor arms (60 / 240 / 300) need the fix.
+- Design (prior work L18384, L18590): cohort = the 85 live tasks, not the 39 ever-solved (34/39 solved by the control;
+  ceiling-bound). One vLLM server, all arms paired by task. Pre-registered reads: solves reported but not decided on
+  in one round (+-3 noise); mechanisms decide (8-min timeout 16.4% and overflow 7.9% of 31B runs today, no-edit,
+  first edit on gold, right-file conversion, calls, seconds). 31B needs a G4 (96 GB) or A100-80GB.
+Next: user "ready" for the Drive/Kaggle-auth staging run on a Colab CPU VM.

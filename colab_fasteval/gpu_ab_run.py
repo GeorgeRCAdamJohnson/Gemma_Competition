@@ -38,7 +38,7 @@ TASKS = WORK / "tasks.jsonl"
 SNAPS = Path("/content/snaps")
 OUT = Path(os.environ.get("AB_OUT", "/content/ab"))
 DRIVE_OUT = Path("/content/drive/MyDrive/gemma_fasteval/ab_runs") / os.environ.get("AB_TAG", "e4b_ab")
-TARGET_MODEL_NAME = "gemma-4-e4b-it-qat-w4a16-ct"
+TARGET_MODEL_NAME = os.environ.get("MODEL_NAME", "gemma-4-e4b-it-qat-w4a16-ct")  # must match each arm's agent.yaml
 CONC = 8
 T0 = time.time()
 
@@ -59,6 +59,9 @@ log("vLLM port", PORT, "| gpu_memory_utilization", UTIL, "| rounds", ROUND_FROM,
 srv = VllmServer(cfg, adapter_manifest=discover_adapters(str(ARMS_DIR / ARMS[0]), adapter_extensions=ALLOWED_ADAPTER_EXTENSIONS))
 _orig = srv.build_env
 srv.build_env = lambda: {**_orig(), 'CUDA_VISIBLE_DEVICES': '0'}
+for arm in ARMS:  # every arm must ask for the served model, or the run silently compares the wrong thing
+    declared = (ARMS_DIR / arm / "agent.yaml").read_text().split("model:", 1)[1].split()[0]
+    assert declared == TARGET_MODEL_NAME, f"arm {arm} declares {declared}, server serves {TARGET_MODEL_NAME}"
 log("booting vLLM ...")
 srv.start()
 ids = [m['id'] for m in json.load(urllib.request.urlopen(srv.base_url.rstrip('/') + '/models'))['data']]
@@ -70,8 +73,10 @@ def caps(agent_dir):
     raw = yaml.safe_load((agent_dir / "eval_config.yaml").read_text()) or {}
     c = raw.get("evaluation", raw) or {}
     out = []
+    # timeout_seconds = the scorer's per-command timeout (HARNESS_README: evaluation.timeout_seconds ->
+    # command_timeout_seconds); without it every arm silently ran at the 300 s default
     for k, flag in (("max_tool_calls", "--max-tool-calls"), ("max_time_minutes", "--max-time-minutes"),
-                    ("max_turns", "--max-turns")):
+                    ("max_turns", "--max-turns"), ("timeout_seconds", "--timeout-seconds")):
         if c.get(k) is not None:
             out += [flag, str(c[k])]
     return out

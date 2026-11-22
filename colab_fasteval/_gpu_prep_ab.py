@@ -11,8 +11,10 @@ C=$D/gemma-4-developer-agent-cache
 mkdir -p /content/work && tar -xf /content/ab_inputs.tar -C /content/work && echo "inputs: $(ls /content/work | tr '\n' ' ')"
 ( cp $D/gemma_fasteval/colab_env/colab_env.tar /content/ && tar -xf /content/colab_env.tar -C / && rm -f /content/colab_env.tar \
   && echo "ENV restored $(( $(date +%s) - T0 ))s" ) &
-( mkdir -p /content/model && cp -r $C/models/google/gemma-4/Other/gemma-4-e4b-it-qat-w4a16-ct/2/. /content/model/ \
-  && echo "MODEL staged $(( $(date +%s) - T0 ))s" ) &
+M=${MODEL_NAME:-gemma-4-e4b-it-qat-w4a16-ct}   # e.g. MODEL_NAME=gemma-4-31b-it-qat-w4a16-ct (stage it first)
+[ -f $C/models/google/gemma-4/Other/$M/2/config.json ] || { echo "MODEL MISSING on Drive: $M (run _stage_model_to_drive.py)"; exit 4; }
+( mkdir -p /content/model && cp -r $C/models/google/gemma-4/Other/$M/2/. /content/model/ && rm -f /content/model/_stage_receipt.json \
+  && echo "MODEL staged $M $(( $(date +%s) - T0 ))s" ) &
 mkdir -p /content/snaps
 for t in $(python3 -c "import json; print(' '.join(json.load(open('/content/work/ab_tasks.json'))))"); do
   cp $C/competitions/gemma-4-developer-agent/snapshots/$t.tgz /content/snaps/

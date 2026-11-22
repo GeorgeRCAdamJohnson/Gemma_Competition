@@ -40,16 +40,23 @@ if a.schema:
     for (name, sql) in db.execute("SELECT name, sql FROM sqlite_master WHERE type IN ('table','view') ORDER BY type, name"):
         print(f"-- {name}\n{sql}\n")
 elif a.prior:
+    terms = a.prior
+    try:  # FTS5 syntax check; shells often strip inner quotes, leaving e.g. "gemma-4-x" unparseable
+        db.execute("SELECT 1 FROM log_sections_fts WHERE log_sections_fts MATCH ? LIMIT 1", (terms,)).fetchall()
+    except sqlite3.OperationalError:
+        keep = {"AND", "OR", "NOT"}
+        terms = " ".join(t if t in keep else '"' + t.replace('"', "") + '"' for t in terms.split())
+        print(f"(query not valid FTS5; searching quoted terms instead: {terms})")
     print("== GEMMA_EXPERIMENT_LOG.md sections (best match first; open the log at line_start)")
     show(db.execute("""SELECT s.line_start, s.date, substr(s.heading, 1, 70) AS heading,
         snippet(log_sections_fts, 1, '[', ']', ' ... ', 14) AS match
         FROM log_sections_fts JOIN log_sections s ON s.sec_id = log_sections_fts.rowid
-        WHERE log_sections_fts MATCH ? ORDER BY rank""", (a.prior,)), a.limit if a.limit != 200 else 15)
+        WHERE log_sections_fts MATCH ? ORDER BY rank""", (terms,)), a.limit if a.limit != 200 else 15)
     print("== other documents (READMEs, reports, receipts)")
     show(db.execute("""SELECT d.kind, substr(d.path, 1, 70) AS path,
         snippet(documents_fts, 2, '[', ']', ' ... ', 14) AS match
         FROM documents_fts JOIN documents d ON d.doc_id = documents_fts.rowid
-        WHERE documents_fts MATCH ? ORDER BY rank""", (a.prior,)), a.limit if a.limit != 200 else 10)
+        WHERE documents_fts MATCH ? ORDER BY rank""", (terms,)), a.limit if a.limit != 200 else 10)
 elif a.task:
     show(db.execute("""SELECT exp, arm, round, model, source, resolved, verified, error_class, patch_chars,
         ROUND(duration_s) AS s, tool_calls, trace_path FROM attempts_unique WHERE task = ? ORDER BY exp DESC, arm, round""",
