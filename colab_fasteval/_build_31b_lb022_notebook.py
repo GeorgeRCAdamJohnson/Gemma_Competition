@@ -1,4 +1,4 @@
-"""Generate colab_fasteval/run_31b_lb022_ide.ipynb: the template chain (_ab_chain.sh) as notebook cells, for running
+﻿"""Generate colab_fasteval/run_31b_lb022_v3.ipynb: the template chain (_ab_chain.sh) as notebook cells, for running
 through the Colab connector add-on. Follows train/colab_repair_decisions_v1_visible.ipynb: a settings cell; a CPU
 dry-run mode (like its `inspect`) that checks every input the GPU run needs without creating anything on Drive; a
 Drive-consent gate; in GPU mode a CU ceiling that includes setup, a pinned-version check and runtime/outcome receipts.
@@ -278,7 +278,7 @@ nb = {"cells": cells,
                                      "mimetype": "text/x-python", "name": "python", "nbconvert_exporter": "python",
                                      "pygments_lexer": "ipython3", "version": "3.12"}},
       "nbformat": 4, "nbformat_minor": 5}
-target = ROOT / "colab_fasteval" / "run_31b_lb022_ide.ipynb"
+target = ROOT / "colab_fasteval" / "run_31b_lb022_v3.ipynb"
 target.write_text(json.dumps(nb, indent=1) + "\n", encoding="utf-8", newline="\n")
 for f, h in HASHES.items():
     print(f"{f:24s} {h[:12]}")

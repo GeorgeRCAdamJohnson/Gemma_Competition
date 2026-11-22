@@ -1,11 +1,11 @@
-"""Run the notebook's dry-run cells locally against Drive for Desktop (G:\\My Drive), so the CPU path is tested before
+﻿"""Run the notebook's dry-run cells locally against Drive for Desktop (G:\\My Drive), so the CPU path is tested before
 anyone connects a runtime. Paths are remapped; bash -n goes through WSL. Writes nothing to Drive.
 usage: python colab_fasteval/_test_notebook_dry_run.py"""
 import json
 import tempfile
 from pathlib import Path
 
-nb = json.loads(Path("colab_fasteval/run_31b_lb022_ide.ipynb").read_text(encoding="utf-8"))
+nb = json.loads(Path("colab_fasteval/run_31b_lb022_v3.ipynb").read_text(encoding="utf-8"))
 code = ["".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code"]
 tmp = Path(tempfile.mkdtemp(prefix="lb022_dry_"))
 remap = [("/content/drive/MyDrive", "G:/My Drive"), ("/tmp/lb022_dry", tmp.as_posix()),
