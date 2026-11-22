@@ -39,7 +39,9 @@ SNAPS = Path("/content/snaps")
 OUT = Path(os.environ.get("AB_OUT", "/content/ab"))
 DRIVE_OUT = Path("/content/drive/MyDrive/gemma_fasteval/ab_runs") / os.environ.get("AB_TAG", "e4b_ab")
 TARGET_MODEL_NAME = os.environ.get("MODEL_NAME", "gemma-4-e4b-it-qat-w4a16-ct")  # must match each arm's agent.yaml
-CONC = 8
+# concurrent tasks per pass; 8 for E4B. For 31B on one GPU, lower it so per-sequence decode speed stays near the
+# scorer's (~23-30 tok/s on 4xL4 TP4), or 8-minute timeouts are inflated for every arm alike.
+CONC = int(os.environ.get("AB_CONC", "8"))
 T0 = time.time()
 
 
