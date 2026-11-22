@@ -21353,6 +21353,30 @@ No leaderboard submission or automatic relaunch. Runtime/quota/cost not independ
   serving requests remain unverified; these counts do not certify the gate.
   No training was launched for this dataset.
 
+### 2026-11-22 -- Babel and packaging contract development replays
+
+- `Outputs/babel-1126-multisite-development-20261121-v1/replay-r7/replay-results/assessment.json`
+  records a native-core local Babel #1126 replay against the actual parent.
+  Baseline and two incomplete fixes fail named upstream issue checks; the
+  complete fix passes, with unchanged regressions and import provenance.
+  A separate Python 3.12 recheck in `python312-audit-v1/assessment.json`
+  reproduces all outcomes twice and checks that test runs leave the recorded
+  workspaces unchanged. Full sandbox/serving and independence gates remain open.
+- `Outputs/packaging-830-contract-development-20261122-v1/replay-v1/assessment.json`
+  records Python 3.12 local native-edit tests on the actual parent and fixed
+  revisions. Baseline fails; each exact single-branch partial fix fails its
+  corresponding post-hoc behavioral assertion; the complete fix passes,
+  alongside unchanged upstream regressions, twice. The upstream issue test
+  by itself accepts the disallowed-only partial fix, so the additional oracle
+  is useful development evidence but was authored after inspecting the patch.
+- The packaging two-decision rows use actual offline ADK-converted tool schemas
+  and complete tree manifests, and are one quarantined family. The offline
+  full-token proxy is 3,682/4,251. A separate single contiguous edit reproduces
+  the same tested complete tree with a 3,798-token proxy and 162 supervised
+  tokens; it is an alternate representation of the same family. All proxies
+  omit the dynamic harness message and policy-required grep/status steps.
+  No row is training-ready, and no new training was launched.
+
 
 ### 2026-11-17T03:10:22.286481+00:00 - private experiment collected
 
@@ -22673,3 +22697,25 @@ totals 45 / 48 match the validated result.
 Swing repeats v1 progress from the user's kernel log at 3,325 s: 321 attempts ended, 28 with context overflow (8.7%).
 Pace ~0.116 attempts/s implies ~14,700 s for 1,700, close to the 15,000 s evaluation cap; a cut would leave the last
 round(s) partial (pre-registered: use complete rounds).
+
+### 2026-11-22 -- HARD-TASK DOSSIER + 31B CONTRAST (`Outputs/_swing_dossier.py hard`, `_hard_fix_compare.py`)
+Coverage check first: on the swing tasks, the 3,119 untraced E4B attempts solve 35.3% vs 35.5% for the 4,155 traced
+ones, so the trace-based dossier is representative on outcome. Task classes (E4B, pooled): 9 never solved, 7 rare
+(<10%), 18 swing, 5 usual (>90%), 90 thin (<40 attempts, 1,725 attempts; mostly the one-run runtime tasks).
+1. Hard tasks (16, n >= 40, rate < 10%; `Outputs/HARD_DOSSIER.md`): failures right file wrong fix 952 (55%), wrong
+   file 435 (25%), overflow 269 (16%). Several are a CONSISTENT MISCONCEPTION: E4B's first edit is on the gold file in
+   nearly every attempt and the same hidden test fails every time: fastapi_14419 (66/67 first edit gold; 65 fail
+   test_security_scopes_*), fastapi_5077 (85/86; 84 fail test_wrapped_method_type_inference), rich_3718 (86/86; 83 fail
+   test_title_text_with_panel_background), rich_3521 (218/219; test_split_cells_mixed), rich_3506 (203/203).
+   Examples: rich_3718, 62% of E4B failures add `title_text.style = self.style` (symptom patch); gold and 31B reuse the
+   existing combined `border_style` in `stylize_before`. fastapi_5077, E4B rebinds `call = call.__wrapped__` (changes the
+   signature too, one level); gold/31B unwrap fully and only for `globalns`. Pattern: E4B's change is too broad or
+   treats the symptom; the winning change is minimal and at the point the statement names.
+2. 31B solves 14 of the 16 at least once (n 2-21 per task; small). 31B writes a scratch reproduction script in 68% of
+   traced attempts vs 1% for E4B (69 of ~7,100); inline python 22% vs 11%. Within task the 31B repro effect is mixed
+   (fastapi_14419 56% vs 17%, rich_3521 35% vs 0%, rich_3506 6% vs 40%), and E4B's few repro attempts don't solve more:
+   a behaviour gap, NOT an established cause. Earlier within-task E4B finding still stands (winners run tests after
+   editing less).
+Training implications: hard right-file tasks are a "fix-shape" target (minimal targeted change vs symptom/over-broad
+edit); build independent examples of that contrast, keep these tasks held out. Open: 31B vs E4B on swing tasks;
+thin tasks need runs before they can be classified.
