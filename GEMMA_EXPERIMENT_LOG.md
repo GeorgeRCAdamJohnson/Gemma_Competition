@@ -22971,3 +22971,10 @@ arm that was not first alphabetically would have run on the base model silently)
 carries an adapter (the harness VllmConfig default is True), so all six arms share one server configuration; startup
 asserts each adapter is served. The adapter and `_lb022_inputs.tar` (56.6 MB) are not committed: rebuild with
 `python colab_fasteval/_build_arms_31b_lb022.py` after the kernel-output pull. 6 arms x 85 = 510 attempts per round.
+
+### 2026-11-22 -- CORRECTION: "never use G4" (HANDOFF) was stale
+User: the project has been using G4. The rule traces to the 11-11 incident (L18944: a cancelled `colab new --gpu G4` still
+allocated and billed ~10 CU/h) and was carried into later E4B pre-registrations as "No G4", where an L4 sufficed. For the
+31B five-arm A/B the G4 (96 GB; ~58 GB KV after the 23.3 GB weights at gmu 0.85) is the planned GPU. Estimate: 510
+attempts at AB_CONC 4-6, ~6-8 h, ~60-80 CU of 261. Repo logs do not record the GPU of past Colab A/Bs (prep prints
+nvidia-smi into the VM's prep.log only); future runs should copy prep.log to Drive with the results.
