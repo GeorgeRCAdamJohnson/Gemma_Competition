@@ -23022,3 +23022,14 @@ Drive mount (consent in the notebook) + GPU check (>= 80 GB), copy pinned inputs
 10836712c3df, _launch_if_ready.py c1508346cfe6, _verify_model_dir.py 3fd791cbf6f2), launch.json (G4, 1 round, conc 6,
 12 h deadline, 31B, archive fallback), prep with polling and fail-closed checks, detached driver, 5-minute monitor until
 ALL_DONE. Refuses to start if ab_runs/31b_lb022_20261122 already holds results. The user deletes the runtime at the end.
+
+### 2026-11-22 -- Connector notebook validated against train/colab_repair_decisions_v1_visible.ipynb (user request)
+Gaps found in `run_31b_lb022_ide.ipynb` v1 vs the reference conventions, all fixed in v2 (`_build_31b_lb022_notebook.py`):
+settings cell (RATE_CU_PER_HOUR, AVAILABLE_CU, APPROVAL = "run 31b lb022 ab", DRIVE_CONSENT) printing SETTINGS_OK;
+Drive mounts only after DRIVE_CONSENT == "ready"; rate <= 12 CU/h and balance >= ceiling = rate x (12 h driver + 1 h setup);
+exactly one GPU with >= 80 GB, name recorded; refuses a runtime with /content/venv, /content/ab, /content/model or
+prep.done; >= 100 GiB free; restored env must equal the pinned set (vllm 0.19.1, torch 2.10.0, transformers 5.13.1,
+compressed-tensors 0.15.0.1, adk-submission 0.2.13, swegemma 0.2.11; build tags like +cu128 ignored); prep budget
+2x setup; runtime.json at start, environment_preflight.json after prep, outcome.json in a finally block (elapsed,
+estimated CU); refuses a non-empty ab_runs/<tag>. Kept: Drive inputs pinned by SHA-256 (the reference embeds its
+sources; equivalent); model checked by sizes + safetensors header end (Kaggle publishes sizes, not hashes).
