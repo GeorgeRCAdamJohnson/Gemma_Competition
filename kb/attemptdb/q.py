@@ -5,6 +5,7 @@ usage:
   python kb/attemptdb/q.py --task rich_3782          every unique attempt of a task, newest experiments first
   python kb/attemptdb/q.py --exp <exp> [--by round]  per-arm (or per-arm-round) totals for one experiment
   python kb/attemptdb/q.py --schema                  table/column list
+  python kb/attemptdb/q.py --prior "max_output_tokens 16384"   prior-work lookup in the log and crawled documents
 """
 import argparse
 import sqlite3
@@ -29,12 +30,26 @@ ap.add_argument("--task")
 ap.add_argument("--exp")
 ap.add_argument("--by", choices=["arm", "round"], default="arm")
 ap.add_argument("--schema", action="store_true")
+ap.add_argument("--prior", metavar="TERMS",
+                help="prior-work lookup: full-text search of experiment-log sections and crawled documents "
+                     "(FTS5 syntax, e.g. 'max_output_tokens 16384' or '\"40 calls\"'). Run before calling an idea untested.")
 ap.add_argument("--limit", type=int, default=200)
 a = ap.parse_args()
 db = sqlite3.connect(DB)
 if a.schema:
     for (name, sql) in db.execute("SELECT name, sql FROM sqlite_master WHERE type IN ('table','view') ORDER BY type, name"):
         print(f"-- {name}\n{sql}\n")
+elif a.prior:
+    print("== GEMMA_EXPERIMENT_LOG.md sections (best match first; open the log at line_start)")
+    show(db.execute("""SELECT s.line_start, s.date, substr(s.heading, 1, 70) AS heading,
+        snippet(log_sections_fts, 1, '[', ']', ' ... ', 14) AS match
+        FROM log_sections_fts JOIN log_sections s ON s.sec_id = log_sections_fts.rowid
+        WHERE log_sections_fts MATCH ? ORDER BY rank""", (a.prior,)), a.limit if a.limit != 200 else 15)
+    print("== other documents (READMEs, reports, receipts)")
+    show(db.execute("""SELECT d.kind, substr(d.path, 1, 70) AS path,
+        snippet(documents_fts, 2, '[', ']', ' ... ', 14) AS match
+        FROM documents_fts JOIN documents d ON d.doc_id = documents_fts.rowid
+        WHERE documents_fts MATCH ? ORDER BY rank""", (a.prior,)), a.limit if a.limit != 200 else 10)
 elif a.task:
     show(db.execute("""SELECT exp, arm, round, model, source, resolved, verified, error_class, patch_chars,
         ROUND(duration_s) AS s, tool_calls, trace_path FROM attempts_unique WHERE task = ? ORDER BY exp DESC, arm, round""",

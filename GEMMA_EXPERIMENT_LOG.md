@@ -22899,3 +22899,11 @@ repetition and wandering, not resolves). The pinned task statement ({problem_des
 little here: it guards against history compaction, which our 28-call / 8-minute runs rarely reach, and our one
 board use of {problem_description} (57146757, per-task branching) scored 0.12. Only the mandatory verify-with-reserve
 remains untested on 31B, with low expected value.
+
+### 2026-11-22 -- Prior-work lookup added (`q.py --prior`) + steering rule `.kiro/steering/prior-work-check.md`
+User: the DB exists so claims like "untested" are checked against it. `python kb/attemptdb/q.py --prior "<terms>"`
+searches log sections (line, date, heading, snippet) and crawled documents with FTS5. Verified on the two items
+missed in the 0.22 comparison: "max_output_tokens 16384" -> L8703 (Kaggle v12 null) first; "max_tool_calls 40" ->
+L4389 (v10 22->40) plus kb/audits/2026-10-14-max-tool-calls-28-to-50-refute.md. Steering rule: run the lookup
+before calling any lever untested or recommending it, cite line/path, and write "not found in the DB" (with the
+searches run) instead of "untested".

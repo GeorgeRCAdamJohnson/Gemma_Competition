@@ -13,6 +13,7 @@ python kb/attemptdb/q.py --schema
 python kb/attemptdb/q.py --task rich_3782
 python kb/attemptdb/q.py --exp kaggle_e4b_seed39_evidence_first --by round
 python kb/attemptdb/q.py 'SELECT ... FROM attempts_unique ...'
+python kb/attemptdb/q.py --prior "max_tool_calls 40"   # has this been tried? log sections + documents, best first
 python kb/attemptdb/inventory.py           # raw-material inventory of the repo
 ```
 The `.sqlite` is gitignored (derived, ~0.5 GB): commit code, rebuild after pulling results.
