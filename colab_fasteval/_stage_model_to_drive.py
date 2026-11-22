@@ -3,6 +3,10 @@
 # point at it with MODEL_NAME. Downloads to local disk first (fast), then copies to Drive and verifies every file's
 # size against Kaggle's version listing. Writes <target>/_stage_receipt.json. Refuses to overwrite a verified copy.
 #   MODEL_NAME=gemma-4-31b-it-qat-w4a16-ct python /content/_stage_model_to_drive.py
+# From an archive already on Drive (no Kaggle auth; upload _verify_model_dir.py to /content first):
+#   MODEL_NAME=gemma-4-31b-it-qat-w4a16-ct \
+#   ARCHIVE=/content/drive/MyDrive/gemma_fasteval/model/gemma-4-other-gemma-4-31b-it-qat-w4a16-ct-v2.tar.gz \
+#   python /content/_stage_model_to_drive.py
 import json
 import os
 import shutil
@@ -47,14 +51,28 @@ need = int(sum(EXPECTED.values()) * 2.1)  # archive + extracted copy
 if free < need:
     raise SystemExit(f"STAGE REFUSED: /content has {free / 2**30:.1f} GiB free, need ~{need / 2**30:.1f}")
 LOCAL.mkdir(parents=True, exist_ok=True)
-subprocess.run(["kaggle", "models", "instances", "versions", "download",
-                f"google/gemma-4/other/{MODEL_NAME}/{VERSION}", "-p", str(LOCAL), "--untar"], check=True)
+ARCHIVE = os.environ.get("ARCHIVE")  # a Kaggle model archive already on Drive (no Kaggle auth needed)
+if ARCHIVE:
+    src_archive = Path(ARCHIVE)
+    if not src_archive.is_file():
+        raise SystemExit(f"STAGE REFUSED: archive not found: {src_archive}")
+    print(f"copying {src_archive.name} ({src_archive.stat().st_size:,} B) from Drive", flush=True)
+    shutil.copyfile(src_archive, LOCAL / src_archive.name)  # local copy: tar over the Drive FUSE mount is slow
+    print(f"  copied at {time.time() - t0:.0f}s; extracting", flush=True)
+else:
+    subprocess.run(["kaggle", "models", "instances", "versions", "download",
+                    f"google/gemma-4/other/{MODEL_NAME}/{VERSION}", "-p", str(LOCAL), "--untar"], check=True)
 for z in list(LOCAL.glob("*.tar.gz")) + list(LOCAL.glob("*.zip")):  # older CLIs ignore --untar
     subprocess.run(["bash", "-c", f'cd "{LOCAL}" && (tar xzf "{z.name}" || unzip -oq "{z.name}") && rm -f "{z.name}"'],
                    check=True)
 src = next((p.parent for p in sorted(LOCAL.rglob("config.json"), key=lambda p: len(p.parts))), None)
 if src is None or sizes(src) != EXPECTED:
     raise SystemExit(f"DOWNLOAD MISMATCH: {sizes(src) if src else 'no config.json'} vs {EXPECTED}")
+# a truncated archive can still yield the right file count; the safetensors header pins the true data length
+check = subprocess.run(["python3", "/content/_verify_model_dir.py", str(src), MODEL_NAME], capture_output=True, text=True)
+print(check.stdout)
+if check.returncode != 0:
+    raise SystemExit("LOCAL VERIFY FAILED (see above)")
 print(f"downloaded + verified locally in {time.time() - t0:.0f}s")
 TARGET.mkdir(parents=True, exist_ok=True)
 for name in sorted(EXPECTED, key=lambda n: EXPECTED[n]):  # small files first, the 23 GB safetensors last

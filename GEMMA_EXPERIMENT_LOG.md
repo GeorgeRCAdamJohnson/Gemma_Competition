@@ -22978,3 +22978,10 @@ allocated and billed ~10 CU/h) and was carried into later E4B pre-registrations 
 31B five-arm A/B the G4 (96 GB; ~58 GB KV after the 23.3 GB weights at gmu 0.85) is the planned GPU. Estimate: 510
 attempts at AB_CONC 4-6, ~6-8 h, ~60-80 CU of 261. Repo logs do not record the GPU of past Colab A/Bs (prep prints
 nvidia-smi into the VM's prep.log only); future runs should copy prep.log to Drive with the results.
+
+### 2026-11-22 -- 31B archive on Drive (user upload); staging via archive
+User uploaded `gemma_fasteval/model/gemma-4-other-gemma-4-31b-it-qat-w4a16-ct-v2.tar.gz` (19,348,664,473 B, the Kaggle
+/2 archive). Integrity is checked only after extraction. `_stage_model_to_drive.py` gains ARCHIVE=<drive path>: copy the
+archive to VM disk, extract, verify sizes + safetensors header end (`_verify_model_dir.py`), copy into
+`gemma-4-developer-agent-cache/models/google/gemma-4/Other/gemma-4-31b-it-qat-w4a16-ct/2`, re-verify, write
+`_stage_receipt.json`. Runs on a Colab CPU VM (0.08 CU/h); needs Drive mounted, no Kaggle auth.
