@@ -22829,3 +22829,9 @@ E4B repair-decisions v1 0.08 (best of three draws: 0.05/0.06/0.08). Both have co
 the runtime limit. Expected private performance follows each policy's mean, not the selected draw: 31B ca5 ~0.18
 (10.6/58 mean), E4B repair-decisions ~0.07 (4.0/58 mean). Selections can be changed until the deadline (Dec 2) if a
 better-evidenced candidate is scored.
+
+### 2026-11-22 -- Selection checked against the small-model prize rules (log 2026-10-28 entry)
+Rules as captured: $10K to the highest-ranking E2B/E4B submission on the PRIVATE set; the E4B entry must be one of the
+two selected finals; main-track score = best of the two. The user's selection (31B ca5 0.20 + E4B repair-decisions
+0.08) satisfies this. Last recorded small-board top: 0.10 = 6/58 (late October; current value not re-checked). Our
+E4B mean is 4.0/58, ~2 tasks short of that mark, so remaining effort has the most prize value on E4B.
