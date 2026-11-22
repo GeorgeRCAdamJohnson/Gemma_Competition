@@ -22743,3 +22743,20 @@ its task's mean); rough z, |z| >= 3 flagged (clustered attempts, 32 arms x 8 met
 Reading: our arms changed HOW MUCH the agent does (calls, overflow, dead attempts) but not WHERE it edits or WHAT
 fix it writes, which is where the failure analysis puts most failures. Future arms should target those, and every
 comparison should be within experiment against its own control.
+
+### 2026-11-22 -- DEGRADATION / CACHING CHECK: do solves get worse over repeated runs? NO (`Outputs/_degradation.py`, `_degradation2.py`, `DEGRADATION.md`)
+User hypothesis: a caching or server-state effect makes solves worse when runs repeat. All outcomes task-adjusted.
+- By round within experiment (26 experiments with >= 3 rounds, ~17,000 attempts): 10 of 26 slopes negative, none
+  strongly negative (z <= -2), one strongly positive (kaggle_batch3, +0.72/round, z +2.5). Pooled by round position:
+  flat; round 1 is slightly LOW (-1.2 points, z -2.2), not high.
+- By server age (2,804 attempts linked to 48 vLLM 0.19.1 servers, all with prefix caching on): flat from 0-30 min to
+  180+ min (all |z| < 1). Prefix-cache hit rate warms from 64% (first 30 min) to ~86% and then stays flat; outcomes do
+  not follow it (hit 80-90%: +0.3, z +0.4; hit 0-10%: +0.3).
+- Same task repeated on the same server (0 to 6+ earlier attempts of that task): no trend (all |z| <= 1.3).
+- Unchanged control arm (C_pack1) across dates 11-10 to 11-13: -2.4, +4.3, +1.5, +3.4, +3.1, ..., +0.9; noise around
+  the mean with no decline.
+- Last rounds carry no extra errors (overflow 7.7% vs 9.0% earlier; timeouts 5 vs 14) and solve 37.1% vs 35.3%
+  among error-free attempts, so deadline cuts don't explain low final rounds either.
+Reading: no sign of degradation from caching, server age or repetition. The impression of "worse in a row" fits
+round-to-round noise (sd 1.47 tasks per Seed39 round) and regression to the mean after a good first run. Limits:
+traces record 0 cached tokens (per-request cache use is not visible); only Kaggle-era runs have server logs.
