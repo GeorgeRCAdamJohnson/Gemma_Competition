@@ -1,0 +1,16 @@
+{
+  "slug": "comfyops/e4b-swing-task-repeats-r100",
+  "expected_version": 1,
+  "version": 1,
+  "code_file": "e4b-swing-task-repeats-r100.ipynb",
+  "accelerator": "NvidiaL4",
+  "notebook_seconds": 17400,
+  "notebook_sha256": "2f6829e8c9b8c7cf572d29f16392b1aea8b88faa00998f7eec264eae599333ae",
+  "metadata_sha256": "caf25969c07cf6f3f18108dfd49596eb384f0bb47014dc24af1323b9746eaa4a",
+  "registration_sha256": "a36b2e95910bbc5f96dc8d49d9a13ae8e7fd1eb392b98ac454aaa1b7f17261e2",
+  "log": "C:\\Users\\biges\\Gemma\\Gemma_Competition\\GEMMA_EXPERIMENT_LOG.md",
+  "registered_at": "2026-11-22T05:03:38.340805+00:00",
+  "phase": "monitoring",
+  "status": "RUNNING",
+  "failure_message": ""
+}

@@ -46,6 +46,17 @@ SLOT_LANES = {"slots8": (0, 1), "slots12": (2, 3)}
 SLOT_MAX_ROUNDS = 6
 SLOT_EVAL_SECONDS = 4800
 SLOT_NOTEBOOK_SECONDS = 6000
+# Swing-task repeats (Outputs/SWING_DOSSIER.md): one frozen policy, many independent attempts per swing task, to measure
+# each task's solve rate under a single configuration and record full traces/test outputs for failure classification.
+SWING_TASKS = (
+    "fastapi_13537", "fastapi_14077", "fastapi_14458", "fastapi_14463", "fastapi_14492", "fastapi_14616",
+    "fastapi_14873", "fastapi_9425", "fastapi_9555", "fastapi_9753", "rich_2725", "rich_2943", "rich_3067",
+    "rich_3518", "rich_3882", "rich_3894", "rich_4077",
+)
+SWING_SLOTS = 12  # GPU rule 3 (validated)
+SWING_MAX_ROUNDS = 100
+SWING_EVAL_SECONDS = 15000
+SWING_NOTEBOOK_SECONDS = 17400
 
 
 def save(path, value):
@@ -393,6 +404,66 @@ def summarize_slots(task_ids, records, rounds):
     }
 
 
+def swing_jobs(task_ids, rounds, gpu):
+    """Jobs for one lane in the swing repeats. Each round runs every swing task once across the four lanes; a task
+    rotates lanes between rounds. Rounds are queued in order so a deadline cut leaves complete early rounds."""
+    return [(task, "swing", rnd) for rnd in range(1, rounds + 1)
+            for index, task in enumerate(task_ids) if (index + rnd) % 4 == gpu]
+
+
+def wilson(successes, n, z=1.96):
+    if not n:
+        return None
+    p = successes / n
+    centre = (p + z * z / (2 * n)) / (1 + z * z / n)
+    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / (1 + z * z / n)
+    return [round(centre - half, 4), round(centre + half, 4)]
+
+
+def summarize_swing(task_ids, records, rounds):
+    """Per-task solve rate (verified definition) with a Wilson 95% interval, overflow and grading coverage."""
+    expected = {(task, "swing", rnd) for task in task_ids for rnd in range(1, rounds + 1)}
+    keys = [(record["id"], record["arm"], record["round"]) for record in records]
+    if len(keys) != len(set(keys)) or not set(keys) <= expected:
+        raise ValueError("Duplicate or unexpected swing-repeat result")
+    started = [record for record in records if not record["status"].startswith("not_started_")]
+    tasks = {}
+    for task in task_ids:
+        rows = [record for record in started if record["id"] == task]
+        solves = sum(verified_solve(record, arm="adapter") for record in rows)
+        tasks[task] = {
+            "attempts": len(rows), "verified_solves": solves,
+            "rate": round(solves / len(rows), 4) if rows else None, "wilson95": wilson(solves, len(rows)),
+            "real_graded": sum(bool(record["real_grade"]) for record in rows),
+            "overflows": sum("ContextWindow" in str((record.get("result") or {}).get("error") or "")
+                             for record in rows),
+            "deadline_hits": sum(record["status"] == "evaluation_deadline" for record in rows),
+        }
+    complete_rounds = max((r for r in range(1, rounds + 1)
+                           if all(tasks[t]["attempts"] >= r for t in task_ids)), default=0)
+    lane_hours = 0.0
+    for gpu in range(4):
+        lane = [record for record in started if record["gpu"] == gpu and record.get("wall_start")]
+        if lane:
+            lane_hours += (max(r["wall_end"] for r in lane) - min(r["wall_start"] for r in lane)) / 3600
+    seconds = [record["seconds"] for record in started if record.get("seconds") is not None]
+    return {
+        "experiment": "swing-task repeats: one frozen policy (repair-decisions fixer adapter, base verifier), "
+                      f"{len(task_ids)} swing tasks x {rounds} attempts, {SWING_SLOTS} slots per lane",
+        "complete": len(started) == len(expected), "expected_executions": len(expected),
+        "recorded": len(records), "started": len(started), "complete_rounds": complete_rounds, "rounds": rounds,
+        "verified_solves": sum(t["verified_solves"] for t in tasks.values()),
+        "real_graded": sum(t["real_graded"] for t in tasks.values()),
+        "overflows": sum(t["overflows"] for t in tasks.values()),
+        "routing_violations": sum(bool(record["routing"]["violations"]) for record in started),
+        "lane_hours": round(lane_hours, 4),
+        "attempts_per_lane_hour": round(len(started) / lane_hours, 3) if lane_hours else None,
+        "mean_seconds": round(sum(seconds) / len(seconds), 1) if seconds else None,
+        "tasks": tasks,
+        "warning": "Descriptive measurement on benchmark tasks; use as held-out evaluation, never as training data.",
+    }
+
+
 def run_paired_repeats(task_ids, rounds, evaluate, deadline, *, gpus=4, slots=CONCURRENCY,
                       arms=("base", "adapter")):
     if slots < 2 or slots % 2 or gpus < 1:
@@ -591,9 +662,18 @@ def run_with_failure_stop(task_ids, evaluate, persist, *, limit=10, workers=4, d
 def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
         *, control_agent=None, rounds=1, overflow_recovery=False, context_probe_token_id=None,
         recovery_context=65536, repeat_benchmark=False, evidence_seed=False,
-        repair_decisions=False, repair_first_round=1, thinking_budget=None, slot_compare=False):
+        repair_decisions=False, repair_first_round=1, thinking_budget=None, slot_compare=False,
+        swing_repeat=False):
     thinking_policies = thinking_plan(rounds, thinking_budget) if thinking_budget is not None else {}
     thinking_compare = bool(thinking_policies)
+    if swing_repeat:
+        if (slot_compare or thinking_compare or repeat_benchmark or evidence_seed or overflow_recovery
+                or repair_decisions or control_agent is not None or not 1 <= rounds <= SWING_MAX_ROUNDS
+                or len(task_ids) != 39 or len(set(task_ids)) != 39 or not set(SWING_TASKS) <= set(task_ids)):
+            raise ValueError(f"Swing repeats require one policy, the Seed39 cohort and 1-{SWING_MAX_ROUNDS} rounds")
+        task_ids = [task for task in task_ids if task in SWING_TASKS]
+    # The slots/swing modes share the per-arm/round layout, the repair-decisions adapter and the 32K check.
+    lane_mode = slot_compare or swing_repeat
     if slot_compare and (
             thinking_compare or repeat_benchmark or evidence_seed or overflow_recovery or repair_decisions
             or control_agent is not None or not 1 <= rounds <= SLOT_MAX_ROUNDS
@@ -625,7 +705,7 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
         raise ValueError("Paired thinking mode requires two policies on 20 unique tasks")
     seed_repeats = evidence_seed and rounds == EVIDENCE_REPEAT_ROUNDS
     repair_decision_repeats = repair_decisions
-    adapter_name = (REPAIR_DECISIONS_ADAPTER if repair_decisions or thinking_compare or slot_compare else
+    adapter_name = (REPAIR_DECISIONS_ADAPTER if repair_decisions or thinking_compare or lane_mode else
                     EVIDENCE_ADAPTER if evidence_seed else ADAPTER)
     context_length = recovery_context if overflow_recovery else 32768
     from adk_submission import VllmConfig, VllmServer, compile_submission
@@ -662,7 +742,7 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
             ids = list(models)
             if MODEL not in ids or adapter_name not in ids:
                 raise RuntimeError(f"gpu{gpu}: missing served model or adapter: {ids}")
-            if (repeat_benchmark or evidence_seed or repair_decisions or thinking_compare or slot_compare) \
+            if (repeat_benchmark or evidence_seed or repair_decisions or thinking_compare or lane_mode) \
                     and models[MODEL].get("max_model_len") != context_length:
                 raise RuntimeError(f"gpu{gpu}: incorrect advertised context for the 32K benchmark")
             responses = []
@@ -719,12 +799,14 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
             policies = dict(zip(thinking_policies, (control_agent, agent)))
         if slot_compare:
             policies = {arm: agent for arm in SLOT_ARMS}  # identical policy; only slots per lane differ
+        if swing_repeat:
+            policies = {"swing": agent}
         for arm, path in policies.items():
             registry = _build_cli_model_registry(path)
             compiled = compile_submission(path, {name: stub(name) for name in tool_names},
                                           registry, adapter_manifest=adapters)
             actual = {child.name: child.model.model for child in compiled.sub_agents}
-            expected_fixer = adapter_name if thinking_compare or slot_compare or arm == "adapter" else MODEL
+            expected_fixer = adapter_name if thinking_compare or lane_mode or arm == "adapter" else MODEL
             if actual != {"fixer": f"openai/{expected_fixer}", "verifier": f"openai/{MODEL}"}:
                 raise RuntimeError(f"Incorrect compiled {arm} roles: {actual}")
             routes[arm] = actual
@@ -736,14 +818,16 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
             print("COMPILED_THINKING_OK", thinking_settings, flush=True)
         print("ALL_FOUR_SERVING_GATES_PASSED", routes, flush=True)
 
-        phase = ("slots_per_lane_8_vs_12_32k" if slot_compare else
+        phase = ("swing_task_repeats_32k" if swing_repeat else
+                 "slots_per_lane_8_vs_12_32k" if slot_compare else
                  "paired_fixer_thinking_32k" if thinking_compare else
                  "repair_decisions_seed39_32k" if repair_decisions else
                  "evidence_seed39_repeats_32k" if seed_repeats else
                  "evidence_seed39_32k" if evidence_seed else "repeat39_32k" if repeat_benchmark else
                  f"overflow_recovery_{context_length}" if overflow_recovery else
                  "positive_controls" if control_agent is not None else "full129")
-        seconds = (SLOT_EVAL_SECONDS if slot_compare else
+        seconds = (SWING_EVAL_SECONDS if swing_repeat else
+                   SLOT_EVAL_SECONDS if slot_compare else
                    THINKING_EVAL_SECONDS if thinking_compare else
                    REPAIR_DECISIONS_SECONDS if repair_decisions else
                    EVIDENCE_REPEAT_SECONDS if seed_repeats else
@@ -754,7 +838,7 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
 
         def one(gpu, task, arm="adapter", rnd=1, cancellation=None):
             output = work / "lora_results" / task
-            if control_agent is not None or seed_repeats or repair_decision_repeats or slot_compare:
+            if control_agent is not None or seed_repeats or repair_decision_repeats or lane_mode:
                 output = work / "lora_results" / arm / f"round_{rnd}" / task
             command = [
                 sys.executable, "-m", "swegemma", "eval", "--tasks", str(tasks),
@@ -764,13 +848,13 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
                 "--max-tool-calls", "80", "--max-time-minutes", "30",
                 "--max-turns", "200", "--timeout-seconds", "300",
             ]
-            if thinking_compare or slot_compare:
+            if thinking_compare or lane_mode:
                 print("TASK_START", gpu, arm, rnd, task, flush=True)
             wall_start = time.time()
             record = run_task(command, output, dict(
                 os.environ, OPENAI_BASE_URL=servers[gpu].base_url, OPENAI_API_KEY="EMPTY"),
                 task, TASK_SECONDS, deadline, cancel_event=cancellation)
-            if slot_compare:  # lane-hours for the throughput rule; other modes keep their record schema
+            if lane_mode:  # lane-hours for throughput; other modes keep their record schema
                 record.update(wall_start=wall_start, wall_end=time.time())
             record.pop("recall_audit", None)
             record.pop("wiring_audit", None)
@@ -788,7 +872,7 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
             trace = output / "traces" / f"trace_{task}.json"
             record["routing"] = audit_routing(
                 json.loads(trace.read_text()),
-                fixer_model=adapter_name if thinking_compare or slot_compare or arm == "adapter" else MODEL,
+                fixer_model=adapter_name if thinking_compare or lane_mode or arm == "adapter" else MODEL,
                 adapter_name=adapter_name,
             ) if trace.is_file() and not record.get("trace_error") else (
                 {"fixer_adapter_observed": False, "violations": [],
@@ -802,9 +886,12 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
             return record
 
         def lane(gpu):
-            slots = SLOT_ARMS[slot_arm(gpu)] if slot_compare else CONCURRENCY
+            slots = (SWING_SLOTS if swing_repeat else SLOT_ARMS[slot_arm(gpu)] if slot_compare else CONCURRENCY)
             with concurrent.futures.ThreadPoolExecutor(max_workers=slots) as pool:
-                if slot_compare:
+                if swing_repeat:
+                    print("LANE_SLOTS", gpu, "swing", slots, flush=True)
+                    list(pool.map(lambda job: one(gpu, *job), swing_jobs(task_ids, rounds, gpu)))
+                elif slot_compare:
                     print("LANE_SLOTS", gpu, slot_arm(gpu), slots, flush=True)
                     list(pool.map(lambda job: one(gpu, *job), slot_jobs(task_ids, rounds, gpu)))
                 elif repair_decision_repeats:
@@ -834,7 +921,8 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
         else:
             with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
                 list(pool.map(lane, range(4)))
-        summary = (summarize_slots(task_ids, records, rounds) if slot_compare else
+        summary = (summarize_swing(task_ids, records, rounds) if swing_repeat else
+                   summarize_slots(task_ids, records, rounds) if slot_compare else
                    summarize_repair_decisions(task_ids, records, repair_first_round) if repair_decisions else
                    summarize_seed_repeats(task_ids, records) if seed_repeats else
                    summarize_evidence_seed(task_ids, records) if evidence_seed else
@@ -862,7 +950,7 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
         save(work / "lora_summary.json", summary)
         # Compatibility name for the existing version-pinned private experiment collector.
         save(work / "memory_summary.json", summary)
-        console = (summary if slot_compare else
+        console = (summary if lane_mode else
                    {k: v for k, v in summary.items() if k not in ("tasks", "rounds")}
                    if seed_repeats or repair_decisions else
                    {k: v for k, v in summary.items() if k != "tasks"}

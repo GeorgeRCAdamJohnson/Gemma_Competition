@@ -21325,6 +21325,34 @@ Comparison: same prompts/tools/gate; saved evidence present vs withheld
 Decision criteria: `{"all_task_round_pairs_graded": 16, "control_nonempty_recalls": 0, "extra_solves_at_least": 4, "first_recall_delivery_each_arm_at_least": 16, "round_wins_at_least": 2}`.
 No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
 
+### 2026-11-22 -- Multi-step workspace and ADK schema fidelity
+
+- The Windows workspace snapshot now uses uncached path `stat` for file identity
+  and compares handle modes separately from path modes; Windows reports
+  executable-file permissions differently for an open handle. The focused
+  snapshot, linked-decision and hunk-screen suite passed 21 tests.
+- `Outputs/multistep-workspace-audit-20261121-v1/assessment.json` replays the
+  Click and attrs development trajectories using the previously recorded
+  native-core reads and edits. The complete local content/mode/directory tree
+  changes only at the target of each of the five edits, and each final tree
+  matches the saved final workspace. Manifests are not atomic snapshots or
+  sandbox, ACL, Linux-path or serving-parity evidence. The original receipts
+  remain partial source/test manifests and both families remain quarantined.
+- `Outputs/adk-schema-inspection-20261121-v1/declaration-assessment.json`:
+  isolated SWE-gemma 0.2.11 factories, pinned ADK 1.36.1 (542 installed Python
+  files verified against the wheel), Google GenAI 2.34.0, LiteLLM 1.83.14 and
+  the local harness patch produce tool schemas differing from all eight legacy
+  static schemas; seven have longer descriptions. This is an offline
+  declaration conversion, not a captured production request.
+- `Outputs/adk-schema-inspection-20261121-v1/adk-schema-token-proxy.json`:
+  with those converted tools and the experimental fixer instruction, the
+  pinned tokenizer reports Click 3,630/4,111 and attrs 3,937/4,894/5,559 full
+  tokens. All are 632 tokens higher than the earlier static proxy; three rows
+  exceed 4,096. Thirty-two reference rows reproduce their attested counts and
+  exact prefixes. Dynamic messages, policy completeness, dependencies and real
+  serving requests remain unverified; these counts do not certify the gate.
+  No training was launched for this dataset.
+
 
 ### 2026-11-17T03:10:22.286481+00:00 - private experiment collected
 
@@ -22601,3 +22629,36 @@ the uncollected `kaggle-e4b-fixer-thinking-2048-r5` folder holds only a duplicat
    Use: train per archetype on an INDEPENDENT corpus (not these tasks); keep the 17 as a held-out eval with mechanism
    metrics (first-edit-gold rate, hidden-test pass given the right file, overflow rate). Open: pull missing test outputs;
    audit gold labels on all tasks; pre-register restart-at-12 A/B (awaiting approval).
+
+### 2026-11-22 -- PRE-REGISTERED + FROZEN: swing-task repeats `comfyops/e4b-swing-task-repeats-r100` (user approved "Go do")
+Question: what is each swing task's solve rate under ONE configuration? The DB has 384-449 attempts per swing task but
+spread over 54-73 arms; the largest same-arm sample is 22. Descriptive measurement, no A/B and no leaderboard claim.
+- Policy: frozen repair-decisions v1 (`G_startup_lora`, the policy of submission 58547656): fixer adapter, base
+  verifier, 32K, max 80 tool calls / 30 min / 2,000 s task wall. Same bundle as the slots run; only the runner gains a
+  `swing_repeat` mode (`kaggle_pkg/tool_lora_runner.py`), builder `kaggle_pkg/_build_e4b_swing_repeats.py --rounds 100`.
+- Tasks: the 17 swing tasks of `Outputs/SWING_DOSSIER.md` (fastapi_14851 excluded, gold label suspect). 100 attempts
+  each = 1,700 executions; 12 slots on each of 4 L4 lanes (GPU rule 3); a task rotates lanes each round; rounds queue
+  in order so a deadline cut leaves complete early rounds.
+- Budget: estimate 1,700 x ~332 s (slots12 mean on these tasks) / 48 slots = ~3.3 h; evaluation cap 15,000 s,
+  notebook cap 17,400 s (19.3 device-hours maximum). Output ~170 MB (slots run: 31 MB for 312 attempts).
+- Usable if >= 90% of executions start and >= 95% of started attempts are real-graded; otherwise partial, complete
+  rounds only. Analysis: per-task verified rate with Wilson 95% interval (+-~10 points at n=100); a task stays "swing"
+  if its interval overlaps 10-90%; report tasks whose interval excludes the pooled DB rate; re-run the failure
+  taxonomy and report how many right-file failures gain a class from the new test outputs. Watch the overflow rate
+  (GPU rule 3 caveat). Results are held-out evaluation only, never training data.
+
+
+### 2026-11-22T05:03:38.340805+00:00 - private experiment launch registration
+
+Package receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b-swing-task-repeats-r100`; slug `comfyops/e4b-swing-task-repeats-r100`; expected version 1; accelerator `NvidiaL4`; requested platform cap 17400s.
+Notebook SHA256 `2f6829e8c9b8c7cf572d29f16392b1aea8b88faa00998f7eec264eae599333ae`; metadata SHA256 `caf25969c07cf6f3f18108dfd49596eb384f0bb47014dc24af1323b9746eaa4a`; registration SHA256 `a36b2e95910bbc5f96dc8d49d9a13ae8e7fd1eb392b98ac454aaa1b7f17261e2`.
+Comparison: Descriptive single-policy measurement: each of the 17 swing tasks (Outputs/SWING_DOSSIER.md) runs 100 independent attempts under the repair-decisions v1 policy of submission 58547656 (fixer adapter, base verifier, 32K, task caps unchanged). Measures per-task solve rate under one configuration and records full traces, patches and test outputs for failure classification.
+
+Decision criteria: `{"analysis": "Per task: verified solve rate with Wilson 95% interval; a task stays a swing task if its interval overlaps 10-90%. Compare each rate to the pooled DB rate (multi-config) and report tasks whose interval excludes it. Re-run the failure taxonomy on these attempts and report how many right-file failures gain a classification from the new test outputs.", "complete_rule": "Usable if >= 90% of 1700 executions start and >= 95% of started attempts are real-graded; otherwise report as partial and use complete rounds only.", "expected_executions": 1700, "expected_tasks": 17, "native_parser_each_lane": true, "repeatable_nonzero_logprob_effect_each_lane": true, "report": "Per-task attempts, solves, interval, overflows, grading coverage; lane-hours and throughput. Abort on serving gates; no automatic retry or leaderboard claim.", "round_labels": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100], "serving_lanes_required": 4, "verified_solve": "Completed, raw real grade, exit 0, no errors and audited fixer route"}`.
+No leaderboard submission or automatic relaunch. Runtime/quota/cost not independently verified by this local launcher; inspect the saved hardware/runtime log.
+
+### 2026-11-22T05:03:38Z -- LAUNCHED `comfyops/e4b-swing-task-repeats-r100` v1 (4x L4, private, internet off)
+Receipt `Outputs/e4b-swing-task-repeats-r100/receipt.json` (notebook sha256 2f6829e8...). Status RUNNING at 05:23Z,
+past vLLM startup and the serving gates (a gate failure ends the kernel). Expected finish ~08:30-09:30Z; hard cap
+17,400 s (~09:53Z). Collect with `python -m kaggle_pkg.run_experiment resume --output "Outputs\e4b-swing-task-repeats-r100"`,
+then rebuild the DB and run the pre-registered analysis.
