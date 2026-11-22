@@ -22760,3 +22760,35 @@ User hypothesis: a caching or server-state effect makes solves worse when runs r
 Reading: no sign of degradation from caching, server age or repetition. The impression of "worse in a row" fits
 round-to-round noise (sd 1.47 tasks per Seed39 round) and regression to the mean after a good first run. Limits:
 traces record 0 cached tokens (per-request cache use is not visible); only Kaggle-era runs have server logs.
+
+### 2026-11-21 Pacific -- E4B 0.08 submission and small-model leaderboard snapshot
+User-provided Kaggle submissions page shows `Gemma submit E4B repair decisions
+v1 - Version 1` succeeded with public score **0.08** (description `again 1 2 3`).
+Two earlier submissions of that version show 0.06 and 0.05. These are
+submission results, not proof of an adapter effect; repeated scores can vary.
+
+The user-provided small-model leaderboard snapshot lists **Adam Johnson at
+rank 410 with 0.06**; `ComfyOps` is not present. In that snapshot, 33 teams
+score above 0.08 (two at 0.12 and 31 at 0.10), and the displayed 0.08 band
+covers ranks 34-196. A 0.08 is tied on displayed score with that band, not a
+confirmed top-100 displayed placement. The user reports that the leaderboard
+is rescored nightly, so the new 0.08 may appear after the next update; its
+actual future rank and score have not been independently verified.
+
+### 2026-11-22 -- WHY did repair-decisions v1 (submission 58547656) score 0.08? Most likely a favourable draw
+User report: public score 0.08, our best E4B so far. Public board = 58 tasks with truncated scores, so 0.08 = 5/58,
+0.06 = 4/58, 0.01 = 1/58: the gain over the previous best E4B entry is ONE task.
+- The previous best E4B notebook (pack-1 fresh-retry, identical code) scored 0.01 (58112867) and 0.06 (58146866)
+  on two draws: identical code spans 3 tasks. 31B ca5 identical bytes span 0.13-0.20 (~4 tasks). One task is inside
+  single-draw noise. Wilson 95% for 5/58: 4%-19%.
+- Locally the policy is indistinguishable from pack 1: repair-decisions Seed39 r1-r10 119 verified / 390 (11.9 per
+  39-task round) vs pack-1 validation 12.00/39; base vs adapter in p5_repeat39 189 vs 178 of 624.
+- Policy = G_startup gate (submit-gate SKILL.md + check.py) + repair-decisions v1 LoRA on the fixer (fixer.yaml).
+  G_startup alone vs C_pack1: 86 vs 90 verified of ~203 (no gain). Task-adjusted mechanisms of the adapter arm
+  (`Outputs/ARM_MECHANISMS.md`): solve +2.2 (z 1.0), first edit on gold +4.2 (z 1.9), wrong file -4.1 (z -1.9),
+  recurring wrong fix -2.1 (z -1.1), conversion -0.4. The only hint is the file-choice direction the adapter was
+  trained for; it is below the noise cutoff.
+Reading: no evidence the policy is better than pack 1; treat 0.08 as one draw. Confirm with a second draw of the same
+notebook (1 submission/day) or a paired local A/B sized for +1 task/round (~9 rounds/arm, GPU rule 1).
+`submissions` table in the DB stops at 11-12 and lacks 58547656; it will appear after the next rebuild if the source
+lists it.
