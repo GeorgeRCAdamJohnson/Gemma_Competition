@@ -22835,3 +22835,11 @@ Rules as captured: $10K to the highest-ranking E2B/E4B submission on the PRIVATE
 two selected finals; main-track score = best of the two. The user's selection (31B ca5 0.20 + E4B repair-decisions
 0.08) satisfies this. Last recorded small-board top: 0.10 = 6/58 (late October; current value not re-checked). Our
 E4B mean is 4.0/58, ~2 tasks short of that mark, so remaining effort has the most prize value on E4B.
+
+### 2026-11-22 -- PUBLIC MAIN LEADERBOARD SNAPSHOT (`Outputs/leaderboard_20261122/`, `Outputs/_leaderboard.py`)
+Snapshot 2026-11-22T06:51Z: 6,408 teams. Team "Adam Johnson" = row 381 at 0.20 (user sees ~360; order inside a tie
+is by time). Score bands (truncated k/58): 0.24 (14 tasks) 16 teams, ranks 1-16; 0.22 (13) 129 teams, 17-145; 0.20
+(12) 615 teams, 146-760; 0.18 (11) 1,232 teams; 0.17 (10) 1,184 teams. The board is extremely compressed: one task
+moves a team across hundreds of places, and our 0.20 is the best of a family whose mean is ~10.6/58 (0.18 band).
+Top is 2 tasks above our best draw, ~3.4 above our mean. Private (71 tasks) will reshuffle these tie bands.
+The E4B small-model board is not in this file; its current top is still unknown.
