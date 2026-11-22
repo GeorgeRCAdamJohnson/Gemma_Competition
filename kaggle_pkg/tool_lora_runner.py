@@ -420,6 +420,60 @@ def wilson(successes, n, z=1.96):
     return [round(centre - half, 4), round(centre + half, 4)]
 
 
+def results_table(records, *, pooled=None):
+    """Markdown results table for any run that writes lora_progress records: one row per (arm, task) and a total row
+    per arm. Columns: started attempts, verified solves, rate, Wilson 95% interval, overflows, real-graded, mean
+    seconds; plus per-round verified solves when an arm has more than one round. `pooled` optionally maps task ->
+    (n, rate) from the intel DB for comparison."""
+    def overflowed(record):
+        return "ContextWindow" in str((record.get("result") or {}).get("error") or "")
+
+    def pct(value):
+        return "-" if value is None else f"{100 * value:.0f}%"
+
+    started = [r for r in records if not str(r.get("status", "")).startswith("not_started_")]
+    arms = sorted({r.get("arm", "adapter") for r in records})
+    header = ["arm", "task", "attempts", "solves", "rate", "95% CI", "overflow", "graded", "mean s"]
+    if pooled:
+        header += ["DB pooled", "outside CI"]
+    lines = ["| " + " | ".join(header) + " |", "|" + "---|" * len(header)]
+    totals = []
+    for arm in arms:
+        rows = [r for r in started if r.get("arm", "adapter") == arm]
+        groups = {}
+        for record in rows:
+            groups.setdefault(record["id"], []).append(record)
+        for task in sorted(groups) + ["**total**"]:
+            group = rows if task == "**total**" else groups[task]
+            n = len(group)
+            solves = sum(verified_solve(r, arm="adapter" if arm != "base" else "base") for r in group)
+            interval = wilson(solves, n)
+            seconds = [r["seconds"] for r in group if r.get("seconds") is not None]
+            cells = [arm, task, str(n), str(solves), pct(solves / n if n else None),
+                     f"{pct(interval[0])}-{pct(interval[1])}" if interval else "-",
+                     str(sum(map(overflowed, group))), str(sum(bool(r.get("real_grade")) for r in group)),
+                     f"{sum(seconds) / len(seconds):.0f}" if seconds else "-"]
+            if pooled:
+                ref = pooled.get(task)
+                cells += [f"{pct(ref[1])} (n {ref[0]})" if ref else "-",
+                          ("yes" if not interval[0] <= ref[1] <= interval[1] else "")
+                          if ref and interval else ""]
+            lines.append("| " + " | ".join(cells) + " |")
+        per_round = {}
+        for record in rows:
+            per_round[record.get("round", 1)] = per_round.get(record.get("round", 1), 0) + verified_solve(
+                record, arm="adapter" if arm != "base" else "base")
+        if len(per_round) > 1:
+            values = list(per_round.values())
+            mean = sum(values) / len(values)
+            sd = math.sqrt(sum((v - mean) ** 2 for v in values) / (len(values) - 1))
+            totals.append(f"- {arm}: {len(values)} rounds, verified solves per round mean {mean:.2f}, sd {sd:.2f}, "
+                          f"min {min(values)}, max {max(values)}")
+    not_started = len(records) - len(started)
+    lines += ["", f"Recorded {len(records)}, started {len(started)}, not started {not_started}."] + totals
+    return "\n".join(lines)
+
+
 def summarize_swing(task_ids, records, rounds):
     """Per-task solve rate (verified definition) with a Wilson 95% interval, overflow and grading coverage."""
     expected = {(task, "swing", rnd) for task in task_ids for rnd in range(1, rounds + 1)}
@@ -956,6 +1010,10 @@ def run(work, agent, tasks, task_ids, snapshots, model_path, prompt, adapters,
                    {k: v for k, v in summary.items() if k != "tasks"}
                    if repeat_benchmark or thinking_compare else summary)
         print("EVALUATION_END", phase, json.dumps(console), flush=True)
+        try:  # human-readable table in the kernel log; never fails the run
+            print("RESULTS_TABLE\n" + results_table(records), flush=True)
+        except Exception as error:  # noqa: BLE001
+            print("RESULTS_TABLE_FAILED", repr(error), flush=True)
     finally:
         if sys.exc_info()[0] is not None:
             save(work / "failure.json", {"phase": phase, "traceback": traceback.format_exc()})

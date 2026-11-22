@@ -22662,3 +22662,14 @@ Receipt `Outputs/e4b-swing-task-repeats-r100/receipt.json` (notebook sha256 2f68
 past vLLM startup and the serving gates (a gate failure ends the kernel). Expected finish ~08:30-09:30Z; hard cap
 17,400 s (~09:53Z). Collect with `python -m kaggle_pkg.run_experiment resume --output "Outputs\e4b-swing-task-repeats-r100"`,
 then rebuild the DB and run the pre-registered analysis.
+
+### 2026-11-22 -- Results table after every Kaggle collect (user request)
+`kaggle_pkg/results_table.py` writes `<output>/RESULTS_TABLE.md` (per arm x task: attempts, verified solves, rate,
+Wilson 95% CI, overflows, real-graded, mean seconds; per-round mean/sd; optional DB pooled rate and "outside CI" flag)
+and is called automatically by `run_experiment` launch/resume after collection; the table is also appended to the
+log's "collected" entry. Future runner builds also print `RESULTS_TABLE` at the end of the Kaggle log (the running
+swing-repeats v1 kernel is frozen without it; its table comes from the local collect). Checked on the slots run:
+totals 45 / 48 match the validated result.
+Swing repeats v1 progress from the user's kernel log at 3,325 s: 321 attempts ended, 28 with context overflow (8.7%).
+Pace ~0.116 attempts/s implies ~14,700 s for 1,700, close to the 15,000 s evaluation cap; a cut would leave the last
+round(s) partial (pre-registered: use complete rounds).
