@@ -22958,3 +22958,16 @@ seconds per attempt. A config is "worth borrowing from" only if it cuts timeouts
 share) by >= 5 points vs A_ca5 without lowering first-edit-gold or conversion; then look at which of its differences
 causes it before changing ca5. Blocked on: the user's local 31B download + Drive upload, verified by
 `colab_fasteval/_verify_model_dir.py` on the Drive folder.
+
+### 2026-11-22 -- 31B Colab A/B: sixth arm F_ayush_lora (his trained adapter) + runner LoRA support
+`kaggle kernels output ayush04barai/lora-step-2` -> `competitor_probe/lb022/ayush04barai__lora-step-2/output/trained_adapter/`:
+adapter_model.safetensors 54,503,808 B; config r 16 / alpha 16, q_proj o_proj down_proj, layers 30-59, base
+google/gemma-4-31b-it-qat-w4a16-ct; result.json 52 examples, 217 presentations, 54 updates, held-out loss 0.015 -> 0.0035.
+F_ayush_lora (sha 1185547f0fab) = E_ayush_noad's exact files + `adapter: main_lora` + adapters/main_lora/. F vs E is a
+single-variable adapter test (pre-registered read: the same mechanism metrics, plus seconds per attempt, because LoRA
+decode was 15-29% slower on the board per L18590 and that feeds the 8-minute timeout).
+Runner (`gpu_ab_run.py`): adapters are now merged from EVERY arm (previously only ARMS[0] was scanned, so an adapter
+arm that was not first alphabetically would have run on the base model silently); enable_lora is on whenever any arm
+carries an adapter (the harness VllmConfig default is True), so all six arms share one server configuration; startup
+asserts each adapter is served. The adapter and `_lb022_inputs.tar` (56.6 MB) are not committed: rebuild with
+`python colab_fasteval/_build_arms_31b_lb022.py` after the kernel-output pull. 6 arms x 85 = 510 attempts per round.

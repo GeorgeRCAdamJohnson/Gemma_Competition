@@ -53,12 +53,23 @@ log("arms", ARMS, "| tasks", len(TASK_IDS), "| rounds", N_ROUNDS, "| conc", CONC
 assert len(list(SNAPS.glob("*.tgz"))) >= len(TASK_IDS)
 OUT.mkdir(parents=True, exist_ok=True)
 
+# adapters from EVERY arm on one server (previously only ARMS[0] was scanned); names must not collide
+manifests = [discover_adapters(str(ARMS_DIR / a), adapter_extensions=ALLOWED_ADAPTER_EXTENSIONS) for a in ARMS]
+merged = {}
+for a, m in zip(ARMS, manifests):
+    for name, info in m.adapters.items():
+        assert name not in merged, f"adapter name {name} in two arms"
+        merged[name] = info
+        log("adapter", name, "from arm", a)
+MANIFEST = type(manifests[0])(adapters=merged)
+# LoRA serving on whenever any arm carries an adapter (the harness VllmConfig default is enable_lora=True); then
+# every arm, adapter or not, runs on the same server configuration
 cfg = VllmConfig(model="/content/model", port=PORT, host='127.0.0.1', tool_call_parser='gemma4', reasoning_parser='gemma4',
                  dtype='bfloat16' if torch.cuda.is_bf16_supported() else 'auto', enable_auto_tool_choice=True,
-                 enable_lora=False, tensor_parallel_size=1, startup_timeout=60 * 25, max_model_len=32768,
+                 enable_lora=bool(merged), tensor_parallel_size=1, startup_timeout=60 * 25, max_model_len=32768,
                  gpu_memory_utilization=UTIL, extra_args=['--served-model-name', TARGET_MODEL_NAME, '2'])
-log("vLLM port", PORT, "| gpu_memory_utilization", UTIL, "| rounds", ROUND_FROM, "..", N_ROUNDS)
-srv = VllmServer(cfg, adapter_manifest=discover_adapters(str(ARMS_DIR / ARMS[0]), adapter_extensions=ALLOWED_ADAPTER_EXTENSIONS))
+log("vLLM port", PORT, "| gpu_memory_utilization", UTIL, "| rounds", ROUND_FROM, "..", N_ROUNDS, "| lora", bool(merged))
+srv = VllmServer(cfg, adapter_manifest=MANIFEST)
 _orig = srv.build_env
 srv.build_env = lambda: {**_orig(), 'CUDA_VISIBLE_DEVICES': '0'}
 for arm in ARMS:  # every arm must ask for the served model, or the run silently compares the wrong thing
@@ -68,6 +79,7 @@ log("booting vLLM ...")
 srv.start()
 ids = [m['id'] for m in json.load(urllib.request.urlopen(srv.base_url.rstrip('/') + '/models'))['data']]
 assert TARGET_MODEL_NAME in ids, ids
+assert all(any(name in i for i in ids) for name in merged), f"adapter not served: {list(merged)} vs {ids}"
 log("vLLM up", srv.base_url)
 
 

@@ -57,7 +57,8 @@ def write(arm, files):
 def fp(d):
     fs = {p.relative_to(d).as_posix(): p.read_bytes() for p in d.rglob("*") if p.is_file()}
     for k, v in fs.items():
-        assert b"\r" not in v and not v.startswith(b"\xef\xbb\xbf"), f"{d}/{k}: CRLF/BOM"
+        if not k.endswith(".safetensors"):  # binary weights legitimately contain \r bytes
+            assert b"\r" not in v and not v.startswith(b"\xef\xbb\xbf"), f"{d}/{k}: CRLF/BOM"
     return hashlib.sha1(b"".join(fs[n] for n in sorted(fs))).hexdigest()[:12]
 
 
@@ -88,15 +89,25 @@ write("D_bliver", literal_assigns(cells("bliverrigpdoge__lb-0-22-3-tweaks-40-too
 ay = {**literal_assigns(cells("ayush04barai__version-1-added-adaptor")[1]),
       **literal_assigns(cells("ayush04barai__version-1-added-adaptor")[2])}
 assert ay["AGENT_YAML"].count("adapter: main_lora\n") == 1
-write("E_ayush_noad", {"agent.yaml": ay["AGENT_YAML"].replace("adapter: main_lora\n", ""),
-                        "configs/sampling.yaml": ay["SAMPLING_YAML"], "eval_config.yaml": ay["EVAL_YAML"],
-                        "prompts/system.md": ay["PROMPT"]})
+ay_files = {"configs/sampling.yaml": ay["SAMPLING_YAML"], "eval_config.yaml": ay["EVAL_YAML"],
+            "prompts/system.md": ay["PROMPT"]}
+write("E_ayush_noad", {**ay_files, "agent.yaml": ay["AGENT_YAML"].replace("adapter: main_lora\n", "")})
+
+# F: the same files WITH his trained adapter (kernel output of ayush04barai/lora-step-2), byte-copied
+ADAPTER = LB / "ayush04barai__lora-step-2" / "output" / "trained_adapter" / "main_lora"
+cfg = json.loads((ADAPTER / "adapter_config.json").read_text())
+assert cfg["base_model_name_or_path"] == f"google/{MODEL}" and cfg["r"] == 16, cfg
+write("F_ayush_lora", {**ay_files, "agent.yaml": ay["AGENT_YAML"]})
+(OUT / "F_ayush_lora" / "adapters" / "main_lora").mkdir(parents=True)
+for name in ("adapter_config.json", "adapter_model.safetensors"):
+    shutil.copyfile(ADAPTER / name, OUT / "F_ayush_lora" / "adapters" / "main_lora" / name)
 
 # every arm must serve the 31B and declare its own limits
 summary = {}
 for d in sorted(OUT.iterdir()):
     agent = (d / "agent.yaml").read_text()
-    assert f"model: {MODEL}\n" in agent and "adapter:" not in agent, f"{d.name}: model/adapter line"
+    assert f"model: {MODEL}\n" in agent, f"{d.name}: model line"
+    assert ("adapter: main_lora\n" in agent) == (d.name == "F_ayush_lora"), f"{d.name}: adapter line"
     ev = (d / "eval_config.yaml").read_text()
     summary[d.name] = {"sha": fp(d), "eval": " ".join(l.strip() for l in ev.splitlines()[1:]),
                        "out": next(l.split(":")[1].strip() for l in (d / "configs/sampling.yaml").read_text().splitlines()
