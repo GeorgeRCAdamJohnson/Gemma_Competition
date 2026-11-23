@@ -23339,3 +23339,12 @@ loses on timeouts; each competitor config fixes timeouts and loses on overflow. 
 shorter per-command timeout (keep out 5000). Prior work: cmd 60 s bundled with a 10-min task cap scored 0.15/0.17/0.13
 on the board; local ca5_31b_timeout_ab B_cmd60 16/36 vs A 9/36 (6 tasks). 40 calls (D) confirms the earlier finding:
 no extra solves, most overflow. Trace metrics (first edit on gold, conversion) pending the DB rebuild.
+
+### 2026-11-22 -- CORRECTION (user): the shorter command timeout is NOT untested
+The six-arm result entry called "ca5 with only a shorter per-command timeout" untested. Prior work (L18432-18530):
+L18432 decomposition: only 3/19 31B timeouts were a hung command burning timeout_seconds 300; 16/19 were model time
+(long ~10k-char deliberation turns). `ca5-31b-timeout-ab` (6 tasks x 6): timeout_seconds 60 16/36 vs 9/36 (p 0.14).
+`ca5-31b-bc-check`: 60 s + 10 min clean. Board B+C pack: 0.15 / 0.17 / 0.13 -> closed 11-13. Today's lower timeout
+counts in the competitor arms therefore do not point to an untested lever: the shortened command timeout addresses
+the minority hung-command class, and the board did not reward it. Net reading of the six-arm A/B: no public 0.22
+config beats ca5; ca5's 5000 output cap is the better trade (lowest overflow); F_ayush_lora +2 over E is noise.
