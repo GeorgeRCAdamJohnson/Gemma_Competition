@@ -168,6 +168,9 @@ def index_bundles(db):
         blobs = {p.relative_to(d).as_posix(): p.read_bytes() for p in files}
         sha12 = hashlib.sha1(b"".join(blobs[n] for n in sorted(blobs))).hexdigest()[:12]
         top = y(d / "agent.yaml")
+        if not isinstance(top, dict):  # e.g. an agent.yaml that is a bare string or empty; index the files, no fields
+            print(f"bundles: {d.relative_to(ROOT)} agent.yaml is not a mapping ({type(top).__name__}); fields left empty")
+            top = {}
         ev = y(d / "eval_config.yaml")
         ev = ev.get("evaluation", ev) if isinstance(ev, dict) else {}
         subs = [y(d / s["config_path"]) for s in top.get("sub_agents") or [] if isinstance(s, dict) and s.get("config_path")]

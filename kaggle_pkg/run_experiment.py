@@ -281,11 +281,14 @@ def collect(backend, state, output):
     destination.mkdir(exist_ok=True)
     token = None
     seen = set()
-    count = 0
+    count = skipped = 0
+    from concurrent.futures import ThreadPoolExecutor
+    pool = ThreadPoolExecutor(max_workers=8)  # per-file request latency dominates; 8 parallel downloads per page
     while True:
         page = retry_read(lambda: backend.page(state["slug"], state["version"], token))
         if page.log:
             (destination / "kernel.log").write_text(page.log, encoding="utf-8")
+        jobs = []
         for item in page.files or []:
             name = PurePosixPath(item.file_name)
             if name.is_absolute() or ".." in name.parts or "\\" in item.file_name or ":" in item.file_name:
@@ -295,18 +298,25 @@ def collect(backend, state, output):
             target = destination.joinpath(*name.parts)
             if not target.resolve().is_relative_to(destination.resolve()):
                 raise ValueError("Output path escapes destination")
+            # download() writes <name>.part and renames on completion, so an existing final file is complete
+            if target.is_file() and target.stat().st_size > 0:
+                skipped += 1
+                continue
             target.parent.mkdir(parents=True, exist_ok=True)
-            retry_read(lambda: download(item.url, target))
-            count += 1
+            jobs.append(pool.submit(retry_read, lambda url=item.url, target=target: download(url, target)))
+        for job in jobs:
+            job.result()  # re-raise any download failure
+        count += len(jobs)
         token = page.next_page_token
-        print(f"Collected {count} result/trace/log files", flush=True)
+        print(f"Collected {count} result/trace/log files ({skipped} already on disk)", flush=True)
         if not token:
             break
         if token in seen:
             raise RuntimeError("Kaggle repeated an output page token")
         seen.add(token)
-        time.sleep(4)
-    return count
+        time.sleep(1)
+    pool.shutdown()
+    return count + skipped
 
 
 def monitor(backend, state, output, wait_seconds, poll_seconds):

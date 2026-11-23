@@ -23348,3 +23348,200 @@ L18432 decomposition: only 3/19 31B timeouts were a hung command burning timeout
 counts in the competitor arms therefore do not point to an untested lever: the shortened command timeout addresses
 the minority hung-command class, and the board did not reward it. Net reading of the six-arm A/B: no public 0.22
 config beats ca5; ca5's 5000 output cap is the better trade (lowest overflow); F_ayush_lora +2 over E is noise.
+
+### 2026-11-23 -- CPU loss qualification, real-source exclusion and replacement acquisition
+
+The actual trainer uses sliced next-token loss rather than a collator.
+`train/audit_repair_training_format.py` adds a versioned task-specific frozen
+fixer surface and exact pinned-token projection, with native schemas checked
+in the separate CPU Torch runtime. Executing the unchanged trainer loss with
+only its device literal changed to CPU matches full ignored-prefix causal
+loss and direct hidden-state gradients. Actual training-window/backward
+helpers pass token-normalized accumulation and final partial windows.
+Synthetic independent states and a mapped 17-symbol vocabulary test
+indexing/normalization only: no Gemma weights, attention fidelity, GPU memory
+or live serving is certified. Registered trainers/notebooks are unchanged.
+
+Packaging #711 and Humanize #26 completed their six-task repeated restricted
+container matrices and full native histories. Saved normalized/raw lengths
+are 5,433/5,439 (438 targets) and 4,528/4,534 (53 targets).
+The six-family PC chain passed with 1,585 target tokens in 397.5 seconds and
+preserved all 25 original batch receipt hashes. Historical builder resume
+verifies hash-pinned archived producer source and writes a separate current
+validation receipt; it never rewrites an old producer signature.
+
+Source adjudication then found a real blocker: the original
+`jmoiron/humanize` README explicitly says development moved to
+`python-humanize/humanize`. The former occurs in the old benchmark-derived
+index and has ten public SWE-rebench test records; Babel has fifteen.
+Only repository metadata, counts and benchmark identifiers were retained,
+not benchmark issue text, source patches, tests or answers. An attempt to bind
+the dataset-viewer response to an exact metadata revision failed with HTTP
+500; no revision pin or exhaustive absence claim is made.
+
+Immutable reservation amendment v2 now quarantines both whole lineages.
+Preparation, replay, hunk screening, acquisition and bounded source checks
+enforce it. Four Humanize captures and all Babel candidates are historical
+development evidence only, not current corpus families. Earlier reservations
+and receipts remain unchanged. The updated single PC launcher removes those
+lineages and preceding host-only replay stages. Its current packaging
+#794/#711 chain passed full capture/token/source/CPU-loss checks: 510 targets,
+with a fresh #794 normalized length of 4,620 (status timing differs from its
+older 4,618 capture). Both full histories exceed 4,096 and fit 18,000 without
+padding; this is not GPU training authorization.
+
+Of the old 59 ranked IDs, 34 belong to the newly excluded lineages,
+eighteen to other previous development/excluded groups, and seven to the
+remaining packaging/dateutil groups. A fresh bounded 100-result-per-repository
+search of those two groups sampled 200 PRs: 89 additional unverified leads
+(13 multi-file), 100 rejections and eleven other quarantines. The four-worker
+hunk screen completed all 89 with no retrieval failures; 43 are multi-site
+heuristic leads, not accepted behavioral families.
+
+Packaging #712 is explicitly deferred, not emitted or counted: its combined
+coordinated edit exceeds the native reader's 150-line limit. The current
+guard rejected `is_truncated=true` before staging/replay. Do not truncate
+evidence or weaken the guard; a complete bounded multi-read/edit design is
+required. Two additional compact packaging fixes (#1160/#1230) completed
+their twelve repeated baseline/positive/negative tasks and complete native
+capture/token qualification: normalized/raw/target lengths are
+4,936/4,943/170 and 4,975/4,983/119.
+
+Forty focused source-quarantine/replay/acquisition/capture/token tests and two
+CPU-format tests pass. Twelve actual Python AST checks and PowerShell parsing
+pass; Pylance syntax calls timed out. Source exclusions override stale v1
+ledgers, and explicitly selecting a quarantined acquisition group stops before
+network requests or output creation. Fully admitted train/validation/decision
+counts remain 0/0/0. No GPU job, frozen corpus or training-readiness claim.
+
+### 2026-11-23 -- Thirteen current CPU repairs and prospective split-source replacement
+
+The single editable PC launcher now covers twelve packaging repair IDs and
+dateutil #1583, rather than only packaging #794/#711. The new eight-repair
+packaging batch (#1316/#1232/#1246/#1247/#1264/#1213/#1310/#1412) passes all
+48 restricted repeated replay tasks and all 48 native-positive-history
+replay tasks. All eight complete native captures and pinned tokenizer audits
+pass. Dateutil #1583 passes its two six-task matrices and complete capture.
+Its upstream fixed tests, relative-import helpers and updated author notices
+are kept outside the model-facing history, with both revision archives and
+the original license retained.
+
+Saved normalized/raw/target token measurements for the new captures:
+
+| Repair ID | Full normalized | Full raw ADK | Targets |
+|---|---:|---:|---:|
+| packaging #1316 | 5,146 | 5,152 | 239 |
+| packaging #1232 | 4,891 | 4,897 | 215 |
+| packaging #1246 | 5,085 | 5,091 | 237 |
+| packaging #1247 | 5,067 | 5,073 | 274 |
+| packaging #1264 | 4,678 | 4,684 | 55 |
+| packaging #1213 | 4,707 | 4,717 | 107 |
+| packaging #1310 | 4,895 | 4,901 | 246 |
+| packaging #1412 | 5,003 | 5,009 | 210 |
+| dateutil #1583 | 4,865 | 4,871 | 134 |
+
+The #1232 attempt using broad Cartesian parsing regressions exceeded the
+unchanged 180-second subprocess bound. Its failed preparation and recipe
+remain preserved. The replacement selects unchanged hash/equality, string
+and empty-specifier regressions, with the same issue oracle and timeout.
+The first larger batch also exposed a pure-insertion defect: the shared span
+builder returned an empty native anchor. It now includes unique unchanged
+context only for insertions. Focused start/middle/end/repeated-context and
+empty-source tests pass; no native read or clipping limit was relaxed.
+A parameterized selector rejected by the existing manifest contract was
+replaced with unchanged named regressions in a new recipe, not by weakening
+the selector guard. Earlier staging files and receipts are unchanged.
+
+The complete current-source launcher passes all thirteen histories, pinned
+revision notices, zero bounded local overlaps, native schemas, task-specific
+surface, target-only sliced loss and token-normalized accumulation. Aggregate
+target count: 2,516; windows: 530, 781, 1,133 and 72. All full histories exceed
+4,096 and fit 18,000 without padding. Outputs:
+`Outputs/repair-training-format-development-20261123-v5` and
+`Outputs/repair-prepared-source-screen-development-20261123-v6`.
+The launcher took 529.0 seconds while resuming twelve completed repairs and
+newly preparing/capturing dateutil. A fully completed resume took 452.1
+seconds and preserved 63 protected receipt hashes, including all 25 original
+historical receipts. This is not fresh-corpus qualification throughput.
+
+A separate zero-row metadata census found benchmark membership for five
+provisionally reserved groups: sdispater/tomlkit 21, hynek/structlog 25,
+agronholm/anyio 40, aio-libs/multidict 3 and mahmoud/boltons 8. No benchmark
+rows or reserved issues, fixes, tests, answers or outputs were requested or
+retained. The five groups were already blocked from train-development replay.
+The immutable original reservation remains unverified/ineligible; only four
+of its original eight decision reservations remain potential leads.
+
+Seven then six replacement repository-metadata leads were screened without
+opening issues or fixes. Positive benchmark membership rejects schedule (1),
+soupsieve (25), backoff (2) and confuse (5); sortedcontainers' NOASSERTION
+metadata and an unresolved validators canonical-name query are not clearance.
+Failed GitHub metadata lookups are recorded as failures, not eligible groups.
+Six zero-hit, nonfork, licensed-metadata leads are prospectively reserved in
+`Outputs/replacement-source-prospective-reservation-20261123-v1`: isodate and
+pyproject-hooks for validation; tzlocal, progress, decorator and ordered-set
+for decisions. Together with remaining original reservations, there are four
+potential validation groups and eight potential decision groups, zero eligible
+and zero sealed. Prior exposure, aliases/genealogy, revision licenses and
+broader benchmark absence remain unresolved. The replacement reservation
+must be enforced by held-out preparation before any answers are opened; it
+does not rewrite current train-replay signatures.
+
+Thirty focused source/replay/capture tests and two CPU-format tests pass.
+Pylance syntax inspection timed out; runtime tests exercised the changed
+Python. No dependencies, image, frozen notebooks, competition harness or GPU
+jobs were changed. Current provisional repair IDs: 13 across two groups.
+Fully admitted train/validation/decision family counts remain 0/0/0.
+
+
+### 2026-11-23T07:57:41.140439+00:00 - private experiment collected
+
+`comfyops/e4b-swing-task-repeats-r100` version 1; platform `COMPLETE`.
+Result receipt: `C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b-swing-task-repeats-r100\result_report.json`; SHA256 `d993d559b1dd1a5f06fdddbe05af545d8b8500fe1e473026b752c3576a35bf44`.
+
+Saved summary: `{"attempts_per_lane_hour": 106.246, "complete": true, "complete_rounds": 100, "expected_executions": 1700, "experiment": "swing-task repeats: one frozen policy (repair-decisions fixer adapter, base verifier), 17 swing tasks x 100 attempts, 12 slots per lane", "lane_hours": 16.0007, "mean_seconds": 398.4, "overflows": 236, "real_graded": 1556, "recorded": 1700, "rounds": 100, "routing_violations": 0, "started": 1700, "tasks": {"fastapi_13537": {"attempts": 100, "deadline_hits": 0, "overflows": 2, "rate": 0.18, "real_graded": 100, "verified_solves": 18, "wilson95": [0.117, 0.2667]}, "fastapi_14077": {"attempts": 100, "deadline_hits": 0, "overflows": 1, "rate": 0.91, "real_graded": 96, "verified_solves": 91, "wilson95": [0.8377, 0.9519]}, "fastapi_14458": {"attempts": 100, "deadline_hits": 0, "overflows": 6, "rate": 0.12, "real_graded": 97, "verified_solves": 12, "wilson95": [0.07, 0.1981]}, "fastapi_14463": {"attempts": 100, "deadline_hits": 0, "overflows": 0, "rate": 0.49, "real_graded": 98, "verified_solves": 49, "wilson95": [0.3942, 0.5865]}, "fastapi_14492": {"attempts": 100, "deadline_hits": 0, "overflows": 58, "rate": 0.15, "real_graded": 94, "verified_solves": 15, "wilson95": [0.0931, 0.2328]}, "fastapi_14616": {"attempts": 100, "deadline_hits": 0, "overflows": 25, "rate": 0.11, "real_graded": 85, "verified_solves": 11, "wilson95": [0.0625, 0.1863]}, "fastapi_14873": {"attempts": 100, "deadline_hits": 0, "overflows": 67, "rate": 0.2, "real_graded": 29, "verified_solves": 20, "wilson95": [0.1334, 0.2888]}, "fastapi_9425": {"attempts": 100, "deadline_hits": 0, "overflows": 1, "rate": 0.62, "real_graded": 99, "verified_solves": 62, "wilson95": [0.5221, 0.709]}, "fastapi_9555": {"attempts": 100, "deadline_hits": 0, "overflows": 3, "rate": 0.57, "real_graded": 96, "verified_solves": 57, "wilson95": [0.4722, 0.6627]}, "fastapi_9753": {"attempts": 100, "deadline_hits": 0, "overflows": 2, "rate": 0.49, "real_graded": 94, "verified_solves": 49, "wilson95": [0.3942, 0.5865]}, "rich_2725": {"attempts": 100, "deadline_hits": 0, "overflows": 36, "rate": 0.3, "real_graded": 84, "verified_solves": 30, "wilson95": [0.2189, 0.3959]}, "rich_2943": {"attempts": 100, "deadline_hits": 0, "overflows": 10, "rate": 0.15, "real_graded": 95, "verified_solves": 15, "wilson95": [0.0931, 0.2328]}, "rich_3067": {"attempts": 100, "deadline_hits": 0, "overflows": 5, "rate": 0.79, "real_graded": 97, "verified_solves": 79, "wilson95": [0.7002, 0.8583]}, "rich_3518": {"attempts": 100, "deadline_hits": 0, "overflows": 7, "rate": 0.25, "real_graded": 98, "verified_solves": 25, "wilson95": [0.1755, 0.343]}, "rich_3882": {"attempts": 100, "deadline_hits": 0, "overflows": 2, "rate": 0.1, "real_graded": 99, "verified_solves": 10, "wilson95": [0.0552, 0.1744]}, "rich_3894": {"attempts": 100, "deadline_hits": 0, "overflows": 0, "rate": 0.32, "real_graded": 100, "verified_solves": 32, "wilson95": [0.2367, 0.4166]}, "rich_4077": {"attempts": 100, "deadline_hits": 0, "overflows": 11, "rate": 0.19, "real_graded": 95, "verified_solves": 19, "wilson95": [0.1251, 0.2778]}}, "verified_solves": 594, "warning": "Descriptive measurement on benchmark tasks; use as held-out evaluation, never as training data."}`.
+
+Missing/unstarted grades are not failures. Partial cohorts are not paired comparisons. Local scores are not leaderboard predictions.
+
+Results table (`C:\Users\biges\Gemma\Gemma_Competition\Outputs\e4b-swing-task-repeats-r100\RESULTS_TABLE.md`):
+
+| arm | task | attempts | solves | rate | 95% CI | overflow | graded | mean s | DB pooled | outside CI |
+|---|---|---|---|---|---|---|---|---|---|---|
+| swing | fastapi_13537 | 100 | 18 | 18% | 12%-27% | 2 | 100 | 380 | 14% (n 385) |  |
+| swing | fastapi_14077 | 100 | 91 | 91% | 84%-95% | 1 | 96 | 312 | 84% (n 410) |  |
+| swing | fastapi_14458 | 100 | 12 | 12% | 7%-20% | 6 | 97 | 478 | 12% (n 416) |  |
+| swing | fastapi_14463 | 100 | 49 | 49% | 39%-59% | 0 | 98 | 189 | 57% (n 449) |  |
+| swing | fastapi_14492 | 100 | 15 | 15% | 9%-23% | 58 | 94 | 283 | 32% (n 443) | yes |
+| swing | fastapi_14616 | 100 | 11 | 11% | 6%-19% | 25 | 85 | 437 | 14% (n 388) |  |
+| swing | fastapi_14873 | 100 | 20 | 20% | 13%-29% | 67 | 29 | 979 | 37% (n 439) | yes |
+| swing | fastapi_9425 | 100 | 62 | 62% | 52%-71% | 1 | 99 | 215 | 60% (n 441) |  |
+| swing | fastapi_9555 | 100 | 57 | 57% | 47%-66% | 3 | 96 | 268 | 52% (n 416) |  |
+| swing | fastapi_9753 | 100 | 49 | 49% | 39%-59% | 2 | 94 | 274 | 44% (n 411) |  |
+| swing | rich_2725 | 100 | 30 | 30% | 22%-40% | 36 | 84 | 665 | 27% (n 414) |  |
+| swing | rich_2943 | 100 | 15 | 15% | 9%-23% | 10 | 95 | 473 | 15% (n 384) |  |
+| swing | rich_3067 | 100 | 79 | 79% | 70%-86% | 5 | 97 | 186 | 73% (n 413) |  |
+| swing | rich_3518 | 100 | 25 | 25% | 18%-34% | 7 | 98 | 372 | 23% (n 414) |  |
+| swing | rich_3882 | 100 | 10 | 10% | 6%-17% | 2 | 99 | 475 | 10% (n 394) |  |
+| swing | rich_3894 | 100 | 32 | 32% | 24%-42% | 0 | 100 | 397 | 32% (n 413) |  |
+| swing | rich_4077 | 100 | 19 | 19% | 13%-28% | 11 | 95 | 391 | 18% (n 446) |  |
+| swing | **total** | 1700 | 594 | 35% | 33%-37% | 236 | 1556 | 398 | - |  |
+
+Recorded 1700, started 1700, not started 0.
+- swing: 100 rounds, verified solves per round mean 5.94, sd 1.85, min 2, max 10
+
+
+### 2026-11-23 -- DB REBUILT with the swing repeats + the 31B six-arm A/B; swing results; 31B trace metrics
+Collect: `run_experiment.collect` now downloads each output page with 8 parallel workers and skips files already on disk
+(download() writes .part then renames, so a final file is complete); page pause 4 s -> 1 s. ~450 files/min vs ~110.
+build.py: an agent.yaml that does not parse to a mapping is indexed with empty fields instead of crashing.
+DB: 17,261 unique attempts (was 15,051), 10,329 traces; verify FAILED CHECKS 0. New: e4b-swing-task-repeats-r100 1,700
+(all traced, 1,592 with test output); drive_31b_lb022_20261122 6 x 85 (all traced).
+SWING REPEATS RESULT (`Outputs/e4b-swing-task-repeats-r100/RESULTS_TABLE.md`, verified solves, Wilson 95%): 594/1,700
+(35%). Two tasks fall below their pooled DB rate: fastapi_14492 15% (9-23) vs 32% pooled, 58 overflows; fastapi_14873
+20% (13-29) vs 37%, 67 overflows and only 29/100 graded. All other 15 tasks inside their intervals. Stay swing (interval
+overlaps 10-90%): 16 of 17; rich_3882 10% (6-17) and fastapi_14077 91% (84-95) sit at the edges.
+31B TRACE METRICS (first edit on a gold file, among attempts that edited; conversion = solved | first edit gold):
+A_ca5 0.43 / 0.38 | B_denpug 0.59 / 0.42 | C_flex 0.68 / 0.43 | D_bliver 0.37 / 0.52 | E 0.43 / 0.42 | F 0.41 / 0.47.
+Caveat: the 31B often writes tmp/repro.py first, so "first edit" undercounts gold localisation for every arm (A: only
+13 of its 32 solves had a gold first edit). B and C reach the gold file first more often (+16 / +25 points) without
+more solves. The pre-registered decision (no arm cuts timeouts + overflow by >= 5 points) stands.
