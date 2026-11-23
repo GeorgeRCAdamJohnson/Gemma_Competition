@@ -23087,6 +23087,34 @@ compressed-tensors 0.15.0.1, adk-submission 0.2.13, swegemma 0.2.11; build tags 
 estimated CU); refuses a non-empty ab_runs/<tag>. Kept: Drive inputs pinned by SHA-256 (the reference embeds its
 sources; equivalent); model checked by sizes + safetensors header end (Kaggle publishes sizes, not hashes).
 
+### 2026-11-22 -- Babel #1121 options development candidate
+
+The quarantined train-development candidate uses parent
+`cfdbc633a0d9ddc43aeb61a43ff40ece787f2978` and upstream PR head
+`4856358078fafa20dd6f91cbc53065aa70a17f55`. Archive and tool hashes, the
+license, environment, and four generated locale files from the previously
+verified Babel 2.18.0 wheel are recorded in the preparation receipt. The
+native-core positive reproduces the upstream source; the negative stops
+only when the first matching options dictionary is nonempty.
+
+The repeated six-task matrix passed post-hoc behavioral assertions and
+unchanged extraction and mapping regressions. The first, narrower replay and
+the failed direct original mapping regression without generated locale data
+are not evidence of full source-build parity. A separate six-task replay
+executes both original upstream issue test parametrizations in copies with the
+upstream test and helper; the baseline fails with the custom extractor's
+RuntimeError, while both positive and negative pass. Thus the original test
+does not distinguish the empty-options negative; the post-hoc empty-options
+assertion does, but is not an independent oracle.
+
+Both replay stages are in the single PC launcher. This is provisional
+development evidence, not a qualified family or training-ready dataset.
+Benchmark/lineage independence, license adjudication, oracle sufficiency,
+actual serving and policy fidelity, masks, the 4,096-token gate, and the
+train/validation/sealed holdout family floors remain unresolved. Proxy
+environment settings do not enforce a network sandbox. No GPU or training
+was launched.
+
 ### 2026-11-22 -- Connector notebook v3: CPU dry-run mode; GPU detection fixed; GPU-only stops scoped to GPU mode
 User: must be able to check everything on CPU before a GPU is needed, and v2 was too restrictive. Changes:
 - MODE = "dry_run" (default, any runtime): Drive (consent gate), pinned input hashes, all six arm fingerprints and model
@@ -23100,3 +23128,214 @@ User: must be able to check everything on CPU before a GPU is needed, and v2 was
 Tested locally (`colab_fasteval/_test_notebook_dry_run.py`: runs the notebook's own cells against G:\My Drive with
 remapped paths): DRY_RUN_OK. The archive starts README.md, chat_template.jinja, config.json, generation_config.json,
 model.safetensors 23,265,352,448 B (flat layout, the exact Kaggle size).
+
+### 2026-11-22 -- Two additional quarantined development repairs
+
+The reusable batch builder prepares packaging #794 and humanize #206 from
+hash-pinned parent and upstream head archives. The repeated matrix contains
+12 passing replay tasks: baseline and plausible incomplete edits fail their
+upstream issue checks, the native-core positive passes them, and all arms
+pass selected unchanged regressions. Revision notices and the omitted
+generated-version bootstrap are recorded. Humanize's positive deliberately
+excludes an unrelated upstream docstring change while preserving the
+behavioral edit; its generated read observation differs from the earlier
+batch. These are two provisional families, not approved training rows.
+
+With the pinned Transformers 5.13.1 installation and hash-verified E4B
+tokenizer assets, the full two-tool sequences measure 1,011 and 958 tokens;
+the static full-tool instruction proxies measure 3,826 and 3,777. The latter
+omit dynamic budget, workspace tree, policy-required steps and production
+transport, so they are not serving-token measurements. No evidence is
+truncated by the tokenizer, but neither synthetic observation establishes
+the actual serving history. Re-running the PC launcher recomputes and
+compares the diagnostic receipt.
+
+The full-corpus audit and training re-encoding now both use
+`enable_thinking=True`; existing pilot defaults are unchanged. Existing
+frozen notebook source hashes are invalidated and must be regenerated and
+registered deliberately. The extended PC launcher passed, as did 27 focused
+tests, including a tampered-receipt rejection; the test executing the
+user-configured Colab notebook was deselected
+because it is configured for pilot rather than inspect. Pylance syntax checks
+timed out. Local replay does not enforce a network or filesystem sandbox.
+Lineage, benchmark overlap, licensing, independent oracle sufficiency,
+serving and policy fidelity, masking, full token parity, family floors and
+sealed holdout remain open. No GPU or training was launched.
+
+The existing packaging #830 development replay was revisited. Its PR head is
+a merge commit whose first-parent commit diff contains unrelated changes;
+the PR base-to-head comparison isolates the intended repair. The upstream
+test checks the disallowed-field message via `pytest.raises(..., match=...)`;
+an additional assertion after the expected exception is unreachable.
+Earlier replays also covered the invalid-field message with a post-hoc oracle,
+which distinguishes the partial fix but is not independent. The existing
+development rows remain quarantined and are not another family.
+
+### 2026-11-22 -- Offline container replays and humanize #169
+
+After Docker Desktop was started, an immutable local Python 3.12 image was
+built offline from 14 pinned Linux wheels independently checked against PyPI
+release digests. Each replay container uses no network, a read-only root and
+input mounts, a non-root user, dropped capabilities, and CPU, memory and
+process limits. The worker checks the network, user, mount and capability
+restrictions. The runner compares image dependency contents with the local
+toolchain, hashes whole workspaces and oracle directories, records test and
+import receipts, and verifies them on resume. This is risk reduction, not a
+kernel-exploit boundary or proof against deliberately hostile test code.
+
+The existing packaging #794 and humanize #206 batches passed all 12
+two-repeat container tasks. Their development rows are byte-identical to
+the preceding batch. Humanize #169, a distinct numeric-subsecond precision
+lead, passed six additional repeated container tasks: baseline and partial
+negative fail the upstream issue assertions, the positive passes, and
+selected unchanged regressions pass in all arms. Its archive needs a
+recorded synthetic distribution-metadata bootstrap; this is not native
+build parity. The source edit includes the upstream docstring change.
+
+The #169 tokenizer diagnostic measures 1,648 tokens with the two-tool
+development surface and 4,467 with the static full-tool proxy. The latter is
+over the 4,096 cap. No evidence was truncated to fit and the candidate remains
+quarantined. The proxy is not a production serving request, and the other
+qualification and sealed-holdout gates remain open.
+
+`train\run_cpu_dataset_replay.ps1` now requires Docker Desktop and the pinned
+local image, and resumes both container-backed batches and their token
+diagnostics. Its earlier stages can still execute host code without enforced
+isolation and issue an explicit warning. The combined launcher and 31 focused
+tests passed; the user-configured Colab notebook test remained deselected.
+There is no GPU training or autonomous background job.
+
+Humanize #173 was subsequently prepared as a separate provisional
+negative-duration family. Its six repeated container tasks pass: the baseline
+and partial negative fail upstream issue assertions, the positive passes,
+and unchanged regressions pass in every arm. Like #169, it needs a recorded
+synthetic package-metadata bootstrap. Its pinned-tokenizer lengths are 2,100
+on the two-tool development surface and 4,915 on the static full-tool proxy.
+The proxy exceeds the cap and is not an actual serving request; the candidate
+remains quarantined. No evidence was truncated. The single PC launcher now
+resumes this batch and emits warnings for both over-cap proxies.
+
+The batch builder now stages quarantined candidate rows and manifest hashes
+before replay, allowing an interrupted replay to resume without publishing
+an incomplete candidate. A failure before staging completes still requires a
+new output directory. The earlier two-family batch and both new families
+were regenerated; their resumable container replays passed and their token
+diagnostics completed with both over-cap warnings retained. The final
+combined launcher passed, along with 32 focused tests; one user-configured
+Colab notebook test remained deselected.
+
+### 2026-11-22 -- Preserved-evidence #169 alternative
+
+The original reader joins selected lines without a trailing newline; this
+explains the apparent source-observation mismatch. The recorded complete
+observation and all pre-target messages are preserved in an alternative
+native edit. Its unique anchor generates the upstream behavioral source with
+only the unrelated docstring change restored to the baseline. The same issue,
+negative and unchanged-regression checks pass twice in the offline container.
+This alternative is the same family, not another qualifying family.
+
+The emitted row measures 1,244 tokens on the two-tool surface and 4,063 on
+the static full-tool proxy. The 33-token headroom is not a serving-parity
+measurement; required workspace, budget and policy steps remain absent.
+The row is quarantined, and #173 remains over the static cap. Interrupted
+replay and tampered staging are covered by focused tests. The PC launcher
+resumes the new replay and tokenizer audit; it still does not prepare a
+qualified corpus or start training.
+
+An additional reproducible sensitivity check uses the pinned harness prompt
+builder with a hypothetical direct fixer handoff, the frozen `G_startup`
+instruction and converted tool schemas. #169 measures 4,283/4,331 tokens
+with testing enabled/disabled, and #173 measures 5,135/5,183. These scenarios
+omit budget, workspace tree, policy-required calls and runtime transport;
+they are neither captured requests nor production bounds. The launcher
+recomputes them alongside the original proxy and keeps both families
+quarantined. The updated launcher completed and 19 focused tests passed.
+Applying the same hypothetical sensitivity check to packaging #794 gives
+4,044/4,092 tokens and to humanize #206 gives 3,997/4,045. All four scenarios
+remain incomplete; none establishes eligibility or actual serving parity.
+
+### 2026-11-22 -- Complete native histories, retention correction and corpus acquisition
+
+The five-stage readiness plan is in `LORA_TRAINING_READINESS_PLAN.md`.
+The user permits longer context; the PC development-retention ceiling is
+18,000 tokens, with no padding. Frozen 4,096 training jobs remain unchanged.
+The earlier repair pilot used examples no longer than 526 tokens and peaked
+at 15,480,815,616 CUDA bytes on an L4; long-context inference elsewhere in
+this log does not establish long-sequence training feasibility.
+
+The corrected single PC launcher completed four curated offline ADK/native
+histories and 24 two-repeat container tasks. All native positives reproduce
+the already-replayed positive contents. Actual reads, status, anchor checks,
+budget decorators, workspace tree/prompt and all eight fixer schemas are
+retained. Saved normalized full token lengths are packaging #794 4,618,
+humanize #206 4,476, preserved #169 4,705 and #173 6,251; raw ADK strings
+measure 4,633/4,482/4,711/6,257. Target lengths are 72/74/124/824.
+All fit the development ceiling, and all exceed 4,096 with full evidence.
+
+A real defect in the preceding curated grep was reproduced: #173 returned
+21,089 characters but the native command tool silently emitted the first
+5,000 with status `ok`. It lacks a command truncation flag. That historical
+capture is incomplete observation evidence. The worker now checks raw stream
+lengths/hashes before accepting observations and rejects clipping in either
+stream, without changing the native tool bodies. A new single-pattern grep
+records its complete focused result. Full multiline edits remain unique even
+when no individual line is unique; all grep matches are retained. Earlier
+rows and receipts are not rewritten.
+
+Candidate-specific local overlap checks for these four families report zero
+hits under the saved bounded methods. Canonical/non-fork snapshot metadata,
+known aliases and revision notice hashes are supporting evidence only.
+The source screen cannot mark groups eligible or infer broader benchmark
+or related-source independence.
+
+Source acquisition used only the four reserved train-development repositories,
+an explicit 2020-2023 merge window and 40-result per-repository limit. Of 83
+sampled PRs, 24 become additional unverified leads and 59 are rejected.
+The prior 35 plus these 24 give 59 distinct ranked IDs. The existing parallel
+hunk screen processes all 24, with no retrieval failures and 15 multi-hunk
+leads; this does not prove genuine coordinated repairs or admission.
+The new CLI keeps its old defaults and prior-exposure/security filters.
+
+Humanize #159 is not prepared or replayed: its PR reports a formatting
+ValueError, and the inspected changes do not establish the required baseline
+assertion replay. Humanize #26 has a
+direct assertion but uses an older aliased metadata lookup unsupported by
+the frozen bootstrap guard. Its exact parent/merged archives are cached for
+later preparation; no row or family admission is emitted. Do not weaken the
+oracle check or silently alter existing builder/registration hashes.
+
+All 18 focused clipping/anchor/notice/overlap/acquisition/replay/token tests pass.
+Pylance syntax inspection timed out; actual Python AST validation succeeded.
+No notebooks, sealed answers or frozen policy were changed. These remain
+curated CPU captures, not live serving or full-mask certification.
+Fully qualified train/validation/decision counts remain 0/0/0; there is no GPU
+job or claim of training readiness.
+
+The final end-to-end resume also completed: all four completed capture
+receipts and tokenizer audits revalidated without recapturing observations.
+`Outputs\repair-prepared-source-screen-development-20261122-v2` binds each
+family's revision notices to its pinned preparation receipt and reports zero
+bounded overlap hits. The 18 focused tests and actual Python/PowerShell syntax
+checks pass. All tracked preparation commands have finished; no autonomous
+background work is being claimed.
+
+### 2026-11-22 -- RESULT: 31B six-arm Colab A/B (ca5 vs public 0.22 configs), 85 live tasks, 1 round, G4, conc 6
+Drive `gemma_fasteval/ab_runs/31b_lb022_20261122` (progress.json, per-arm results, prep.log, runtime.json). G4 RTX PRO
+6000 Blackwell 97,887 MiB, 10.05 CU/h; prep 684 s; six passes 59-70 min each; ALL six on Drive 21:20 local.
+PARITY: A_ca5 32/85 = exactly its Kaggle 4xL4 result on the same 85 (ca5-31b-presubmit-85, 32/85).
+| arm | solved | 8-min timeout | overflow | no edit | calls | mean s | vs A: arm-only / A-only | timeout+ovf vs A |
+| A_ca5 | 32 | 15 | 6 | 16 | 18.6 | 281 | - | - |
+| B_denpug | 30 | 4 | 17 | 9 | 19.5 | 246 | 4 / 6 | +0.0 pt |
+| C_flex | 29 | 11 | 19 | 19 | 21.4 | 269 | 2 / 5 | +10.6 pt |
+| D_bliver (40 calls) | 31 | 12 | 25 | 18 | 20.7 | 265 | 3 / 4 | +18.8 pt |
+| E_ayush_noad | 32 | 5 | 14 | 10 | 19.5 | 239 | 5 / 5 | -2.4 pt |
+| F_ayush_lora | 34 | 10 | 9 | 12 | 20.1 | 249 | 5 / 3 | -2.4 pt |
+Pre-registered rule (timeouts + overflow down >= 5 points vs A_ca5): NO arm passes. Solves: all within +-3 of A_ca5.
+Adapter test F vs E (same files, + adapter): 34 vs 32; discordant 7 F-only vs 5 E-only (net +2, sign test far from
+significant); adapter moved failures from overflow (14 -> 9) to timeouts (5 -> 10), mean 249 s vs 239 s (+4%).
+Pattern across arms (descriptive, one round): 8-minute timeouts track the per-command timeout (ca5 300 s: 15; 240 s:
+5-12; 60 s: 4); overflow tracks max_output_tokens (5000: 6; 6144: 14; 8192: 17-25). ca5 has the overflow side right and
+loses on timeouts; each competitor config fixes timeouts and loses on overflow. Untested combination: ca5 with only a
+shorter per-command timeout (keep out 5000). Prior work: cmd 60 s bundled with a 10-min task cap scored 0.15/0.17/0.13
+on the board; local ca5_31b_timeout_ab B_cmd60 16/36 vs A 9/36 (6 tasks). 40 calls (D) confirms the earlier finding:
+no extra solves, most overflow. Trace metrics (first edit on gold, conversion) pending the DB rebuild.
