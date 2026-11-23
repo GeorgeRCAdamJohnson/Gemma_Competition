@@ -28,7 +28,7 @@ RUN_NAME = sys.argv[1] if len(sys.argv) > 1 else "lb022"
 R = RUNS[RUN_NAME]
 TAG = R["tag"]
 N_PASSES = len(R["arm_shas"]) * R["rounds"]
-FILES = [R["bundle"], "_gpu_prep_ab.py", "_launch_if_ready.py", "_verify_model_dir.py"]
+FILES = [R["bundle"], "_gpu_prep_ab.py", "_launch_if_ready.py", "_verify_model_dir.py", "_live_status.py"]
 HASHES = {f: hashlib.sha256((ROOT / "colab_fasteval" / f).read_bytes()).hexdigest() for f in FILES}
 LAUNCH = {"arms": "arms", "out": "/content/ab", "tag": TAG, "rounds": R["rounds"], "round_from": 1, "deadline_h": 12,
           "gpu_utilization": 0.85, "model_name": "gemma-4-31b-it-qat-w4a16-ct",
@@ -146,7 +146,8 @@ HASHES = {json.dumps(HASHES, indent=1)}
 BASE = Path('/tmp/{TAG}_dry') if DRY else Path('/content')
 BASE.mkdir(parents=True, exist_ok=True)
 DEST = {{'{R["bundle"]}': BASE / 'ab_inputs.tar', '_gpu_prep_ab.py': BASE / 'gpu_prep_ab.py',
-        '_launch_if_ready.py': BASE / 'launch_if_ready.py', '_verify_model_dir.py': BASE / '_verify_model_dir.py'}}
+        '_launch_if_ready.py': BASE / 'launch_if_ready.py', '_verify_model_dir.py': BASE / '_verify_model_dir.py',
+        '_live_status.py': BASE / 'live_status.py'}}
 for name, target in DEST.items():
     shutil.copyfile(SRC / name, target)
     got = hashlib.sha256(target.read_bytes()).hexdigest()
@@ -262,35 +263,29 @@ else:
     print('\\n'.join(Path('/content/prep.log').read_text().splitlines()[-12:]))
 """),
     code("""
-# 4. Launch the driver (GPU mode only; detached, survives a dropped connection while the runtime lives)
+# 4. Launch the driver and the live-status writer (GPU mode; both detached, they survive a dropped connection while
+#    the runtime lives). The writer refreshes ab_runs/<tag>/live_status.txt on Drive every 2 min and writes
+#    outcome.json when the run ends, so no cell has to stay running.
 if DRY:
     print('dry run: driver not launched')
 else:
     runpy.run_path('/content/launch_if_ready.py')
+    subprocess.Popen(f"nohup /content/venv/bin/python /content/live_status.py {LAUNCH['tag']} 120 {RATE_CU_PER_HOUR} "
+                     f"{STARTED} > /content/live_status.log 2>&1 &", shell=True)
+    print('live status: Drive', RUN / 'live_status.txt', '(every 2 min). The kernel is free; run cell 5 any time.')
 """),
     code("""
-# 5. Monitor every 5 min until ALL_DONE (GPU mode); outcome.json at the end
+# 5. Status check: returns immediately, run it as often as you like (the kernel stays free)
 if DRY:
     print('dry run complete. For the real run: connect a G4 server, set MODE = "gpu", rate and balance, run all cells.')
 else:
-    log, prog, done = Path('/content/ab.log'), Path('/content/ab/progress.json'), Path('/content/ab/ALL_DONE')
-    outcome = {'status': 'incomplete'}
-    try:
-        while not done.exists():
-            passes = json.loads(prog.read_text())['passes'] if prog.exists() else []
-            tail = log.read_text(errors='replace').splitlines()[-1:] if log.exists() else []
-            print(time.strftime('%H:%M:%S'), f'passes done {len(passes)}/{N_PASSES} |', *tail, flush=True)
-            time.sleep(300)
-        passes = json.loads(prog.read_text())['passes']
-        outcome.update(status='all_done', all_done=done.read_text(), passes=len(passes))
-        for p in passes:
-            print({k: v for k, v in p.items() if not isinstance(v, (list, dict))})
-    finally:
-        outcome['elapsed_seconds'] = round(time.time() - STARTED)
-        outcome['estimated_cu_at_entered_rate'] = round(outcome['elapsed_seconds'] * RATE_CU_PER_HOUR / 3600, 2)
-        (RUN / 'outcome.json').write_text(json.dumps(outcome, indent=2) + '\\n')
-        print('OUTCOME', outcome)
-    print('Results are on Drive. Now disconnect and DELETE this runtime.')
+    live = RUN / 'live_status.txt'
+    print(live.read_text() if live.exists() else 'no live status yet (prep or vLLM start still running)')
+    prog = Path('/content/ab/progress.json')
+    passes = json.loads(prog.read_text())['passes'] if prog.exists() else []
+    print(f'passes done {len(passes)}/{N_PASSES}:', [(p['arm'], p['round'], p['solved']) for p in passes])
+    if Path('/content/ab/ALL_DONE').exists():
+        print('ALL_DONE. Results are on Drive. Now disconnect and DELETE this runtime.')
 """),
 ]
 # nbformat 4.5 requires a unique id per cell (VS Code will not run cells of an invalid notebook); metadata matches
@@ -306,7 +301,8 @@ nb = {"cells": cells,
                                      "mimetype": "text/x-python", "name": "python", "nbconvert_exporter": "python",
                                      "pygments_lexer": "ipython3", "version": "3.12"}},
       "nbformat": 4, "nbformat_minor": 5}
-target = ROOT / "colab_fasteval" / R["notebook"]
+import os
+target = Path(os.environ["NB_OUT"]) if os.environ.get("NB_OUT") else ROOT / "colab_fasteval" / R["notebook"]
 target.write_text(json.dumps(nb, indent=1) + "\n", encoding="utf-8", newline="\n")
 for f, h in HASHES.items():
     print(f"{f:24s} {h[:12]}")

@@ -23704,3 +23704,12 @@ seconds. Context: 31b_lb022 A_ca5 32/85; F_ayush_lora (his prompt + adapter) 34 
 Decision: treat the adapter as worth a leaderboard draw on ca5 only if G - A >= +4 solves summed over the 2 rounds
 (~+2 per round) AND G's mean seconds per attempt is no more than 10% above A's (LoRA decode was 15-29% slower on the
 board, L18590, and the scorer has a 12 h limit). Otherwise ca5 stays as is. Two rounds still only detect large effects.
+
+### 2026-11-23 -- Notebook monitoring redesigned: live status on Drive, kernel never blocked (user request)
+Problem: cell 5 was a blocking loop and the driver writes to Drive only per pass, so a run was invisible for ~1 h at a
+time and nothing else could run without interrupting. New `colab_fasteval/_live_status.py` (detached on the VM, next
+to the driver): every 2 min writes `ab_runs/<tag>/live_status.{json,txt}` = finished tasks and solves so far per
+arm/round, driver alive, vLLM running/waiting and per-sequence decode tok/s, log tail; at the end it writes outcome.json.
+Generator: the script is a pinned input (sha256 checked); cell 4 starts driver + writer; cell 5 is a one-shot status
+check. Verified by a local dry run of a temp build (DRY_RUN_OK). The running `run_31b_ca5lora.ipynb` was NOT rewritten
+(open in the editor); for this run the writer is started by hand from a new cell after the driver launches.
