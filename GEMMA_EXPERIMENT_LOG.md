@@ -23713,3 +23713,163 @@ arm/round, driver alive, vLLM running/waiting and per-sequence decode tok/s, log
 Generator: the script is a pinned input (sha256 checked); cell 4 starts driver + writer; cell 5 is a one-shot status
 check. Verified by a local dry run of a temp build (DRY_RUN_OK). The running `run_31b_ca5lora.ipynb` was NOT rewritten
 (open in the editor); for this run the writer is started by hand from a new cell after the driver launches.
+
+## 2026-11-24 -- Packaging quarantined; first replacement repair completes the PC chain
+
+The user explicitly selected conservative packaging quarantine and replacement.
+The [effective v3 reservation](Outputs/independent-discovery-reservation-20261121-v1/effective-reservation-amendment-v3.json)
+now excludes the whole packaging source group alongside the existing excluded
+lineages. This does not claim proven overlap between the fifteen packaging
+fixes and benchmark target components. Earlier ledgers, candidates and replay
+receipts are preserved; the sixteen-example / 11,436-target aggregate above
+is historical, not the current corpus. Missing v3 or an old-policy override
+fails, and current authorization precedes archived-producer resume.
+
+Before opening their candidate fixes, the
+[replacement training reservation](Outputs/replacement-training-source-prospective-reservation-20261124-v1/reservation.json)
+reserved Suor/funcy, pyeve/cerberus and ianare/exif-py. Public/nonfork/no-parent
+metadata and BSD-3-Clause/ISC default-branch licenses were recorded and pinned.
+Revision-verified exact-name benchmark counts are zero, not source clearance.
+Sortedcontainers remains deferred on license metadata; python-statemachine
+was excluded after seven benchmark matches.
+
+The bounded acquisition sampled 35 PRs: six unverified leads and twenty-nine
+rejections. All six hunk screens completed, one with multiple source hunks.
+No lead was admitted on metadata or hunk shape. The mandatory quarantine path
+passed 74 focused tests and a completed dateutil-only chain in 201.116 seconds
+with 134 supervised tokens.
+
+Actual Suor/funcy#177 production then exposed two concrete blockers: the
+builder's `src`-only layout and a missing `whatever` test import in the pinned
+image. Both were resolved without changing the issue oracle. Recipes now
+support explicit `source_root=[]`, with default `src` behavior and both
+bootstrap paths retained. The genuine BSD-3-Clause `whatever==0.7` wheel,
+declared in both upstream revisions, is hash-locked in a new per-source
+runtime directory and mounted read-only outside the source workspace.
+Every runtime file and its complete directory snapshot are pinned; unpinned
+additions, mutation and edited-package shadowing fail. The frozen replay
+image, shared dependency inventory, native worker and registered training
+surface are unchanged.
+
+The [funcy recipe](train/data/repair-funcy-177-development-v1.json) uses the
+actual first merge parent, not the queue's PR-base SHA. Both added upstream
+issue tests fail with real assertions on baseline and the wrong-contract
+negative, while the native positive passes. Three selected regression
+bodies/decorators are unchanged across revisions and pass on all arms.
+Preparation and native capture each pass six repeated replay tasks.
+Its complete history measures **4,879 normalized / 4,885 raw tokens**, with
+**115 target tokens**; both the 18K retention and captured 5,000 completion
+budgets pass. No tests/imports were stripped, helper fabricated, target
+truncated or output budget increased.
+
+The [single PC launcher](train/run_cpu_dataset_replay.ps1) now includes only
+dateutil #1583 and funcy #177. The
+[current CPU result](Outputs/repair-training-format-development-20261124-v3/cpu-loss-assessment.json)
+passes schema, frozen task-specific surface, target-only next-token loss and
+token-normalized accumulation with **two provisional repairs / 249 targets**.
+The completed combined chain took **170.359 seconds**, revalidating existing
+evidence rather than measuring fresh-family admission throughput. Source
+notices and bounded overlap checks pass; source clearance remains open.
+Sixty-five focused metadata/source/preparation/replay tests pass. The editor
+Problems check reports no errors in the three changed Python producers.
+
+The [post-v3 preservation correction](Outputs/repair-root-layout-runtime-sources-20261124-v1/preservation-check-v2.json)
+verifies all **78 protected historical byte hashes**. Its preserved first
+check was a false alarm: it compared uppercase PowerShell hex strings against
+lowercase Python strings case-sensitively. The corrected comparison validates
+the digest syntax and normalizes hex casing; no historical file was restored
+or rewritten. Archived producers/runners are hash-verified, never executed
+to evade current policy, and historical revalidation uses new sidecars.
+
+Current admitted train/validation/decision family counts remain **0/0/0**.
+The other five replacement leads, broader source/duplicate adjudication,
+20 validation and 60 sealed decision families, final registration/package,
+real-model/serving/GPU probes and approved training remain unfinished.
+The separate prospective evaluation reservation and isolated exposure review
+are unchanged. No GPU job, model-weight download, frozen training-loop change
+or competition-harness change was made by this work.
+
+### Replacement production continues: three active CPU repairs, all six leads dispositioned
+
+The [EXIF #215 recipe](train/data/repair-exif-215-development-v1.json) now passes
+six preparation and six native-history replay tasks. Both selected regression
+bodies/decorators and the relevant image fixtures are unchanged between the
+actual merge parent and merge head. The revision BSD-3-Clause notice is
+retained and verified directly, not inferred from repository metadata.
+Its full history measures **4,911 normalized / 4,917 raw / 62 target tokens**;
+both the retention and captured completion budgets pass without clipping.
+
+The [current three-repair CPU result](Outputs/repair-training-format-development-20261124-v4/cpu-loss-assessment.json)
+contains dateutil #1583, funcy #177 and EXIF #215: **311 supervised tokens**.
+The [single PC launcher](train/run_cpu_dataset_replay.ps1) completed the
+three-repair chain in **297.720 seconds**, including repeated replay,
+complete native history and both budgets, source-notice/bounded overlap,
+target-only next-token loss and accumulation. Earlier two-repair and
+dateutil-only aggregates remain historical snapshots, not current totals.
+
+The other four replacement leads now have actual preliminary baseline
+outcomes rather than speculative rejection reasons:
+
+- Suor/funcy#178: eight parameter cases fail with unhashable-argument
+  `TypeError`, zero assertion failures.
+- Suor/funcy#197: two parameter cases fail with missing-`__delete__`
+  `AttributeError`, zero assertion failures.
+- pyeve/cerberus#562: collection first failed on absent `pkg_resources`.
+  The genuine hash-locked MIT `setuptools==80.9.0` wheel in a new private
+  read-only runtime resolves that import. The unchanged named test then
+  fails with `TypeError: string indices must be integers`, not an assertion.
+- ianare/exif-py#227: the unchanged named test fails with
+  `KeyError: Thumbnail JPEGInterchangeFormatLength`. Its real upstream-added
+  image fixture stays oracle-only; this preliminary probe uses an oracle
+  working directory to preserve the original source workspace. That option
+  is not yet a qualified production-runner feature.
+
+Parameters do not increase family counts. All four remain deferred under
+the current named-assertion gate; no error was reclassified or caught to
+manufacture an assertion, and no positive/negative/capture completion is
+claimed for them. An exception-aware evidence format would require an
+explicit versioned qualification decision, with named expected behavior,
+source-only positive/negative proofs and import/collection-error rejection
+retained. Current fully admitted counts remain **0/0/0**, not 3/0/0.
+
+### Public training sources restored and expanded
+
+The user approved broad use of permitted public training sources with
+independent evaluation. [Reservation amendment v4](Outputs/independent-discovery-reservation-20261121-v1/effective-reservation-amendment-v4.json)
+restores packaging, Humanize and Babel as provisional, unverified
+training-development groups. Benchmark membership alone is not treated as
+an organizer-wide training ban. Holdout reservations and quarantines are
+unchanged; licensing, competition restrictions, provenance, family
+deduplication and independent evaluation remain blocking gates.
+
+The [unified PC launcher](train/run_cpu_dataset_replay.ps1) revalidated
+fifteen preserved packaging repairs and four Humanize repairs alongside
+dateutil, Funcy and EXIF, and added packaging #1206, #1349 and #1295.
+Each new case passed six preparation and six capture-stage replay tasks.
+Full / supervised tokens were 7,781 / 1,451; 5,112 / 91; and 6,108 / 530,
+respectively; all satisfy the 18,000 retention and captured 5,000 completion
+limits. The initial #1295 negative failed two unchanged regressions; its
+preserved v2 negative passes them and fails the named issue assertion.
+Packaging #1349's relationship to #1360 still needs semantic-family review.
+
+The [current CPU assessment](Outputs/repair-training-format-public-sources-v5/cpu-loss-assessment.json)
+contains **25 provisional repair IDs / 14,760 supervised tokens**; the
+[bounded source screen](Outputs/repair-prepared-source-screen-public-sources-v5/assessment.json)
+reports no local overlap hits and **zero fully qualified families**.
+The previous 78 protected receipt hashes remain unchanged. A new Funcy/EXIF
+search sampled 53 PRs and yielded no new leads, primarily because 31 were
+previously inspected and 20 matched only the search body.
+No held-out answers, GPU work, registered trainer or competition harness
+were touched. Admitted train/validation/decision counts remain **0/0/0**;
+the dataset is not ready for training.
+
+### 2026-11-23 -- RESULT: 31B ca5 vs ca5 + ayush04barai adapter (85 live tasks x 2 rounds, G4, conc 6): FAIL, ca5 unchanged
+Drive `gemma_fasteval/ab_runs/31b_ca5lora_20261123`; summary `Outputs/_ca5lora_summary.py`.
+| arm | r1 | r2 | total /170 | 8-min timeout | overflow | no edit | mean s |
+| A_ca5 | 32 | 29 | 61 | 23 | 26 | 36 | 267 |
+| G_ca5_ayush | 31 | 32 | 63 | 27 | 15 | 24 | 290 |
+Paired by task and round: G-only 9, A-only 7, G - A = +2 (bar +4); time ratio G/A 1.09 (limit 1.10). Pre-registered
+rule FAILS on solves -> no leaderboard draw; ca5 stays the 31B final. Consistent adapter signature across both runs
+(this one and F vs E in 31b_lb022): less overflow (26 -> 15; 14 -> 9), fewer empty patches (36 -> 24), slower steps
+(+9%; +4%), more 8-minute timeouts, no reliable solve gain. ca5 identical-bytes local draws on the 85: 32, 32, 29
+(29 of 32 tasks shared between the first two). Cost ~49 CU; balance 109 CU after the run.
