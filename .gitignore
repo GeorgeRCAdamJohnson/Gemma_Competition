@@ -113,3 +113,6 @@ pulled_v6/
 colab_fasteval/_lb022_inputs.tar
 colab_fasteval/arms_31b_lb022/F_ayush_lora/adapters/
 competitor_probe/lb022/ayush04barai__lora-step-2/output/
+
+colab_fasteval/_ca5lora_inputs.tar
+colab_fasteval/arms_31b_ca5lora/G_ca5_ayush/adapters/

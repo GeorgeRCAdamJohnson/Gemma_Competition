@@ -23545,3 +23545,162 @@ A_ca5 0.43 / 0.38 | B_denpug 0.59 / 0.42 | C_flex 0.68 / 0.43 | D_bliver 0.37 / 
 Caveat: the 31B often writes tmp/repro.py first, so "first edit" undercounts gold localisation for every arm (A: only
 13 of its 32 solves had a gold first edit). B and C reach the gold file first more often (+16 / +25 points) without
 more solves. The pre-registered decision (no arm cuts timeouts + overflow by >= 5 points) stands.
+
+### CPU dataset continuation: bounded multi-read and frozen completion budgets
+
+The PC preparation chain now has sixteen provisional packaging/dateutil
+repair IDs, not sixteen admitted families. New packaging #1199/#1360/#1492
+pass eighteen preparation and eighteen native replay tasks, complete native
+capture, tokenizer/prefix checks and both captured budgets. Current evidence
+covers 192 repeated replay tasks. The three new normalized/raw/target token
+counts are 5,812/5,820/390; 11,291/11,301/4,054; and
+11,616/11,626/4,476. Eight selected regression bodies/decorators are unchanged
+between the corresponding merge-parent and fixed snapshots.
+
+Long observations now use contiguous native reads of at most 150 lines,
+clamped to EOF. Complete old edit anchors are preserved across the responses;
+multi-read anchor grep checks a focused line rather than echoing the whole
+long span. Returned matches, source responses and stdout/stderr are not
+cropped. #1360 includes all three generator changes. #1492 preserves the
+upstream-added source notice; this notice is not another behavioral family.
+Native read, command-output and explicit-truncation guards are unchanged.
+
+A second, independent length gate was missing. The actual captured fixer
+request allows 5,000 completion tokens even when CPU full-sequence retention
+is 18,000. The auditor now checks supervised target length against the
+captured `max_completion_tokens`, rejects missing/invalid budgets, and fails
+the CLI on either context or completion overflow after saving its report.
+It does not modify the policy, request budget or frozen registrations.
+
+Failed/deferred work remains immutable:
+
+- The first five-repair recipe selected #712 equality tests, which passed
+  on baseline and were correctly rejected. The corrected recipe selects
+  upstream `TestSpecifier::test_specifiers` membership assertions; only its
+  selector/name changes, not the oracle. All thirty preparation tasks pass.
+- #712's complete per-case native history fits 18K at 14,269 total tokens,
+  but its 6,147-token target exceeds 5,000. It is not in the current batch.
+- #1327 passes behavioral replay, but native `edit_file` explicitly marks
+  its returned diff truncated. The unchanged worker rejects it; the partial
+  capture has no batch completion. It is not in the current batch.
+- Recipe v3 contains only #1199/#1360/#1492. No failed receipt or original
+  recipe was rewritten. The disposition proof is in
+  [deferred-candidates-v1.json](Outputs/repair-packaging-coordinated-batch-development-20261124-v1/deferred-candidates-v1.json).
+
+The aggregate CPU surface/schema, sliced target loss and token-normalized
+accumulation checks pass with **11,436 supervised tokens**, in windows of
+801, 845, 4,594 and 5,196. Retained normalized full sequences range from
+4,620 to 11,616, with every target within its 5,000 captured completion cap.
+No padding or evidence truncation was introduced. The current bounded
+source/notices screen finds no overlap hits; this is not source clearance.
+
+The single launcher took 889.9 seconds with thirteen completed repairs
+resumed and three freshly produced. Full completed resume took 386.3 seconds,
+preserving all 78 protected result hashes, including all 63 historical
+protected hashes. These are not fresh-sixteen-family qualification
+throughput or an admission ETA. Historical builders, captures and tokenizer
+audits require hash-verified original producer archives and unchanged
+remaining inputs/evidence. Old audits receive a separate completion-budget
+validation receipt; their original reports remain unchanged.
+
+Receipts:
+
+- [CPU assessment](Outputs/repair-training-format-development-20261124-v1/cpu-loss-assessment.json).
+- [Completed-chain preservation](Outputs/repair-training-format-development-20261124-v1/pc-chain-verification-v2.json).
+- [Source screen](Outputs/repair-prepared-source-screen-development-20261124-v1/assessment.json).
+- [Production dispositions](Outputs/repair-production-dispositions-20261124-v1/assessment.json):
+  independently revalidates all 192 current task receipts and their logs,
+  outcomes and import evidence; thirteen of the 89 fresh-queue IDs now pass
+  CPU development gates, 76 remain uncompleted, including deferred leads.
+
+Upstream #1199 also identifies CPython/distutils ancestry in the affected
+tag code. A zero-row benchmark metadata request finds zero exact
+`python/cpython` records; no answer rows were requested or returned, and no
+dataset revision pin or broader genealogy clearance is claimed. Related
+source, previous exposure, semantic deduplication and independent-oracle
+admission remain open.
+
+The unchanged `packed_memory_lora.train` already accepts prevalidated
+`(rows, audit, ordered_ids)` through `args.edit_prepared`. The frozen
+`kaggle_evidence_to_edit.py` data wrapper, rather than the core engine,
+requires a static system message and CAP 4096. A new task-specific wrapper
+must be registered before training, but it can reuse the frozen engine.
+
+Forty-seven focused producer/replay/history tests and two CPU-format tests
+pass. Both Pylance tool calls timed out; runtime tests, six edited-Python AST
+checks and PowerShell parsing passed. No dependencies, replay image,
+competition harness, attached notebooks, frozen training engine or GPU jobs
+were changed. Fully admitted train/validation/decision counts remain 0/0/0;
+the 80/20/60 floors and independent decision-source requirements are unchanged.
+
+### Source-audit completion and revision-pinned metadata follow-up
+
+The isolated [twelve-group source assessment](Outputs/prospective-evaluation-source-exposure-20261124-v1/assessment.json)
+is complete within its bounded scope. Nine groups are negative within the
+available local history and three remain unknown from generic-token
+matches. No positive answer exposures or new exclusions were established.
+Only seven local project sessions over thirty days were available; the cloud
+lookup returned no project sessions. All eligibility/sealing flags remain
+false, and four validation / eight decision groups remain potential leads.
+One discovered redirect is an alias of an already reserved group, not an
+additional group. No held-out candidate answers were opened.
+
+The [new metadata auditor](train/audit_benchmark_source_metadata.py) resolves
+the earlier revision-pin gap for a fresh, explicitly bounded check. It
+requires the dataset identity/revision and every count response's
+`X-Revision` to match, with `length=0`, empty answer rows, a complete result
+and a nonnegative integer count. Existing output cannot be overwritten.
+Positive membership is recorded and returns exit code 1.
+
+At `nebius/SWE-rebench` revision
+`89cdfbab4ab1bd8f5a658bb212d1b63624f4f881`, the
+[new train-related receipt](Outputs/train-source-benchmark-revision-20261124-v1/assessment.json)
+finds zero exact-name matches for packaging, dateutil and CPython. The
+[excluded Babel control](Outputs/benchmark-source-metadata-positive-control-20261124-v1/assessment.json)
+finds fifteen matches and blocks with exit code 1. Neither request type
+returned benchmark answer rows. Fifteen focused tests pass; the Pylance
+syntax request failed with a transport error. No dependencies or frozen
+training/replay inputs were changed.
+
+This follow-up does not retroactively pin earlier metadata queries, establish
+all-benchmark/genealogy clearance or admit any family. The sixteen provisional
+CPU histories and all 80/20/60 admission requirements are unchanged; fully
+admitted counts remain **0/0/0**. The readiness plan now explicitly closes
+only stage 1's CPU-format exit condition, not packaging or live-serving/GPU
+gates.
+
+The [bounded exposure follow-up](Outputs/prospective-evaluation-source-exposure-20261124-v1/followup-v2.json)
+reviewed twenty-three context snippets; thirty-seven matching fields remain
+filtered/unreviewed. The three unknown groups remain unknown, and the nine
+bounded negative findings are unchanged. Another cloud metadata discovery
+query returned no project sessions; its local supplement failed. No missing
+coverage is interpreted as clearance.
+
+Further train-source genealogy work found a concrete relationship worth
+adjudicating before more packaging expansion: the
+[pinned current pip vendor declaration and benchmark count](Outputs/packaging-vendor-source-metadata-20261124-v1/source-assessment-v1.json)
+show `packaging==26.3` vendored by pip and 46 exact `pypa/pip` benchmark
+records at the frozen dataset revision. Packaging has zero exact-name
+matches, and supplies fifteen of the sixteen provisional CPU IDs.
+This does not prove those benchmark tasks contain an affected packaging
+component/revision. Packaging admission stays blocked; the choice is
+conservative quarantine/replacement or isolated component/revision
+adjudication, not automatic acceptance. No source code, issue, patch, test or
+benchmark answer row was fetched for this check, and no existing ledger or
+historical result was changed.
+
+### 2026-11-23 -- PRE-REGISTERED (built, not launched): 31B ca5 vs ca5 + ayush04barai adapter, 85 live tasks, 2 rounds
+Prior work (`q.py --prior`): L13894 built ca5 + OUR v19 adapter (`local_eval/push_ca5_lora31b`) and flagged it as a
+regime mismatch; ca5 + ayush's adapter is not in the DB. Arms (`colab_fasteval/_build_arms_31b_ca5lora.py`):
+A_ca5 135bacd909cd (byte-identical to the 31b_lb022 control and the 0.20 submission) | G_ca5_ayush 9e5611757b14 = the
+same files + `adapter: main_lora` + adapters/main_lora (ayush04barai/lora-step-2 output: r16/a16, q/o/down, layers
+30-59). The builder asserts the arms differ ONLY in agent.yaml and the two adapter files. Bundle `_ca5lora_inputs.tar`
+(sha256 21c6e36e0d9c) on Drive `gemma_fasteval/launch/31b_ca5lora_20261123/`. Notebook `colab_fasteval/run_31b_ca5lora.ipynb`
+(same generator and cells as the six-arm run, now parameterised; fixed: the monitor pass count was a bare N_PASSES
+name). Local dry run against Drive: DRY_RUN_OK. G4, conc 6, both arms on one server (LoRA serving on for both), arm
+order rotates per round; 340 attempts, ~4.5 h, ~45 CU; driver deadline 12 h.
+Reads (paired by task and round, 170 attempts per arm): solves, plus 8-minute timeouts, overflow, no-edit and mean
+seconds. Context: 31b_lb022 A_ca5 32/85; F_ayush_lora (his prompt + adapter) 34 vs E (his prompt) 32.
+Decision: treat the adapter as worth a leaderboard draw on ca5 only if G - A >= +4 solves summed over the 2 rounds
+(~+2 per round) AND G's mean seconds per attempt is no more than 10% above A's (LoRA decode was 15-29% slower on the
+board, L18590, and the scorer has a 12 h limit). Otherwise ca5 stays as is. Two rounds still only detect large effects.

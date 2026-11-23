@@ -3,16 +3,34 @@ through the Colab connector add-on. Follows train/colab_repair_decisions_v1_visi
 dry-run mode (like its `inspect`) that checks every input the GPU run needs without creating anything on Drive; a
 Drive-consent gate; in GPU mode a CU ceiling that includes setup, a pinned-version check and runtime/outcome receipts.
 Inputs are read from MyDrive/gemma_fasteval/launch/<tag>/ with SHA-256 pinned from the local copies.
-usage: python colab_fasteval/_build_31b_lb022_notebook.py"""
+usage: python colab_fasteval/_build_31b_lb022_notebook.py [lb022 | ca5lora]"""
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TAG = "31b_lb022_20261122"
-FILES = ["_lb022_inputs.tar", "_gpu_prep_ab.py", "_launch_if_ready.py", "_verify_model_dir.py"]
+# one entry per run; the cells are shared, so a fix to the notebook applies to every run
+RUNS = {
+    "lb022": dict(tag="31b_lb022_20261122", bundle="_lb022_inputs.tar", rounds=1, notebook="run_31b_lb022_v3.ipynb",
+                  title="31B six-arm A/B: ca5 vs public 0.22 configs",
+                  arms_text="A_ca5, B_denpug, C_flex, D_bliver, E_ayush_noad, F_ayush_lora", estimate="~8.5 h, ~85 CU",
+                  arm_shas={"A_ca5": "135bacd909cd", "B_denpug": "0a4c009b17ec", "C_flex": "328f689eca0f",
+                            "D_bliver": "abc861feada8", "E_ayush_noad": "151b922c5d75", "F_ayush_lora": "1185547f0fab"}),
+    "ca5lora": dict(tag="31b_ca5lora_20261123", bundle="_ca5lora_inputs.tar", rounds=2, notebook="run_31b_ca5lora.ipynb",
+                    title="31B two-arm A/B: ca5 vs ca5 + ayush04barai adapter",
+                    arms_text="A_ca5 (the 0.20 submission) and G_ca5_ayush (the same files + adapter: main_lora)",
+                    estimate="~4.5 h, ~45 CU",
+                    arm_shas=json.loads((ROOT / "colab_fasteval" / "_ca5lora_config.json").read_text())["arm_shas"]
+                    if (ROOT / "colab_fasteval" / "_ca5lora_config.json").is_file() else {}),
+}
+RUN_NAME = sys.argv[1] if len(sys.argv) > 1 else "lb022"
+R = RUNS[RUN_NAME]
+TAG = R["tag"]
+N_PASSES = len(R["arm_shas"]) * R["rounds"]
+FILES = [R["bundle"], "_gpu_prep_ab.py", "_launch_if_ready.py", "_verify_model_dir.py"]
 HASHES = {f: hashlib.sha256((ROOT / "colab_fasteval" / f).read_bytes()).hexdigest() for f in FILES}
-LAUNCH = {"arms": "arms", "out": "/content/ab", "tag": TAG, "rounds": 1, "round_from": 1, "deadline_h": 12,
+LAUNCH = {"arms": "arms", "out": "/content/ab", "tag": TAG, "rounds": R["rounds"], "round_from": 1, "deadline_h": 12,
           "gpu_utilization": 0.85, "model_name": "gemma-4-31b-it-qat-w4a16-ct",
           "model_archive": "gemma_fasteval/model/gemma-4-other-gemma-4-31b-it-qat-w4a16-ct-v2.tar.gz", "conc": 6}
 # the Kaggle-matched environment (L18758; same versions as every Kaggle run: wheelhouse globbed=41)
@@ -23,9 +41,9 @@ ENV_TAR_BYTES = 19220930560
 ARCHIVE_BYTES = 19348664473
 MAX_RATE = 12.0  # CU/h; G4 measured ~10 (L18944)
 SETUP_H = 1.0  # prep (env + archive copy/extract + snapshots) counted in the ceiling
-# arm fingerprints from _build_arms_31b_lb022.py (sha1 over sorted file bytes)
-ARM_SHAS = {"A_ca5": "135bacd909cd", "B_denpug": "0a4c009b17ec", "C_flex": "328f689eca0f", "D_bliver": "abc861feada8",
-            "E_ayush_noad": "151b922c5d75", "F_ayush_lora": "1185547f0fab"}
+# arm fingerprints from the arms builder (sha1 over sorted file bytes)
+ARM_SHAS = R["arm_shas"]
+assert ARM_SHAS, f"no arm fingerprints for {RUN_NAME}; run its arms builder first"
 
 
 def code(src):
@@ -39,17 +57,17 @@ def md(src):
 
 cells = [
     md(f"""
-# 31B six-arm A/B: ca5 vs public 0.22 configs (Colab connector)
-Pre-registered in `GEMMA_EXPERIMENT_LOG.md` (2026-11-22). Arms: A_ca5, B_denpug, C_flex, D_bliver, E_ayush_noad,
-F_ayush_lora; the 85 live tasks; 1 round; 6 tasks at once. Results: `MyDrive/gemma_fasteval/ab_runs/{TAG}`.
+# {R['title']} (Colab connector)
+Pre-registered in `GEMMA_EXPERIMENT_LOG.md`. Arms: {R['arms_text']}; the 85 live tasks; {R['rounds']} round(s);
+6 tasks at once. Results: `MyDrive/gemma_fasteval/ab_runs/{TAG}`.
 
-**1. Dry run on CPU first** (`MODE = "dry_run"`, any runtime). Checks Drive, the pinned inputs, all six arms, the 85
+**1. Dry run on CPU first** (`MODE = "dry_run"`, any runtime). Checks Drive, the pinned inputs, all {len(ARM_SHAS)} arms, the 85
 tasks and their snapshots, the environment snapshot, the model archive layout, the runner and the prep script.
 Creates nothing on Drive and starts no GPU work. Ends with `DRY_RUN_OK`.
 
 **2. GPU run** (`MODE = "gpu"`) on **one G4 (96 GB), High-RAM**, connected through the add-on's server picker. Enter the
 visible rate (at most {MAX_RATE} CU/h) and balance. The job ceiling is rate x ({LAUNCH['deadline_h']} h + {SETUP_H} h setup);
-the driver stops itself at {LAUNCH['deadline_h']} h. Estimate ~8.5 h, ~85 CU at 10 CU/h.
+the driver stops itself at {LAUNCH['deadline_h']} h. Estimate {R['estimate']} at 10 CU/h.
 
 Set `DRIVE_CONSENT = "ready"` only when you are ready to approve the Drive prompt yourself.
 **When the last cell prints `ALL_DONE` (or any cell fails in GPU mode), disconnect and delete the runtime.**
@@ -125,9 +143,9 @@ STARTED = time.time()
 D = Path('/content/drive/MyDrive')
 SRC = D / 'gemma_fasteval/launch/{TAG}'
 HASHES = {json.dumps(HASHES, indent=1)}
-BASE = Path('/tmp/lb022_dry') if DRY else Path('/content')
+BASE = Path('/tmp/{TAG}_dry') if DRY else Path('/content')
 BASE.mkdir(parents=True, exist_ok=True)
-DEST = {{'_lb022_inputs.tar': BASE / 'ab_inputs.tar', '_gpu_prep_ab.py': BASE / 'gpu_prep_ab.py',
+DEST = {{'{R["bundle"]}': BASE / 'ab_inputs.tar', '_gpu_prep_ab.py': BASE / 'gpu_prep_ab.py',
         '_launch_if_ready.py': BASE / 'launch_if_ready.py', '_verify_model_dir.py': BASE / '_verify_model_dir.py'}}
 for name, target in DEST.items():
     shutil.copyfile(SRC / name, target)
@@ -175,7 +193,7 @@ if DRY:
         model = next((l.split(':', 1)[1].strip() for l in (a / 'agent.yaml').read_text().splitlines()
                       if l.startswith('model:')), None) if fs else None
         need(got == want and model == LAUNCH['model_name'], f'arm {{arm}} sha {{got}} model {{model}}')
-    need(sorted(p.name for p in (work / 'arms').iterdir()) == sorted(ARM_SHAS), 'exactly the six registered arms')
+    need(sorted(p.name for p in (work / 'arms').iterdir()) == sorted(ARM_SHAS), 'exactly the registered arms')
     tasks = json.loads((work / 'ab_tasks.json').read_text())
     need(len(tasks) == 85 == len(set(tasks)), f'{{len(tasks)}} unique tasks')
     ids = {{json.loads(l).get('instance_id') or json.loads(l).get('id') for l in (work / 'tasks.jsonl').read_text().splitlines() if l}}
@@ -261,7 +279,7 @@ else:
         while not done.exists():
             passes = json.loads(prog.read_text())['passes'] if prog.exists() else []
             tail = log.read_text(errors='replace').splitlines()[-1:] if log.exists() else []
-            print(time.strftime('%H:%M:%S'), f'passes done {len(passes)}/6 |', *tail, flush=True)
+            print(time.strftime('%H:%M:%S'), f'passes done {len(passes)}/{N_PASSES} |', *tail, flush=True)
             time.sleep(300)
         passes = json.loads(prog.read_text())['passes']
         outcome.update(status='all_done', all_done=done.read_text(), passes=len(passes))
@@ -278,14 +296,17 @@ else:
 # nbformat 4.5 requires a unique id per cell (VS Code will not run cells of an invalid notebook); metadata matches
 # train/colab_repair_decisions_v1_visible.ipynb, which runs through the connector
 for i, c in enumerate(cells):
-    c["id"] = f"lb022-{i:02d}"
+    c["id"] = f"{RUN_NAME}-{i:02d}"
+    # the monitor cell is a plain string; fill in the pass count here so the notebook never sees a bare name
+    c["source"] = [line.replace("{N_PASSES}", str(N_PASSES)) for line in c["source"]]
+    assert not any("N_PASSES" in line for line in c["source"]), "N_PASSES left in a cell"
 nb = {"cells": cells,
       "metadata": {"kernelspec": {"display_name": "Python 3 (ipykernel)", "language": "python", "name": "python3"},
                    "language_info": {"codemirror_mode": {"name": "ipython", "version": 3}, "file_extension": ".py",
                                      "mimetype": "text/x-python", "name": "python", "nbconvert_exporter": "python",
                                      "pygments_lexer": "ipython3", "version": "3.12"}},
       "nbformat": 4, "nbformat_minor": 5}
-target = ROOT / "colab_fasteval" / "run_31b_lb022_v3.ipynb"
+target = ROOT / "colab_fasteval" / R["notebook"]
 target.write_text(json.dumps(nb, indent=1) + "\n", encoding="utf-8", newline="\n")
 for f, h in HASHES.items():
     print(f"{f:24s} {h[:12]}")
