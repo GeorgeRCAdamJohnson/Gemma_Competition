@@ -1,5 +1,9 @@
 # Paper outline - Gemma 4 Developer Agent (working draft)
 
+> **Superseded 2026-11-23 by the narrative draft [`WRITEUP.md`](WRITEUP.md)**, which adds the intel database,
+> failure-first analysis, the public-config audit and the LoRA results. This outline is kept for its figure map and
+> open author questions.
+
 Sources: `GEMMA_EXPERIMENT_LOG.md` (cited as L<line>), `Write-up/_chronology_notes.md`, `PAPER_FINDING1_DRAFT.md`,
 `Outputs/FORUM_ANALYSIS_20261108.md` (cited as [topic id]). Figures are in this folder (`Fig N` = file below).
 Items marked **[AUTHOR]** need your input; items marked **[GAP]** are claims the log does not yet support.
@@ -141,7 +145,7 @@ Narrative: ten days without beating 0.12; board 0.08, 0.08, 0.10, 0.05 (L8401-84
   19 solves landed between 511 and 608 s. **Fig 4**.
 - Regression check: 18/18 always-solved kept; total task time -3% (the 60 s kill offsets the extra minutes).
 - Caveat: our tests ran under heavier load than the sequential scorer, so the board gain will be smaller.
-- **[PENDING]** board result of the B+C pack - fill in when scored.
+- Board result of the B+C pack: 0.15 / 0.17 / 0.13 (inside ca5's spread) -> closed 11-13; ca5 kept.
 
 ## 10. Discussion - what we would do again, and differently
 - Again: written rules from prior competitions; pre-registered bars; one change per test; trace-level mechanism

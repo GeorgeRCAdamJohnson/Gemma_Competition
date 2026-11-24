@@ -24330,6 +24330,21 @@ EXIF in the checked test split. Fifteen auditor tests passed. These checks do
 not settle broader genealogy or cross-source semantic independence; no source
 or family was admitted, and no training or GPU work was launched.
 
+### 2026-11-24 -- Funcy #211 preparation attempt
+
+The [Funcy #211 recipe](train/data/repair-funcy-211-development-v1.json)
+uses its pinned parent/head archives, upstream bound-method issue tests and a
+partial positional-only negative. The guarded one-worker container matrix
+completed both positive runs, including their selected regression checks.
+Both baseline and both negative runs failed the unchanged named-assertion
+gate; the
+[summary](Outputs/repair-funcy-211-public-sources-v1/prepared-v1/replay/summary-7e32df25a3c54507a26019b2cc006fcf.json)
+has SHA256
+`b158b25442ac371e053f75bb44d858f6c1d8b956561440bcbdf359148b1a4870`.
+No candidate was published or added to the 48-row corpus. Preserve this failed
+attempt; its failure mode requires adjudication rather than weakening the
+gate. No GPU work or training occurred.
+
 ### 2026-11-23 -- RESULT: E4B synthetic length probe v2 (`train/colab_repair_length_probe_v2.ipynb`): CUDA OOM on one L4
 Drive `gemma_fasteval/lora_runs/e4b-repair-length-probe-v2` (runtime.json, run.log, environment_preflight.json,
 outcome.json: status failed, CalledProcessError, 661.8 s, ~0.37 CU at 2.0 CU/h). First attempt landed on a T4 and was
@@ -24346,3 +24361,64 @@ Options: (1) chunked target-loss (blocks of ~512 positions with recomputation; i
 a new versioned loss with a CPU equivalence test vs the frozen loss_sum, then re-probe 12,015/4,668; (2) cap supervised
 tokens at ~1,500 (drop/split #1360, #1492) and probe at #1206's shape; (3) larger GPU (registration pins L4; G4 ~5x
 rate). The v2 output folder now exists; a re-probe needs a new tag (-v3). Same logits issue applies to a 31B LoRA.
+
+### 2026-11-24 -- Fresh train-development leads and GCP preparation
+
+The [bounded metadata scan](Outputs/public-repair-triage-train-gcp-batch-20261124-v1/summary.json)
+sampled 144 PRs from seven provisionally reserved train-development sources,
+returning nine quarantined leads. Cross-checking local recipes and output
+directories found that humanize #354 was already staged and humanize #329
+already had an output directory; the other seven are not thereby qualified
+or proven independent. No sealed answers were included in acquisition.
+
+Pinned source snapshots and provisional recipes for
+[humanize #359](train/data/repair-humanize-359-development-v1.json) and
+[Babel #1288](train/data/repair-babel-1288-development-v1.json) passed
+archive, source-span, license-file consistency, selector, native-edit preparation and row-schema
+checks. They have not been replayed or admitted. Humanize #392 was not staged:
+its upstream replacement's old edit span appears twice, so it fails the
+existing unique-edit gate. The Babel #1275 source archive lacks generated
+locale data needed by its proposed test; it remains a lead, not a recipe.
+
+[The parallel batch launcher](train/run_parallel_repair_batches.py) runs up
+to two one-family recipes concurrently, each with up to four existing
+container replay workers; a failing batch does not prevent the other batch.
+Its concurrency and failure accounting are unit-tested, not cloud-validated.
+The acquisition worker limit and launcher tests passed (9 tests total).
+Pylance syntax checks timed out; the Python test runner parsed the new code.
+
+The active GCP project had billing enabled, Compute Engine enabled, and 24
+regional E2 CPUs available in `us-central1` at the time checked. No VM was
+created, no cloud batch was run, and no credentials or sealed answers were
+transferred. The exact pinned image is present locally but its export was
+deferred because available shared-host memory was below the 600,000 KiB
+guard. Cloud staging, remote isolation validation and receipt retrieval
+remain unfinished.
+
+Subsequently, when the shared-host guard allowed it, the exact replay image
+was exported to `Outputs/repair-training-gcp-candidates-20261124-v1/pinned-replay-image.tar`
+(SHA256 `cecad89b31f09fad2bfefb2b9d2c29fee00f120b5a85015f1c3df3ad6c63aaba`).
+Its OCI index identifies the pinned image
+`sha256:cfde067afd9ceac278e5d8e4955ed91a30a80e84ca2729fc995edffb91d9c816`;
+remote Docker must independently verify it can inspect that exact identity.
+Separate earlier-merge metadata scans returned 17 and 21 quarantined leads;
+these counts include previously staged IDs and do not imply qualification.
+
+Three additional provisional recipes passed native-edit preparation:
+[Babel #1132](train/data/repair-babel-1132-development-v1.json),
+[humanize #295](train/data/repair-humanize-295-development-v1.json), and
+[humanize #346](train/data/repair-humanize-346-development-v1.json).
+They remain untested by the isolated replay and unqualified. A 64-GiB,
+8-vCPU E2 VM in `us-central1` is approximately $0.36 per VM-hour before disk
+and network charges; two such VMs fit the checked 24-vCPU regional quota.
+No VM was launched by this preparation step.
+
+### 2026-11-23 -- Write-up updated: `Write-up/WRITEUP.md` narrative draft v1 (supersedes PAPER_OUTLINE.md for content)
+Paper Track (`gemma-4-developer-agent-paper`) closed 2026-11-12; we had entered but did not submit. The write-up is kept
+current anyway (portfolio, a solution write-up if we place, project record). Draft covers phases 1-3, measurement
+(58-task board, noise, power, parity 32/85 reproduced, grading deterministic, degradation null), transfer failure,
+31B clock, the intel DB, failure-first findings (first edit decisive; 55% right-file-wrong-fix; recurring wrong fixes;
+arms change effort not decisions; direction register), the public-config audit (none beats ca5; output cap ~ overflow,
+command timeout ~ timeouts), the ca5 + public adapter test and traces, infrastructure, next steps (multi-pattern repair
+LoRA; L4 OOM at 4,668 supervised tokens), lessons, limitations, key-numbers appendix. Main board now 6,610 teams, ours
+rank 389 at 0.20. PAPER_OUTLINE.md: superseded note; B+C pending item filled.
