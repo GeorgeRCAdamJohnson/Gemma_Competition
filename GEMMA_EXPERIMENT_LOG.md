@@ -24422,3 +24422,10 @@ arms change effort not decisions; direction register), the public-config audit (
 command timeout ~ timeouts), the ca5 + public adapter test and traces, infrastructure, next steps (multi-pattern repair
 LoRA; L4 OOM at 4,668 supervised tokens), lessons, limitations, key-numbers appendix. Main board now 6,610 teams, ours
 rank 389 at 0.20. PAPER_OUTLINE.md: superseded note; B+C pending item filled.
+
+### 2026-11-23 -- SMALL-MODEL LEADERBOARD snapshot (user paste): 1,377 teams; ours 0.08, listed 199th, tied band 35-206
+Score bands (truncated k/58): 0.12 (7 tasks) 2 teams; 0.10 (6) 32 teams, ranks 3-34; 0.08 (5) 172 teams, ranks 35-206
+(ours, "Adam Johnson", listed 199th; order inside a tie is by time); 0.06 (4) ranks 207-594; 0.05 ranks 595-989; 0.03
+990-1235; 0.01 1236-1318; 0.00 1319+. ayush04barai ("Ayush Barai") is also at 0.08. Our E4B entry's mean over three
+draws is 4.0/58 (0.069), so its best draw sits one band above its mean. The prize is decided on the private ~71 tasks,
+where the 0.10-0.12 teams' public draws also regress. One task separates us from the 0.10 band and two from the top.

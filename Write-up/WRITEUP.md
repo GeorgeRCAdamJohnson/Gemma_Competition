@@ -1,4 +1,4 @@
-# Measure Before You Tune: Building and Auditing a Gemma 4 Coding Agent
+﻿# Measure Before You Tune: Building and Auditing a Gemma 4 Coding Agent
 
 *Gemma 4 Developer Agent competition (Kaggle), 2026-10-01 to 2026-12-02. Narrative draft v1, 2026-11-23.
 Sources: `GEMMA_EXPERIMENT_LOG.md` (the dated record of every experiment), the project intel database
@@ -9,7 +9,8 @@ Sources: `GEMMA_EXPERIMENT_LOG.md` (the dated record of every experiment), the p
 We built single-agent coding agents on Gemma 4 for a benchmark where an agent reads a Python repository and an issue,
 edits the code, and is scored by hidden tests on private repositories. Our 31B agent ("ca5") reached **0.20 on the
 public leaderboard (12 of 58 tasks), rank 389 of 6,610 teams**. Our small-model agent (E4B with a repair-decisions
-LoRA) is our entry for the $10K small-model prize, at a mean of **4.0 of 58** over three draws.
+LoRA) is our entry for the $10K small-model prize: best draw **0.08, tied for 35th of 1,377 teams** (the 0.08 band covers
+ranks 35-206), mean **4.0 of 58** over three draws. The small-model top is 0.12 (7 tasks), two tasks above our best draw.
 
 The score is not the main result. What we can show is that we know *why* the agents succeed and fail, at the level
 of individual attempts, and that we can tell a real improvement from noise:
