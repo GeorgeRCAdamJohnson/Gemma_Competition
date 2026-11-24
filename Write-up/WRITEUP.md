@@ -45,9 +45,20 @@ noisy. Practice-set results are hypotheses, and single leaderboard draws are wea
 
 ## 2. Phase 1: a fast start from written rules (10-01 to 10-03)
 
-We started from a rule set carried over from earlier competitions: pre-register the success bar before each test,
-change one thing at a time, treat any local score as a hypothesis, and log retractions. [AUTHOR: one paragraph on
-what the earlier cell-tracking, attack-agent and poker competitions taught.]
+We did not start from zero. Each earlier competition left a lesson and some tooling, and we brought both:
+
+- **The first idea is rarely the final one.** Across competitions we reused tools and adapters from earlier attempts
+  instead of starting over, and expected to iterate past the first design.
+- **Agent Attack** taught us not to rely on the public leaderboard, which is why we built a local testing framework
+  before trusting any score.
+- **Poker** extended that: we reverse-engineered the scorer and built our own tests and validators around it.
+- **Biohub** is where we learned to train LoRAs and run work on Colab, and started building skills beyond our standard
+  processes.
+- **Across all of them:** trust your own measurements, and be persistent. Most of the useful results in this project
+  came after a run of nulls.
+
+From those we kept a working rule set: pre-register the success bar before each test, change one thing at a time,
+treat any local score as a hypothesis, and log retractions next to the original claims.
 
 The first agent resolved 0 of 6 tasks; the cause was four harness and loop bugs, not the method. A local
 reproduction of the failure ("the agent explores until it runs out of budget") led to contract-anchored prompts and
