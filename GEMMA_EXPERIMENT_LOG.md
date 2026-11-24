@@ -23873,3 +23873,39 @@ rule FAILS on solves -> no leaderboard draw; ca5 stays the 31B final. Consistent
 (this one and F vs E in 31b_lb022): less overflow (26 -> 15; 14 -> 9), fewer empty patches (36 -> 24), slower steps
 (+9%; +4%), more 8-minute timeouts, no reliable solve gain. ca5 identical-bytes local draws on the 85: 32, 32, 29
 (29 of 32 tasks shared between the first two). Cost ~49 CU; balance 109 CU after the run.
+
+### Repair data: approved synthetic L4 length probe, not yet run
+
+The user confirmed substantial available Colab and Kaggle quota, chose to
+retain the 80/20/60 qualified-data target, and approved one bounded L4
+feasibility probe. The previous repair pilot already trained E4B on an L4;
+its longest example was 526 tokens. The present 25-example development
+assessment has a maximum of 11,616 total / 4,476 supervised tokens, and none
+fits 4,096 tokens. These are geometry measurements, not admitted families.
+
+Built [the inspect-first probe](train/colab_repair_length_probe_v1.ipynb)
+(SHA256 `91adddd4a076ddc37dbc4f22af998a3275ce711fce0851c67fa9be33182e529d`).
+It exercises a synthetic input of that geometry with the frozen trainer's
+loss and no optimizer update, data rows, export or submission. The cap is
+3,780 seconds and 2.1 estimated compute units at 2 CU/hour, excluding Colab
+allocation and idle billing. The saved notebook's CPU inspection and eight
+focused probe/loss tests passed. No GPU work was launched.
+
+Additional packaging #1245 and #1314 and Humanize #41 were staged but are not
+in the CPU-complete cohort. Docker stopped during the first two replays;
+#1314 also showed a missing `tomli_w` test dependency. The failed and partial
+receipts are preserved, and all three remain unqualified. The separate
+evaluation preflight found no newly qualified or sealed source groups.
+
+### 2026-11-23 -- TRACES: what ayush's adapter changes on ca5 (31b_ca5lora_20261123, 170 attempts per arm)
+DB rebuilt (17,601 unique; verify 0 failed). Per attempt, A_ca5 vs G_ca5_ayush:
+- Same amount of work: calls 19.8 vs 20.6, reads 7.0 vs 6.8, greps 6.1 vs 6.3, completion tokens 7,131 vs 7,044,
+  thinking 19.3k vs 18.6k chars. Wall 238 vs 256 s (+8%): ~30 vs ~27.5 generated tok/s overall. The slowdown is the
+  LoRA serving cost, not longer reasoning; it is what produces the extra 8-minute timeouts.
+- Localisation unchanged: first edit on gold 0.44 vs 0.42, any gold file edited 0.735 vs 0.747, calls before the first
+  edit 9.2 vs 9.7, repro script written 61% in both.
+- Edits more readily: successful edits 3.47 vs 4.04, failed edits 0.48 vs 0.65, files edited 2.11 vs 2.25 -> fewer
+  empty patches (36 -> 24). Consistent with its training as an edit-only adapter.
+- Fix quality unchanged: attempts that edited a gold file and still failed 67 vs 65. Both arms reach a gold file in
+  ~74% of attempts but solve ~37%; the 31B gap is right file, wrong fix, as on E4B.
+Note: steps.elapsed_s is cumulative within an attempt, not per step; per-token speed above is from wall_s / tokens.
