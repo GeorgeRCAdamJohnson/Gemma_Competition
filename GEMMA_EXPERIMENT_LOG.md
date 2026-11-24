@@ -23909,3 +23909,440 @@ DB rebuilt (17,601 unique; verify 0 failed). Per attempt, A_ca5 vs G_ca5_ayush:
 - Fix quality unchanged: attempts that edited a gold file and still failed 67 vs 65. Both arms reach a gold file in
   ~74% of attempts but solve ~37%; the 31B gap is right file, wrong fix, as on E4B.
 Note: steps.elapsed_s is cumulative within an attempt, not per step; per-token speed above is from wall_s / tokens.
+
+### Repair data: parallel CPU preparation and pinned evaluation metadata
+
+The user reaffirmed the 80/20/60 floors and asked for faster execution, not
+lower standards. The unified
+[v7 CPU assessment](Outputs/repair-training-format-public-sources-v7/cpu-loss-assessment.json)
+passed for **29 provisional IDs / 20,366 supervised tokens**; its SHA256 is
+`0b7d8b1f4af3ef07ee6add85a782b1365ce22d64df902aad6802a577ddc12754`.
+The [v7 source screen](Outputs/repair-prepared-source-screen-public-sources-v7/assessment.json)
+SHA256 is `15e0ba5dfbd69b8e27204eb0b5342b4f4576b17be3fe2c20ad616aae586ea7bc`.
+Humanize #240, packaging #1454 and packaging #1392 have individually passed
+preparation, native capture and length/completion audits, but the aggregate
+including them has not yet been verified. Packaging #1454 measured
+11,837 full / 4,423 target tokens; #1392 measured 7,908 / 1,393.
+
+A [metadata-only evaluation receipt](Outputs/evaluation-source-revision-check-20261124-v1/assessment.json)
+checked twelve prospective groups at the pinned SWE-rebench revision and
+found zero exact-name hits; SHA256
+`2cceaf3c7dc494b6bd6108b0772d67a4ad52be9644555fb7ba3a91326d99482b`.
+No answer rows were requested. Exact-name absence does not establish
+independence or clear the remaining source/exposure gates.
+
+The new task-specific structural audit passed focused split, task-prefix and
+completion-limit tests; it rejected the actual 29-row development corpus at
+the 80-family-ID floor. It cannot certify source or family independence and
+does not launch training. Fully admitted train/validation/decision counts
+remain **0/0/0**. No GPU job, held-out answer inspection, harness change or
+registered trainer change occurred.
+
+The subsequent [v8 CPU assessment](Outputs/repair-training-format-public-sources-v8/cpu-loss-assessment.json)
+passed for **30 provisional IDs / 20,449 supervised tokens**; SHA256
+`50bee4fcb11d2974c4acc66dda485f859bfbce6175de72576161ef489d45c50c`.
+Its [source screen](Outputs/repair-prepared-source-screen-public-sources-v8/assessment.json)
+SHA256 is `4731b579dd355e55d607318a8f73f303018f63dc9852b008c569021c5b332b59`.
+The 32-ID v9 chain is running; no admission status has changed.
+Packaging #1327 passed its six preparation and six capture-stage replay tasks,
+but native history capture rejected the edited response because the real tool
+marked its diff truncated. The failure is preserved and the candidate is not
+included in the chain. Packaging #1257's initial replay could not collect
+its upstream test due to missing test helpers; a separate retry uses the
+upstream-declared, hash-pinned `pretend` dependency and preserves the failure.
+That retry passed all six preparation and six capture-stage replay tasks and
+the native-history token audit: 9,924 full / 2,533 target tokens. It is
+included in the planned v10 launcher, not the already-running v9 aggregate.
+
+Prospective evaluation [repository revision metadata](Outputs/evaluation-repository-revision-metadata-20261124-v1/assessment.json)
+pins default-branch commits for all twelve groups and reports all twelve as
+nonforks; SHA256
+`2b51bdf7132232d91b21b310493c497fb7cde76a62ccec18f733c41a1329130e`.
+The separate [root-notice receipt](Outputs/evaluation-revision-license-notices-20261124-v1/assessment.json)
+verifies Git blob IDs and SHA256 hashes for thirteen notices in eleven groups;
+`rspeer/ordered-set` has no root notice in the scan. Its SHA256 is
+`d96b356290760fcda68778dd58441c62dd16e1b9130fc5e8f7f63abc4f1ce29b`.
+These metadata do not authorize any group or establish candidate-revision
+licensing, lineage independence, or absence of prior exposure.
+
+A [follow-up root-notice receipt](Outputs/evaluation-revision-license-notices-20261124-v2/assessment.json)
+verified `rspeer/ordered-set`'s `MIT-LICENSE` at the pinned revision; the
+first scan missed it because its filename does not start with `LICENSE`.
+SHA256 `53349181be955f8fb5927c5c053f87f663411cfccd97a15be19907a3001e3836`.
+Each of the twelve groups now has at least one pinned root-notice hash, but
+none is cleared or sealed.
+
+The [known-alias split comparison](Outputs/training-evaluation-alias-separation-20261124-v1/assessment.json)
+found zero exact known-alias collisions between the five represented training
+groups and twelve prospective evaluation groups or across evaluation splits;
+SHA256 `5b7a7a4e81c39fab1180b367ede6f3738509e0046380c5d2a07e4a1610118af1`.
+It does not establish broader lineage or semantic independence.
+
+The [v9 CPU assessment](Outputs/repair-training-format-public-sources-v9/cpu-loss-assessment.json)
+completed with **32 provisional IDs / 26,265 supervised tokens**; SHA256
+`208dfff464c0d5612c47a93db262e1866a3ef707537975e3b528944c3cd6ceae`.
+The [v9 source screen](Outputs/repair-prepared-source-screen-public-sources-v9/assessment.json)
+SHA256 is `8a5506052007407a9bedd8318a43d3e37a8777e3cfd71f4501dad04dd2e7cd41`.
+It reports zero fully qualified families. The 33-ID v10 aggregate is under
+verification; individual success does not establish aggregate success.
+
+The [evaluation-tree metadata receipt](Outputs/evaluation-tree-lineage-metadata-20261124-v1/assessment.json)
+records complete default-branch tree metadata for twelve prospective
+evaluation repositories. Its comparison found no exact normalized
+path-component matches against the named training and other evaluation
+groups; SHA256 `8a054172ce9e3c9a12530a4f57b2aea4f3515a84411dd5ad2f45054d17e10d5e`.
+No file contents or holdout answers were fetched. The check misses different
+names, filename stems and other forms of vendoring; it does not clear
+candidate revisions or establish lineage independence.
+
+Packaging #1306 and Suor/funcy#191 and Suor/funcy#200 each passed six
+preparation and six native-capture replay tasks and complete-history audits.
+Their full / target token counts are 9,622 / 2,992; 4,895 / 150; and
+6,234 / 854, respectively. All remain provisional. The editable PC launcher
+now targets a 36-ID v11 aggregate including these three and packaging #1257;
+the launcher parses successfully, but v11 has not been run end to end.
+
+The initial Suor/funcy#203 recipe was rejected before preparation because
+its excluded-edit field incorrectly listed a documentation path rather than
+a source-span exclusion. The unchanged original recipe is retained; a v2
+recipe omits the unrelated upstream documentation change and passed six
+preparation and six native-capture replay tasks. Its complete history is
+4,909 full / 132 target tokens. The PC launcher now targets 37 provisional IDs;
+v11 remains unverified and no candidate was admitted.
+
+An [incremental source screen](Outputs/repair-prepared-source-screen-public-sources-v11-incremental-v1/assessment.json)
+checked 36 prepared IDs from the v9 inputs plus packaging #1257, packaging
+#1306, Suor/funcy#191 and Suor/funcy#200 without repeating all replay tasks.
+Its SHA256 is `ac3b17a0c13c9bf254b13a0c51dbcd8e6a6915856387d5cf2425bdc19d3219d0`.
+The bounded local patch/text comparison found no hits, while known Humanize
+aliases occur in the prior index. It does not include Suor/funcy#203, does
+not replace an end-to-end launcher run, and clears no families.
+
+Suor/funcy#209's initial preparation failed test collection in all six replay
+tasks because the unchanged upstream `tests/py38_funcs.py` helper was absent
+from the oracle mount. The failed attempts remain intact. The helper has the
+same SHA256 in both revisions; a separate v2 recipe includes it and passed all
+six preparation and six capture-stage replays. Its complete history is
+10,083 full / 3,624 target tokens. The PC launcher now targets 38 provisional
+IDs; v11 remains unverified and no candidate was admitted.
+
+The [v10 CPU assessment](Outputs/repair-training-format-public-sources-v10/cpu-loss-assessment.json)
+completed with **33 provisional IDs / 28,798 supervised tokens**; SHA256
+`ec6fcad3629c66f565c2bce131609daafbca3a1289952ab3c30d1414f95fbbda`.
+Its [source screen](Outputs/repair-prepared-source-screen-public-sources-v10/assessment.json)
+SHA256 is `6e5104597b96a43942dfd5818886844aef7249462eb5026658aebe707da9fd67`;
+it reports zero fully qualified families. The end-to-end result is CPU-only
+and does not establish GPU feasibility, serving parity or split eligibility.
+
+Suor/funcy#182 passed six preparation and six capture-stage replay tasks and
+its complete history uses 5,254 full / 264 target tokens. The PC launcher now
+targets 39 provisional IDs; v11 remains unverified and none was admitted.
+
+A [metadata-only PR-count receipt](Outputs/evaluation-merged-pr-counts-20261124-v1/assessment.json)
+reports 22 to 333 merged PRs per prospective evaluation repository; SHA256
+`e5bec14ad7349ff234aaa52557414d34822221621d014b4a8d4aac77ba31f79a`.
+No titles, patches, tests or held-out answers were emitted. Counts include
+non-repairs and cannot establish the 20/60 floors or the same-location cases.
+
+The [incremental CPU-format assessment](Outputs/repair-training-format-public-sources-v11-incremental-v1/cpu-loss-assessment.json)
+verified **38 provisional IDs / 36,550 supervised tokens**; SHA256
+`151fe288f271fae54212900e2a68090b2f8854e2c96f79ffe4af9b03e1268138`.
+It reused completed individual histories rather than rerunning the whole
+launcher, and it excludes Suor/funcy#182. The 39-ID v11 launcher is running
+separately. Neither result clears sources or authorizes training.
+
+python-babel/babel#1414 passed six preparation and six capture-stage replay
+tasks. Its complete history is 5,756 full / 337 target tokens. The upstream
+oracle compares generated source text, so a supplementary
+[JavaScript behavior check](Outputs/repair-babel-1414-js-behavior-v1/assessment.json)
+executed the actual generated rule at five negative, positive and fractional
+inputs: baseline and negative controls fail, positive passes. Its SHA256 is
+`0d984ed06553ec4be004a6ecf3f4da781fa38f3ba5ffc99598d1ffd855de4388`.
+The bounded [source screen](Outputs/repair-babel-1414-source-screen-v1/assessment.json)
+SHA256 is `8ed5c77d4dc06f0345ec4f65347af33bec6dce49a0ef719cf33dd0a2ae857fde`;
+it reports zero local patch/text hits and does not clear the source. The
+launcher now targets 40 provisional IDs in v12, which is not yet verified.
+
+A [Git-blob separation check](Outputs/training-evaluation-git-blob-separation-20261124-v1/assessment.json)
+compared 305 distinct Python source blobs of at least 1,024 bytes from the
+baseline and positive workspaces of 40 provisional IDs with twelve pinned
+evaluation trees. No exact blob matches occurred between training and
+evaluation groups or across the evaluation repositories; SHA256
+`be93edac14a7d42693851ebcaf4e67f968275fb220b7d714f37a784a1bd58fb7`.
+Only evaluation tree metadata was fetched. This does not exclude smaller or
+modified copies, other languages, semantic overlap or related lineages and
+does not clear candidate revisions.
+
+dateutil/dateutil#1655 passed all six preparation replays and all six
+[capture-stage replays](Outputs/repair-dateutil-1655-public-sources-history-v1/replay/summary-a85fd765297a4ec0b71f8664e07057ec.json).
+Its complete native history is 5,351 total / 239 target tokens; the
+[token audit](Outputs/repair-dateutil-1655-public-sources-history-v1/token-audit-18000-v1/assessment.json)
+SHA256 is `f0e3a49de12259d2b5d31e38f2b7455ae5381a4ca97cad7a0437fd3902d8c77e`.
+This passes CPU length checks only, not the existing 4,096-token training
+cap or source qualification. Launcher v13 includes it and targets 41
+provisional IDs; an end-to-end v13 result is pending.
+
+The 39-ID v11 launcher completed end to end: the
+[CPU assessment](Outputs/repair-training-format-public-sources-v11/cpu-loss-assessment.json)
+reports 36,814 supervised tokens and SHA256
+`ffd4138a05f88fda8cc27a7df69c462e424b695edf9af1e2b76717fdba44a607`.
+The [source screen](Outputs/repair-prepared-source-screen-public-sources-v11/assessment.json)
+SHA256 is `d5b832fef1ff2352a19c567b944fa37ec8185a39bd3ed5f07acfad3aa7523ed6`;
+it reports 39 screened and zero fully qualified. The v13 launcher was then
+started separately; it includes the individually audited Babel #1414 and
+dateutil/dateutil#1655 candidates.
+
+Suor/funcy#207 and Suor/funcy#186 are new provisional acquisition leads.
+Their revision archives, unchanged selected regressions, recipe structure
+and unique edit anchors were checked. #207 passed six preparation and six
+capture-stage replays; its complete native history is 4,884 total / 142
+target tokens. Its [token audit](Outputs/repair-funcy-207-public-sources-history-v1/token-audit-18000-v1/assessment.json)
+SHA256 is `0981cbb6e251e1be9f4e65433480dbb6e6b87b2facd5cdcf06a676f3dcd62fa7`.
+It is not in the running v13 aggregate, and launcher v14 targets 42
+provisional IDs. #186 subsequently passed six preparation and six capture
+replays; its complete native history is 4,687 total / 51 target tokens. Its
+[token audit](Outputs/repair-funcy-186-public-sources-history-v1/token-audit-18000-v1/assessment.json)
+SHA256 is `08ea8795f20289ae94dad706a565069e45f462863a9cf647a119a220849e379a`.
+Launcher v15 adds it, targeting 43 provisional IDs. Neither candidate is
+counted as qualified.
+
+python-babel/babel#1409 is another provisional lead. Its archived revisions,
+unchanged selected regressions, recipe structure and unique edit anchors were
+checked; all six preparation and six capture-stage replays passed. The
+complete native history is 5,338 total / 124 target tokens; its
+[token audit](Outputs/repair-babel-1409-public-sources-history-v1/token-audit-18000-v1/assessment.json)
+SHA256 is `094644dcf53b000ba7e72bb6401bf7eade1e8d2b082a397515b415c8d2cd6c81`.
+Launcher v16 targets 44 provisional IDs; this one is not in the running v13
+aggregate and is not qualified.
+
+python-humanize/humanize#354 is a separate provisional fractional-formatting
+lead. Its revision archives, unchanged selected regressions, recipe structure
+and edit anchors were checked; six preparation and six capture-stage replays
+passed. The complete native history is 4,955 total / 214 target tokens; its
+[token audit](Outputs/repair-humanize-354-public-sources-history-v1/token-audit-18000-v1/assessment.json)
+SHA256 is `8ee14f9d40c89ad5cdf3c89587caa2d26c935792712ea2a8dde91a9ccd6449cf`.
+Launcher v17 targets 45 provisional IDs; this one is not in the running v13
+aggregate and is not qualified.
+python-humanize/humanize#320 is an additional sign-handling lead with pinned
+archives, unchanged selected regressions and checked edit anchors. Its v1
+preparation, capture and token audit passed, but the initial negative only
+applied `abs` to a positive
+whole part, so it did not actually fix the defect for any negative mixed
+number. Preserve that evidence but do not use it as the final hard negative;
+v2 instead attempts the `-1` case and must be replayed. Both #320 and #354
+touch the fractional formatter, so their mechanisms must be adjudicated rather
+than automatically counted as independent.
+
+python-humanize/humanize#329 was inspected but deferred: its upstream
+filesize test file contains only the modified parametrized issue test, so the
+current single-test-file recipe cannot also select an unchanged regression.
+The pinned archives are retained; no behavioral pass is claimed.
+
+The 41-ID v13 launcher completed end to end. Its
+[CPU assessment](Outputs/repair-training-format-public-sources-v13/cpu-loss-assessment.json)
+reports 37,390 supervised tokens and SHA256
+`d913fead7194a19c16c8d43bebb6cd7fb907bbd897c984b923c25ce5e255322f`.
+Its [source screen](Outputs/repair-prepared-source-screen-public-sources-v13/assessment.json)
+SHA256 is `930b3aca63a6f1c17fd9a8a3745ce4208ff6b45c4cd19e26f83409f37f38a208`;
+41 IDs were screened and zero were fully qualified. Neither output authorizes
+training. Packaging #1519 is a further cycle-diagnostic lead with pinned
+archives, unchanged selected regressions and checked edit anchors; behavioral
+replay is still pending. Attempts to start #1519 and #320 v2 stopped before
+creating outputs because free shared-host memory was below the 600,000 KiB
+launch guard.
+
+A same-file review of the 45 provisional training histories revisited a
+related pair requiring semantic-family adjudication: packaging #1246 and
+#1310 both change `_normalize_extras` in `markers.py`. The former handles
+nested expressions and variable-versus-variable comparisons for `extra`;
+the latter normalizes set-membership literals for `extras` and dependency
+groups. Their different edits alone do not establish independent families.
+The same review compared the upstream Humanize #320 and #354 patches:
+#320 fixes the sign on mixed fractions, while #354 folds a rounded fractional
+part into the whole number. Both affect `fractional`; keep their family
+relationship open rather than counting them automatically.
+
+The revised Humanize #320 negative passed six preparation and six independent
+capture-stage replays. Its complete normalized history is 4,858 total / 159
+target tokens and fits both the 18,000-token CPU cap and captured 5,000-token
+completion budget; its [token audit](Outputs/repair-humanize-320-public-sources-history-v2/token-audit-18000-v1/assessment.json)
+SHA256 is `fefd5dedd5a66decd3755947e7159793ca8d0fdc5c2167b1546c140251cc240e`.
+Launcher v18 now targets 46 provisional IDs; this aggregate has not yet run.
+This result does not resolve source or semantic-family qualification.
+
+Packaging #1519 passed six preparation and six capture-stage replays. Its
+complete normalized history is 5,005 total / 77 target tokens, within the
+18,000-token CPU cap and captured 5,000-token completion budget but above the
+existing 4,096-token registration. Its
+[token audit](Outputs/repair-packaging-1519-public-sources-history-v1/token-audit-18000-v1/assessment.json)
+SHA256 is `4d8ea23ac38aa4f9fa497f211a2e46afe06e8c5ece27dd7737b23cae47fc7a8c`.
+Launcher v19 targets 47 provisional IDs; this aggregate has not yet run.
+An independent ID count of the v13 histories plus the six later individually
+audited histories found 47 distinct IDs from six groups: packaging 25,
+Humanize 9, Funcy 8, Babel 2, dateutil 2 and EXIF 1. This is a provisional
+inventory, not an aggregated loss audit, a family adjudication, or evidence
+of a balanced training corpus.
+
+The v19 PC launcher subsequently completed end to end. Its
+[CPU assessment](Outputs/repair-training-format-public-sources-v19/cpu-loss-assessment.json)
+reports 47 IDs and 38,157 target tokens with target-only loss and
+token-normalized accumulation verified; SHA256
+`a0443a89d44beeca383bc554e990965d2b375ab2878cc68f985546f682a24bdb`.
+The [source screen](Outputs/repair-prepared-source-screen-public-sources-v19/assessment.json)
+reports 47 screened, no bounded local overlap hits, and zero fully qualified
+families; SHA256
+`f2ca074e6c30f1ff9c1c53fd806be0beed1ca553cc6f7a711cf9748404072dcb`.
+This verifies the combined CPU path, not licensing clearance, independence,
+GPU feasibility or authorization to train.
+
+For source diversification, pyeve/cerberus#327 was screened as a potential
+training-development repair. Its merged parent and head archives are retained
+under `Outputs/repair-cerberus-327-public-sources-v1` with SHA256s
+`cea6d7183adaa58776c609d56871d8eac23fd888b1808d47fa4a75acc76089e5`
+and `1248ce95689d871d060a86a718eec33a426b5b2c59d16b75a48cf2414f5623b7`.
+It is deferred: its upstream test is inside `cerberus/tests`, whereas the
+current preparation schema requires a top-level `tests` directory. Its older
+source also imports legacy names from `collections`, so replay-runtime
+compatibility must be checked before qualification. No replay or admission is
+claimed. A first image-version probe had a command-quoting error; its corrected
+retry was deferred because available shared-host memory was below the guard.
+
+The batch producer now supports upstream tests inside the source package
+as well as top-level `tests`; fixed tests remain oracle-only and the original
+workspace tests remain unchanged. The previous producer was archived and a
+real historical candidate successfully resumed through that archive. Forty-one
+focused preparation, capture and source-screen tests passed, including
+in-package oracle isolation and rejection of an unrelated package path.
+
+pyeve/cerberus#490 then passed six preparation and six capture-stage
+container replays with the fully pinned, read-only setuptools runtime. Its
+complete native history is 4,853 total / 57 target tokens, within the CPU
+retention and captured completion budgets but above the existing 4,096-token
+registration. Its
+[token audit](Outputs/repair-cerberus-490-public-sources-history-v1/token-audit-18000-v1/assessment.json)
+SHA256 is `ec95c29b224e26724123265ec153e4a078693b4fda81e8e8e07e16951b3705d3`.
+Launcher v20 targets 48 provisional IDs across seven source groups; this
+aggregate has not yet been run and no candidate is admitted.
+The [individual source screen](Outputs/repair-cerberus-490-prepared-source-screen-v1/assessment.json)
+found no bounded local overlap hits, but still reports zero qualified
+families; SHA256
+`a0a647d77eb295b10225766c8400ee897049d61ab38d5bdd86fa4e6569b11fad`.
+
+The v20 launcher subsequently completed end to end. Its
+[CPU assessment](Outputs/repair-training-format-public-sources-v20/cpu-loss-assessment.json)
+reports 48 IDs and 38,214 target tokens with target-only loss and accumulation
+checks passing; SHA256
+`556ca426f2d969c0f1474c376f501f9f57b72373c88eabb2c64812d0cc992a79`.
+Its [source screen](Outputs/repair-prepared-source-screen-public-sources-v20/assessment.json)
+reports 48 screened and zero fully qualified; SHA256
+`0a8cf16b3e57f96c8fa00cf0b113c75edd549dfee8d3da62c5d0c05e16ab3fc8`.
+No model/GPU or independent-source qualification follows from the CPU pass.
+
+The user ran the approved v2 synthetic L4 probe: its child failed with a
+CUDA OOM while the frozen trainer's `loss_sum` was executing. The log reports
+a 4.56 GiB allocation request, 1.51 GiB free and 22.03 GiB total; no
+forward/backward pass completed. The failure does not establish a safe length
+or isolate the exact temporary tensor from the stack trace alone. The 47-ID
+v19 encoding has seven histories over 1,500 target tokens: packaging #1314
+(4,668), #1492 (4,476), #1454 (4,423), #1360 (4,054), Funcy #209
+(3,624), packaging #1306 (2,992), and #1257 (2,533). These remain provisional.
+
+### 2026-11-23 -- RESULT: synthetic L4 length probe v2 failed
+
+The approved 12,015-total / 4,668-target-token synthetic probe exhausted L4
+memory in the frozen trainer's logits soft-capping expression before backward
+propagation. The allocation request was 4.56 GiB with 1.51 GiB free; no
+optimizer updates occurred. The preserved Drive run is
+`MyDrive/gemma_fasteval/lora_runs/e4b-repair-length-probe-v2`; its `run.log`
+SHA256 is `6e56acd76a351894fbf9668d399f482762249d785add744ed62a45f65d091273`.
+The receipt reports 661.75 seconds and an estimated 0.368 CU at the entered
+2 CU/hour rate, excluding allocation and idle billing. The tested configuration
+does not establish this geometry as feasible; any changed memory strategy
+requires validation and separate GPU approval.
+
+### 2026-11-24 -- Bounded development-family review
+
+The user-tagged attrs #1328 rows are three decisions from one excluded
+development family. The frozen fixer stops after its first successful edit,
+and the rows do not meet the existing multi-step and admission gates; they
+were not added to training.
+
+A [selected-pair review](Outputs/repair-training-format-public-sources-v20/related-pair-review-v1.json)
+compares six potentially related pairs in the 48-row development aggregate.
+The fixes address different behaviors, but packaging #1349 and #1360 share
+the empty-versus-omitted pattern and require further semantic-family
+adjudication. This is not exhaustive deduplication or source clearance.
+
+A supplementary Cerberus #490 coercion check produced one baseline and one
+negative run with the pinned image and read-only source/dependencies. The
+negative reports string coercion failures that the baseline suppresses, while
+still suppressing integer coercion failures. The
+[receipt](Outputs/repair-cerberus-490-public-sources-v1/negative-meaningfulness-v1/assessment.json)
+is incomplete: the positive arm and repeat runs did not start because free
+host memory fell below the 600,000 KiB guard. Workspace hashes matched before
+and after. No admission, training, or GPU result is claimed.
+
+### 2026-11-24 -- RESULT: checkpointed synthetic L4 length probe v3 passed
+
+The user ran the separately versioned
+[v3 probe](train/colab_repair_length_probe_v3.ipynb) on an NVIDIA L4.
+The Drive `probe_result.json` reports a successful synthetic forward/backward
+at 12,015 total / 7,347 prefix / 4,668 supervised tokens with
+`checkpointed-target-chunks-v1`, 512-token chunks, and zero optimizer updates.
+Forward/backward took 28.0857 seconds; peak PyTorch CUDA allocation was
+21,568,153,088 bytes and loss per target token was 3.4264567. The result
+SHA256 is `7c01849aa82ba0518afd2697bae164bbbe8d250985e95381730103893cdadb3f`.
+The matching `outcome.json` SHA256 is
+`1c0e6cb8801bc0eaa943517e6c1fcd1e7224fc18441f017e07f1dc8d14f416a8`;
+it reports 620.16 seconds and 0.3445 estimated CU at 2 CU/hour, excluding
+allocation and idle billing. The runtime receipt identifies the device as
+NVIDIA L4. The user was advised to disconnect; disconnection is unverified.
+
+Earlier local CPU checks compared the versioned loss and gradients with the
+frozen loss across chunk boundaries, with 21 focused tests passing. The v3
+result validates only the recorded synthetic forward/backward geometry, not
+optimizer updates, a full training run, other sequence shapes, serving, or
+dataset admission. The frozen trainer remains unchanged. This result is not
+authorization to launch training.
+
+### 2026-11-24 -- v20 metadata-only evaluation alias comparison
+
+The [v20 alias assessment](Outputs/repair-training-format-public-sources-v20/alias-separation-v2.json)
+checks all 48 provisional training IDs across seven represented source groups
+against the four prospective validation and eight prospective decision groups.
+No known exact repository aliases collide. It detects case-insensitive alias
+collisions, excluded aliases, conflicting reservations and a training screen
+created under a different v4 ledger; five focused tests pass. Receipt SHA256
+is `1004e11462a9941980184eeb07666b6c1fb8ab5691bb5af1d0af540436c074f9`.
+Pylance syntax requests timed out; the Python test runner parsed both files.
+No held-out answers were read, and unknown aliases, vendoring, source lineage
+and semantic overlap remain open. No evaluation group becomes eligible or
+sealed and qualified counts do not change.
+
+### 2026-11-24 -- Funcy #177 bounded candidate review
+
+The [candidate review](Outputs/funcy-177-train-source-semantic-oracle-v1/assessment.json)
+compares Funcy #177 with all seven other v20 Funcy families and records the
+six preparation and six capture-stage replay receipts. The
+[revision-pinned benchmark metadata check](Outputs/training-source-benchmark-revision-20261124-v2/assessment.json)
+returned zero exact-name matches and zero answer rows for Funcy, Cerberus and
+EXIF in the checked test split. Fifteen auditor tests passed. These checks do
+not settle broader genealogy or cross-source semantic independence; no source
+or family was admitted, and no training or GPU work was launched.
+
+### 2026-11-23 -- RESULT: E4B synthetic length probe v2 (`train/colab_repair_length_probe_v2.ipynb`): CUDA OOM on one L4
+Drive `gemma_fasteval/lora_runs/e4b-repair-length-probe-v2` (runtime.json, run.log, environment_preflight.json,
+outcome.json: status failed, CalledProcessError, 661.8 s, ~0.37 CU at 2.0 CU/h). First attempt landed on a T4 and was
+stopped by the physical_l4 gate before Drive/output (nothing written). Second attempt, one NVIDIA L4 (22.03 GiB usable):
+environment restored, peft==0.21.3 pinned (ALLOW_DEPENDENCY_INSTALL=True required; the pip conflict warnings concern
+vllm/lark/xgrammar and are irrelevant to training), E4B staged and SHA-256 verified, then OOM in the frozen
+`packed_memory_lora.train.loss_sum` line 341 (`logits.float()`): "Tried to allocate 4.56 GiB ... 19.74 GiB allocated".
+4.56 GiB = 4,668 target positions x 262,144 vocab x 4 bytes, i.e. the full-vocab fp32 logits of every supervised token
+at once (plus the bf16 copy and cross-entropy buffers). Model + checkpointed activations at 12,015 tokens used ~17.5 GiB.
+Reading: the shape limit on L4 is the per-example SUPERVISED token count, not sequence length. Corpus impact: packaging
+#1360 (4,054 targets) and #1492 (4,476) exceed it; most rows have 55-800 targets (largest other: #1206, 1,451 targets /
+7,781 full). Estimate (unverified): <= ~1,500 targets fit under the frozen loss.
+Options: (1) chunked target-loss (blocks of ~512 positions with recomputation; identical sum; ~0.5 GiB logits peak) as
+a new versioned loss with a CPU equivalence test vs the frozen loss_sum, then re-probe 12,015/4,668; (2) cap supervised
+tokens at ~1,500 (drop/split #1360, #1492) and probe at #1206's shape; (3) larger GPU (registration pins L4; G4 ~5x
+rate). The v2 output folder now exists; a re-probe needs a new tag (-v3). Same logits issue applies to a 31B LoRA.
